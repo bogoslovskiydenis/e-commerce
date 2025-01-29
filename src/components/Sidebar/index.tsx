@@ -4,19 +4,24 @@ interface Category {
     href: string
 }
 
-const categories: Category[] = [
-    { name: 'Чоловіки', count: 48113, href: '/choloviky' },
-    { name: 'Жінки', count: 87890, href: '/zinky' },
-    { name: 'Одяг', count: 44424, href: '/odyag' },
-    { name: 'Взуття', count: 26734, href: '/vzuttya' },
-    //больше категорий
+interface SidebarProps {
+    categories?: Category[]
+}
+
+// Дефолтные категории
+const DEFAULT_CATEGORIES: Category[] = [
+    { name: 'Одяг', count: 4424, href: '/odyag' },
+    { name: 'Взуття', count: 2674, href: '/vzuttya' },
+    { name: 'Аксесуари', count: 1523, href: '/aksesuary' },
+    { name: 'Спортивний одяг', count: 892, href: '/sport' },
+    { name: 'Білизна', count: 567, href: '/bilyzna' }
 ]
 
-export default function Sidebar() {
+export default function Sidebar({ categories = DEFAULT_CATEGORIES }: SidebarProps) {
     return (
         <aside className="w-64 flex-shrink-0">
             <nav className="space-y-1">
-                {categories.map((category) => (
+                {categories?.map((category) => (
                     <a
                         key={category.href}
                         href={category.href}

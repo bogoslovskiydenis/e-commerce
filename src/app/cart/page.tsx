@@ -1,5 +1,4 @@
 import Image from 'next/image'
-import Link from 'next/link'
 import { Trash2, Heart } from 'lucide-react'
 
 const CartItem = () => {
