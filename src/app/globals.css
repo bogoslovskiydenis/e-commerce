@@ -5,12 +5,45 @@
 :root {
   --background-rgb: 255, 255, 255;
   --text-rgb: 34, 34, 34;
-  --filter-rgb: 238, 235, 39;
 }
 
 body {
   color: rgb(var(--text-rgb));
   background: rgb(var(--background-rgb));
+}
+
+/* Navigation styles */
+.nav-item {
+  position: static; /* Changed from relative to static */
+}
+
+.nav-dropdown {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  min-width: 100vw;
+  background: white;
+  border-bottom: 1px solid #e5e7eb;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(0);
+  transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
+  z-index: 50;
+}
+
+.nav-item:hover .nav-dropdown {
+  opacity: 1;
+  visibility: visible;
+}
+
+.nav-link {
+  transition: color 0.2s ease-in-out;
+}
+
+.nav-link:hover {
+  color: #ef4444;
 }
 
 @media (prefers-color-scheme: dark) {
