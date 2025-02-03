@@ -1,14 +1,22 @@
+'use client'
+
 import Link from 'next/link'
+import { useState } from 'react'
 import { Search, Heart, ShoppingBag, User } from 'lucide-react'
 import Navigation from '@/components/Navigation'
+import { AuthModal } from '@/components/AuthModal'
+import { AuthPrompt } from './AuthPrompt'
 
 export default function Header() {
+    const [showPrompt, setShowPrompt] = useState(false)
+    const [showAuth, setShowAuth] = useState(false)
+    const [authType, setAuthType] = useState<'login' | 'register'>('login')
+
     return (
         <>
-            <div className="h-[136px]" /> {/* Плейсхолдер для фиксированного хедера */}
+            <div className="h-[136px]" />
 
             <header className="fixed top-0 left-0 right-0 bg-white z-50">
-                {/* Верхняя панель - Жінка, Чоловік, Дитина */}
                 <div className="border-b">
                     <div className="container mx-auto px-4">
                         <div className="flex justify-between items-center h-8 text-sm">
@@ -29,16 +37,13 @@ export default function Header() {
                     </div>
                 </div>
 
-                {/* Основной хедер с логотипом и поиском */}
                 <div className="py-4">
                     <div className="container mx-auto px-4">
                         <div className="flex items-center gap-8">
-                            {/* Логотип */}
                             <Link href="/" className="font-light text-2xl">
                                 E
                             </Link>
 
-                            {/* Поиск */}
                             <div className="flex-1">
                                 <div className="relative">
                                     <input
@@ -50,14 +55,39 @@ export default function Header() {
                                 </div>
                             </div>
 
-                            {/* Действия пользователя */}
                             <nav className="flex items-center gap-6">
-                                <Link href="/login" className="flex items-center gap-2 text-sm">
-                                    <User size={20} />
-                                    <span>Увійти</span>
-                                </Link>
+                                <div className="relative">
+                                    <button
+                                        className="flex items-center gap-2 text-sm"
+                                        onMouseEnter={() => setShowPrompt(true)}
+                                    >
+                                        <User size={20} />
+                                        <span>Увійти</span>
+                                    </button>
+
+                                    {showPrompt && (
+                                        <div
+                                            className="absolute right-0 z-[100]" // z-index больше чем у хедера (z-50)
+                                            onMouseLeave={() => setShowPrompt(false)}
+                                        >
+                                            <AuthPrompt
+                                                onLogin={() => {
+                                                    setAuthType('login')
+                                                    setShowAuth(true)
+                                                    setShowPrompt(false)
+                                                }}
+                                                onRegister={() => {
+                                                    setAuthType('register')
+                                                    setShowAuth(true)
+                                                    setShowPrompt(false)
+                                                }}
+                                            />
+                                        </div>
+                                    )}
+                                </div>
+
                                 <Link href="/favorites" className="flex items-center gap-2 text-sm">
-                                    <Heart size={20} />
+                                <Heart size={20} />
                                     <span>Улюблене</span>
                                 </Link>
                                 <Link href="/cart" className="flex items-center gap-2 text-sm">
@@ -69,9 +99,14 @@ export default function Header() {
                     </div>
                 </div>
 
-                {/* Навигация */}
                 <Navigation />
             </header>
+
+            <AuthModal
+                isOpen={showAuth}
+                onClose={() => setShowAuth(false)}
+                type={authType}
+            />
         </>
     )
 }
