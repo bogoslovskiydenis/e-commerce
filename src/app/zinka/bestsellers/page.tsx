@@ -2,8 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import ProductSection from '@/components/ProductSection'
 
-// Моковые данные
-// Моковые данные
+
 const SALE_PRODUCTS = [
     {
         id: '1',
@@ -14,7 +13,7 @@ const SALE_PRODUCTS = [
         discount: 57,
         image: '/images/products/women/desigual-jacket.jpg',
         link: '/products/desigual-jacket',
-        category: 'jackets'  // Добавили поле category
+        category: 'jackets'
     },
     {
         id: '2',
@@ -25,7 +24,7 @@ const SALE_PRODUCTS = [
         discount: 60,
         image: '/images/products/women/marciano-jacket.jpg',
         link: '/products/marciano-jacket',
-        category: 'jackets'  // Добавили поле category
+        category: 'jackets'
     }
 ]
 

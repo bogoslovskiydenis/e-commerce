@@ -93,13 +93,13 @@ export default function Footer() {
                     <div className="flex flex-col md:flex-row justify-between items-center gap-4">
                         <div className="flex gap-4">
                             <Link href="https://instagram.com" className="text-gray-600 hover:text-black">
-                                <Instagram size={24} />
+                                {/*<Instagram size={24} />*/}
                             </Link>
                             <Link href="https://youtube.com" className="text-gray-600 hover:text-black">
-                                <Youtube size={24} />
+                                {/*<Youtube size={24} />*/}
                             </Link>
                             <Link href="https://facebook.com" className="text-gray-600 hover:text-black">
-                                <Facebook size={24} />
+                                {/*<Facebook size={24} />*/}
                             </Link>
                         </div>
 

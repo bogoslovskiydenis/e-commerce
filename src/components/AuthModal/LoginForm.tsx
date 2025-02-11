@@ -55,10 +55,10 @@ export function LoginForm({
                 <span>або продовжити через</span>
                 <div className="flex justify-center gap-4 mt-4">
                     <button className="p-2 border rounded-full">
-                        <img src="/google.svg" alt="Google" className="w-6 h-6" />
+                        <img src="/" alt="Google" className="w-6 h-6" />
                     </button>
                     <button className="p-2 border rounded-full">
-                        <img src="/facebook.svg" alt="Facebook" className="w-6 h-6" />
+                        <img src="/" alt="Facebook" className="w-6 h-6" />
                     </button>
                 </div>
             </div>

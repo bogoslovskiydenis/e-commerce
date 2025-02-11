@@ -93,14 +93,14 @@ export function RegisterForm({
                 <label className="flex items-start gap-2">
                     <input type="checkbox" className="mt-1" />
                     <span className="text-sm">
-            Хочу приєднатися до MODIVO FASHION CLUB і отримувати додаткові знижки на покупки
+            Хочу приєднатися до Ecommerce
           </span>
                 </label>
 
                 <label className="flex items-start gap-2">
                     <input type="checkbox" className="mt-1" />
                     <span className="text-sm">
-            Даю згоду на отримання від Modivo S.A. з головним офісом в Зеленій Гурі на електронну адресу комерційної інформації компанії та її суб'єктів з якими співпрацює, згідно з правилами.
+            Даю згоду на отримання від Ecommerce S.A. з головним офісом в Зеленій Гурі на електронну адресу комерційної інформації компанії та її суб'єктів з якими співпрацює, згідно з правилами.
           </span>
                 </label>
             </div>

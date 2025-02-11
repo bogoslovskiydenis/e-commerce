@@ -40,7 +40,7 @@ const DEFAULT_PRODUCTS: Product[] = [
 export default function ProductGrid({ products = DEFAULT_PRODUCTS }: ProductGridProps) {
     return (
         <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {products.map((product) => (
+            {products?.map((product) => (
                 <div key={product.id} className="group relative">
                     <div className="aspect-square overflow-hidden rounded-lg bg-gray-100">
                         <Image
