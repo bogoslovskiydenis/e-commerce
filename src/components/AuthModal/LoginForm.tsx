@@ -1,4 +1,5 @@
 import { Eye, EyeOff } from 'lucide-react'
+import Image from 'next/image'
 
 interface LoginFormProps {
     email: string
@@ -19,48 +20,75 @@ export function LoginForm({
                           }: LoginFormProps) {
     return (
         <div className="space-y-4">
-            <input
-                type="email"
-                placeholder="Адреса e-mail"
-                className="w-full p-3 border rounded"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-            />
-
-            <div className="relative">
+            <div>
+                <label htmlFor="email" className="block text-sm font-medium mb-2">
+                    Email
+                </label>
                 <input
-                    type={passwordVisible ? "text" : "password"}
-                    placeholder="Пароль"
-                    className="w-full p-3 border rounded"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    type="email"
+                    id="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full px-3 py-2 border rounded-lg"
+                    placeholder="Введіть email"
                 />
-                <button
-                    onClick={() => setPasswordVisible(!passwordVisible)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2"
-                >
-                    {passwordVisible ? <EyeOff size={20} /> : <Eye size={20} />}
-                </button>
             </div>
 
-            <button className="w-full py-3 bg-yellow-500 text-white rounded hover:bg-yellow-600">
+            <div>
+                <label htmlFor="password" className="block text-sm font-medium mb-2">
+                    Пароль
+                </label>
+                <div className="relative">
+                    <input
+                        type={passwordVisible ? 'text' : 'password'}
+                        id="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        className="w-full px-3 py-2 border rounded-lg"
+                        placeholder="Введіть пароль"
+                    />
+                    <button
+                        type="button"
+                        onClick={() => setPasswordVisible(!passwordVisible)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2"
+                    >
+                        {passwordVisible ? <EyeOff size={20} /> : <Eye size={20} />}
+                    </button>
+                </div>
+            </div>
+
+            <button className="w-full bg-black text-white py-3 rounded-lg hover:bg-gray-800">
                 Увійти
             </button>
 
-            <button className="text-sm text-center w-full">
-                Я не пам'ятаю свій пароль
-            </button>
-
-            <div className="text-center text-sm text-gray-500">
-                <span>або продовжити через</span>
-                <div className="flex justify-center gap-4 mt-4">
-                    <button className="p-2 border rounded-full">
-                        <img src="/" alt="Google" className="w-6 h-6" />
-                    </button>
-                    <button className="p-2 border rounded-full">
-                        <img src="/" alt="Facebook" className="w-6 h-6" />
-                    </button>
+            <div className="relative text-center">
+                <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t"></div>
                 </div>
+                <span className="relative bg-white px-4 text-sm text-gray-500">
+                    або увійти через
+                </span>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+                <button className="flex items-center justify-center gap-2 px-4 py-2 border rounded-lg hover:bg-gray-50">
+                    <Image
+                        src=""
+                        alt="Google"
+                        width={20}
+                        height={20}
+                    />
+                    Google
+                </button>
+                <button className="flex items-center justify-center gap-2 px-4 py-2 border rounded-lg hover:bg-gray-50">
+                    <Image
+                        src=""
+                        alt="Facebook"
+                        width={20}
+                        height={20}
+                    />
+                    Facebook
+                </button>
             </div>
         </div>
     )

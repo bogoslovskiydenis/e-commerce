@@ -27,85 +27,96 @@ export function RegisterForm({
                              }: RegisterFormProps) {
     return (
         <div className="space-y-4">
-            <div className="space-y-2 mb-6">
-                <div className="flex items-center gap-2">
-                    <span className="w-4 h-4 bg-gray-200 rounded-full"></span>
-                    Додаткові знижки на покупки
-                </div>
-                <div className="flex items-center gap-2">
-                    <span className="w-4 h-4 bg-gray-200 rounded-full"></span>
-                    Створи акаунт за 10 секунд
-                </div>
-                <div className="flex items-center gap-2">
-                    <span className="w-4 h-4 bg-gray-200 rounded-full"></span>
-                    Купуй відні іншиде
-                </div>
-            </div>
-
-            <input
-                type="text"
-                placeholder="Ім'я"
-                className="w-full p-3 border rounded"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-            />
-
-            <input
-                type="email"
-                placeholder="Адреса e-mail"
-                className="w-full p-3 border rounded"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-            />
-
-            <div className="relative">
+            <div>
+                <label htmlFor="name" className="block text-sm font-medium mb-2">
+                    Ім&apos;я
+                </label>
                 <input
-                    type={passwordVisible ? "text" : "password"}
-                    placeholder="Пароль"
-                    className="w-full p-3 border rounded"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    type="text"
+                    id="name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="w-full px-3 py-2 border rounded-lg"
+                    placeholder="Введіть ім&apos;я"
                 />
-                <button
-                    onClick={() => setPasswordVisible(!passwordVisible)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2"
-                >
-                    {passwordVisible ? <EyeOff size={20} /> : <Eye size={20} />}
-                </button>
             </div>
 
             <div>
-                <p className="mb-2">Зазвичай купую у відділі:</p>
-                <div className="flex gap-2">
-                    {['Жінка', 'Чоловік', 'Дитина'].map((gender) => (
-                        <button
-                            key={gender}
-                            onClick={() => setSelectedGender(gender)}
-                            className={`px-4 py-2 border rounded ${selectedGender === gender ? 'border-black' : ''}`}
-                        >
-                            {gender}
-                        </button>
-                    ))}
+                <label htmlFor="register-email" className="block text-sm font-medium mb-2">
+                    Email
+                </label>
+                <input
+                    type="email"
+                    id="register-email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full px-3 py-2 border rounded-lg"
+                    placeholder="Введіть email"
+                />
+            </div>
+
+            <div>
+                <label htmlFor="register-password" className="block text-sm font-medium mb-2">
+                    Пароль
+                </label>
+                <div className="relative">
+                    <input
+                        type={passwordVisible ? 'text' : 'password'}
+                        id="register-password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        className="w-full px-3 py-2 border rounded-lg"
+                        placeholder="Створіть пароль"
+                    />
+                    <button
+                        type="button"
+                        onClick={() => setPasswordVisible(!passwordVisible)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2"
+                    >
+                        {passwordVisible ? <EyeOff size={20} /> : <Eye size={20} />}
+                    </button>
+                </div>
+                <p className="mt-1 text-sm text-gray-500">
+                    Мінімум 8 символів
+                </p>
+            </div>
+
+            <div>
+                <label className="block text-sm font-medium mb-2">
+                    Стать
+                </label>
+                <div className="grid grid-cols-2 gap-4">
+                    <button
+                        type="button"
+                        onClick={() => setSelectedGender('female')}
+                        className={`px-4 py-2 border rounded-lg ${
+                            selectedGender === 'female' ? 'border-black' : ''
+                        }`}
+                    >
+                        Жіноча
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => setSelectedGender('male')}
+                        className={`px-4 py-2 border rounded-lg ${
+                            selectedGender === 'male' ? 'border-black' : ''
+                        }`}
+                    >
+                        Чоловіча
+                    </button>
                 </div>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-2">
                 <label className="flex items-start gap-2">
                     <input type="checkbox" className="mt-1" />
                     <span className="text-sm">
-            Хочу приєднатися до Ecommerce
-          </span>
-                </label>
-
-                <label className="flex items-start gap-2">
-                    <input type="checkbox" className="mt-1" />
-                    <span className="text-sm">
-            Даю згоду на отримання від Ecommerce S.A. з головним офісом в Зеленій Гурі на електронну адресу комерційної інформації компанії та її суб'єктів з якими співпрацює, згідно з правилами.
-          </span>
+                        Я погоджуюсь отримувати інформацію про новинки та акції
+                    </span>
                 </label>
             </div>
 
-            <button className="w-full py-3 bg-yellow-500 text-white rounded hover:bg-yellow-600">
+            <button className="w-full bg-black text-white py-3 rounded-lg hover:bg-gray-800">
                 Створити акаунт
             </button>
         </div>
