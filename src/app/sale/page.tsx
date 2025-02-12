@@ -1,9 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import ProductSection from '@/components/ProductSection'
+import ProductSection from '@/components/ProductSection/ProductSection'
 import { ChevronDown } from 'lucide-react'
-import type { Product } from '@/types'
+import type { Product } from '@/types/Product_types'
 
 const CATEGORIES = [
     { name: 'Плаття', count: 1234 },

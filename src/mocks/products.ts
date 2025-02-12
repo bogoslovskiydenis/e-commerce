@@ -1,4 +1,4 @@
-import { Product } from '@/types'
+import { Product } from '@/types/Product_types'
 
 export const WOMEN_PRODUCTS: Product[] = [
     {

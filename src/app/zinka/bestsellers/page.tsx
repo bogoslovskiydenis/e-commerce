@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import ProductSection from '@/components/ProductSection'
+import ProductSection from '@/components/ProductSection/ProductSection'
 
 
 const SALE_PRODUCTS = [

@@ -3,8 +3,8 @@
 import Link from 'next/link'
 import { useState } from 'react'
 import { Search, Heart, ShoppingBag, User } from 'lucide-react'
-import Navigation from '@/components/Navigation'
-import { AuthModal } from '@/components/AuthModal'
+import Navigation from '@/components/Navigation/Navigation'
+import { AuthModal } from '@/components/AuthModal/AuthModal'
 import { AuthPrompt } from './AuthPrompt'
 
 export default function Header() {
