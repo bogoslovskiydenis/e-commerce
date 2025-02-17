@@ -5,7 +5,7 @@ const nextConfig = {
         domains: ['localhost'],
     },
     experimental: {
-        optimizeCss: true,
+        optimizeCss: false // Отключаем optimizeCss, который использует critters
     },
 };
 
