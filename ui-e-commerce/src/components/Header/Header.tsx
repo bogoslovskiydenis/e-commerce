@@ -6,7 +6,7 @@ import { Search, Heart, ShoppingBag, User, Menu } from 'lucide-react'
 import Navigation from '@/components/Navigation/Navigation'
 import { AuthModal } from '@/components/AuthModal/AuthModal'
 import { AuthPrompt } from './AuthPrompt'
-import MobileMenu from "@/components/Header/MobileMenuProps";
+import MobileMenu from './MobileMenu'
 
 export default function Header() {
     const [showPrompt, setShowPrompt] = useState(false)
