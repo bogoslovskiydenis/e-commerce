@@ -7,9 +7,16 @@
   --text-rgb: 34, 34, 34;
 }
 
+html {
+  width: 100%;
+  height: 100%;
+}
+
 body {
   color: rgb(var(--text-rgb));
   background: rgb(var(--background-rgb));
+  min-width: 320px; /* Минимальная ширина для мобильных */
+  overflow-x: hidden;
 }
 
 /* Navigation styles */

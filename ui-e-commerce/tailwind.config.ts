@@ -13,6 +13,13 @@ const config: Config = {
         text: 'rgb(34, 34, 34)',
         filter: 'rgb(238, 235, 39)',
       },
+      screens: {
+        'sm': '640px',
+        'md': '768px',
+        'lg': '1024px',
+        'xl': '1280px',
+        '2xl': '1536px',
+      },
     },
   },
   plugins: [],
