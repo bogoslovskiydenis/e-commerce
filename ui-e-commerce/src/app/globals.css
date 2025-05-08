@@ -29,20 +29,22 @@ body {
   left: 0;
   right: 0;
   top: 100%;
-  min-width: 100vw;
+  height: 50vh; /* Высота на три четверти экрана */
+  max-height: 50vh;
   background: white;
   border-bottom: 1px solid #e5e7eb;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   opacity: 0;
-  visibility: hidden;
+ visibility: visible;
   transform: translateY(0);
   transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
   z-index: 50;
+  overflow-y: auto; /* Добавляем прокрутку */
 }
 
 .nav-item:hover .nav-dropdown {
   opacity: 1;
-  visibility: visible;
+ visibility: visible;
 }
 
 .nav-link {

@@ -10,11 +10,10 @@ interface SidebarProps {
 
 // Дефолтные категории
 const DEFAULT_CATEGORIES: Category[] = [
-    { name: 'Одяг', count: 4424, href: '/odyag' },
-    { name: 'Взуття', count: 2674, href: '/vzuttya' },
-    { name: 'Аксесуари', count: 1523, href: '/aksesuary' },
-    { name: 'Спортивний одяг', count: 892, href: '/sport' },
-    { name: 'Білизна', count: 567, href: '/bilyzna' }
+    { name: 'Шарики', count: 4424, href: '/ball' },
+    { name: 'Коробки', count: 2674, href: '/korobka' },
+    // { name: 'Шарики', count: 1523, href: '/bals' },
+
 ]
 
 export default function Sidebar({ categories = DEFAULT_CATEGORIES }: SidebarProps) {

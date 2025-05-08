@@ -54,10 +54,10 @@ export function DropdownMenu({ content }: DropdownMenuProps) {
 
                         {/* Promo Cards */}
                         {content.promoCards && (
-                            <div className="grid grid-rows-2 gap-6">
+                            <div className="grid gap-6">
                                 {content.promoCards.map((card, index) => (
                                     <div key={index} className="space-y-2">
-                                        <div className="relative aspect-[3/4]">
+                                        <div className="relative aspect-[1/1] h-[100px] w-[100px]">
                                             <Image
                                                 src={card.image}
                                                 alt={card.title}

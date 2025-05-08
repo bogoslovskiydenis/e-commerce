@@ -142,7 +142,7 @@ export default function Header() {
                                 </Link>
                                 <Link href="/cart" className="flex items-center gap-2 text-sm">
                                     <ShoppingBag size={20} />
-                                    <span>Кошик</span>
+                                    <span>Кошик11</span>
                                 </Link>
                             </nav>
                         </div>
