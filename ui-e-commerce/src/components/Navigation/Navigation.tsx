@@ -18,7 +18,7 @@ const navigationItems: NavigationItem[] = [
     { title: 'Стаканчики', href: '/cups', hasDropdown: true },
     { title: 'Подарки', href: '/gifts', hasDropdown: true },
     { title: 'Наборы', href: '/sets', hasDropdown: true },
-    { title: 'Акции', href: '/promotions', isSpecial: true },
+    { title: 'Акции', href: '/sale', isSpecial: true },
 ];
 
 type DropdownKey = keyof typeof dropdownContent;

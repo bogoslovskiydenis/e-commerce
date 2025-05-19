@@ -110,7 +110,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                                 <ChevronRight size={20} className="text-gray-400" />
                             </Link>
                             <Link
-                                href="/promotions"
+                                href="/sale"
                                 className="flex items-center justify-between px-4 py-4 border-b hover:bg-gray-50 transition-colors"
                                 onClick={handleLinkClick}
                             >
