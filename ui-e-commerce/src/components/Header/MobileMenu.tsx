@@ -60,7 +60,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                 <div className="flex flex-col h-full">
                     {/* Header */}
                     <div className="flex items-center justify-between p-4 border-b bg-teal-600 text-white">
-                        <span className="text-xl font-bold">ШАРИКИ НА ДОМ</span>
+                        <span className="text-xl font-bold">Логотип</span>
                         <button onClick={handleClose}>
                             <X size={24} />
                         </button>

@@ -56,7 +56,7 @@ export default function Header() {
                             </button>
 
                             <Link href="/" className="text-2xl font-bold text-teal-600">
-                                ШАРИКИ НА ДОМ
+                             Логотип
                             </Link>
 
                             <div className="flex items-center gap-5">
@@ -95,7 +95,7 @@ export default function Header() {
                     <div className="container mx-auto px-4">
                         <div className="flex items-center gap-8">
                             <Link href="/" className="text-3xl font-bold text-teal-600">
-                                ШАРИКИ НА ДОМ
+                                Логотип
                             </Link>
 
                             <div className="flex-1">
