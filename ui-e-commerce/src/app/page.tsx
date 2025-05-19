@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import ProductSection from '@/components/ProductSection/ProductSection'
-import { FEATURED_PRODUCTS, MAIN_CATEGORIES, REVIEWS } from '@/data/balloonData'
+import { FEATURED_PRODUCTS, MAIN_CATEGORIES, REVIEWS } from '../data/balloonData'
 
 export default function HomePage() {
     return (
