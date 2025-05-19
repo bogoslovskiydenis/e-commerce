@@ -8,7 +8,7 @@ export const FEATURED_PRODUCTS: CompatibleProduct[] = [
         price: 150,
         oldPrice: 200,
         discount: 25,
-        image: '/images/balloons/heart-red.jpg',
+        image: '/api/placeholder/300/300',
         category: 'hearts',
         link: '/products/hearts/1'
     },
@@ -16,7 +16,7 @@ export const FEATURED_PRODUCTS: CompatibleProduct[] = [
         id: '2',
         name: 'Букет "С днем рождения"',
         price: 450,
-        image: '/images/bouquets/birthday.jpg',
+        image: '/api/placeholder/300/300',
         category: 'bouquets',
         link: '/products/bouquets/2'
     },
@@ -26,7 +26,7 @@ export const FEATURED_PRODUCTS: CompatibleProduct[] = [
         price: 350,
         oldPrice: 400,
         discount: 12,
-        image: '/images/balloons/number-1-gold.jpg',
+        image: '/api/placeholder/300/300',
         category: 'numbers',
         link: '/products/numbers/3'
     },
@@ -36,7 +36,7 @@ export const FEATURED_PRODUCTS: CompatibleProduct[] = [
         price: 650,
         oldPrice: 750,
         discount: 13,
-        image: '/images/sets/unicorn.jpg',
+        image: '/api/placeholder/300/300',
         category: 'sets',
         link: '/products/sets/4'
     }
@@ -46,31 +46,31 @@ export const FEATURED_PRODUCTS: CompatibleProduct[] = [
 export const MAIN_CATEGORIES = [
     {
         name: 'Фольгированные шары',
-        image: '/images/categories/foil-balloons.jpg',
+        image: '/api/placeholder/400/400',
         href: '/balloons/foil',
         count: '200+'
     },
     {
         name: 'Букеты из шаров',
-        image: '/images/categories/bouquets.jpg',
+        image: '/api/placeholder/400/400',
         href: '/bouquets',
         count: '150+'
     },
     {
         name: 'День рождения',
-        image: '/images/categories/birthday.jpg',
+        image: '/api/placeholder/400/400',
         href: '/sets/birthday',
         count: '100+'
     },
     {
         name: 'Свадебные',
-        image: '/images/categories/wedding.jpg',
+        image: '/api/placeholder/400/400',
         href: '/balloons/wedding',
         count: '80+'
     },
     {
         name: 'Детские наборы',
-        image: '/images/categories/kids.jpg',
+        image: '/api/placeholder/400/400',
         href: '/sets/kids',
         count: '120+'
     }

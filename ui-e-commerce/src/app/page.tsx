@@ -9,7 +9,7 @@ export default function HomePage() {
             {/* Промо баннер */}
             <div className="relative aspect-[2/1] md:aspect-[3/1]">
                 <Image
-                    src="/images/banners/main-banner.jpg"
+                    src="/api/placeholder/1200/600"
                     alt="Шарики на дом Киев"
                     fill
                     className="object-cover"
@@ -177,7 +177,7 @@ export default function HomePage() {
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
                         <a
-                            href="tel:(067) 111-11-11"
+                            href="tel:(067) 11111"
                             className="inline-block px-8 py-3 bg-white text-teal-600 rounded-lg hover:bg-gray-100 font-medium"
                         >
                             📞 (067) 11111
