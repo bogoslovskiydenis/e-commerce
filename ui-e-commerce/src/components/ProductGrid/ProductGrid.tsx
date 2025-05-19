@@ -1,79 +1,179 @@
 import Image from 'next/image'
-import { Heart } from 'lucide-react'
+import Link from 'next/link'
+import { Heart, ShoppingBag } from 'lucide-react'
 
-interface Product {
+interface BalloonProduct {
     id: string
-    title: string
-    brand: string
+    name: string
+    type: 'foil' | 'latex' | 'bouquet' | 'set'
     price: number
     oldPrice?: number
     discount?: number
     image: string
     category: string
+    withHelium?: boolean
+    size?: string
+    colors?: string[]
+    inStock: boolean
 }
 
 interface ProductGridProps {
-    products?: Product[]
+    products?: BalloonProduct[]
 }
 
-// Дефолтные продукты
-const DEFAULT_PRODUCTS: Product[] = [
+// Дефолтные продукты для магазина шариков
+const DEFAULT_BALLOON_PRODUCTS: BalloonProduct[] = [
     {
         id: '1',
-        title: 'Снікерси · Білий',
-        brand: 'Kappa',
-        price: 2599,
-        oldPrice: 3299,
-        image: '/images/products/1.jpg',
-        category: 'sneakers'
+        name: 'Сердце фольгированное красное',
+        type: 'foil',
+        price: 150,
+        oldPrice: 200,
+        discount: 25,
+        image: '/images/balloons/heart-red.jpg',
+        category: 'hearts',
+        withHelium: true,
+        size: '45см',
+        colors: ['Красный'],
+        inStock: true
     },
     {
         id: '2',
-        title: 'Кросівки · Чорний',
-        brand: 'Nike',
-        price: 3999,
-        image: '/images/products/2.jpg',
-        category: 'sneakers'
+        name: 'Букет "С днем рождения"',
+        type: 'bouquet',
+        price: 450,
+        image: '/images/bouquets/birthday.jpg',
+        category: 'birthday',
+        withHelium: true,
+        inStock: true
+    },
+    {
+        id: '3',
+        name: 'Цифра "1" золотая',
+        type: 'foil',
+        price: 350,
+        oldPrice: 400,
+        discount: 12,
+        image: '/images/balloons/number-1-gold.jpg',
+        category: 'numbers',
+        withHelium: true,
+        size: '90см',
+        colors: ['Золотой'],
+        inStock: true
+    },
+    {
+        id: '4',
+        name: 'Набор "Единорог"',
+        type: 'set',
+        price: 650,
+        image: '/images/sets/unicorn.jpg',
+        category: 'kids',
+        withHelium: true,
+        inStock: false
     }
 ]
 
-export default function ProductGrid({ products = DEFAULT_PRODUCTS }: ProductGridProps) {
+export default function ProductGrid({ products = DEFAULT_BALLOON_PRODUCTS }: ProductGridProps) {
     return (
         <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {products?.map((product) => (
                 <div key={product.id} className="group relative">
-                    <div className="aspect-square overflow-hidden rounded-lg bg-gray-100">
-                        <Image
-                            src={product.image}
-                            alt={product.title}
-                            width={300}
-                            height={300}
-                            className="h-full w-full object-cover object-center transition-transform duration-300 group-hover:scale-105"
-                        />
-                        <button
-                            className="absolute top-4 right-4 p-2 rounded-full bg-white opacity-0 group-hover:opacity-100 transition-opacity"
-                            aria-label="Add to favorites"
-                        >
-                            <Heart size={20} />
-                        </button>
+                    <div className="aspect-square overflow-hidden rounded-lg bg-gray-100 relative">
+                        <Link href={`/products/${product.category}/${product.id}`}>
+                            <Image
+                                src={product.image}
+                                alt={product.name}
+                                width={300}
+                                height={300}
+                                className="h-full w-full object-cover object-center transition-transform duration-300 group-hover:scale-105"
+                            />
+                        </Link>
+
+                        {/* Скидка */}
+                        {product.discount && (
+                            <div className="absolute top-3 left-3 bg-red-500 text-white px-2 py-1 rounded text-sm font-medium">
+                                -{product.discount}%
+                            </div>
+                        )}
+
+                        {/* Статус товара */}
+                        {!product.inStock && (
+                            <div className="absolute top-3 right-3 bg-gray-500 text-white px-2 py-1 rounded text-sm">
+                                Нет в наличии
+                            </div>
+                        )}
+
+                        {/* Кнопки действий */}
+                        <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button
+                                className="p-2 rounded-full bg-white shadow-md hover:bg-gray-50"
+                                aria-label="Добавить в избранное"
+                            >
+                                <Heart size={20} />
+                            </button>
+                            {product.inStock && (
+                                <button
+                                    className="p-2 rounded-full bg-teal-600 text-white shadow-md hover:bg-teal-700"
+                                    aria-label="Добавить в корзину"
+                                >
+                                    <ShoppingBag size={20} />
+                                </button>
+                            )}
+                        </div>
+
+                        {/* Тип товара */}
+                        <div className="absolute bottom-3 left-3">
+                            <span className="inline-block bg-white/90 backdrop-blur-sm px-2 py-1 rounded text-xs font-medium">
+                                {product.type === 'foil' && '✨ Фольга'}
+                                {product.type === 'latex' && '🎈 Латекс'}
+                                {product.type === 'bouquet' && '💐 Букет'}
+                                {product.type === 'set' && '🎁 Набор'}
+                            </span>
+                        </div>
                     </div>
 
                     <div className="mt-4">
-                        <h3 className="text-sm font-medium text-gray-900">{product.brand}</h3>
-                        <p className="mt-1 text-sm text-gray-500">{product.title}</p>
-                        <div className="mt-1 flex items-center gap-2">
-                            <span className="text-lg font-bold">{product.price} грн</span>
+                        <Link href={`/products/${product.category}/${product.id}`}>
+                            <h3 className="text-sm font-medium text-gray-900 hover:text-teal-600">
+                                {product.name}
+                            </h3>
+                        </Link>
+
+                        {/* Дополнительная информация */}
+                        <div className="mt-1 flex flex-wrap gap-2 text-xs text-gray-500">
+                            {product.size && (
+                                <span className="bg-gray-100 px-2 py-0.5 rounded">
+                                    📏 {product.size}
+                                </span>
+                            )}
+                            {product.withHelium && (
+                                <span className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded">
+                                    ✈️ С гелием
+                                </span>
+                            )}
+                            {product.colors && product.colors.length > 0 && (
+                                <span className="bg-purple-100 text-purple-700 px-2 py-0.5 rounded">
+                                    🎨 {product.colors.join(', ')}
+                                </span>
+                            )}
+                        </div>
+
+                        {/* Цена */}
+                        <div className="mt-2 flex items-center gap-2">
+                            <span className="text-lg font-bold text-teal-600">{product.price} грн</span>
                             {product.oldPrice && (
                                 <span className="text-sm text-gray-500 line-through">
                                     {product.oldPrice} грн
                                 </span>
                             )}
-                            {product.discount && (
-                                <span className="text-sm font-medium text-red-600">
-                                    -{product.discount}%
-                                </span>
-                            )}
                         </div>
+
+                        {/* Кнопка быстрого заказа */}
+                        {product.inStock && (
+                            <button className="w-full mt-3 bg-teal-600 text-white py-2 rounded-lg hover:bg-teal-700 text-sm font-medium transition-colors">
+                                Быстрый заказ
+                            </button>
+                        )}
                     </div>
                 </div>
             ))}

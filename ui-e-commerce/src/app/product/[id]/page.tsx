@@ -1,3 +1,4 @@
+// Товары в корзине
 import Image from 'next/image'
 import { Heart, ShoppingBag } from 'lucide-react'
 

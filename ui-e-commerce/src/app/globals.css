@@ -10,6 +10,13 @@
 html {
   width: 100%;
   height: 100%;
+  scroll-padding-top: 128px; /* Отступ для мобильных (без верхней полоски) */
+}
+
+@media (min-width: 1024px) {
+  html {
+    scroll-padding-top: 176px; /* Отступ для десктопа (с верхней полоской) */
+  }
 }
 
 body {
@@ -19,9 +26,20 @@ body {
   overflow-x: hidden;
 }
 
+/* Стили для фиксированного хедера */
+.fixed-header-spacer {
+  height: 128px; /* Высота для мобильных (без верхней полоски) */
+}
+
+@media (min-width: 1024px) {
+  .fixed-header-spacer {
+    height: 176px; /* Высота для десктопа (с верхней полоской) */
+  }
+}
+
 /* Navigation styles */
 .nav-item {
-  position: static; /* Changed from relative to static */
+  position: static;
 }
 
 .nav-dropdown {
@@ -29,22 +47,23 @@ body {
   left: 0;
   right: 0;
   top: 100%;
-  height: 50vh; /* Высота на три четверти экрана */
+  height: 50vh;
   max-height: 50vh;
   background: white;
   border-bottom: 1px solid #e5e7eb;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   opacity: 0;
- visibility: visible;
-  transform: translateY(0);
-  transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
-  z-index: 50;
-  overflow-y: auto; /* Добавляем прокрутку */
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.2s ease-in-out;
+  z-index: 40;
+  overflow-y: auto;
 }
 
 .nav-item:hover .nav-dropdown {
   opacity: 1;
- visibility: visible;
+  visibility: visible;
+  transform: translateY(0);
 }
 
 .nav-link {
@@ -52,7 +71,66 @@ body {
 }
 
 .nav-link:hover {
-  color: #ef4444;
+  color: #0d9488; /* teal-600 */
+}
+
+/* Анимация появления контента */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* Стили для кнопок */
+.btn-primary {
+  @apply bg-teal-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-teal-700 transition-colors;
+}
+
+.btn-secondary {
+  @apply bg-white text-teal-600 px-6 py-3 rounded-lg font-medium border border-teal-600 hover:bg-teal-50 transition-colors;
+}
+
+/* Стили для карточек товаров */
+.product-card {
+  @apply bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow;
+}
+
+.product-card:hover .product-image {
+  @apply scale-105;
+}
+
+.product-image {
+  @apply transition-transform duration-300;
+}
+
+/* Стили для мобильного меню */
+.mobile-menu-overlay {
+  @apply fixed inset-0 bg-black bg-opacity-50 z-[200];
+}
+
+.mobile-menu-content {
+  @apply fixed inset-y-0 right-0 w-full max-w-sm bg-white shadow-xl transform transition-transform duration-300;
+}
+
+/* Стили для фильтров */
+.filter-checkbox {
+  @apply w-4 h-4 text-teal-600 bg-gray-100 border-gray-300 rounded focus:ring-teal-500 focus:ring-2;
+}
+
+/* Адаптивные стили для мелких экранов */
+@media (max-width: 1023px) {
+  html {
+    scroll-padding-top: 128px; /* Без верхней полоски на мобильных */
+  }
 }
 
 @media (prefers-color-scheme: dark) {

@@ -14,245 +14,203 @@ type DropdownItem = {
     }[];
 }
 
-type DropdownKey = 'Шарики' | 'Коробки'
-    // | 'Взуття' | 'Спортивні' | 'Аксесуари' | 'Преміум'
-    ;
+type DropdownKey = 'Шарики' | 'Букеты из шаров' | 'Стаканчики' | 'Подарки' | 'Наборы';
 
 export const dropdownContent: Record<DropdownKey, DropdownItem> = {
     'Шарики': {
         sections: [
             {
-                title: 'Популярні шарики',
+                title: 'По типу',
                 items: [
-                    { name: '1', href: '#' },
-                    { name: '2', href: '#' },
-                    { name: '2', href: '#' },
-                    { name: '3', href: '#' },
-                    { name: '4', href: '#' },
-                    { name: '5', href: '#' },
+                    { name: 'Фольгированные', href: '/balloons/foil' },
+                    { name: 'Латексные', href: '/balloons/latex' },
+                    { name: 'С гелием', href: '/balloons/helium' },
+                    { name: 'Без гелия', href: '/balloons/air' },
+                    { name: 'Светящиеся', href: '/balloons/led' },
+                    { name: 'Миниатюрные', href: '/balloons/mini' },
                 ]
             },
             {
-                title: 'Коробки шарики',
+                title: 'По событию',
                 items: [
-                    { name: '1', href: '#' },
-                    { name: '2', href: '#' },
-                    { name: '2', href: '#' },
-                    { name: '3', href: '#' },
-                    { name: '4', href: '#' },
-                    { name: '5', href: '#' },
+                    { name: 'День рождения', href: '/balloons/birthday' },
+                    { name: 'Свадьба', href: '/balloons/wedding' },
+                    { name: 'Выпускной', href: '/balloons/graduation' },
+                    { name: '8 марта', href: '/balloons/march8' },
+                    { name: 'День Святого Валентина', href: '/balloons/valentine' },
+                    { name: 'Новый год', href: '/balloons/newyear' },
                 ]
             },
             {
-                title: 'Стаканчики',
+                title: 'По цвету',
                 items: [
-                    { name: '1', href: '#' },
-                    { name: '2', href: '#' },
-                    { name: '3', href: '#' },
-                    { name: '4', href: '#' },
+                    { name: 'Красные', href: '/balloons/red' },
+                    { name: 'Синие', href: '/balloons/blue' },
+                    { name: 'Розовые', href: '/balloons/pink' },
+                    { name: 'Золотые', href: '/balloons/gold' },
+                    { name: 'Серебряные', href: '/balloons/silver' },
+                    { name: 'Разноцветные', href: '/balloons/multicolor' },
                 ]
             }
         ],
         promoCards: [
             {
-                image: '/images/sharik.png',
-                title: 'Шарик 1 ',
-                subtitle: 'Rinascimento',
-                link: '#'
+                image: '/images/balloons/foil-hearts.jpg',
+                title: 'Фольгированные сердца',
+                subtitle: 'От 150 грн',
+                link: '/balloons/foil-hearts'
             },
             {
-                image: '/images/sharik.png',
-                title: 'Шарик 2',
-                subtitle: 'Elisabetha Franchi',
-                link: '#'
+                image: '/images/balloons/birthday-set.jpg',
+                title: 'Набор на день рождения',
+                subtitle: 'От 500 грн',
+                link: '/balloons/birthday-set'
             }
         ]
     },
-    'Коробки': {
+    'Букеты из шаров': {
         sections: [
             {
-                title: 'Категорії Коробок',
+                title: 'По размеру',
                 items: [
-                    { name: '1', href: '#' },
-                    { name: '2', href: '#' },
-                    { name: '3', href: '#' },
-                    { name: '4', href: '#' },
+                    { name: 'Мини букеты (3-5 шаров)', href: '/bouquets/mini' },
+                    { name: 'Средние (7-10 шаров)', href: '/bouquets/medium' },
+                    { name: 'Большие (15+ шаров)', href: '/bouquets/large' },
+                    { name: 'Огромные (25+ шаров)', href: '/bouquets/huge' },
                 ]
             },
             {
-                title: 'Популярні коробки',
+                title: 'По тематике',
                 items: [
-                    { name: '1', href: '#' },
-                    { name: '2', href: '#' },
-                    { name: '3', href: '#' },
-                    { name: '4', href: '#' },
+                    { name: 'Романтические', href: '/bouquets/romantic' },
+                    { name: 'Детские', href: '/bouquets/kids' },
+                    { name: 'Корпоративные', href: '/bouquets/corporate' },
+                    { name: 'Праздничные', href: '/bouquets/festive' },
                 ]
             }
         ],
         promoCards: [
             {
-                image: '/images/korobka/korobka.jpeg',
-                title: 'Картинка для коробок',
-                subtitle: 'Коробка',
-                link: '#'
+                image: '/images/bouquets/romantic.jpg',
+                title: 'Романтический букет',
+                subtitle: 'От 450 грн',
+                link: '/bouquets/romantic'
             },
-            // {
-            //     image: '/images/clothing/outerwear.jpg',
-            //     title: 'Верхній одяг',
-            //     subtitle: 'Зима 2024',
-            //     link: '#'
-            // }
+            {
+                image: '/images/bouquets/birthday.jpg',
+                title: 'День рождения',
+                subtitle: 'От 350 грн',
+                link: '/bouquets/birthday'
+            }
         ]
     },
-    // 'Взуття': {
-    //     sections: [
-    //         {
-    //             title: 'Категорії',
-    //             items: [
-    //                 { name: 'Балетки', href: '#' },
-    //                 { name: 'Босоніжки', href: '#' },
-    //                 { name: 'Кросівки', href: '#' },
-    //                 { name: 'Туфлі', href: '#' },
-    //                 { name: 'Черевики', href: '#' }
-    //             ]
-    //         },
-    //         {
-    //             title: 'Бренди',
-    //             items: [
-    //                 { name: 'Nike', href: '#' },
-    //                 { name: 'Adidas', href: '#' },
-    //                 { name: 'New Balance', href: '#' },
-    //                 { name: 'Converse', href: '#' },
-    //                 { name: 'Puma', href: '#' }
-    //             ]
-    //         }
-    //     ],
-    //     promoCards: [
-    //         {
-    //             image: '/images/shoes/sneakers.jpg',
-    //             title: 'Спортивне взуття',
-    //             subtitle: 'Нова колекція',
-    //             link: '#'
-    //         },
-    //         {
-    //             image: '/images/shoes/boots.jpg',
-    //             title: 'Осінь-Зима 2024',
-    //             subtitle: 'Черевики',
-    //             link: '#'
-    //         }
-    //     ]
-    // },
-    // 'Спортивні': {
-    //     sections: [
-    //         {
-    //             title: 'Категорії',
-    //             items: [
-    //                 { name: 'Футболки', href: '#' },
-    //                 { name: 'Шорти', href: '#' },
-    //                 { name: 'Спортивні костюми', href: '#' },
-    //                 { name: 'Кросівки', href: '#' },
-    //                 { name: 'Аксесуари', href: '#' }
-    //             ]
-    //         },
-    //         {
-    //             title: 'Бренди',
-    //             items: [
-    //                 { name: 'Nike', href: '#' },
-    //                 { name: 'Adidas', href: '#' },
-    //                 { name: 'Puma', href: '#' },
-    //                 { name: 'Under Armour', href: '#' },
-    //                 { name: 'Reebok', href: '#' }
-    //             ]
-    //         }
-    //     ],
-    //     promoCards: [
-    //         {
-    //             image: '/images/sport/running.jpg',
-    //             title: 'Біг',
-    //             subtitle: 'Нова колекція',
-    //             link: '#'
-    //         },
-    //         {
-    //             image: '/images/sport/training.jpg',
-    //             title: 'Тренування',
-    //             subtitle: 'Спортивний одяг',
-    //             link: '#'
-    //         }
-    //     ]
-    // },
-    // 'Аксесуари': {
-    //     sections: [
-    //         {
-    //             title: 'Категорії',
-    //             items: [
-    //                 { name: 'Сумки', href: '#' },
-    //                 { name: 'Гаманці', href: '#' },
-    //                 { name: 'Ремені', href: '#' },
-    //                 { name: 'Шапки', href: '#' },
-    //                 { name: 'Шарфи', href: '#' }
-    //             ]
-    //         },
-    //         {
-    //             title: 'Бренди',
-    //             items: [
-    //                 { name: 'Michael Kors', href: '#' },
-    //                 { name: 'Calvin Klein', href: '#' },
-    //                 { name: 'Tommy Hilfiger', href: '#' },
-    //                 { name: 'Guess', href: '#' },
-    //                 { name: 'Liu Jo', href: '#' }
-    //             ]
-    //         }
-    //     ],
-    //     promoCards: [
-    //         {
-    //             image: '/images/accessories/bags.jpg',
-    //             title: 'Сумки',
-    //             subtitle: 'Нова колекція',
-    //             link: '#'
-    //         },
-    //         {
-    //             image: '/images/accessories/scarves.jpg',
-    //             title: 'Шарфи та шапки',
-    //             subtitle: 'Зима 2024',
-    //             link: '#'
-    //         }
-    //     ]
-    // },
-    // 'Преміум': {
-    //     sections: [
-    //         {
-    //             title: 'Категорії',
-    //             items: [
-    //                 { name: 'Одяг', href: '#' },
-    //                 { name: 'Взуття', href: '#' },
-    //                 { name: 'Сумки', href: '#' },
-    //                 { name: 'Аксесуари', href: '#' }
-    //             ]
-    //         },
-    //         {
-    //             title: 'Бренди',
-    //             items: [
-    //                 { name: 'Gucci', href: '#' },
-    //                 { name: 'Prada', href: '#' },
-    //                 { name: 'Fendi', href: '#' },
-    //                 { name: 'Balenciaga', href: '#' },
-    //                 { name: 'Saint Laurent', href: '#' }
-    //             ]
-    //         }
-    //     ],
-    //     promoCards: [
-    //         {
-    //             image: '/images/premium/luxury.jpg',
-    //             title: 'Люкс',
-    //             subtitle: 'Нова колекція',
-    //             link: '#'
-    //         },
-    //         {
-    //             image: '/images/premium/accessories.jpg',
-    //             title: 'Аксесуари',
-    //             subtitle: 'Преміум колекція',
-    //             link: '#'
-    //         }
-    //     ]
-    // }
+    'Стаканчики': {
+        sections: [
+            {
+                title: 'Материал',
+                items: [
+                    { name: 'Пластиковые', href: '/cups/plastic' },
+                    { name: 'Бумажные', href: '/cups/paper' },
+                    { name: 'Экологические', href: '/cups/eco' },
+                ]
+            },
+            {
+                title: 'Размер',
+                items: [
+                    { name: '200 мл', href: '/cups/200ml' },
+                    { name: '300 мл', href: '/cups/300ml' },
+                    { name: '500 мл', href: '/cups/500ml' },
+                ]
+            },
+            {
+                title: 'Тематика',
+                items: [
+                    { name: 'День рождения', href: '/cups/birthday' },
+                    { name: 'Единорог', href: '/cups/unicorn' },
+                    { name: 'Супергерои', href: '/cups/superhero' },
+                    { name: 'Принцессы', href: '/cups/princess' },
+                ]
+            }
+        ],
+        promoCards: [
+            {
+                image: '/images/cups/birthday-set.jpg',
+                title: 'Набор стаканчиков',
+                subtitle: 'От 80 грн',
+                link: '/cups/birthday-set'
+            }
+        ]
+    },
+    'Подарки': {
+        sections: [
+            {
+                title: 'Категории',
+                items: [
+                    { name: 'Мягкие игрушки', href: '/gifts/plush' },
+                    { name: 'Сувениры', href: '/gifts/souvenirs' },
+                    { name: 'Украшения', href: '/gifts/jewelry' },
+                    { name: 'Конфеты', href: '/gifts/sweets' },
+                    { name: 'Цветы', href: '/gifts/flowers' },
+                ]
+            },
+            {
+                title: 'По поводу',
+                items: [
+                    { name: 'День рождения', href: '/gifts/birthday' },
+                    { name: 'Юбилей', href: '/gifts/anniversary' },
+                    { name: 'Свадьба', href: '/gifts/wedding' },
+                    { name: 'Новорожденный', href: '/gifts/newborn' },
+                ]
+            }
+        ],
+        promoCards: [
+            {
+                image: '/images/gifts/teddy-bear.jpg',
+                title: 'Мягкие игрушки',
+                subtitle: 'От 250 грн',
+                link: '/gifts/plush'
+            },
+            {
+                image: '/images/gifts/gift-box.jpg',
+                title: 'Подарочные наборы',
+                subtitle: 'От 500 грн',
+                link: '/gifts/sets'
+            }
+        ]
+    },
+    'Наборы': {
+        sections: [
+            {
+                title: 'Готовые наборы',
+                items: [
+                    { name: 'День рождения мальчика', href: '/sets/boy-birthday' },
+                    { name: 'День рождения девочки', href: '/sets/girl-birthday' },
+                    { name: 'Романтический вечер', href: '/sets/romantic' },
+                    { name: 'Выписка из роддома', href: '/sets/newborn' },
+                    { name: 'Выпускной', href: '/sets/graduation' },
+                ]
+            },
+            {
+                title: 'Собрать набор',
+                items: [
+                    { name: 'Конструктор наборов', href: '/sets/constructor' },
+                    { name: 'Индивидуальный заказ', href: '/sets/custom' },
+                ]
+            }
+        ],
+        promoCards: [
+            {
+                image: '/images/sets/birthday-boy.jpg',
+                title: 'День рождения мальчика',
+                subtitle: 'От 800 грн',
+                link: '/sets/boy-birthday'
+            },
+            {
+                image: '/images/sets/birthday-girl.jpg',
+                title: 'День рождения девочки',
+                subtitle: 'От 800 грн',
+                link: '/sets/girl-birthday'
+            }
+        ]
+    }
 };

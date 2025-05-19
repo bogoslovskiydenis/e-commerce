@@ -13,9 +13,12 @@ interface NavigationItem {
 }
 
 const navigationItems: NavigationItem[] = [
-    { title: 'Sale %', href: '/sale', isSpecial: true },
-    { title: 'Шарики', href: '/ball', hasDropdown: true },
-    { title: 'Коробки', href: '/korobka', hasDropdown: true },
+    { title: 'Шарики', href: '/balloons', hasDropdown: true },
+    { title: 'Букеты из шаров', href: '/bouquets', hasDropdown: true },
+    { title: 'Стаканчики', href: '/cups', hasDropdown: true },
+    { title: 'Подарки', href: '/gifts', hasDropdown: true },
+    { title: 'Наборы', href: '/sets', hasDropdown: true },
+    { title: 'Акции', href: '/promotions', isSpecial: true },
 ];
 
 type DropdownKey = keyof typeof dropdownContent;
@@ -61,8 +64,8 @@ export default function Navigation() {
                             >
                                 <Link
                                     href={item.href}
-                                    className={`nav-link block px-4 py-4 text-sm ${
-                                        item.isSpecial ? 'text-red-600' : 'text-gray-900'
+                                    className={`nav-link block px-6 py-4 text-sm ${
+                                        item.isSpecial ? 'text-red-600 font-semibold' : 'text-gray-900'
                                     }`}
                                 >
                                     {item.title}
