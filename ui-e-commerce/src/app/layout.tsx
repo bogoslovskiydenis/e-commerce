@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import Header from '@/components/Header/Header'
 import Footer from '@/components/Footer/Footer'
+import LayoutWrapper from '@/components/LayoutWrapper/LayoutWrapper'
 import './globals.css'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -25,11 +26,9 @@ export default function RootLayout({
     return (
         <html lang="uk">
         <body className={`${inter.className} bg-background text-text min-h-screen flex flex-col relative`}>
-        <Header />
-        <main className="flex-1">
+        <LayoutWrapper>
             {children}
-        </main>
-        <Footer />
+        </LayoutWrapper>
         </body>
         </html>
     )

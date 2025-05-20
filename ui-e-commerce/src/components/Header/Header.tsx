@@ -1,12 +1,12 @@
 'use client'
 
 import Link from 'next/link'
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { Search, Heart, ShoppingBag, User, Menu, Mail, Phone } from 'lucide-react'
 import Navigation from '@/components/Navigation/Navigation'
-import { AuthModal } from '@/components/AuthModal/AuthModal'
-import { AuthPrompt } from './AuthPrompt'
 import MobileMenu from './MobileMenu'
+import { AuthPrompt } from "@/components/AuthModal/AuthPrompt"
+import {AuthModal} from "@/components/AuthModal/AuthModal";
 
 export default function Header() {
     const [showPrompt, setShowPrompt] = useState(false)
@@ -23,7 +23,7 @@ export default function Header() {
                         <nav className="flex gap-6">
                             <Link href="/about" className="hover:text-teal-200">Про нас</Link>
                             <Link href="/delivery" className="hover:text-teal-200">Доставка</Link>
-                            <Link href="/promotions" className="hover:text-teal-200">Акції</Link>
+                            <Link href="/sale" className="hover:text-teal-200">Акції</Link>
                             <Link href="/contacts" className="hover:text-teal-200">Контакти</Link>
                         </nav>
 
@@ -56,11 +56,11 @@ export default function Header() {
                             </button>
 
                             <Link href="/" className="text-2xl font-bold text-teal-600">
-                             Логотип
+                                Логотип
                             </Link>
 
                             <div className="flex items-center gap-5">
-                                <Link href="/account">
+                                <Link href="/login">
                                     <User size={24} />
                                 </Link>
                                 <Link href="/favorites">
@@ -90,7 +90,7 @@ export default function Header() {
             </header>
 
             {/* Desktop Header */}
-            <header className="hidden lg:block fixed top-[40px] left-0 right-0 bg-white z-50 shadow-sm">
+            <header className="hidden lg:block fixed top-[35px] left-0 right-0 bg-white z-50 shadow-sm">
                 <div className="py-4">
                     <div className="container mx-auto px-4">
                         <div className="flex items-center gap-8">
@@ -111,13 +111,14 @@ export default function Header() {
 
                             <nav className="flex items-center gap-6">
                                 <div className="relative">
-                                    <button
+                                    <Link
+                                        href="/login"
                                         className="flex items-center gap-2 text-sm"
                                         onMouseEnter={() => setShowPrompt(true)}
                                     >
                                         <User size={20} />
                                         <span>Увійти</span>
-                                    </button>
+                                    </Link>
 
                                     {showPrompt && (
                                         <div
