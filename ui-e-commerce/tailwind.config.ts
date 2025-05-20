@@ -13,6 +13,9 @@ const config: Config = {
         text: 'rgb(34, 34, 34)',
         filter: 'rgb(238, 235, 39)',
       },
+      // width:{
+      //   '64' :'24rem'
+      // },
       screens: {
         'sm': '640px',
         'md': '768px',

@@ -77,7 +77,7 @@ export default function ProductGrid({ products = DEFAULT_BALLOON_PRODUCTS }: Pro
     return (
         <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {products?.map((product) => (
-                <div key={product.id} className="group relative">
+                <div key={product.id} className="group relative flex flex-col h-full">
                     <div className="aspect-square overflow-hidden rounded-lg bg-gray-100 relative">
                         <Link href={`/products/${product.category}/${product.id}`}>
                             <Image
@@ -132,9 +132,9 @@ export default function ProductGrid({ products = DEFAULT_BALLOON_PRODUCTS }: Pro
                         </div>
                     </div>
 
-                    <div className="mt-4">
-                        <Link href={`/products/${product.category}/${product.id}`}>
-                            <h3 className="text-sm font-medium text-gray-900 hover:text-teal-600">
+                    <div className="mt-4 flex flex-col flex-grow">
+                        <Link href={`/products/${product.category}/${product.id}`} className="mb-1">
+                            <h3 className="text-sm font-medium text-gray-900 hover:text-teal-600 line-clamp-2 h-10">
                                 {product.name}
                             </h3>
                         </Link>
@@ -168,12 +168,18 @@ export default function ProductGrid({ products = DEFAULT_BALLOON_PRODUCTS }: Pro
                             )}
                         </div>
 
-                        {/* Кнопка быстрого заказа */}
-                        {product.inStock && (
-                            <button className="w-full mt-3 bg-teal-600 text-white py-2 rounded-lg hover:bg-teal-700 text-sm font-medium transition-colors">
-                                Быстрый заказ
-                            </button>
-                        )}
+                        {/* Кнопка быстрого заказа - перемещена в конец для выравнивания */}
+                        <div className="mt-auto pt-3">
+                            {product.inStock ? (
+                                <button className="w-full bg-teal-600 text-white py-2 rounded-lg hover:bg-teal-700 text-sm font-medium transition-colors">
+                                    Быстрый заказ
+                                </button>
+                            ) : (
+                                <button className="w-full bg-gray-300 text-gray-600 py-2 rounded-lg text-sm font-medium cursor-not-allowed">
+                                    Нет в наличии
+                                </button>
+                            )}
+                        </div>
                     </div>
                 </div>
             ))}

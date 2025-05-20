@@ -25,7 +25,7 @@ const BALLOON_CATEGORIES: Category[] = [
 
 export default function Sidebar({ categories = BALLOON_CATEGORIES }: SidebarProps) {
     return (
-        <aside className="w-64 flex-shrink-0">
+        <aside className="w-96 flex-shrink-0">
             <div className="bg-white rounded-lg border">
                 <div className="p-4 border-b">
                     <h2 className="font-semibold text-lg">Категории</h2>
