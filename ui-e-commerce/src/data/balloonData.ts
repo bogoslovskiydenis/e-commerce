@@ -8,7 +8,7 @@ export const FEATURED_PRODUCTS: CompatibleProduct[] = [
         price: 150,
         oldPrice: 200,
         discount: 25,
-        image: '/api/placeholder/300/300',
+        image: '/images/hard.jpg',
         category: 'hearts',
         link: '/products/hearts/1'
     },
@@ -46,7 +46,7 @@ export const FEATURED_PRODUCTS: CompatibleProduct[] = [
 export const MAIN_CATEGORIES = [
     {
         name: 'Фольгированные шары',
-        image: '/api/placeholder/400/400',
+        image: '/images/hard.jpg',
         href: '/balloons/foil',
         count: '200+'
     },

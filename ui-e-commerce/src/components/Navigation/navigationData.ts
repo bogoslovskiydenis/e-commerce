@@ -55,13 +55,13 @@ export const dropdownContent: Record<DropdownKey, DropdownItem> = {
         ],
         promoCards: [
             {
-                image: '/images/balloons/foil-hearts.jpg',
+                image: '/images/hard.jpg',
                 title: 'Фольгированные сердца',
                 subtitle: 'От 150 грн',
                 link: '/balloons/foil-hearts'
             },
             {
-                image: '/images/balloons/birthday-set.jpg',
+                image: '/images/hard.jpg',
                 title: 'Набор на день рождения',
                 subtitle: 'От 500 грн',
                 link: '/balloons/birthday-set'

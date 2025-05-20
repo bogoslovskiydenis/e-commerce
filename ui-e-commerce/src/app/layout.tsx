@@ -9,7 +9,7 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
     title: 'Ecommerce',
-    description: 'Купити одяг, взуття та аксесуари',
+    description: 'Шарики',
 }
 
 export const viewport: Viewport = {

@@ -1,17 +1,22 @@
 'use client'
 
-import Image from 'next/image'
-import Link from 'next/link'
 import { useState, useEffect } from 'react'
+import Link from 'next/link'
+import Image from 'next/image'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import ProductSection from '@/components/ProductSection/ProductSection'
+import FeaturedProductsSection from '@/components/HomePageComponent/FeaturedProductsSection/FeaturedProductsSection'
+import CategorySection from '@/components/HomePageComponent/CategorySection/CategorySection'
+import FeaturesSection from '@/components/HomePageComponent/FeaturesSection/FeaturesSection'
+import TestimonialsSection from '@/components/HomePageComponent/TestimonialsSection/TestimonialsSection'
+import CTASection from '@/components/HomePageComponent/CTASection/CTASection'
+import QuickOrderSection from '@/components/HomePageComponent/QuickOrderSection/QuickOrderSection'
 import { FEATURED_PRODUCTS, MAIN_CATEGORIES, REVIEWS } from '@/data/balloonData'
 
 // Данные для слайдера баннеров
 const BANNER_SLIDES = [
     {
         id: 1,
-        image: '/api/placeholder/1200/600',
+        image: '/images/banner.png',
         title: 'Шарики на дом в Киеве',
         subtitle: 'Фольгированные и латексные шарики с доставкой по Киеву за 2 часа. Букеты, подарки и украшения для любого праздника.',
         primaryButton: { text: 'Выбрать шарики', href: '/balloons' },
@@ -19,7 +24,7 @@ const BANNER_SLIDES = [
     },
     {
         id: 2,
-        image: '/api/placeholder/1200/600',
+        image: '/images/banner1.png',
         title: 'Акции до -70%',
         subtitle: 'Супер скидки на все виды шариков! Спешите воспользоваться уникальными предложениями.',
         primaryButton: { text: 'Смотреть акции', href: '/sale' },
@@ -27,11 +32,68 @@ const BANNER_SLIDES = [
     },
     {
         id: 3,
-        image: '/api/placeholder/1200/600',
+        image: '/images/banner.png',
         title: 'Букеты из шаров',
         subtitle: 'Готовые композиции для любого праздника. Быстрая доставка по Киеву за 2 часа.',
         primaryButton: { text: 'Заказать букет', href: '/bouquets' },
         secondaryButton: { text: 'Контакты', href: '/contacts' }
+    }
+]
+
+// Данные для быстрого заказа
+const QUICK_ORDER_STEPS = [
+    {
+        icon: '🎈',
+        title: 'Выберите шарики',
+        description: 'Более 500 видов воздушных шаров'
+    },
+    {
+        icon: '🚚',
+        title: 'Быстрая доставка',
+        description: 'Доставим за 2 часа по Киеву'
+    },
+    {
+        icon: '💝',
+        title: 'Готовые наборы',
+        description: 'Подарочные комплекты на любой повод'
+    }
+]
+
+// Преимущества
+const FEATURES = [
+    {
+        icon: '⚡',
+        title: 'Быстрая доставка',
+        description: 'Доставим за 2 часа в любую точку Киева'
+    },
+    {
+        icon: '✨',
+        title: 'Качество гарантировано',
+        description: 'Только лучшие материалы и свежий гелий'
+    },
+    {
+        icon: '🎨',
+        title: 'Индивидуальный подход',
+        description: 'Создаем уникальные композиции под ваши пожелания'
+    },
+    {
+        icon: '💰',
+        title: 'Доступные цены',
+        description: 'Лучшие цены в Киеве без переплат'
+    }
+]
+
+// CTA Секция
+const CTA_BUTTONS = [
+    {
+        text: '📞 (067) 111-11-11',
+        href: 'tel:(067) 111-11-11',
+        primary: true
+    },
+    {
+        text: '💬 Написать в Telegram',
+        href: '/contacts',
+        primary: false
     }
 ]
 
@@ -139,167 +201,52 @@ export default function HomePage() {
             </div>
 
             {/* Быстрый заказ */}
-            <div className="bg-gray-50 py-6 sm:py-8 lg:py-12">
-                <div className="container mx-auto px-4">
-                    <div className="max-w-4xl mx-auto">
-                        <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-center mb-4 sm:mb-6 lg:mb-8">
-                            Быстрый заказ
-                        </h2>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                            <div className="bg-white p-4 sm:p-6 rounded-lg shadow-sm text-center">
-                                <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-3 sm:mb-4 bg-teal-100 rounded-full flex items-center justify-center">
-                                    <span className="text-xl sm:text-2xl">🎈</span>
-                                </div>
-                                <h3 className="font-semibold mb-2 text-sm sm:text-base">Выберите шарики</h3>
-                                <p className="text-gray-600 text-xs sm:text-sm">Более 500 видов воздушных шаров</p>
-                            </div>
-                            <div className="bg-white p-4 sm:p-6 rounded-lg shadow-sm text-center">
-                                <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-3 sm:mb-4 bg-teal-100 rounded-full flex items-center justify-center">
-                                    <span className="text-xl sm:text-2xl">🚚</span>
-                                </div>
-                                <h3 className="font-semibold mb-2 text-sm sm:text-base">Быстрая доставка</h3>
-                                <p className="text-gray-600 text-xs sm:text-sm">Доставим за 2 часа по Киеву</p>
-                            </div>
-                            <div className="bg-white p-4 sm:p-6 rounded-lg shadow-sm text-center sm:col-span-2 lg:col-span-1">
-                                <div className="w-12 h-12 sm:w-16 sm:h-16 mx-auto mb-3 sm:mb-4 bg-teal-100 rounded-full flex items-center justify-center">
-                                    <span className="text-xl sm:text-2xl">💝</span>
-                                </div>
-                                <h3 className="font-semibold mb-2 text-sm sm:text-base">Готовые наборы</h3>
-                                <p className="text-gray-600 text-xs sm:text-sm">Подарочные комплекты на любой повод</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <QuickOrderSection
+                title="Быстрый заказ"
+                steps={QUICK_ORDER_STEPS}
+            />
 
             {/* Популярные категории */}
-            <div className="container mx-auto px-4 py-8 sm:py-12 lg:py-16">
-                <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-center mb-6 sm:mb-8 lg:mb-10">
-                    Популярные категории
-                </h2>
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-6">
-                    {MAIN_CATEGORIES.map((category) => (
-                        <Link
-                            key={category.name}
-                            href={category.href}
-                            className="group relative aspect-square overflow-hidden rounded-lg border border-gray-200"
-                        >
-                            <Image
-                                src={category.image}
-                                alt={category.name}
-                                fill
-                                className="object-cover transition-transform duration-300 group-hover:scale-105"
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-                            <div className="absolute bottom-2 sm:bottom-4 left-2 sm:left-4 text-white">
-                                <h3 className="font-semibold text-sm sm:text-base lg:text-lg mb-1 leading-tight">
-                                    {category.name}
-                                </h3>
-                                <p className="text-xs sm:text-sm opacity-90">
-                                    {category.count} товаров
-                                </p>
-                            </div>
-                        </Link>
-                    ))}
-                </div>
-            </div>
+            <CategorySection
+                title="Популярные категории"
+                categories={MAIN_CATEGORIES}
+                columns={5}
+            />
 
             {/* Хиты продаж */}
-            <div className="bg-gray-50 py-8 sm:py-12 lg:py-16">
-                <div className="container mx-auto px-4">
-                    <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-center mb-6 sm:mb-8 lg:mb-10">
-                        Хиты продаж
-                    </h2>
-                    <ProductSection products={FEATURED_PRODUCTS} />
-                </div>
-            </div>
+            <FeaturedProductsSection
+                title="Хиты продаж"
+                products={FEATURED_PRODUCTS}
+                viewAllLink="/products"
+                viewAllText="Посмотреть все"
+                bgColor="bg-gray-50"
+                slidesToShow={4}
+            />
 
             {/* Преимущества */}
-            <div className="container mx-auto px-4 py-8 sm:py-12 lg:py-16">
-                <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-center mb-6 sm:mb-8 lg:mb-10">
-                    Почему выбирают нас
-                </h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-                    <div className="text-center">
-                        <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-3 sm:mb-4 bg-teal-100 rounded-full flex items-center justify-center">
-                            <span className="text-2xl sm:text-3xl">⚡</span>
-                        </div>
-                        <h3 className="font-semibold text-base sm:text-lg mb-2">Быстрая доставка</h3>
-                        <p className="text-gray-600 text-sm sm:text-base">Доставим за 2 часа в любую точку Киева</p>
-                    </div>
-                    <div className="text-center">
-                        <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-3 sm:mb-4 bg-teal-100 rounded-full flex items-center justify-center">
-                            <span className="text-2xl sm:text-3xl">✨</span>
-                        </div>
-                        <h3 className="font-semibold text-base sm:text-lg mb-2">Качество гарантировано</h3>
-                        <p className="text-gray-600 text-sm sm:text-base">Только лучшие материалы и свежий гелий</p>
-                    </div>
-                    <div className="text-center">
-                        <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-3 sm:mb-4 bg-teal-100 rounded-full flex items-center justify-center">
-                            <span className="text-2xl sm:text-3xl">🎨</span>
-                        </div>
-                        <h3 className="font-semibold text-base sm:text-lg mb-2">Индивидуальный подход</h3>
-                        <p className="text-gray-600 text-sm sm:text-base">Создаем уникальные композиции под ваши пожелания</p>
-                    </div>
-                    <div className="text-center">
-                        <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto mb-3 sm:mb-4 bg-teal-100 rounded-full flex items-center justify-center">
-                            <span className="text-2xl sm:text-3xl">💰</span>
-                        </div>
-                        <h3 className="font-semibold text-base sm:text-lg mb-2">Доступные цены</h3>
-                        <p className="text-gray-600 text-sm sm:text-base">Лучшие цены в Киеве без переплат</p>
-                    </div>
-                </div>
-            </div>
+            <FeaturesSection
+                title="Почему выбирают нас"
+                features={FEATURES}
+                columns={4}
+            />
 
             {/* Отзывы */}
-            <div className="bg-gray-50 py-8 sm:py-12 lg:py-16">
-                <div className="container mx-auto px-4">
-                    <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-center mb-6 sm:mb-8 lg:mb-10">
-                        Отзывы наших клиентов
-                    </h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                        {REVIEWS.map((review, index) => (
-                            <div key={index} className="bg-white p-4 sm:p-6 rounded-lg shadow-sm">
-                                <div className="flex items-center mb-3">
-                                    <span className="font-semibold text-sm sm:text-base">{review.name}</span>
-                                    <div className="ml-auto flex">
-                                        {[...Array(review.rating)].map((_, i) => (
-                                            <span key={i} className="text-yellow-400 text-sm sm:text-base">⭐</span>
-                                        ))}
-                                    </div>
-                                </div>
-                                <p className="text-gray-600 text-xs sm:text-sm">{review.text}</p>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </div>
+            <TestimonialsSection
+                title="Отзывы наших клиентов"
+                testimonials={REVIEWS}
+                bgColor="bg-gray-50"
+                slidesToShow={3}
+            />
 
             {/* CTA секция */}
-            <div className="bg-teal-600 text-white py-12 sm:py-16 lg:py-20">
-                <div className="container mx-auto px-4 text-center">
-                    <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-3 sm:mb-4">
-                        Готовы сделать заказ?
-                    </h2>
-                    <p className="text-base sm:text-lg mb-6 sm:mb-8 opacity-90 max-w-2xl mx-auto">
-                        Свяжитесь с нами любым удобным способом
-                    </p>
-                    <div className="flex flex-col xs:flex-row gap-3 sm:gap-4 justify-center max-w-lg mx-auto">
-                        <a
-                            href="tel:(067) 111-11-11"
-                            className="inline-block px-6 sm:px-8 py-2.5 sm:py-3 bg-white text-teal-600 rounded-lg hover:bg-gray-100 font-medium text-sm sm:text-base transition-colors"
-                        >
-                            📞 (067) 111-11-11
-                        </a>
-                        <Link
-                            href="/contacts"
-                            className="inline-block px-6 sm:px-8 py-2.5 sm:py-3 border-2 border-white text-white rounded-lg hover:bg-white hover:text-teal-600 font-medium text-sm sm:text-base transition-colors"
-                        >
-                            💬 Написать в Telegram
-                        </Link>
-                    </div>
-                </div>
-            </div>
+            <CTASection
+                title="Готовы сделать заказ?"
+                subtitle="Свяжитесь с нами любым удобным способом"
+                buttons={CTA_BUTTONS}
+                bgColor="bg-teal-600"
+                textColor="text-white"
+                align="center"
+            />
         </div>
     )
 }

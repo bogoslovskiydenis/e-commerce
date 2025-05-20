@@ -5,34 +5,34 @@ export default function Footer() {
     return (
         <footer className="bg-gray-100 pt-16 pb-8">
             {/* Преимущества */}
-            <div className="container mx-auto px-4 mb-16">
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-                    <div className="flex flex-col items-center text-center">
-                        <div className="mb-4">
-                            <Image src="/images/return.svg" alt="Повернення" width={48} height={48} />
-                        </div>
-                        <h3 className="font-medium">Зручні способи повернення</h3>
-                    </div>
-                    <div className="flex flex-col items-center text-center">
-                        <div className="mb-4">
-                            <Image src="/images/delivery.svg" alt="Доставка" width={48} height={48} />
-                        </div>
-                        <h3 className="font-medium">Безкоштовна доставка з Європи від 2500 грн</h3>
-                    </div>
-                    <div className="flex flex-col items-center text-center">
-                        <div className="mb-4">
-                            <Image src="/images/payment.svg" alt="Оплата" width={48} height={48} />
-                        </div>
-                        <h3 className="font-medium">Зручні платежі</h3>
-                    </div>
-                    <div className="flex flex-col items-center text-center">
-                        <div className="mb-4">
-                            <Image src="/images/brands.svg" alt="Бренди" width={48} height={48} />
-                        </div>
-                        <h3 className="font-medium">Понад 1000 брендів</h3>
-                    </div>
-                </div>
-            </div>
+            {/*<div className="container mx-auto px-4 mb-16">*/}
+            {/*    <div className="grid grid-cols-1 md:grid-cols-4 gap-8">*/}
+            {/*        <div className="flex flex-col items-center text-center">*/}
+            {/*            <div className="mb-4">*/}
+            {/*                <Image src="/images/return.svg" alt="Повернення" width={48} height={48} />*/}
+            {/*            </div>*/}
+            {/*            <h3 className="font-medium">Зручні способи повернення</h3>*/}
+            {/*        </div>*/}
+            {/*        <div className="flex flex-col items-center text-center">*/}
+            {/*            <div className="mb-4">*/}
+            {/*                <Image src="/images/delivery.svg" alt="Доставка" width={48} height={48} />*/}
+            {/*            </div>*/}
+            {/*            <h3 className="font-medium">Безкоштовна доставка з Європи від 2500 грн</h3>*/}
+            {/*        </div>*/}
+            {/*        <div className="flex flex-col items-center text-center">*/}
+            {/*            <div className="mb-4">*/}
+            {/*                <Image src="/images/payment.svg" alt="Оплата" width={48} height={48} />*/}
+            {/*            </div>*/}
+            {/*            <h3 className="font-medium">Зручні платежі</h3>*/}
+            {/*        </div>*/}
+            {/*        <div className="flex flex-col items-center text-center">*/}
+            {/*            <div className="mb-4">*/}
+            {/*                <Image src="/images/brands.svg" alt="Бренди" width={48} height={48} />*/}
+            {/*            </div>*/}
+            {/*            <h3 className="font-medium">Понад 1000 брендів</h3>*/}
+            {/*        </div>*/}
+            {/*    </div>*/}
+            {/*</div>*/}
 
             {/* Основной контент футера */}
             <div className="container mx-auto px-4">
