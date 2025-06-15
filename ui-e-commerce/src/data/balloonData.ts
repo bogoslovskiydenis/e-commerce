@@ -1,6 +1,6 @@
-import type { CompatibleProduct } from '@/types/BalloonShop_types'
-
 // Продукты для главной страницы - совместимый формат
+import {CompatibleProduct} from "@/types/BalloonShop_types";
+
 export const FEATURED_PRODUCTS: CompatibleProduct[] = [
     {
         id: '1',
@@ -92,5 +92,63 @@ export const REVIEWS = [
         name: 'Елена',
         text: 'Красивые фольгированные шары для свадьбы. Качество отличное, продержались весь день!',
         rating: 5
+    }
+]
+
+// Дополнительные товары для каталогов
+export const BALLOON_CATALOG_PRODUCTS: CompatibleProduct[] = [
+    {
+        id: '1',
+        name: 'Сердце фольгированное красное',
+        price: 150,
+        oldPrice: 200,
+        discount: 25,
+        image: '/images/hard.jpg',
+        category: 'hearts',
+        link: '/products/hearts/1'
+    },
+    {
+        id: '2',
+        name: 'Звезда фольгированная золотая',
+        price: 120,
+        image: '/images/hard.jpg',
+        category: 'stars',
+        link: '/products/stars/2'
+    },
+    {
+        id: '3',
+        name: 'Цифра "1" серебряная',
+        price: 350,
+        oldPrice: 400,
+        discount: 12,
+        image: '/api/placeholder/300/300',
+        category: 'numbers',
+        link: '/products/numbers/3'
+    },
+    {
+        id: '4',
+        name: 'Латексный шар розовый',
+        price: 25,
+        image: '/api/placeholder/300/300',
+        category: 'latex',
+        link: '/products/latex/4'
+    },
+    {
+        id: '5',
+        name: 'Букет "С днем рождения"',
+        price: 450,
+        image: '/api/placeholder/300/300',
+        category: 'bouquets',
+        link: '/products/bouquets/2'
+    },
+    {
+        id: '6',
+        name: 'Набор "Единорог"',
+        price: 650,
+        oldPrice: 750,
+        discount: 13,
+        image: '/api/placeholder/300/300',
+        category: 'sets',
+        link: '/products/sets/4'
     }
 ]
