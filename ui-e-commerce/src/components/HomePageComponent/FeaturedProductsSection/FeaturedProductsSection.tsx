@@ -38,6 +38,24 @@ export default function FeaturedProductsSection({
     const canGoBack = currentSlide > 0
     const canGoForward = currentSlide < maxSlides
 
+    // Функция для определения правильной ссылки на товар
+    const getProductLink = (product: any) => {
+        // Если у товара есть готовая ссылка - используем ее
+        if (product.link) {
+            return product.link
+        }
+
+        // Определяем тип товара по категории и формируем ссылку
+        if (product.category === 'bouquets') {
+            return `/bouquets/${product.id}`
+        }
+        if (product.category === 'sets' || product.category === 'kids') {
+            return `/sets/${product.id}`
+        }
+        // Все остальное (шары) - ведем на /balloons/category/id
+        return `/balloons/${product.category}/${product.id}`
+    }
+
     return (
         <div className={`${bgColor} py-8 sm:py-12 lg:py-16`}>
             <div className="container mx-auto px-4">
@@ -93,7 +111,7 @@ export default function FeaturedProductsSection({
                                 style={{ width: `${100 / slidesToShow}%` }}
                             >
                                 <Link
-                                    href={product.link || `/products/${product.category}/${product.id}`}
+                                    href={getProductLink(product)}
                                     className="group block"
                                 >
                                     <div className="aspect-square overflow-hidden rounded-lg bg-gray-100 mb-3">

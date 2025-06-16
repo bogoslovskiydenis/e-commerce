@@ -30,7 +30,7 @@ const DEFAULT_BALLOON_PRODUCTS: BalloonProduct[] = [
         price: 150,
         oldPrice: 200,
         discount: 25,
-        image: '/images/balloons/heart-red.jpg',
+        image: '/images/hard.jpg',
         category: 'hearts',
         withHelium: true,
         size: '45см',
@@ -74,12 +74,26 @@ const DEFAULT_BALLOON_PRODUCTS: BalloonProduct[] = [
 ]
 
 export default function ProductGrid({ products = DEFAULT_BALLOON_PRODUCTS }: ProductGridProps) {
+    // Функция для определения правильной ссылки на товар
+    const getProductLink = (product: BalloonProduct) => {
+        // Если это букет - ведем на /bouquets/id
+        if (product.type === 'bouquet') {
+            return `/bouquets/${product.id}`
+        }
+        // Если это набор - ведем на /sets/id
+        if (product.type === 'set') {
+            return `/sets/${product.id}`
+        }
+        // Все остальное (шары) - ведем на /balloons/category/id
+        return `/balloons/${product.category}/${product.id}`
+    }
+
     return (
         <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {products?.map((product) => (
                 <div key={product.id} className="group relative flex flex-col h-full">
                     <div className="aspect-square overflow-hidden rounded-lg bg-gray-100 relative">
-                        <Link href={`/products/${product.category}/${product.id}`}>
+                        <Link href={getProductLink(product)}>
                             <Image
                                 src={product.image}
                                 alt={product.name}
@@ -133,7 +147,7 @@ export default function ProductGrid({ products = DEFAULT_BALLOON_PRODUCTS }: Pro
                     </div>
 
                     <div className="mt-4 flex flex-col flex-grow">
-                        <Link href={`/products/${product.category}/${product.id}`} className="mb-1">
+                        <Link href={getProductLink(product)} className="mb-1">
                             <h3 className="text-sm font-medium text-gray-900 hover:text-teal-600 line-clamp-2 h-10">
                                 {product.name}
                             </h3>

@@ -2,7 +2,7 @@
 
 import ProductSectionPage from '@/components/ProductSectionPage/ProductSectionPage'
 
-// Данные для каталога шариков
+// Данные для каталога шариков с обновленными ссылками
 const BALLOON_PRODUCTS = [
     {
         id: '1',
@@ -58,24 +58,28 @@ const BALLOON_PRODUCTS = [
     },
     {
         id: '5',
-        name: 'Букет "С днем рождения"',
-        type: 'bouquet',
-        price: 450,
+        name: 'Сердце розовое',
+        type: 'foil',
+        price: 140,
         image: '/api/placeholder/300/300',
-        category: 'birthday',
+        category: 'hearts',
         withHelium: true,
+        size: '45см',
+        colors: ['Розовый'],
         inStock: true
     },
     {
         id: '6',
-        name: 'Набор "Единорог"',
-        type: 'set',
-        price: 650,
-        oldPrice: 750,
-        discount: 13,
+        name: 'Звезда серебряная',
+        type: 'foil',
+        price: 110,
+        oldPrice: 130,
+        discount: 15,
         image: '/api/placeholder/300/300',
-        category: 'kids',
+        category: 'stars',
         withHelium: true,
+        size: '50см',
+        colors: ['Серебряный'],
         inStock: false
     }
 ]
@@ -84,12 +88,12 @@ const BALLOON_PRODUCTS = [
 const BALLOON_CATEGORIES = [
     { name: 'Фольгированные шары', count: 245, href: '/balloons/foil' },
     { name: 'Латексные шары', count: 187, href: '/balloons/latex' },
-    { name: 'Букеты из шаров', count: 156, href: '/bouquets' },
     { name: 'Цифры из шаров', count: 45, href: '/balloons/numbers' },
     { name: 'Сердца', count: 89, href: '/balloons/hearts' },
     { name: 'Звезды', count: 67, href: '/balloons/stars' },
     { name: 'Шары с рисунком', count: 134, href: '/balloons/printed' },
     { name: 'Светящиеся шары', count: 78, href: '/balloons/led' },
+    { name: 'Букеты из шаров', count: 156, href: '/bouquets' },
     { name: 'Стаканчики', count: 95, href: '/cups' },
     { name: 'Подарки', count: 203, href: '/gifts' },
     { name: 'Готовые наборы', count: 112, href: '/sets' }
