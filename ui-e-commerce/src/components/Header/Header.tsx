@@ -2,11 +2,12 @@
 
 import Link from 'next/link'
 import React, { useState } from 'react'
-import { Search, Heart, ShoppingBag, User, Menu, Mail, Phone } from 'lucide-react'
+import { Heart, ShoppingBag, User, Menu, Mail, Phone } from 'lucide-react'
 import Navigation from '@/components/Navigation/Navigation'
 import MobileMenu from './MobileMenu'
 import { AuthPrompt } from "@/components/AuthModal/AuthPrompt"
-import {AuthModal} from "@/components/AuthModal/AuthModal";
+import {AuthModal} from "@/components/AuthModal/AuthModal"
+import SearchAutocomplete from '@/components/Search/SearchAutocomplete'
 
 export default function Header() {
     const [showPrompt, setShowPrompt] = useState(false)
@@ -73,17 +74,9 @@ export default function Header() {
                         </div>
 
                         <div className="py-3">
-                            <div className="relative">
-                                <input
-                                    type="search"
-                                    placeholder="Пошук шариків, подарків, стаканчиків..."
-                                    className="w-full pl-10 pr-4 py-2.5 bg-gray-100 rounded-lg text-sm"
-                                />
-                                <Search
-                                    className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-                                    size={20}
-                                />
-                            </div>
+                            <SearchAutocomplete
+                                placeholder="Пошук шариків, подарків, стаканчиків..."
+                            />
                         </div>
                     </div>
                 </div>
@@ -99,14 +92,10 @@ export default function Header() {
                             </Link>
 
                             <div className="flex-1">
-                                <div className="relative max-w-md">
-                                    <input
-                                        type="search"
-                                        placeholder="Пошук шариків, подарків, стаканчиків..."
-                                        className="w-full pl-10 pr-4 py-2 bg-gray-100 rounded-lg text-sm"
-                                    />
-                                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-                                </div>
+                                <SearchAutocomplete
+                                    placeholder="Пошук шариків, подарків, стаканчиків..."
+                                    className="max-w-md"
+                                />
                             </div>
 
                             <nav className="flex items-center gap-6">

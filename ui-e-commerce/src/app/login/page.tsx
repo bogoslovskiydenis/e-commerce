@@ -17,7 +17,7 @@ export default function LoginPage() {
 
             {/* Форма авторизации */}
             <div className="flex-1 flex items-center justify-center py-12">
-                <div className="w-full max-w-md bg-white rounded-lg shadow-sm p-6 md:p-8">
+                <div className="w-full max-w-lg bg-white rounded-lg shadow-sm p-6 md:p-8">
                     {/* Переключение вкладок */}
                     <div className="grid grid-cols-2 gap-2 mb-6">
                         <button
