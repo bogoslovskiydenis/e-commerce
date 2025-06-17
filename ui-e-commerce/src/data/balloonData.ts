@@ -9,7 +9,7 @@ export const FEATURED_PRODUCTS: CompatibleProduct[] = [
         discount: 25,
         image: '/images/hard.jpg',
         category: 'hearts',
-        link: '/balloons/hearts/1'  // Изменено с /products/hearts/1
+        link: '/balloons/hearts/1'
     },
     {
         id: '2',
@@ -17,7 +17,7 @@ export const FEATURED_PRODUCTS: CompatibleProduct[] = [
         price: 450,
         image: '/api/placeholder/300/300',
         category: 'bouquets',
-        link: '/bouquets/2'  // Букеты остаются отдельно
+        link: '/bouquets/2'
     },
     {
         id: '3',
@@ -27,7 +27,7 @@ export const FEATURED_PRODUCTS: CompatibleProduct[] = [
         discount: 12,
         image: '/api/placeholder/300/300',
         category: 'numbers',
-        link: '/balloons/numbers/3'  // Изменено с /products/numbers/3
+        link: '/balloons/numbers/3'
     },
     {
         id: '4',
@@ -37,7 +37,7 @@ export const FEATURED_PRODUCTS: CompatibleProduct[] = [
         discount: 13,
         image: '/api/placeholder/300/300',
         category: 'sets',
-        link: '/sets/4'  // Наборы остаются отдельно
+        link: '/sets/4'
     }
 ]
 
@@ -46,7 +46,7 @@ export const MAIN_CATEGORIES = [
     {
         name: 'Фольгированные шары',
         image: '/images/hard.jpg',
-        href: '/balloons',
+        href: '/balloons/foil',
         count: '200+'
     },
     {
@@ -104,7 +104,7 @@ export const BALLOON_CATALOG_PRODUCTS: CompatibleProduct[] = [
         discount: 25,
         image: '/images/hard.jpg',
         category: 'hearts',
-        link: '/balloons/hearts/1'  // Изменено с /products/hearts/1
+        link: '/balloons/hearts/1'
     },
     {
         id: '2',
@@ -112,7 +112,7 @@ export const BALLOON_CATALOG_PRODUCTS: CompatibleProduct[] = [
         price: 120,
         image: '/images/hard.jpg',
         category: 'stars',
-        link: '/balloons/stars/2'  // Изменено с /products/stars/2
+        link: '/balloons/stars/2'
     },
     {
         id: '3',
@@ -122,7 +122,7 @@ export const BALLOON_CATALOG_PRODUCTS: CompatibleProduct[] = [
         discount: 12,
         image: '/api/placeholder/300/300',
         category: 'numbers',
-        link: '/balloons/numbers/3'  // Изменено с /products/numbers/3
+        link: '/balloons/numbers/3'
     },
     {
         id: '4',
@@ -130,7 +130,7 @@ export const BALLOON_CATALOG_PRODUCTS: CompatibleProduct[] = [
         price: 25,
         image: '/api/placeholder/300/300',
         category: 'latex',
-        link: '/balloons/latex/4'  // Изменено с /products/latex/4
+        link: '/balloons/latex/4'
     },
     {
         id: '5',
@@ -138,7 +138,7 @@ export const BALLOON_CATALOG_PRODUCTS: CompatibleProduct[] = [
         price: 450,
         image: '/api/placeholder/300/300',
         category: 'bouquets',
-        link: '/bouquets/2'  // Букеты остаются отдельно
+        link: '/bouquets/2'
     },
     {
         id: '6',
@@ -148,6 +148,6 @@ export const BALLOON_CATALOG_PRODUCTS: CompatibleProduct[] = [
         discount: 13,
         image: '/api/placeholder/300/300',
         category: 'sets',
-        link: '/sets/4'  // Наборы остаются отдельно
+        link: '/sets/4'
     }
 ]

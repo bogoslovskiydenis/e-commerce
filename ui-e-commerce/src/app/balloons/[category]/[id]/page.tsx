@@ -138,57 +138,29 @@ const BALLOON_PRODUCTS_DATA: Record<string, Record<string, BalloonProductData>> 
             }
         }
     },
-    bouquets: {
-        '2': {
-            id: '2',
-            name: 'Букет "С днем рождения"',
-            article: 'Артикул: BQ002',
-            price: 450,
-            images: ['/api/placeholder/300/300'],
-            colors: [
-                { name: 'Разноцветный', value: 'multicolor' }
-            ],
-            sizes: ['Стандартный'],
-            withHelium: true,
-            material: 'Фольга + Латекс',
-            category: 'Букеты',
-            description: 'Готовый букет из разноцветных шаров для празднования дня рождения.',
-            features: [
-                'Готовая композиция',
-                'Включает 7-10 шаров',
-                'Красивая упаковка'
-            ],
-            inStock: true,
-            deliveryInfo: {
-                free: 'Бесплатно от 500 грн',
-                paid: 'От 50 грн',
-                express: 'От 100 грн (2 часа)'
-            }
-        }
-    },
-    sets: {
+    latex: {
         '4': {
             id: '4',
-            name: 'Набор "Единорог"',
-            article: 'Артикул: SET004',
-            price: 650,
-            oldPrice: 750,
-            discount: 13,
+            name: 'Латексный шар розовый',
+            article: 'Артикул: LAT004',
+            price: 25,
             images: ['/api/placeholder/300/300'],
             colors: [
-                { name: 'Розово-голубой', value: 'pink-blue' }
+                { name: 'Розовый', value: 'pink' },
+                { name: 'Красный', value: 'red' },
+                { name: 'Синий', value: 'blue' }
             ],
-            sizes: ['Полный набор'],
+            sizes: ['30см'],
             withHelium: true,
-            material: 'Фольга + Латекс',
-            category: 'Наборы',
-            description: 'Волшебный набор в тематике единорога для детского праздника.',
+            material: 'Латекс',
+            category: 'Латексные шары',
+            description: 'Качественный латексный шар для любого праздника.',
             features: [
-                'Тематические шары',
-                'Фигура единорога',
-                'Дополнительные аксессуары'
+                'Натуральный латекс',
+                'Экологически безопасный',
+                'Яркие цвета'
             ],
-            inStock: false,
+            inStock: true,
             deliveryInfo: {
                 free: 'Бесплатно от 500 грн',
                 paid: 'От 50 грн',
@@ -198,7 +170,7 @@ const BALLOON_PRODUCTS_DATA: Record<string, Record<string, BalloonProductData>> 
     }
 }
 
-export default function BalloonProductPage({ params }: BalloonProductPageProps) {
+export default function BalloonCategoryProductPage({ params }: BalloonProductPageProps) {
     const { category, id } = use(params)
     const product = BALLOON_PRODUCTS_DATA[category]?.[id]
 
