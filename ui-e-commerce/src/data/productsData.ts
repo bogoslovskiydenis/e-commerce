@@ -3,7 +3,7 @@ export const PRODUCTS_DATA = {
         {
             id: '1',
             name: 'Сердце фольгированное красное',
-            type: 'foil',
+            type: 'foil' as const,
             price: 150,
             oldPrice: 200,
             discount: 25,
@@ -18,7 +18,7 @@ export const PRODUCTS_DATA = {
         {
             id: '2',
             name: 'Звезда золотая',
-            type: 'foil',
+            type: 'foil' as const,
             price: 120,
             image: '/images/hard.jpg',
             category: 'stars',
@@ -31,7 +31,7 @@ export const PRODUCTS_DATA = {
         {
             id: '3',
             name: 'Цифра "1" серебряная',
-            type: 'foil',
+            type: 'foil' as const,
             price: 350,
             oldPrice: 400,
             discount: 12,
@@ -46,7 +46,7 @@ export const PRODUCTS_DATA = {
         {
             id: '4',
             name: 'Латексный шар розовый',
-            type: 'latex',
+            type: 'latex' as const,
             price: 25,
             image: '/api/placeholder/300/300',
             category: 'latex',
@@ -59,7 +59,7 @@ export const PRODUCTS_DATA = {
         {
             id: '5',
             name: 'Сердце розовое',
-            type: 'foil',
+            type: 'foil' as const,
             price: 140,
             image: '/api/placeholder/300/300',
             category: 'hearts',
@@ -72,7 +72,7 @@ export const PRODUCTS_DATA = {
         {
             id: '6',
             name: 'Звезда серебряная',
-            type: 'foil',
+            type: 'foil' as const,
             price: 110,
             oldPrice: 130,
             discount: 15,
@@ -90,7 +90,7 @@ export const PRODUCTS_DATA = {
         {
             id: '1',
             name: 'Букет "С днем рождения"',
-            type: 'bouquet',
+            type: 'bouquet' as const,
             price: 450,
             image: '/api/placeholder/300/300',
             category: 'birthday',
@@ -101,7 +101,7 @@ export const PRODUCTS_DATA = {
         {
             id: '2',
             name: 'Букет "Романтический вечер"',
-            type: 'bouquet',
+            type: 'bouquet' as const,
             price: 550,
             oldPrice: 650,
             discount: 15,
@@ -114,7 +114,7 @@ export const PRODUCTS_DATA = {
         {
             id: '3',
             name: 'Букет "Для выпускника"',
-            type: 'bouquet',
+            type: 'bouquet' as const,
             price: 480,
             image: '/api/placeholder/300/300',
             category: 'graduation',
@@ -125,7 +125,7 @@ export const PRODUCTS_DATA = {
         {
             id: '4',
             name: 'Букет "Детский праздник"',
-            type: 'bouquet',
+            type: 'bouquet' as const,
             price: 400,
             image: '/api/placeholder/300/300',
             category: 'kids',
@@ -136,7 +136,7 @@ export const PRODUCTS_DATA = {
         {
             id: '5',
             name: 'Букет "Юбилей"',
-            type: 'bouquet',
+            type: 'bouquet' as const,
             price: 750,
             oldPrice: 850,
             discount: 12,
@@ -149,7 +149,7 @@ export const PRODUCTS_DATA = {
         {
             id: '6',
             name: 'Букет "Свадебный"',
-            type: 'bouquet',
+            type: 'bouquet' as const,
             price: 850,
             image: '/api/placeholder/300/300',
             category: 'wedding',
@@ -163,7 +163,7 @@ export const PRODUCTS_DATA = {
         {
             id: '1',
             name: 'Стаканчики "День рождения" бумажные',
-            type: 'cup',
+            type: 'cup' as const,
             price: 80,
             image: '/api/placeholder/300/300',
             category: 'birthday',
@@ -175,7 +175,7 @@ export const PRODUCTS_DATA = {
         {
             id: '2',
             name: 'Стаканчики "Единорог" картонные',
-            type: 'cup',
+            type: 'cup' as const,
             price: 95,
             oldPrice: 120,
             discount: 21,
@@ -189,7 +189,7 @@ export const PRODUCTS_DATA = {
         {
             id: '3',
             name: 'Стаканчики "Супергерои" пластиковые',
-            type: 'cup',
+            type: 'cup' as const,
             price: 110,
             image: '/api/placeholder/300/300',
             category: 'superhero',
@@ -201,7 +201,7 @@ export const PRODUCTS_DATA = {
         {
             id: '4',
             name: 'Стаканчики "Принцессы" бумажные',
-            type: 'cup',
+            type: 'cup' as const,
             price: 90,
             image: '/api/placeholder/300/300',
             category: 'princess',
@@ -213,7 +213,7 @@ export const PRODUCTS_DATA = {
         {
             id: '5',
             name: 'Стаканчики "Свадебные" экологические',
-            type: 'cup',
+            type: 'cup' as const,
             price: 150,
             oldPrice: 180,
             discount: 17,
@@ -227,7 +227,7 @@ export const PRODUCTS_DATA = {
         {
             id: '6',
             name: 'Стаканчики "Новый год" картонные',
-            type: 'cup',
+            type: 'cup' as const,
             price: 100,
             image: '/api/placeholder/300/300',
             category: 'newyear',
@@ -242,7 +242,7 @@ export const PRODUCTS_DATA = {
         {
             id: '1',
             name: 'Мягкая игрушка "Медвежонок"',
-            type: 'plush',
+            type: 'plush' as const,
             price: 250,
             image: '/api/placeholder/300/300',
             category: 'plush',
@@ -252,7 +252,7 @@ export const PRODUCTS_DATA = {
         {
             id: '2',
             name: 'Сувенир "С днем рождения"',
-            type: 'souvenir',
+            type: 'souvenir' as const,
             price: 180,
             oldPrice: 220,
             discount: 18,
@@ -264,7 +264,7 @@ export const PRODUCTS_DATA = {
         {
             id: '3',
             name: 'Браслет "Для лучшей подруги"',
-            type: 'jewelry',
+            type: 'jewelry' as const,
             price: 320,
             image: '/api/placeholder/300/300',
             category: 'jewelry',
@@ -274,7 +274,7 @@ export const PRODUCTS_DATA = {
         {
             id: '4',
             name: 'Набор конфет "Праздничный"',
-            type: 'sweets',
+            type: 'sweets' as const,
             price: 350,
             image: '/api/placeholder/300/300',
             category: 'sweets',
@@ -284,7 +284,7 @@ export const PRODUCTS_DATA = {
         {
             id: '5',
             name: 'Букет цветов "Весенний"',
-            type: 'flowers',
+            type: 'flowers' as const,
             price: 450,
             oldPrice: 550,
             discount: 18,
@@ -296,7 +296,7 @@ export const PRODUCTS_DATA = {
         {
             id: '6',
             name: 'Подарочный набор "Новорожденному"',
-            type: 'gift set',
+            type: 'plush' as const,
             price: 720,
             image: '/api/placeholder/300/300',
             category: 'newborn',
@@ -309,7 +309,7 @@ export const PRODUCTS_DATA = {
         {
             id: '1',
             name: 'Набор "День рождения мальчика"',
-            type: 'set',
+            type: 'set' as const,
             price: 980,
             oldPrice: 1200,
             discount: 18,
@@ -321,7 +321,7 @@ export const PRODUCTS_DATA = {
         {
             id: '2',
             name: 'Набор "День рождения девочки"',
-            type: 'set',
+            type: 'set' as const,
             price: 950,
             oldPrice: 1150,
             discount: 17,
@@ -333,7 +333,7 @@ export const PRODUCTS_DATA = {
         {
             id: '3',
             name: 'Набор "Романтический вечер"',
-            type: 'set',
+            type: 'set' as const,
             price: 1200,
             image: '/api/placeholder/300/300',
             category: 'romantic',
@@ -343,7 +343,7 @@ export const PRODUCTS_DATA = {
         {
             id: '4',
             name: 'Набор "Выписка из роддома"',
-            type: 'set',
+            type: 'set' as const,
             price: 1350,
             oldPrice: 1500,
             discount: 10,
@@ -355,7 +355,7 @@ export const PRODUCTS_DATA = {
         {
             id: '5',
             name: 'Набор "Выпускной"',
-            type: 'set',
+            type: 'set' as const,
             price: 1400,
             image: '/api/placeholder/300/300',
             category: 'graduation',
@@ -365,7 +365,7 @@ export const PRODUCTS_DATA = {
         {
             id: '6',
             name: 'Набор "Юбилей 50 лет"',
-            type: 'set',
+            type: 'set' as const,
             price: 1500,
             oldPrice: 1800,
             discount: 17,

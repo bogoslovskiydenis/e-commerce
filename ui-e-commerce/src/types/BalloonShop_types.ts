@@ -85,6 +85,8 @@ export interface Bouquet {
     includes: string[];
     description?: string;
     inStock: boolean;
+    withHelium?: boolean;
+    material?: string;
 }
 
 export interface Cup {
@@ -101,6 +103,8 @@ export interface Cup {
     packSize: number; // количество в упаковке
     description?: string;
     inStock: boolean;
+    colors?: string[];
+    size?: string;
 }
 
 export interface Gift {
@@ -115,6 +119,7 @@ export interface Gift {
     description?: string;
     occasion?: string[];
     inStock: boolean;
+    material?: string;
 }
 
 export interface Set {
@@ -135,6 +140,7 @@ export interface Set {
     gender?: 'boy' | 'girl' | 'unisex';
     description?: string;
     inStock: boolean;
+    material?: string;
 }
 
 // Утилиты для конвертации между типами
@@ -154,82 +160,87 @@ export class ProductConverter {
             type: this.getProductType(item)
         }
 
-        // Добавляем специфические поля в зависимости от типа
-        if ('withHelium' in item) {
+        // Безопасное добавление специфических полей
+        if (this.isBalloon(item) || this.isBouquet(item)) {
             base.withHelium = item.withHelium
         }
 
-        if ('colors' in item) {
+        if (this.isBalloon(item)) {
             base.colors = item.colors
-        }
-
-        if ('sizes' in item) {
             base.size = item.sizes[0] // Берем первый размер
-        }
-
-        if ('material' in item) {
-            base.material = typeof item.material === 'string' ? item.material : item.material
-        }
-
-        if ('balloonCount' in item) {
-            base.balloonCount = item.balloonCount
-        }
-
-        if ('volume' in item) {
-            base.volume = item.volume
-        }
-
-        if ('packSize' in item) {
-            base.packSize = item.packSize
-        }
-
-        if ('theme' in item) {
-            base.theme = item.theme
-        }
-
-        if ('includes' in item) {
-            base.includes = item.includes
-        }
-
-        if ('tags' in item) {
+            base.material = item.material
             base.tags = item.tags
-        }
-
-        if ('occasion' in item) {
             base.occasion = item.occasion
         }
 
-        if ('ageGroup' in item) {
-            base.ageGroup = item.ageGroup
+        if (this.isBouquet(item)) {
+            base.balloonCount = item.balloonCount
+            base.theme = item.theme
+            base.includes = item.includes
+            if (item.material) base.material = item.material
         }
 
-        if ('gender' in item) {
-            base.gender = item.gender
+        if (this.isCup(item)) {
+            base.volume = item.volume
+            base.packSize = item.packSize
+            base.material = item.material
+            base.theme = item.theme
+            if (item.colors) base.colors = item.colors
+            if (item.size) base.size = item.size
         }
 
-        if ('items' in item) {
+        if (this.isGift(item)) {
+            base.occasion = item.occasion
+            if (item.material) base.material = item.material
+        }
+
+        if (this.isSet(item)) {
             base.items = item.items
+            base.ageGroup = item.ageGroup
+            base.gender = item.gender
+            if (item.material) base.material = item.material
         }
 
         return base
     }
 
+    // Type guards для безопасной проверки типов
+    private static isBalloon(item: Balloon | Bouquet | Cup | Gift | Set): item is Balloon {
+        return 'withHelium' in item && 'colors' in item && 'sizes' in item
+    }
+
+    private static isBouquet(item: Balloon | Bouquet | Cup | Gift | Set): item is Bouquet {
+        return 'balloonCount' in item && 'theme' in item && 'includes' in item
+    }
+
+    private static isCup(item: Balloon | Bouquet | Cup | Gift | Set): item is Cup {
+        return 'volume' in item && 'packSize' in item
+    }
+
+    private static isGift(item: Balloon | Bouquet | Cup | Gift | Set): item is Gift {
+        return !('withHelium' in item) && !('balloonCount' in item) && !('volume' in item) && !('items' in item)
+    }
+
+    private static isSet(item: Balloon | Bouquet | Cup | Gift | Set): item is Set {
+        return 'items' in item && Array.isArray((item as Set).items)
+    }
+
     // Определяет тип продукта
     private static getProductType(item: Balloon | Bouquet | Cup | Gift | Set): ProductType {
-        if ('withHelium' in item) {
-            return item.type as ProductType // Balloon
+        if (this.isBalloon(item)) {
+            return item.type as ProductType
         }
-        if ('balloonCount' in item) {
+        if (this.isBouquet(item)) {
             return 'bouquet'
         }
-        if ('volume' in item) {
+        if (this.isCup(item)) {
             return 'cup'
         }
-        if ('items' in item) {
+        if (this.isSet(item)) {
             return 'set'
         }
         // Gift
-        return item.type as ProductType
+        return (item as Gift).type as ProductType
     }
 
     // Конвертирует массив детализированных продуктов
