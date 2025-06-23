@@ -1,7 +1,7 @@
 'use client'
 
 import { X } from 'lucide-react'
-import SidebarFilters from './SidebarFilters'
+import SidebarFilters, { FilterState } from './SidebarFilters'
 import { CategoryConfig } from '@/config/categoryConfig'
 
 interface MobileFiltersModalProps {
@@ -9,13 +9,15 @@ interface MobileFiltersModalProps {
     onClose: () => void;
     categoryKey: string;
     config: CategoryConfig;
+    onFiltersChange?: (filters: FilterState) => void;
 }
 
 export default function MobileFiltersModal({
                                                isOpen,
                                                onClose,
                                                categoryKey,
-                                               config
+                                               config,
+                                               onFiltersChange
                                            }: MobileFiltersModalProps) {
     if (!isOpen) return null;
 
@@ -44,7 +46,12 @@ export default function MobileFiltersModal({
 
                     {/* Содержимое фильтров */}
                     <div className="flex-1 overflow-y-auto">
-                        <SidebarFilters categoryKey={categoryKey} config={config} isMobile={true} />
+                        <SidebarFilters
+                            categoryKey={categoryKey}
+                            config={config}
+                            isMobile={true}
+                            onFiltersChange={onFiltersChange}
+                        />
                     </div>
 
                     {/* Кнопки действий */}
@@ -59,7 +66,7 @@ export default function MobileFiltersModal({
                             className="w-full py-2 text-gray-600 hover:text-gray-800 text-sm"
                             onClick={onClose}
                         >
-                            Сбросить все
+                            Закрыть
                         </button>
                     </div>
                 </div>

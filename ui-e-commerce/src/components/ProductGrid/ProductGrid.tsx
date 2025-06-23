@@ -1,9 +1,9 @@
 import ProductCard from '@/components/ProductCard/ProductCard'
 
-interface BalloonProduct {
+export interface BalloonProduct {
     id: string
     name: string
-    type: 'foil' | 'latex' | 'bouquet' | 'set'
+    type: 'foil' | 'latex' | 'bouquet' | 'set' | 'cup' | 'plush' | 'souvenir' | 'jewelry' | 'sweets' | 'flowers' | 'gift set'
     price: number
     oldPrice?: number
     discount?: number
