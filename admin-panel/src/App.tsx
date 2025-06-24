@@ -1,135 +1,250 @@
-import React from 'react';
 import { Admin, Resource } from 'react-admin';
 import { Dashboard } from './pages/Dashboard';
-import { OrderList, OrderEdit } from './resources/orders';
-import { CustomerList, CustomerEdit } from './resources/customers';
 import { ProductList, ProductEdit, ProductCreate } from './resources/products';
+import { OrderList, OrderEdit } from './resources/orders';
 import { CategoryList, CategoryEdit, CategoryCreate } from './resources/categories';
-import { DiscountList, DiscountEdit, DiscountCreate } from './resources/discounts';
-import { CommentList, CommentEdit, CommentShow } from './resources/comments';
-import { CallbackList, CallbackEdit, CallbackCreate, CallbackShow } from './resources/callbacks';
-import { AnalyticsDashboard } from './pages/Analytics';
-import { SettingsPage } from './pages/Settings';
-import { MarketingPage } from './pages/Marketing';
-import { WebsitePage } from './pages/Website';
-import { customDataProvider } from './utils/dataProvider';
-import { CustomLayout } from './components/Layout/CustomLayout';
+import { CustomerList, CustomerEdit } from './resources/customers';
+import { ReviewList, ReviewEdit } from './resources/reviews';
+import { CallbackList, CallbackEdit } from './resources/callbacks';
+import { CustomMenu } from './components/CustomMenu';
 
-// Icons
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import PeopleIcon from '@mui/icons-material/People';
-import InventoryIcon from '@mui/icons-material/Inventory';
-import WebIcon from '@mui/icons-material/Web';
-import LocalOfferIcon from '@mui/icons-material/LocalOffer';
-import CampaignIcon from '@mui/icons-material/Campaign';
-import AnalyticsIcon from '@mui/icons-material/Analytics';
-import SettingsIcon from '@mui/icons-material/Settings';
-import CommentIcon from '@mui/icons-material/Comment';
-import PhoneCallbackIcon from '@mui/icons-material/PhoneCallback';
+// Создаем провайдер данных без строгой типизации
+const mockDataProvider = {
+    getList: (resource: string, params: any) => {
+        console.log('Getting list for resource:', resource, 'with params:', params);
+
+        switch (resource) {
+            case 'orders':
+                return Promise.resolve({
+                    data: [
+                        {
+                            id: 125,
+                            orderNumber: 125,
+                            date: '2025-06-24T13:30:25',
+                            customer: {
+                                id: 1,
+                                name: 'Олена Сергіївна',
+                                phone: '+38 (066) 453-45-46',
+                                email: 'elena@example.com'
+                            },
+                            status: 'new',
+                            paymentMethod: 'monobank',
+                            deliveryMethod: 'courier',
+                            deliveryAddress: 'м. Ірпінь, Київська обл., Бучанський р-н, по тарифам перевозчика',
+                            total: 126,
+                            currency: 'грн',
+                            items: [
+                                {
+                                    id: 1,
+                                    product: {
+                                        id: 1,
+                                        name: 'Сердце фольгированное красное',
+                                        price: 150
+                                    },
+                                    quantity: 1,
+                                    price: 150
+                                }
+                            ],
+                            notes: 'Новою поштою',
+                            processing: false
+                        }
+                    ] as any[],
+                    total: 1
+                });
+
+            case 'products':
+                return Promise.resolve({
+                    data: [
+                        {
+                            id: 1,
+                            brand: 'BalloonShop',
+                            title: 'Сердце фольгированное красное',
+                            price: 150,
+                            oldPrice: 200,
+                            discount: 25,
+                            image: '/images/hard.jpg',
+                            category: 'hearts',
+                            categoryId: 1,
+                            inStock: true
+                        },
+                        {
+                            id: 2,
+                            brand: 'BalloonShop',
+                            title: 'Букет "С днем рождения"',
+                            price: 450,
+                            image: '/api/placeholder/300/300',
+                            category: 'bouquets',
+                            categoryId: 2,
+                            inStock: true
+                        }
+                    ] as any[],
+                    total: 2
+                });
+
+            case 'categories':
+                return Promise.resolve({
+                    data: [
+                        { id: 1, name: 'Сердца', slug: 'hearts', description: 'Фольгированные сердца' },
+                        { id: 2, name: 'Букеты', slug: 'bouquets', description: 'Букеты из шаров' },
+                        { id: 3, name: 'Цифры', slug: 'numbers', description: 'Цифры из шаров' }
+                    ] as any[],
+                    total: 3
+                });
+
+            case 'customers':
+                return Promise.resolve({
+                    data: [
+                        {
+                            id: 1,
+                            name: 'Олена Сергіївна',
+                            email: 'elena@example.com',
+                            phone: '+38 (066) 453-45-46',
+                            address: 'м. Ірпінь, Київська обл.'
+                        }
+                    ] as any[],
+                    total: 1
+                });
+
+            case 'reviews':
+                return Promise.resolve({
+                    data: [
+                        {
+                            id: 1,
+                            date: '2025-01-22T14:45:43',
+                            customerName: 'Шановний клієнте',
+                            productName: 'Поліетилен високої щільності',
+                            rating: 5,
+                            comment: 'Ми, компанія Kayi Plastik, є надійним іменем у галузі пластмас, що базується в Стамбулі, Туреччина. Завдяки багаторічному досвіду у міжнародній торгівлі, ми успішно експортуємо високоякісні матеріали до таких країн, як Італія, Болгарія, Ірак, Північна Македонія...',
+                            status: 'pending',
+                            template: 'Сучасні пакувальні матеріали: повний огляд для бізнесу та приватного використання'
+                        },
+                        {
+                            id: 2,
+                            date: '2025-01-22T14:45:58',
+                            customerName: 'Шановний клієнте',
+                            productName: 'Поліетилен високої щільності',
+                            rating: 5,
+                            comment: 'Ми, компанія Kayi Plastik, є надійним іменем у галузі пластмас, що базується в Стамбулі, Туреччина. Завдяки багаторічному досвіду у міжнародній торгівлі, ми успішно експортуємо високоякісні матеріали до таких країн, як Італія, Болгарія, Ірак, Північна Македонія...',
+                            status: 'pending',
+                            template: 'Сучасні пакувальні матеріали: повний огляд для бізнесу та приватного використання'
+                        }
+                    ] as any[],
+                    total: 2
+                });
+
+            case 'callbacks':
+                return Promise.resolve({
+                    data: [
+                        {
+                            id: 1,
+                            name: 'Олена',
+                            phone: '+38 (097) 649-43-97',
+                            date: '2025-06-21T08:47:07',
+                            url: '/ru/struzhka-derevyna-1-kh/',
+                            status: 'new',
+                            processed: false
+                        }
+                    ] as any[],
+                    total: 1
+                });
+
+            default:
+                return Promise.resolve({ data: [] as any[], total: 0 });
+        }
+    },
+
+    getOne: (resource: string, params: any) => {
+        console.log('Getting one for resource:', resource, 'with params:', params);
+        return Promise.resolve({
+            data: { id: params.id, name: `Mock ${resource}` } as any
+        });
+    },
+
+    getMany: (resource: string, params: any) => {
+        console.log('Getting many for resource:', resource, 'with params:', params);
+        return Promise.resolve({ data: [] as any[] });
+    },
+
+    getManyReference: (resource: string, params: any) => {
+        console.log('Getting many reference for resource:', resource, 'with params:', params);
+        return Promise.resolve({ data: [] as any[], total: 0 });
+    },
+
+    create: (resource: string, params: any) => {
+        console.log('Creating for resource:', resource, 'with params:', params);
+        return Promise.resolve({ data: { ...params.data, id: Date.now() } as any });
+    },
+
+    update: (resource: string, params: any) => {
+        console.log('Updating for resource:', resource, 'with params:', params);
+        return Promise.resolve({ data: params.data as any });
+    },
+
+    updateMany: (resource: string, params: any) => {
+        console.log('Updating many for resource:', resource, 'with params:', params);
+        return Promise.resolve({ data: params.ids as any[] });
+    },
+
+    delete: (resource: string, params: any) => {
+        console.log('Deleting for resource:', resource, 'with params:', params);
+        return Promise.resolve({ data: { id: params.id } as any });
+    },
+
+    deleteMany: (resource: string, params: any) => {
+        console.log('Deleting many for resource:', resource, 'with params:', params);
+        return Promise.resolve({ data: params.ids as any[] });
+    }
+};
 
 const App = () => (
     <Admin
         dashboard={Dashboard}
-        dataProvider={customDataProvider}
-        layout={CustomLayout}
+        dataProvider={mockDataProvider}
+        title="E-commerce Admin"
+        menu={CustomMenu}
     >
-        {/* Заказы */}
+        {/* Секция "Заказы" */}
         <Resource
             name="orders"
             list={OrderList}
             edit={OrderEdit}
-            icon={ShoppingCartIcon}
             options={{ label: 'Заказы' }}
         />
-
-        {/* Комментарии и отзывы */}
-        <Resource
-            name="comments"
-            list={CommentList}
-            edit={CommentEdit}
-            show={CommentShow}
-            icon={CommentIcon}
-            options={{ label: 'Комментарии и отзывы' }}
-        />
-
-        {/* Обратный звонок */}
         <Resource
             name="callbacks"
             list={CallbackList}
             edit={CallbackEdit}
-            create={CallbackCreate}
-            show={CallbackShow}
-            icon={PhoneCallbackIcon}
             options={{ label: 'Обратный звонок' }}
         />
-
-        {/* Клиенты */}
         <Resource
-            name="customers"
-            list={CustomerList}
-            edit={CustomerEdit}
-            icon={PeopleIcon}
-            options={{ label: 'Клиенты' }}
+            name="reviews"
+            list={ReviewList}
+            edit={ReviewEdit}
+            options={{ label: 'Комментарии и отзывы' }}
         />
 
-        {/* Товары */}
+        {/* Секция "Каталог" */}
         <Resource
             name="products"
             list={ProductList}
             edit={ProductEdit}
             create={ProductCreate}
-            icon={InventoryIcon}
             options={{ label: 'Товары' }}
         />
-
-        {/* Категории (вспомогательный ресурс) */}
         <Resource
             name="categories"
             list={CategoryList}
             edit={CategoryEdit}
             create={CategoryCreate}
+            options={{ label: 'Категории' }}
         />
 
-        {/* Сайт */}
+        {/* Секция "Клиенты" */}
         <Resource
-            name="website"
-            list={WebsitePage}
-            icon={WebIcon}
-            options={{ label: 'Сайт' }}
-        />
-
-        {/* Скидки */}
-        <Resource
-            name="discounts"
-            list={DiscountList}
-            edit={DiscountEdit}
-            create={DiscountCreate}
-            icon={LocalOfferIcon}
-            options={{ label: 'Скидки' }}
-        />
-
-        {/* Маркетинг */}
-        <Resource
-            name="marketing"
-            list={MarketingPage}
-            icon={CampaignIcon}
-            options={{ label: 'Маркетинг' }}
-        />
-
-        {/* Аналитика */}
-        <Resource
-            name="analytics"
-            list={AnalyticsDashboard}
-            icon={AnalyticsIcon}
-            options={{ label: 'Аналитика' }}
-        />
-
-        {/* Настройки */}
-        <Resource
-            name="settings"
-            list={SettingsPage}
-            icon={SettingsIcon}
-            options={{ label: 'Настройки' }}
+            name="customers"
+            list={CustomerList}
+            edit={CustomerEdit}
+            options={{ label: 'Клиенты' }}
         />
     </Admin>
 );
