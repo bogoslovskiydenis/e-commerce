@@ -15,17 +15,61 @@ import {
     Reviews,
     Inventory,
     Category,
-    People
+    People,
+    Language,
+    Image,
+    Article,
+    Settings as SettingsIcon
 } from '@mui/icons-material';
 
 export const CustomMenu = (props: any) => {
-    const [ordersOpen, setOrdersOpen] = useState(true);
+    const [websiteOpen, setWebsiteOpen] = useState(false);
+    const [ordersOpen, setOrdersOpen] = useState(false);
     const [catalogOpen, setCatalogOpen] = useState(false);
     const resources = useResourceDefinitions();
 
     return (
         <Menu {...props}>
             <DashboardMenuItem />
+
+            {/* Секция Сайт */}
+            <ListItem
+                button
+                onClick={() => setWebsiteOpen(!websiteOpen)}
+                sx={{
+                    paddingLeft: 2,
+                    backgroundColor: websiteOpen ? 'rgba(0, 0, 0, 0.04)' : 'transparent'
+                }}
+            >
+                <ListItemIcon>
+                    <Language />
+                </ListItemIcon>
+                <ListItemText primary="Сайт" />
+                {websiteOpen ? <ExpandLess /> : <ExpandMore />}
+            </ListItem>
+
+            <Collapse in={websiteOpen} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                    <MenuItemLink
+                        to="/banners"
+                        primaryText="Баннеры"
+                        leftIcon={<Image fontSize="small" />}
+                        sx={{ paddingLeft: 4 }}
+                    />
+                    <MenuItemLink
+                        to="/pages"
+                        primaryText="Страницы"
+                        leftIcon={<Article fontSize="small" />}
+                        sx={{ paddingLeft: 4 }}
+                    />
+                    <MenuItemLink
+                        to="/settings/1"
+                        primaryText="Настройки сайта"
+                        leftIcon={<SettingsIcon fontSize="small" />}
+                        sx={{ paddingLeft: 4 }}
+                    />
+                </List>
+            </Collapse>
 
             {/* Секция Заказы */}
             <ListItem

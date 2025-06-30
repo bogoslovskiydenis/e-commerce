@@ -153,4 +153,158 @@ export interface Discount {
     description?: string;
 }
 
+
+export interface Banner {
+    id: string;
+    title: string;
+    subtitle?: string;
+    description?: string;
+    image: string;
+    mobileImage?: string;
+    buttonText?: string;
+    buttonUrl?: string;
+    position: 'main' | 'category' | 'sidebar' | 'promo';
+    active: boolean;
+    order: number;
+    startDate?: string;
+    endDate?: string;
+    createdAt: string;
+    updatedAt: string;
+}
+
+export interface PageContent {
+    id: string;
+    slug: string;
+    title: string;
+    content: string;
+    excerpt?: string;
+    metaTitle?: string;
+    metaDescription?: string;
+    metaKeywords?: string;
+    active: boolean;
+    template?: 'default' | 'full-width' | 'sidebar';
+    createdAt: string;
+    updatedAt: string;
+}
+
+export interface SiteSettings {
+    id: string;
+    // Основные настройки
+    siteName: string;
+    siteDescription: string;
+    siteKeywords?: string;
+    logo?: string;
+    favicon?: string;
+
+    // Дизайн
+    primaryColor: string;
+    secondaryColor: string;
+    accentColor?: string;
+    fontFamily?: string;
+
+    // Контактная информация
+    phone: string;
+    alternativePhone?: string;
+    email: string;
+    supportEmail?: string;
+    address: string;
+    workingHours: string;
+
+    // Социальные сети
+    socialMedia: {
+        facebook?: string;
+        instagram?: string;
+        telegram?: string;
+        viber?: string;
+        youtube?: string;
+        tiktok?: string;
+    };
+
+    // SEO и аналитика
+    googleAnalytics?: string;
+    googleTagManager?: string;
+    facebookPixel?: string;
+    yandexMetrica?: string;
+
+    // Настройки доставки
+    deliverySettings: {
+        freeDeliveryFrom?: number;
+        deliveryPrice?: number;
+        deliveryTime?: string;
+        deliveryInfo?: string;
+    };
+
+    // Настройки платежей
+    paymentMethods: string[];
+
+    updatedAt: string;
+}
+
+export interface MenuItem {
+    id: string;
+    title: string;
+    url: string;
+    type: 'page' | 'category' | 'external' | 'custom';
+    parentId?: string;
+    order: number;
+    active: boolean;
+    target?: '_self' | '_blank';
+    cssClass?: string;
+    icon?: string;
+}
+
+export interface NavigationMenu {
+    id: string;
+    name: string;
+    location: 'header' | 'footer' | 'sidebar' | 'mobile';
+    items: MenuItem[];
+    active: boolean;
+}
+
+export interface HomePageSettings {
+    id: string;
+    // Hero секция
+    heroTitle: string;
+    heroSubtitle?: string;
+    heroButtonText?: string;
+    heroButtonUrl?: string;
+    heroBackgroundImage?: string;
+
+    // Секции на главной
+    showFeaturedProducts: boolean;
+    featuredProductsTitle?: string;
+    showCategories: boolean;
+    categoriesTitle?: string;
+    showTestimonials: boolean;
+    testimonialsTitle?: string;
+    showFeatures: boolean;
+
+    // Блоки преимуществ
+    features: {
+        id: string;
+        title: string;
+        description: string;
+        icon?: string;
+        active: boolean;
+        order: number;
+    }[];
+
+    updatedAt: string;
+}
+
+export interface Testimonial {
+    id: string;
+    authorName: string;
+    authorAvatar?: string;
+    content: string;
+    rating: number;
+    productId?: string;
+    active: boolean;
+    featured: boolean;
+    createdAt: string;
+}
+
+
+
+
 export {};

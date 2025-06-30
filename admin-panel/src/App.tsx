@@ -1,14 +1,29 @@
 import { Admin, Resource } from 'react-admin';
 import { Dashboard } from './pages/Dashboard';
-import { ProductList, ProductEdit, ProductCreate } from './resources/products';
-import { OrderList, OrderEdit } from './resources/orders';
-import { CategoryList, CategoryEdit, CategoryCreate } from './resources/categories';
-import { CustomerList, CustomerEdit } from './resources/customers';
-import { ReviewList, ReviewEdit } from './resources/reviews';
-import { CallbackList, CallbackEdit } from './resources/callbacks';
+
+// Импорты ресурсов
+import { ProductList, ProductEdit, ProductCreate } from './resources';
+import { OrderList, OrderEdit } from './resources';
+import { CategoryList, CategoryEdit, CategoryCreate } from './resources';
+import { CustomerList, CustomerEdit } from './resources';
+import { ReviewList, ReviewEdit } from './resources';
+import { CallbackList, CallbackEdit } from './resources';
+
+// Импорты секции "Сайт"
+import {
+    BannerList,
+    BannerEdit,
+    BannerCreate,
+    PageList,
+    PageEdit,
+    PageCreate,
+    PageShow,
+    SiteSettingsEdit
+} from './resources';
+
 import { CustomMenu } from './components/CustomMenu';
 
-// Создаем провайдер данных без строгой типизации
+// Простой мок провайдер данных
 const mockDataProvider = {
     getList: (resource: string, params: any) => {
         console.log('Getting list for resource:', resource, 'with params:', params);
@@ -203,6 +218,28 @@ const App = () => (
         title="E-commerce Admin"
         menu={CustomMenu}
     >
+        {/* Секция "Сайт" */}
+        <Resource
+            name="banners"
+            list={BannerList}
+            edit={BannerEdit}
+            create={BannerCreate}
+            options={{ label: 'Баннеры' }}
+        />
+        <Resource
+            name="pages"
+            list={PageList}
+            edit={PageEdit}
+            create={PageCreate}
+            show={PageShow}
+            options={{ label: 'Страницы' }}
+        />
+        <Resource
+            name="settings"
+            edit={SiteSettingsEdit}
+            options={{ label: 'Настройки сайта' }}
+        />
+
         {/* Секция "Заказы" */}
         <Resource
             name="orders"
