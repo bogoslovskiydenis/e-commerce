@@ -8,6 +8,11 @@ import { CategoryList, CategoryEdit, CategoryCreate } from './resources';
 import { CustomerList, CustomerEdit } from './resources';
 import { ReviewList, ReviewEdit } from './resources';
 import { CallbackList, CallbackEdit } from './resources';
+import {
+    NavigationList,
+    NavigationEdit,
+    NavigationCreate
+} from './resources';
 
 // Импорты секции "Сайт"
 import {
@@ -282,6 +287,13 @@ const App = () => (
             list={CustomerList}
             edit={CustomerEdit}
             options={{ label: 'Клиенты' }}
+        />
+
+        <Resource
+            name="navigation"
+            list={NavigationList}
+            edit={NavigationEdit}
+            create={NavigationCreate}
         />
     </Admin>
 );

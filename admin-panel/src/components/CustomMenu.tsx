@@ -51,6 +51,12 @@ export const CustomMenu = (props: any) => {
             <Collapse in={websiteOpen} timeout="auto" unmountOnExit>
                 <List component="div" disablePadding>
                     <MenuItemLink
+                        to="/navigation"
+                        primaryText="Навигация"
+                        leftIcon={<Menu fontSize="small" />}
+                        sx={{ paddingLeft: 4 }}
+                    />
+                    <MenuItemLink
                         to="/banners"
                         primaryText="Баннеры"
                         leftIcon={<Image fontSize="small" />}

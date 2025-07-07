@@ -5,5 +5,4 @@ export * from './customers';
 export * from './reviews';
 export * from './callbacks';
 export * from './website';
-
-export {};
+export * from './comments';
