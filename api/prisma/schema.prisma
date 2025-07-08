@@ -1,0 +1,195 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Перечисления
+enum UserRole {
+  SUPER_ADMIN
+  ADMINISTRATOR
+  MANAGER
+  CRM_MANAGER
+}
+
+enum OrderStatus {
+  NEW
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+enum LogLevel {
+  INFO
+  WARNING
+  ERROR
+  CRITICAL
+}
+
+// Основные модели
+model User {
+  id                String    @id @default(uuid())
+  username          String    @unique
+  email             String    @unique
+  passwordHash      String    @map("password_hash")
+  fullName          String    @map("full_name")
+  role              UserRole
+  permissions       String[]
+  isActive          Boolean   @default(true) @map("is_active")
+  twoFactorEnabled  Boolean   @default(false) @map("two_factor_enabled")
+  twoFactorSecret   String?   @map("two_factor_secret")
+  avatarUrl         String?   @map("avatar_url")
+  lastLogin         DateTime? @map("last_login")
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+
+  // Связи
+  adminLogs         AdminLog[]
+  assignedOrders    Order[]   @relation("OrderManager")
+
+  @@map("users")
+}
+
+model Customer {
+  id        String   @id @default(uuid())
+  name      String
+  email     String?
+  phone     String
+  address   String?
+  notes     String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Связи
+  orders    Order[]
+
+  @@map("customers")
+}
+
+model Category {
+  id          String     @id @default(uuid())
+  name        String
+  slug        String     @unique
+  description String?
+  parentId    String?    @map("parent_id")
+  imageUrl    String?    @map("image_url")
+  isActive    Boolean    @default(true) @map("is_active")
+  sortOrder   Int        @default(0) @map("sort_order")
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+
+  // Связи
+  parent      Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children    Category[] @relation("CategoryHierarchy")
+  products    Product[]
+
+  @@map("categories")
+}
+
+model Product {
+  id               String    @id @default(uuid())
+  title            String
+  slug             String    @unique
+  description      String?
+  shortDescription String?   @map("short_description")
+  price            Decimal   @db.Decimal(10, 2)
+  oldPrice         Decimal?  @map("old_price") @db.Decimal(10, 2)
+  categoryId       String    @map("category_id")
+  brand            String?
+  sku              String?   @unique
+  images           String[]
+  attributes       Json?
+  isActive         Boolean   @default(true) @map("is_active")
+  inStock          Boolean   @default(true) @map("in_stock")
+  stockQuantity    Int       @default(0) @map("stock_quantity")
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+
+  // Связи
+  category         Category  @relation(fields: [categoryId], references: [id])
+  orderItems       OrderItem[]
+
+  @@map("products")
+}
+
+model Order {
+  id               String        @id @default(uuid())
+  orderNumber      String        @unique @map("order_number")
+  customerId       String        @map("customer_id")
+  managerId        String?       @map("manager_id")
+  status           OrderStatus   @default(NEW)
+  paymentStatus    PaymentStatus @default(PENDING) @map("payment_status")
+  paymentMethod    String?       @map("payment_method")
+  totalAmount      Decimal       @map("total_amount") @db.Decimal(10, 2)
+  shippingAddress  Json?         @map("shipping_address")
+  notes            String?
+  managerNotes     String?       @map("manager_notes")
+  source           String?
+  createdAt        DateTime      @default(now()) @map("created_at")
+  updatedAt        DateTime      @updatedAt @map("updated_at")
+
+  // Связи
+  customer         Customer      @relation(fields: [customerId], references: [id])
+  manager          User?         @relation("OrderManager", fields: [managerId], references: [id])
+  items            OrderItem[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id              String  @id @default(uuid())
+  orderId         String  @map("order_id")
+  productId       String  @map("product_id")
+  quantity        Int
+  price           Decimal @db.Decimal(10, 2)
+  total           Decimal @db.Decimal(10, 2)
+
+  // Связи
+  order           Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product         Product @relation(fields: [productId], references: [id])
+
+  @@map("order_items")
+}
+
+model AdminLog {
+  id          String   @id @default(uuid())
+  userId      String   @map("user_id")
+  action      String
+  resource    String
+  resourceId  String?  @map("resource_id")
+  description String
+  ipAddress   String   @map("ip_address")
+  userAgent   String   @map("user_agent")
+  metadata    Json?
+  level       LogLevel @default(INFO)
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  // Связи
+  user        User     @relation(fields: [userId], references: [id])
+
+  @@map("admin_logs")
+}
+
+model Setting {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  value     Json
+  type      String
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("settings")
+}

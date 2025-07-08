@@ -1,21 +1,12 @@
 {
   "name": "balloon-shop-backend",
   "version": "1.0.0",
-  "description": "Backend для админ панели интернет-магазина шариков",
-  "main": "dist/app.js",
+  "type": "module",
   "scripts": {
-    "dev": "nodemon src/app.ts",
+    "dev": "tsx app.ts",
+    "start": "tsx app.ts",
     "build": "tsc",
-    "start": "node dist/app.js",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "db:migrate": "prisma migrate dev",
-    "db:deploy": "prisma migrate deploy",
-    "db:seed": "tsx src/seeds/index.ts",
-    "db:studio": "prisma studio",
-    "db:generate": "prisma generate",
-    "lint": "eslint src/**/*.ts",
-    "lint:fix": "eslint src/**/*.ts --fix"
+    "start:prod": "node dist/app.js"
   },
   "dependencies": {
     "@prisma/client": "^5.7.1",
@@ -23,15 +14,12 @@
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
-    "express-rate-limit": "^7.1.5",
+    "express-rate-limit": "^7.5.1",
     "helmet": "^7.1.0",
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
-    "multer": "^1.4.5-lts.1",
     "redis": "^4.6.12",
-    "sharp": "^0.32.6",
     "speakeasy": "^2.0.0",
-    "uuid": "^9.0.1",
     "winston": "^3.11.0",
     "zod": "^3.22.4"
   },
@@ -41,34 +29,9 @@
     "@types/express": "^4.17.21",
     "@types/jsonwebtoken": "^9.0.5",
     "@types/morgan": "^1.9.9",
-    "@types/multer": "^1.4.11",
     "@types/node": "^20.10.5",
-    "@types/speakeasy": "^2.0.10",
-    "@types/uuid": "^9.0.7",
-    "@typescript-eslint/eslint-plugin": "^6.15.0",
-    "@typescript-eslint/parser": "^6.15.0",
-    "eslint": "^8.56.0",
-    "jest": "^29.7.0",
-    "nodemon": "^3.0.2",
     "prisma": "^5.7.1",
-    "ts-jest": "^29.1.1",
-    "ts-node": "^10.9.2",
     "tsx": "^4.6.2",
     "typescript": "^5.3.3"
-  },
-  "engines": {
-    "node": ">=18.0.0"
-  },
-  "keywords": [
-    "nodejs",
-    "typescript",
-    "express",
-    "postgresql",
-    "prisma",
-    "admin-panel",
-    "ecommerce",
-    "balloon-shop"
-  ],
-  "author": "Your Name",
-  "license": "MIT"
+  }
 }
