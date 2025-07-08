@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
-import { logger } from '../utils/logger';
+import { logger } from '@/utils/logger';
+import { config } from './index';
 
 // Расширяем глобальный объект для хранения Prisma Client в development
 declare global {
@@ -28,19 +29,19 @@ export const prisma = globalThis.__prisma ?? new PrismaClient({
     ],
     datasources: {
         db: {
-            url: process.env.DATABASE_URL,
+            url: config.databaseUrl,
         },
     },
 });
 
 // В development режиме сохраняем клиент глобально для избежания переподключений
-if (process.env.NODE_ENV !== 'production') {
+if (config.nodeEnv !== 'production') {
     globalThis.__prisma = prisma;
 }
 
 // Настройка логирования для Prisma
 prisma.$on('query', (e) => {
-    if (process.env.NODE_ENV === 'development' && process.env.LOG_QUERIES === 'true') {
+    if (config.logging.enableQueries) {
         logger.debug('Prisma Query', {
             query: e.query,
             params: e.params,
@@ -133,7 +134,31 @@ export async function withTransaction<T>(
     });
 }
 
+// Функция для очистки соединений (для graceful shutdown)
+export async function gracefulShutdown(): Promise<void> {
+    logger.info('🔄 Initiating graceful database shutdown...');
+
+    try {
+        await disconnectDatabase();
+        logger.info('✅ Graceful database shutdown completed');
+    } catch (error) {
+        logger.error('❌ Error during graceful shutdown:', error);
+        throw error;
+    }
+}
+
+// Обработчики для graceful shutdown
+process.on('SIGINT', async () => {
+    logger.info('📝 Received SIGINT, shutting down gracefully...');
+    await gracefulShutdown();
+    process.exit(0);
+});
+
+process.on('SIGTERM', async () => {
+    logger.info('📝 Received SIGTERM, shutting down gracefully...');
+    await gracefulShutdown();
+    process.exit(0);
+});
+
 // Экспорт для использования в других модулях
 export default prisma;
-
-

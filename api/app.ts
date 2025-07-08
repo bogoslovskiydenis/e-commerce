@@ -4,161 +4,213 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
 import rateLimit from 'express-rate-limit';
-import { PrismaClient } from '@prisma/client';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 
-// Импорт роутов
-import authRoutes from './src/routes/auth.routes';
-import adminRoutes from './src/routes/admin.routes';
-import apiRoutes from './src/routes/api.routes';
-
-// Импорт middleware
-import { errorHandler } from './src/middleware/error.middleware';
-import { notFound } from './src/middleware/notFound.middleware';
-import { requestLogger } from './src/middleware/logging.middleware';
-
-// Импорт утилит
-import { logger } from './src/utils/logger';
-import { connectRedis } from './src/config/redis';
-
-// Загрузка переменных окружения
+// Загрузка переменных окружения в первую очередь
 dotenv.config();
 
-// Инициализация Prisma
-export const prisma = new PrismaClient({
-    log: ['query', 'info', 'warn', 'error'],
-});
+// Импорт конфигурации и базы данных
+import { config } from '@/config';
+import { prisma, connectDatabase } from '@/config/database';
+
+// Импорт роутов
+import routes from './src/routes/index.js';
+
+// Импорт middleware
+import { errorHandler } from '@/middleware/error.middleware';
+import { notFound } from '@/middleware/notFound.middleware';
+import { requestLogger } from '@/middleware/logging.middleware';
+
+// Импорт утилит
+import { logger } from '@/utils/logger';
+
+// Определяем __filename и __dirname для ES модулей
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// Экспортируем prisma для использования в других модулях
+export { prisma };
 
 // Создание Express приложения
 const app = express();
 
 // Базовые настройки безопасности
-app.use(helmet({
-    crossOriginResourcePolicy: { policy: "cross-origin" },
-    contentSecurityPolicy: {
-        directives: {
-            defaultSrc: ["'self'"],
-            imgSrc: ["'self'", "data:", "https:"],
-            scriptSrc: ["'self'", "'unsafe-inline'"],
-            styleSrc: ["'self'", "'unsafe-inline'"],
+if (config.security.helmetEnabled) {
+    app.use(helmet({
+        crossOriginResourcePolicy: { policy: "cross-origin" },
+        contentSecurityPolicy: {
+            directives: {
+                defaultSrc: ["'self'"],
+                imgSrc: ["'self'", "data:", "https:"],
+                scriptSrc: ["'self'", "'unsafe-inline'"],
+                styleSrc: ["'self'", "'unsafe-inline'"],
+            },
         },
-    },
-}));
+    }));
+}
 
 // CORS настройки
-app.use(cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-}));
+if (config.security.corsEnabled) {
+    app.use(cors({
+        origin: config.frontendUrl,
+        credentials: true,
+        methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+        allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+    }));
+}
 
 // Rate limiting
 const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 минут
-    max: process.env.NODE_ENV === 'production' ? 100 : 1000, // лимит запросов
+    windowMs: config.security.rateLimitWindow,
+    max: config.nodeEnv === 'production' ? config.security.rateLimitMax : 1000, // Больше лимит в dev
     message: {
-        error: 'Слишком много запросов с этого IP, попробуйте позже'
+        error: 'Too many requests',
+        message: 'Please try again later'
     },
     standardHeaders: true,
     legacyHeaders: false,
 });
-app.use('/api/', limiter);
 
-// Парсинг JSON и URL-encoded данных
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.use(limiter);
 
-// HTTP логирование
-if (process.env.NODE_ENV !== 'test') {
-    app.use(morgan('combined', {
-        stream: {
-            write: (message: string) => logger.info(message.trim())
-        }
-    }));
+// Логирование запросов
+if (config.nodeEnv === 'development') {
+    app.use(morgan('dev'));
+} else {
+    app.use(morgan('combined'));
 }
+
+// Middleware для парсинга JSON
+app.use(express.json({
+    limit: '10mb',
+    strict: true
+}));
+
+app.use(express.urlencoded({
+    extended: true,
+    limit: '10mb'
+}));
 
 // Кастомное логирование запросов
 app.use(requestLogger);
 
-// Статические файлы
-app.use('/uploads', express.static('uploads'));
+// Статические файлы (для загруженных изображений)
+app.use('/uploads', express.static(config.upload.path));
 
-// Health check
-app.get('/health', (req, res) => {
-    res.status(200).json({
-        status: 'OK',
-        timestamp: new Date().toISOString(),
-        uptime: process.uptime(),
-        environment: process.env.NODE_ENV || 'development'
-    });
+// Health check endpoint
+app.get('/health', async (req, res) => {
+    try {
+        // Проверяем подключение к базе данных
+        await prisma.$queryRaw`SELECT 1`;
+
+        res.json({
+            status: 'healthy',
+            timestamp: new Date().toISOString(),
+            uptime: process.uptime(),
+            environment: config.nodeEnv,
+            version: process.env.npm_package_version || '1.0.0',
+            database: 'connected',
+            memory: process.memoryUsage()
+        });
+    } catch (error) {
+        res.status(503).json({
+            status: 'unhealthy',
+            timestamp: new Date().toISOString(),
+            error: error instanceof Error ? error.message : 'Unknown error'
+        });
+    }
 });
 
-// API routes
-app.use('/api/auth', authRoutes);
-app.use('/api/admin', adminRoutes);
-app.use('/api', apiRoutes);
+// API роуты
+app.use(config.api.prefix, routes);
 
-// Роут для проверки версии API
-app.get('/api/version', (req, res) => {
-    res.json({
-        version: '1.0.0',
-        name: 'Balloon Shop Admin API',
-        description: 'API для админ панели интернет-магазина шариков'
-    });
-});
-
-// 404 handler
+// 404 middleware
 app.use(notFound);
 
-// Error handler (должен быть последним)
+// Error handling middleware (должен быть последним)
 app.use(errorHandler);
 
-// Graceful shutdown
-process.on('SIGTERM', async () => {
-    logger.info('SIGTERM received, shutting down gracefully');
-    await prisma.$disconnect();
-    process.exit(0);
-});
-
-process.on('SIGINT', async () => {
-    logger.info('SIGINT received, shutting down gracefully');
-    await prisma.$disconnect();
-    process.exit(0);
-});
-
-// Запуск сервера
-const PORT = process.env.PORT || 3001;
-
+// Функция запуска сервера
 async function startServer() {
     try {
-        // Подключение к Redis
-        await connectRedis();
-        logger.info('Redis connected successfully');
+        logger.info('🚀 Starting Balloon Shop API server...');
 
-        // Проверка подключения к БД
-        await prisma.$connect();
-        logger.info('Database connected successfully');
+        // Подключение к Redis (опционально)
+        if (config.redisUrl) {
+            logger.info('🔄 Connecting to Redis...');
+            try {
+                const { connectRedis } = await import('./src/config/redis.js');
+                await connectRedis();
+                logger.info('✅ Redis connected successfully');
+            } catch (redisError) {
+                logger.warn('⚠️ Redis connection failed, continuing without Redis:', redisError);
+            }
+        }
 
-        // Запуск HTTP сервера
-        app.listen(PORT, () => {
-            logger.info(`🚀 Server is running on port ${PORT}`);
-            logger.info(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
-            logger.info(`🔗 Health check: http://localhost:${PORT}/health`);
+        // Подключение к базе данных
+        logger.info('🔄 Connecting to database...');
+        await connectDatabase();
 
-            if (process.env.NODE_ENV === 'development') {
-                logger.info(`📋 API docs available at: http://localhost:${PORT}/api/version`);
+        // Запуск сервера
+        const server = app.listen(config.port, () => {
+            logger.info(`🎉 Server is running on port ${config.port}`);
+            logger.info(`🌍 Environment: ${config.nodeEnv}`);
+            logger.info(`📍 API endpoint: http://localhost:${config.port}${config.api.prefix}`);
+            logger.info(`🏥 Health check: http://localhost:${config.port}/health`);
+
+            if (config.nodeEnv === 'development') {
+                logger.info(`🎯 Frontend URL: ${config.frontendUrl}`);
+                logger.info(`📝 Logs level: ${config.logging.level}`);
             }
         });
 
+        // Graceful shutdown
+        const gracefulShutdown = async (signal: string) => {
+            logger.info(`📝 Received ${signal}, shutting down gracefully...`);
+
+            server.close(async () => {
+                logger.info('✅ HTTP server closed');
+
+                try {
+                    await prisma.$disconnect();
+                    logger.info('✅ Database connection closed');
+                } catch (error) {
+                    logger.error('❌ Error closing database connection:', error);
+                }
+
+                logger.info('✅ Graceful shutdown completed');
+                process.exit(0);
+            });
+
+            // Форсируем выход если graceful shutdown не завершился за 30 секунд
+            setTimeout(() => {
+                logger.error('❌ Graceful shutdown timed out, forcing exit');
+                process.exit(1);
+            }, 30000);
+        };
+
+        // Обработчики сигналов
+        process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+        process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+
+        // Обработка необработанных ошибок
+        process.on('unhandledRejection', (reason, promise) => {
+            logger.error('❌ Unhandled Rejection at:', promise, 'reason:', reason);
+        });
+
+        process.on('uncaughtException', (error) => {
+            logger.error('❌ Uncaught Exception:', error);
+            process.exit(1);
+        });
+
     } catch (error) {
-        logger.error('Failed to start server:', error);
+        logger.error('❌ Failed to start server:', error);
         process.exit(1);
     }
 }
 
-// Запуск приложения
-if (process.env.NODE_ENV !== 'test') {
-    startServer();
-}
+// Запускаем сервер
+startServer();
 
 export default app;

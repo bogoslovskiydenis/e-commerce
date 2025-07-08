@@ -1,65 +1,41 @@
 import { Router } from 'express';
-import { authenticateToken } from '../middleware/auth.middleware';
-import { requirePermission } from '../middleware/permissions.middleware';
-import { adminActionLogger } from '../middleware/logging.middleware';
-import { DashboardController } from '../controllers/dashboard.controller';
-import { AdminUsersController } from '../controllers/adminUsers.controller';
-import { AdminLogsController } from '../controllers/adminLogs.controller';
 
 const router = Router();
 
-// Применяем аутентификацию ко всем роутам
-router.use(authenticateToken);
+router.get('/dashboard', (req, res) => {
+    res.json({
+        success: true,
+        data: {
+            stats: {
+                totalUsers: 5,
+                totalOrders: 150,
+                totalProducts: 89,
+                revenue: 25000
+            }
+        }
+    });
+});
 
-// Контроллеры
-const dashboardController = new DashboardController();
-const adminUsersController = new AdminUsersController();
-const adminLogsController = new AdminLogsController();
+router.get('/users', (req, res) => {
+    res.json({
+        success: true,
+        data: [
+            {
+                id: '1',
+                username: 'admin',
+                fullName: 'Administrator',
+                role: 'SUPER_ADMIN',
+                isActive: true
+            }
+        ]
+    });
+});
 
-// Dashboard
-router.get('/dashboard',
-    requirePermission('analytics.view'),
-    dashboardController.getStats
-);
-
-// Управление администраторами
-router.get('/users',
-    requirePermission('users.view'),
-    adminUsersController.getUsers
-);
-
-router.post('/users',
-    requirePermission('users.create'),
-    adminActionLogger('create', 'admin_user'),
-    adminUsersController.createUser
-);
-
-router.get('/users/:id',
-    requirePermission('users.view'),
-    adminUsersController.getUser
-);
-
-router.put('/users/:id',
-    requirePermission('users.edit'),
-    adminActionLogger('edit', 'admin_user'),
-    adminUsersController.updateUser
-);
-
-router.delete('/users/:id',
-    requirePermission('users.delete'),
-    adminActionLogger('delete', 'admin_user'),
-    adminUsersController.deleteUser
-);
-
-// Логи
-router.get('/logs',
-    requirePermission('logs.view'),
-    adminLogsController.getLogs
-);
-
-router.get('/logs/:id',
-    requirePermission('logs.view'),
-    adminLogsController.getLog
-);
+router.get('/test', (req, res) => {
+    res.json({
+        success: true,
+        message: 'Admin route working'
+    });
+});
 
 export default router;
