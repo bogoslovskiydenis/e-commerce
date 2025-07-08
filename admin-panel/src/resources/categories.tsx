@@ -1,5 +1,15 @@
-import {Create, Datagrid, Edit, EditButton, List, required, SimpleForm, TextField, TextInput} from "react-admin";
-
+import React from 'react';
+import {
+    Create,
+    Datagrid,
+    Edit,
+    EditButton,
+    List,
+    required,
+    SimpleForm,
+    TextField,
+    TextInput
+} from "react-admin";
 
 export const CategoryList = () => (
     <List>

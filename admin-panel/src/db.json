@@ -1,0 +1,228 @@
+{
+  "orders": [
+    {
+      "id": "125",
+      "createdAt": "2025-06-24T13:30:25",
+      "customer": {
+        "name": "Молчук Олена Сергіївна",
+        "phone": "+38 (067) 453-45-46",
+        "email": "elena@example.com"
+      },
+      "totalAmount": 126,
+      "itemsCount": 1,
+      "status": "new",
+      "paymentStatus": "paid",
+      "paymentMethod": "Онлайн-оплата банковской картой",
+      "deliveryMethod": "Новою поштою",
+      "deliveryAddress": "м. Ірпінь (Київська обл., Бучанський р-н.), по тарифам перевозчика",
+      "source": "Чек",
+      "manager": "Дмитро",
+      "comment": "",
+      "commentCustomer": "",
+      "items": [
+        {
+          "productId": "1",
+          "productName": "Фольгированное сердце",
+          "quantity": 1,
+          "price": 126,
+          "total": 126
+        }
+      ]
+    },
+    {
+      "id": "124",
+      "createdAt": "2025-06-24T12:31:38",
+      "customer": {
+        "name": "Юрій",
+        "phone": "+38 (050) 502-16-13",
+        "email": "yuriy@example.com"
+      },
+      "totalAmount": 1080,
+      "itemsCount": 3,
+      "status": "processing",
+      "paymentStatus": "paid",
+      "paymentMethod": "Онлайн-оплата банковской картой",
+      "deliveryMethod": "Новою поштою",
+      "deliveryAddress": "г. Ивано-Франковск, по тарифам перевозчика",
+      "source": "Чек",
+      "manager": "Дмитро",
+      "comment": "Отправлен",
+      "commentCustomer": "",
+      "items": [
+        {
+          "productId": "2",
+          "productName": "Букет из шаров",
+          "quantity": 3,
+          "price": 360,
+          "total": 1080
+        }
+      ]
+    },
+    {
+      "id": "123",
+      "createdAt": "2025-06-23T16:55:19",
+      "customer": {
+        "name": "Шепель Марія",
+        "phone": "+38 (050) 397-77-74",
+        "email": "maria@example.com"
+      },
+      "totalAmount": 504,
+      "itemsCount": 4,
+      "status": "new",
+      "paymentStatus": "pending",
+      "paymentMethod": "Безналичный расчет",
+      "deliveryMethod": "Почтомат Новой почты",
+      "deliveryAddress": "с. Софиевская Борщаговка (Киевская обл., Бучанский р-н.)",
+      "source": "Сайт",
+      "manager": "Дмитро",
+      "comment": "Изменить",
+      "commentCustomer": "Не доставлен",
+      "items": [
+        {
+          "productId": "1",
+          "productName": "Фольгированное сердце",
+          "quantity": 4,
+          "price": 126,
+          "total": 504
+        }
+      ]
+    }
+  ],
+  "comments": [
+    {
+      "id": "1",
+      "subject": "Пропозиція для CRP100B - Поліетилен високої щільності",
+      "content": "Шановний клієнте, Ми, компанія Каул Plastik, є надійним іменем у галузі пластмас, що базується в Стамбулі, Туреччина. Завдяки багаторічному досвіду у міжнародній торгівлі, ми успішно експортуємо високоякісні матеріали до таких країн, як Італія, Болгарія, Ірак, Північна Македо...",
+      "status": "new",
+      "type": "comment",
+      "author": {
+        "name": "Шановний клієнте",
+        "email": "info@kaulplastik.com",
+        "phone": "+90 212 555 0123"
+      },
+      "user": {
+        "name": "гоуд",
+        "role": "guest"
+      },
+      "recordType": "Сучасні пакувальні матеріали: повний огляд для бізнесу та приватного використання",
+      "recordId": "CRP100B",
+      "template": "Новости",
+      "isVisible": false,
+      "createdAt": "2025-01-22T14:45:43",
+      "moderatorNote": ""
+    },
+    {
+      "id": "2",
+      "subject": "Пропозиція для CRP100B - Поліетилен високої щільності",
+      "content": "Шановний клієнте, Ми, компанія Каул Plastik, є надійним іменем у галузі пластмас, що базується в Стамбулі, Туреччина. Завдяки багаторічному досвіду у міжнародній торгівлі, ми успішно експортуємо високоякісні матеріали до таких країн, як Італія, Болгарія, Ірак, Північна Македо...",
+      "status": "new",
+      "type": "comment",
+      "author": {
+        "name": "Шановний клієнте",
+        "email": "info@kaulplastik.com",
+        "phone": "+90 212 555 0123"
+      },
+      "user": {
+        "name": "гоуд",
+        "role": "guest"
+      },
+      "recordType": "Сучасні пакувальні матеріали: повний огляд для бізнесу та приватного використання",
+      "recordId": "CRP100B",
+      "template": "Новости",
+      "isVisible": false,
+      "createdAt": "2025-01-22T14:45:58",
+      "moderatorNote": ""
+    }
+  ],
+  "callbacks": [
+    {
+      "id": "1",
+      "name": "Олена",
+      "phone": "+38 (097) 649-43-97",
+      "email": "elena@example.com",
+      "status": "new",
+      "url": "/u/atruzka-derevna-1-kh/",
+      "callbackTime": null,
+      "manager": "",
+      "comment": "",
+      "managerNote": "",
+      "priority": "medium",
+      "createdAt": "2025-06-21T08:47:07"
+    }
+  ],
+  "customers": [
+    {
+      "id": "1",
+      "name": "Молчук Олена Сергіївна",
+      "email": "elena@example.com",
+      "phone": "+38 (067) 453-45-46",
+      "address": "м. Ірпінь (Київська обл., Бучанський р-н.)",
+      "createdAt": "2025-06-20T10:00:00"
+    },
+    {
+      "id": "2",
+      "name": "Олена",
+      "email": "elena2@example.com",
+      "phone": "+38 (097) 649-43-97",
+      "address": "",
+      "createdAt": "2025-06-21T08:47:07"
+    }
+  ],
+  "products": [
+    {
+      "id": "1",
+      "brand": "Шарики",
+      "title": "Фольгированное сердце красное",
+      "price": 150,
+      "oldPrice": 200,
+      "discount": 25,
+      "category": "hearts",
+      "categoryId": "1",
+      "image": "/images/heart-red.jpg",
+      "description": "Красивое фольгированное сердце для романтических событий",
+      "inStock": true,
+      "createdAt": "2025-06-01T10:00:00"
+    },
+    {
+      "id": "2",
+      "brand": "Шарики",
+      "title": "Букет из шаров с днем рождения",
+      "price": 450,
+      "category": "bouquets",
+      "categoryId": "2",
+      "image": "/images/bouquet-birthday.jpg",
+      "description": "Готовый букет из разноцветных шаров",
+      "inStock": true,
+      "createdAt": "2025-06-01T10:00:00"
+    }
+  ],
+  "categories": [
+    {
+      "id": "1",
+      "name": "Сердца",
+      "slug": "hearts",
+      "description": "Фольгированные шары в форме сердца"
+    },
+    {
+      "id": "2",
+      "name": "Букеты",
+      "slug": "bouquets",
+      "description": "Готовые букеты из воздушных шаров"
+    }
+  ],
+  "discounts": [
+    {
+      "id": "1",
+      "name": "Летняя скидка",
+      "code": "SUMMER2025",
+      "value": 15,
+      "type": "percentage",
+      "startDate": "2025-06-01",
+      "endDate": "2025-08-31",
+      "minOrderAmount": 500,
+      "usageLimit": 100,
+      "active": true,
+      "description": "Скидка 15% на все товары летом"
+    }
+  ]
+}
