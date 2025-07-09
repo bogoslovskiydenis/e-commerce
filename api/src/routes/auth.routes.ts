@@ -3,6 +3,10 @@ import { validate } from '../middleware/validation.middleware.js';
 import { authenticateToken, AuthenticatedRequest } from '../middleware/auth.middleware.js';
 import { z } from 'zod';
 import { Request, Response } from 'express';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import { prisma } from '../config/database.js';
+import { config } from '../config/index.js';
 
 const router = Router();
 
@@ -15,111 +19,61 @@ const loginSchema = z.object({
     })
 });
 
-// Схема для смены пароля
-const changePasswordSchema = z.object({
-    body: z.object({
-        currentPassword: z.string().min(1, 'Current password is required'),
-        newPassword: z.string().min(6, 'New password must be at least 6 characters')
-    })
-});
-
-// Схема для обновления профиля
-const updateProfileSchema = z.object({
-    body: z.object({
-        fullName: z.string().optional(),
-        email: z.string().email().optional(),
-        avatar: z.string().optional()
-    })
-});
-
-// Схема для 2FA кодов
-const twoFactorCodeSchema = z.object({
-    body: z.object({
-        code: z.string().length(6, '2FA code must be 6 digits')
-    })
-});
-
-// Мок данные пользователей (в реальном проекте будет база данных)
-const USERS = [
-    {
-        id: '1',
-        username: 'admin',
-        password: 'admin123', // В реальности должен быть хеш
-        email: 'admin@example.com',
-        fullName: 'Супер Администратор',
-        role: 'SUPER_ADMIN',
-        permissions: ['admin.full_access'],
-        active: true,
-        twoFactorEnabled: false,
-        twoFactorSecret: null,
-        lastLogin: null,
-        createdAt: '2024-01-01T00:00:00Z'
-    },
-    {
-        id: '2',
-        username: 'manager',
-        password: 'manager123',
-        email: 'manager@example.com',
-        fullName: 'Иван Менеджеров',
-        role: 'ADMINISTRATOR',
-        permissions: [
-            'products.create', 'products.edit', 'products.delete', 'products.view',
-            'categories.create', 'categories.edit', 'categories.delete', 'categories.view',
-            'users.create', 'users.edit', 'users.view',
-            'website.banners', 'website.pages', 'website.navigation',
-            'analytics.view'
-        ],
-        active: true,
-        twoFactorEnabled: false,
-        twoFactorSecret: null,
-        lastLogin: null,
-        createdAt: '2024-01-01T00:00:00Z'
-    },
-    {
-        id: '3',
-        username: 'operator',
-        password: 'operator123',
-        email: 'operator@example.com',
-        fullName: 'Анна Операторова',
-        role: 'MANAGER',
-        permissions: [
-            'orders.view', 'orders.edit',
-            'callbacks.view', 'callbacks.edit',
-            'reviews.view', 'reviews.edit',
-            'customers.view', 'customers.edit',
-            'products.view', 'analytics.basic'
-        ],
-        active: true,
-        twoFactorEnabled: true,
-        twoFactorSecret: 'JBSWY3DPEHPK3PXP', // Мок секрет для 2FA
-        lastLogin: null,
-        createdAt: '2024-01-01T00:00:00Z'
-    }
-];
-
 // Утилиты для работы с токенами
-const generateToken = (userId: string) => {
-    // В реальности использовать JWT
-    return `token_${userId}_${Date.now()}`;
+const generateToken = (userId: string, username: string, role: string, permissions: string[]) => {
+    return jwt.sign(
+        {
+            id: userId,
+            username,
+            role,
+            permissions
+        },
+        config.jwtSecret,
+        { expiresIn: config.jwtExpiresIn }
+    );
 };
 
 const generateRefreshToken = (userId: string) => {
-    return `refresh_${userId}_${Date.now()}`;
+    return jwt.sign(
+        { id: userId },
+        config.jwtRefreshSecret,
+        { expiresIn: config.jwtRefreshExpiresIn }
+    );
 };
 
-// Логин
-router.post('/login', validate(loginSchema), (req: Request, res: Response) => {
+// Утилита для проверки пароля
+const verifyPassword = async (password: string, hash: string): Promise<boolean> => {
+    return await bcrypt.compare(password, hash);
+};
+
+
+
+// Основной логин endpoint
+router.post('/login', validate(loginSchema), async (req: Request, res: Response) => {
     try {
         const { username, password, twoFactorCode } = req.body;
 
         console.log('🔐 Попытка входа:', { username });
 
-        // Поиск пользователя
-        const user = USERS.find(u =>
-            (u.username === username || u.email === username) && u.password === password
-        );
+        // Поиск пользователя в базе данных
+        const user = await prisma.user.findFirst({
+            where: {
+                OR: [
+                    { username: username },
+                    { email: username }
+                ]
+            }
+        });
+
+        console.log('🔍 Пользователь найден:', user ? {
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            isActive: user.isActive
+        } : 'НЕ НАЙДЕН');
 
         if (!user) {
+            console.log('❌ Пользователь не найден');
             return res.status(401).json({
                 success: false,
                 error: 'Invalid credentials',
@@ -127,7 +81,23 @@ router.post('/login', validate(loginSchema), (req: Request, res: Response) => {
             });
         }
 
-        if (!user.active) {
+        // Проверка пароля
+        console.log('🔍 Проверяем пароль...');
+        const passwordValid = await verifyPassword(password, user.passwordHash);
+        console.log('🔍 Результат проверки пароля:', passwordValid);
+
+        if (!passwordValid) {
+            console.log('❌ Неверный пароль');
+            return res.status(401).json({
+                success: false,
+                error: 'Invalid credentials',
+                message: 'Неверный логин или пароль'
+            });
+        }
+
+        // Проверка активности аккаунта
+        if (!user.isActive) {
+            console.log('❌ Аккаунт неактивен');
             return res.status(403).json({
                 success: false,
                 error: 'Account disabled',
@@ -135,7 +105,7 @@ router.post('/login', validate(loginSchema), (req: Request, res: Response) => {
             });
         }
 
-        // Проверка 2FA
+        // Проверка 2FA (упрощенная)
         if (user.twoFactorEnabled) {
             if (!twoFactorCode) {
                 return res.json({
@@ -145,7 +115,6 @@ router.post('/login', validate(loginSchema), (req: Request, res: Response) => {
                 });
             }
 
-            // Простая проверка 2FA (в реальности использовать TOTP)
             if (twoFactorCode !== '123456') {
                 return res.status(401).json({
                     success: false,
@@ -156,14 +125,33 @@ router.post('/login', validate(loginSchema), (req: Request, res: Response) => {
         }
 
         // Обновляем время последнего входа
-        user.lastLogin = new Date().toISOString();
+        await prisma.user.update({
+            where: { id: user.id },
+            data: { lastLogin: new Date() }
+        });
 
         // Создаем токены
-        const token = generateToken(user.id);
+        const token = generateToken(user.id, user.username, user.role, user.permissions);
         const refreshToken = generateRefreshToken(user.id);
 
-        // Убираем пароль из ответа
-        const { password: _, twoFactorSecret: __, ...userWithoutSecrets } = user;
+        // Сохраняем refresh token в базе данных (если таблица существует)
+        try {
+            await prisma.userSession.create({
+                data: {
+                    userId: user.id,
+                    refreshToken,
+                    expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 дней
+                    ipAddress: req.ip,
+                    userAgent: req.get('User-Agent')
+                }
+            });
+        } catch (sessionError) {
+            console.log('⚠️ Не удалось сохранить сессию:', sessionError.message);
+            // Продолжаем без сохранения сессии
+        }
+
+        // Убираем секретные данные из ответа
+        const { passwordHash, twoFactorSecret, ...userWithoutSecrets } = user;
 
         console.log('✅ Успешный вход:', userWithoutSecrets);
 
@@ -187,34 +175,212 @@ router.post('/login', validate(loginSchema), (req: Request, res: Response) => {
     }
 });
 
-// Обновление токена
-router.post('/refresh', (req: Request, res: Response) => {
+// Получить информацию о текущем пользователе
+router.get('/me', authenticateToken, async (req: AuthenticatedRequest, res: Response) => {
     try {
-        const { refreshToken } = req.body;
-
-        if (!refreshToken || !refreshToken.startsWith('refresh_')) {
+        if (!req.user) {
             return res.status(401).json({
                 success: false,
-                error: 'Invalid refresh token'
+                error: 'User not authenticated'
             });
         }
 
-        // Извлекаем ID пользователя из токена (упрощенно)
-        const userId = refreshToken.split('_')[1];
-        const user = USERS.find(u => u.id === userId);
+        const user = await prisma.user.findUnique({
+            where: { id: req.user.id }
+        });
 
-        if (!user || !user.active) {
+        if (!user || !user.isActive) {
             return res.status(401).json({
                 success: false,
                 error: 'User not found or inactive'
             });
         }
 
+        const { passwordHash, twoFactorSecret, ...userWithoutSecrets } = user;
+
+        res.json({
+            success: true,
+            data: userWithoutSecrets
+        });
+
+    } catch (error) {
+        console.error('Ошибка получения информации о пользователе:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Internal server error'
+        });
+    }
+});
+
+// Выход
+router.post('/logout', authenticateToken, async (req: AuthenticatedRequest, res: Response) => {
+    try {
+        const { refreshToken } = req.body;
+
+        if (refreshToken) {
+            try {
+                // Удаляем сессию из базы данных
+                await prisma.userSession.deleteMany({
+                    where: {
+                        refreshToken,
+                        userId: req.user?.id
+                    }
+                });
+            } catch (sessionError) {
+                console.log('⚠️ Не удалось удалить сессию:', sessionError.message);
+            }
+        }
+
+        console.log('👋 Выход пользователя:', req.user?.username);
+
+        res.json({
+            success: true,
+            message: 'Logged out successfully'
+        });
+    } catch (error) {
+        console.error('Ошибка при выходе:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Internal server error'
+        });
+    }
+});
+
+router.post('/create-hash', async (req: Request, res: Response) => {
+    try {
+        const password = 'admin123';
+        const saltRounds = 12;
+
+        console.log('🔧 Создание хеша для пароля:', password);
+
+        const hash = await bcrypt.hash(password, saltRounds);
+        console.log('✅ Сгенерированный хеш:', hash);
+
+        // Проверяем, что хеш работает
+        const isValid = await bcrypt.compare(password, hash);
+        console.log('🔍 Проверка хеша:', isValid);
+
+        // Обновляем всех пользователей
+        const updateResult = await prisma.user.updateMany({
+            where: {
+                username: {
+                    in: ['admin', 'manager', 'operator']
+                }
+            },
+            data: {
+                passwordHash: hash
+            }
+        });
+
+        console.log('📊 Обновлено пользователей:', updateResult.count);
+
+        return res.json({
+            success: true,
+            message: 'Пароли обновлены',
+            data: {
+                newHash: hash,
+                isValid: isValid,
+                updatedUsers: updateResult.count
+            }
+        });
+
+    } catch (error) {
+        console.error('❌ Ошибка создания хеша:', error);
+        return res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+});
+
+router.post('/refresh', async (req: Request, res: Response) => {
+    try {
+        const { refreshToken } = req.body;
+
+        if (!refreshToken) {
+            return res.status(401).json({
+                success: false,
+                error: 'Refresh token required'
+            });
+        }
+
+        // Проверяем refresh token в базе данных
+        let session;
+        try {
+            session = await prisma.userSession.findUnique({
+                where: { refreshToken },
+                include: { user: true }
+            });
+        } catch (sessionError) {
+            console.log('⚠️ UserSession table not found, using simple JWT verify');
+
+            // Если таблицы нет, проверяем JWT напрямую
+            try {
+                const decoded = jwt.verify(refreshToken, config.jwtRefreshSecret) as any;
+                const user = await prisma.user.findUnique({
+                    where: { id: decoded.id }
+                });
+
+                if (!user || !user.isActive) {
+                    return res.status(401).json({
+                        success: false,
+                        error: 'User not found or inactive'
+                    });
+                }
+
+                // Создаем новые токены
+                const newToken = generateToken(user.id, user.username, user.role, user.permissions);
+                const newRefreshToken = generateRefreshToken(user.id);
+
+                const { passwordHash, twoFactorSecret, ...userWithoutSecrets } = user;
+
+                return res.json({
+                    success: true,
+                    data: {
+                        token: newToken,
+                        refreshToken: newRefreshToken,
+                        user: userWithoutSecrets
+                    }
+                });
+
+            } catch (jwtError) {
+                return res.status(401).json({
+                    success: false,
+                    error: 'Invalid refresh token'
+                });
+            }
+        }
+
+        if (!session || session.expiresAt < new Date()) {
+            return res.status(401).json({
+                success: false,
+                error: 'Invalid or expired refresh token'
+            });
+        }
+
+        const user = session.user;
+
+        if (!user.isActive) {
+            return res.status(401).json({
+                success: false,
+                error: 'User inactive'
+            });
+        }
+
         // Создаем новые токены
-        const newToken = generateToken(user.id);
+        const newToken = generateToken(user.id, user.username, user.role, user.permissions);
         const newRefreshToken = generateRefreshToken(user.id);
 
-        const { password: _, twoFactorSecret: __, ...userWithoutSecrets } = user;
+        // Обновляем сессию
+        await prisma.userSession.update({
+            where: { id: session.id },
+            data: {
+                refreshToken: newRefreshToken,
+                expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+            }
+        });
+
+        const { passwordHash, twoFactorSecret, ...userWithoutSecrets } = user;
 
         res.json({
             success: true,
@@ -234,18 +400,18 @@ router.post('/refresh', (req: Request, res: Response) => {
     }
 });
 
-// Выход
-router.post('/logout', authenticateToken, (req: AuthenticatedRequest, res: Response) => {
+router.post('/admin/logs', authenticateToken, async (req: AuthenticatedRequest, res: Response) => {
     try {
-        // В реальности здесь можно добавить токен в blacklist
-        console.log('👋 Выход пользователя:', req.user?.username);
+        console.log('📝 Admin log request from:', req.user?.username);
 
+        // Пока что просто возвращаем успех, позже можно добавить реальное логирование
         res.json({
             success: true,
-            message: 'Logged out successfully'
+            message: 'Log recorded'
         });
+
     } catch (error) {
-        console.error('Ошибка при выходе:', error);
+        console.error('❌ Admin log error:', error);
         res.status(500).json({
             success: false,
             error: 'Internal server error'
@@ -253,34 +419,19 @@ router.post('/logout', authenticateToken, (req: AuthenticatedRequest, res: Respo
     }
 });
 
-// Получить информацию о текущем пользователе
-router.get('/me', authenticateToken, (req: AuthenticatedRequest, res: Response) => {
+// Получение логов (заглушка)
+router.get('/admin/logs', authenticateToken, async (req: AuthenticatedRequest, res: Response) => {
     try {
-        if (!req.user) {
-            return res.status(401).json({
-                success: false,
-                error: 'User not authenticated'
-            });
-        }
+        console.log('📋 Get logs request from:', req.user?.username);
 
-        const user = USERS.find(u => u.id === req.user!.id);
-
-        if (!user || !user.active) {
-            return res.status(401).json({
-                success: false,
-                error: 'User not found or inactive'
-            });
-        }
-
-        const { password: _, twoFactorSecret: __, ...userWithoutSecrets } = user;
-
+        // Заглушка - возвращаем пустой массив логов
         res.json({
             success: true,
-            data: userWithoutSecrets
+            data: []
         });
 
     } catch (error) {
-        console.error('Ошибка получения информации о пользователе:', error);
+        console.error('❌ Get logs error:', error);
         res.status(500).json({
             success: false,
             error: 'Internal server error'
@@ -288,241 +439,76 @@ router.get('/me', authenticateToken, (req: AuthenticatedRequest, res: Response) 
     }
 });
 
-// Обновить профиль
-router.patch('/profile', authenticateToken, validate(updateProfileSchema), (req: AuthenticatedRequest, res: Response) => {
+// DEBUG ENDPOINT - временный для диагностики
+router.post('/debug-login', async (req: Request, res: Response) => {
     try {
-        if (!req.user) {
-            return res.status(401).json({
-                success: false,
-                error: 'User not authenticated'
-            });
-        }
+        const { username, password } = req.body;
 
-        const user = USERS.find(u => u.id === req.user!.id);
+        console.log('🔍 DEBUG: Login attempt:', { username, password });
+
+        // Поиск пользователя
+        const user = await prisma.user.findFirst({
+            where: {
+                OR: [
+                    { username: username },
+                    { email: username }
+                ]
+            }
+        });
+
+        console.log('🔍 DEBUG: User found:', user ? {
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            passwordHashStart: user.passwordHash.substring(0, 30),
+            isActive: user.isActive
+        } : 'NOT FOUND');
 
         if (!user) {
-            return res.status(404).json({
+            return res.json({
                 success: false,
-                error: 'User not found'
+                debug: 'User not found',
+                searchedUsername: username
             });
         }
 
-        // Обновляем профиль
-        const { fullName, email, avatar } = req.body;
+        // Проверка пароля с помощью bcrypt
+        console.log('🔍 DEBUG: Checking password with bcrypt...');
+        console.log('🔍 DEBUG: Provided password:', password);
+        console.log('🔍 DEBUG: Stored hash start:', user.passwordHash.substring(0, 30));
 
-        if (fullName !== undefined) user.fullName = fullName;
-        if (email !== undefined) user.email = email;
-        if (avatar !== undefined) user.avatar = avatar;
+        const passwordValid = await bcrypt.compare(password, user.passwordHash);
 
-        const { password: _, twoFactorSecret: __, ...userWithoutSecrets } = user;
+        console.log('🔍 DEBUG: Bcrypt result:', passwordValid);
 
-        console.log('✏️ Обновление профиля:', userWithoutSecrets);
+        // Дополнительные проверки
+        const testPassword = 'admin123';
+        const testHash = '$2b$12$LQv3c1yqBwEHFx8.9rI2HO2yfuZ/5P8bC2Qht9HQ5/9FG5M6y7K7K';
+        const testResult = await bcrypt.compare(testPassword, testHash);
 
-        res.json({
+        console.log('🔍 DEBUG: Test admin123 against known hash:', testResult);
+
+        return res.json({
             success: true,
-            data: userWithoutSecrets,
-            message: 'Профиль успешно обновлен'
+            debug: {
+                userFound: true,
+                username: user.username,
+                email: user.email,
+                isActive: user.isActive,
+                providedPassword: password,
+                storedHashStart: user.passwordHash.substring(0, 30),
+                bcryptResult: passwordValid,
+                testResult: testResult,
+                hashMatches: user.passwordHash === testHash
+            }
         });
 
     } catch (error) {
-        console.error('Ошибка обновления профиля:', error);
-        res.status(500).json({
+        console.error('❌ DEBUG: Error:', error);
+        return res.status(500).json({
             success: false,
-            error: 'Internal server error'
-        });
-    }
-});
-
-// Смена пароля
-router.post('/change-password', authenticateToken, validate(changePasswordSchema), (req: AuthenticatedRequest, res: Response) => {
-    try {
-        if (!req.user) {
-            return res.status(401).json({
-                success: false,
-                error: 'User not authenticated'
-            });
-        }
-
-        const user = USERS.find(u => u.id === req.user!.id);
-
-        if (!user) {
-            return res.status(404).json({
-                success: false,
-                error: 'User not found'
-            });
-        }
-
-        const { currentPassword, newPassword } = req.body;
-
-        // Проверяем текущий пароль
-        if (user.password !== currentPassword) {
-            return res.status(400).json({
-                success: false,
-                error: 'Invalid current password',
-                message: 'Неверный текущий пароль'
-            });
-        }
-
-        // Обновляем пароль
-        user.password = newPassword; // В реальности нужно хешировать
-
-        console.log('🔑 Смена пароля пользователя:', user.username);
-
-        res.json({
-            success: true,
-            message: 'Пароль успешно изменен'
-        });
-
-    } catch (error) {
-        console.error('Ошибка смены пароля:', error);
-        res.status(500).json({
-            success: false,
-            error: 'Internal server error'
-        });
-    }
-});
-
-// Настройка 2FA
-router.post('/2fa/setup', authenticateToken, (req: AuthenticatedRequest, res: Response) => {
-    try {
-        if (!req.user) {
-            return res.status(401).json({
-                success: false,
-                error: 'User not authenticated'
-            });
-        }
-
-        const user = USERS.find(u => u.id === req.user!.id);
-
-        if (!user) {
-            return res.status(404).json({
-                success: false,
-                error: 'User not found'
-            });
-        }
-
-        // Генерируем секрет для 2FA (в реальности использовать speakeasy)
-        const secret = 'JBSWY3DPEHPK3PXP'; // Мок секрет
-        user.twoFactorSecret = secret;
-
-        const qrCodeUrl = `otpauth://totp/ShopAdmin:${user.username}?secret=${secret}&issuer=ShopAdmin`;
-
-        console.log('🔐 Настройка 2FA для:', user.username);
-
-        res.json({
-            success: true,
-            data: {
-                secret,
-                qrCodeUrl,
-                manualEntryKey: secret
-            },
-            message: 'QR код для настройки 2FA сгенерирован'
-        });
-
-    } catch (error) {
-        console.error('Ошибка настройки 2FA:', error);
-        res.status(500).json({
-            success: false,
-            error: 'Internal server error'
-        });
-    }
-});
-
-// Подтверждение 2FA
-router.post('/2fa/verify', authenticateToken, validate(twoFactorCodeSchema), (req: AuthenticatedRequest, res: Response) => {
-    try {
-        if (!req.user) {
-            return res.status(401).json({
-                success: false,
-                error: 'User not authenticated'
-            });
-        }
-
-        const user = USERS.find(u => u.id === req.user!.id);
-
-        if (!user) {
-            return res.status(404).json({
-                success: false,
-                error: 'User not found'
-            });
-        }
-
-        const { code } = req.body;
-
-        // Простая проверка кода (в реальности использовать TOTP верификацию)
-        if (code !== '123456') {
-            return res.status(400).json({
-                success: false,
-                error: 'Invalid 2FA code',
-                message: 'Неверный код 2FA'
-            });
-        }
-
-        // Включаем 2FA
-        user.twoFactorEnabled = true;
-
-        console.log('✅ 2FA включен для:', user.username);
-
-        res.json({
-            success: true,
-            message: 'Двухфакторная аутентификация успешно включена'
-        });
-
-    } catch (error) {
-        console.error('Ошибка верификации 2FA:', error);
-        res.status(500).json({
-            success: false,
-            error: 'Internal server error'
-        });
-    }
-});
-
-// Отключение 2FA
-router.post('/2fa/disable', authenticateToken, validate(twoFactorCodeSchema), (req: AuthenticatedRequest, res: Response) => {
-    try {
-        if (!req.user) {
-            return res.status(401).json({
-                success: false,
-                error: 'User not authenticated'
-            });
-        }
-
-        const user = USERS.find(u => u.id === req.user!.id);
-
-        if (!user) {
-            return res.status(404).json({
-                success: false,
-                error: 'User not found'
-            });
-        }
-
-        const { code } = req.body;
-
-        // Проверяем код для отключения
-        if (code !== '123456') {
-            return res.status(400).json({
-                success: false,
-                error: 'Invalid 2FA code',
-                message: 'Неверный код 2FA'
-            });
-        }
-
-        // Отключаем 2FA
-        user.twoFactorEnabled = false;
-        user.twoFactorSecret = null;
-
-        console.log('❌ 2FA отключен для:', user.username);
-
-        res.json({
-            success: true,
-            message: 'Двухфакторная аутентификация отключена'
-        });
-
-    } catch (error) {
-        console.error('Ошибка отключения 2FA:', error);
-        res.status(500).json({
-            success: false,
-            error: 'Internal server error'
+            debug: 'Exception occurred',
+            error: error.message
         });
     }
 });

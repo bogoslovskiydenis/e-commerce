@@ -15,7 +15,7 @@ export interface User {
 }
 
 // API базовый URL - можно вынести в переменные окружения
-const API_BASE_URL = 'http://localhost:3000/api';
+const API_BASE_URL = 'http://localhost:3001/api';
 
 // Утилиты для работы с токенами
 const TOKEN_KEY = 'auth_token';

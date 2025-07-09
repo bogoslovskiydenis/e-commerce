@@ -811,3 +811,512 @@
 {"timestamp":"2025-07-09T08:18:06.429Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/?page=1&limit=25&sortBy=createdAt&sortOrder=desc","statusCode":404,"duration":"0ms","ip":"::1"}
 {"timestamp":"2025-07-09T08:18:06.431Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/api/auth/me","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
 {"timestamp":"2025-07-09T08:18:06.432Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/me","statusCode":200,"duration":"1ms","ip":"::1"}
+{"timestamp":"2025-07-09T12:52:12.213Z","level":"info","message":"🚀 Starting Balloon Shop API server...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T12:52:12.214Z","level":"info","message":"🔄 Connecting to Redis...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T12:52:12.424Z","level":"info","message":"🔄 Redis Client Connecting...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T12:52:12.438Z","level":"info","message":"✅ Redis Client Ready","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T12:52:12.439Z","level":"info","message":"✅ Redis connected and ping successful","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T12:52:12.439Z","level":"info","message":"✅ Redis connected successfully","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T12:52:12.439Z","level":"info","message":"🔄 Connecting to database...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T12:52:12.442Z","level":"info","message":"Prisma Info Starting a postgresql pool with 17 connections.","service":"balloon-shop-backend","target":"quaint::pooled"}
+{"timestamp":"2025-07-09T12:52:12.447Z","level":"error","message":"❌ Database connection failed: Can't reach database server at `localhost:5432`\n\nPlease make sure your database server is running at `localhost:5432`.","service":"balloon-shop-backend","name":"PrismaClientInitializationError","clientVersion":"5.22.0","errorCode":"P1001","stack":"PrismaClientInitializationError: Can't reach database server at `localhost:5432`\n\nPlease make sure your database server is running at `localhost:5432`.\n    at t (/Users/denisbogoslovskiy/WebstormProjects/e-commerce/api/node_modules/@prisma/client/runtime/library.js:112:2488)\n    at connectDatabase (/Users/denisbogoslovskiy/WebstormProjects/e-commerce/api/src/config/database.ts:81:9)\n    at startServer (/Users/denisbogoslovskiy/WebstormProjects/e-commerce/api/app.ts:153:9)"}
+{"timestamp":"2025-07-09T12:56:03.265Z","level":"info","message":"🚀 Starting Balloon Shop API server...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T12:56:03.265Z","level":"info","message":"🔄 Connecting to Redis...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T12:56:03.508Z","level":"info","message":"🔄 Redis Client Connecting...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T12:56:03.511Z","level":"info","message":"✅ Redis Client Ready","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T12:56:03.512Z","level":"info","message":"✅ Redis connected and ping successful","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T12:56:03.512Z","level":"info","message":"✅ Redis connected successfully","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T12:56:03.512Z","level":"info","message":"🔄 Connecting to database...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T12:56:03.514Z","level":"info","message":"Prisma Info Starting a postgresql pool with 17 connections.","service":"balloon-shop-backend","target":"quaint::pooled"}
+{"timestamp":"2025-07-09T12:56:03.543Z","level":"info","message":"✅ Database connected successfully","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T12:56:03.550Z","level":"info","message":"✅ Database health check passed","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T12:56:03.551Z","level":"info","message":"🎉 Server is running on port 3001","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T12:56:03.551Z","level":"info","message":"🌍 Environment: development","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T12:56:03.551Z","level":"info","message":"📍 API endpoint: http://localhost:3001/api","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T12:56:03.551Z","level":"info","message":"🏥 Health check: http://localhost:3001/health","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T12:56:03.551Z","level":"info","message":"🎯 Frontend URL: http://localhost:3000","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T12:56:03.551Z","level":"info","message":"📝 Logs level: info","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T12:56:28.812Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"POST","url":"/api/auth/login","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"timestamp":"2025-07-09T12:56:28.867Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"POST","url":"/login","statusCode":200,"duration":"56ms","ip":"::1"}
+{"timestamp":"2025-07-09T12:56:28.906Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"POST","url":"/api/admin/logs","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"timestamp":"2025-07-09T12:56:28.908Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"POST","url":"/","statusCode":404,"duration":"2ms","ip":"::1"}
+{"timestamp":"2025-07-09T12:56:32.206Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/api/auth/me","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"timestamp":"2025-07-09T12:56:32.208Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/me","statusCode":200,"duration":"3ms","ip":"::1"}
+{"timestamp":"2025-07-09T12:56:42.022Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"POST","url":"/api/auth/login","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"timestamp":"2025-07-09T12:56:42.023Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"POST","url":"/login","statusCode":200,"duration":"2ms","ip":"::1"}
+{"timestamp":"2025-07-09T12:56:42.042Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"POST","url":"/api/admin/logs","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"timestamp":"2025-07-09T12:56:42.043Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"POST","url":"/","statusCode":404,"duration":"1ms","ip":"::1"}
+{"timestamp":"2025-07-09T12:56:42.089Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/api/auth/me","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"timestamp":"2025-07-09T12:56:42.090Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/me","statusCode":200,"duration":"0ms","ip":"::1"}
+{"timestamp":"2025-07-09T12:56:42.102Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/api/auth/me","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"timestamp":"2025-07-09T12:56:42.104Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/me","statusCode":200,"duration":"2ms","ip":"::1"}
+{"timestamp":"2025-07-09T12:56:42.161Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/api/stats","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"timestamp":"2025-07-09T12:56:42.162Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/","statusCode":404,"duration":"1ms","ip":"::1"}
+{"timestamp":"2025-07-09T12:56:42.164Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/api/auth/me","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"timestamp":"2025-07-09T12:56:42.164Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/me","statusCode":200,"duration":"0ms","ip":"::1"}
+{"timestamp":"2025-07-09T12:56:42.173Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/api/stats","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"timestamp":"2025-07-09T12:56:42.173Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/","statusCode":404,"duration":"0ms","ip":"::1"}
+{"timestamp":"2025-07-09T12:56:43.951Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/api/auth/me","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"timestamp":"2025-07-09T12:56:43.952Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/me","statusCode":200,"duration":"1ms","ip":"::1"}
+{"timestamp":"2025-07-09T12:56:46.014Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/api/orders?page=1&limit=25&sortBy=id&sortOrder=asc","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"timestamp":"2025-07-09T12:56:46.016Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/?page=1&limit=25&sortBy=id&sortOrder=asc","statusCode":404,"duration":"2ms","ip":"::1"}
+{"timestamp":"2025-07-09T12:56:46.019Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/api/auth/me","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"timestamp":"2025-07-09T12:56:46.020Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/me","statusCode":200,"duration":"1ms","ip":"::1"}
+{"timestamp":"2025-07-09T12:56:46.816Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/api/auth/me","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"timestamp":"2025-07-09T12:56:46.817Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/me","statusCode":200,"duration":"1ms","ip":"::1"}
+{"timestamp":"2025-07-09T12:56:47.661Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/api/orders?page=1&limit=25&sortBy=id&sortOrder=asc","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"timestamp":"2025-07-09T12:56:47.661Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/?page=1&limit=25&sortBy=id&sortOrder=asc","statusCode":404,"duration":"0ms","ip":"::1"}
+{"timestamp":"2025-07-09T12:56:47.664Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/api/auth/me","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"timestamp":"2025-07-09T12:56:47.664Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/me","statusCode":200,"duration":"0ms","ip":"::1"}
+{"timestamp":"2025-07-09T12:56:50.235Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/api/auth/me","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"timestamp":"2025-07-09T12:56:50.235Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/me","statusCode":200,"duration":"0ms","ip":"::1"}
+{"timestamp":"2025-07-09T12:56:51.268Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/api/orders?page=1&limit=25&sortBy=id&sortOrder=asc","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"timestamp":"2025-07-09T12:56:51.268Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/?page=1&limit=25&sortBy=id&sortOrder=asc","statusCode":404,"duration":"0ms","ip":"::1"}
+{"timestamp":"2025-07-09T12:56:51.269Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/api/auth/me","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"timestamp":"2025-07-09T12:56:51.269Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/me","statusCode":200,"duration":"0ms","ip":"::1"}
+{"timestamp":"2025-07-09T12:56:51.767Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/api/comments?page=1&limit=25&sortBy=createdAt&sortOrder=desc","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"timestamp":"2025-07-09T12:56:51.768Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/?page=1&limit=25&sortBy=createdAt&sortOrder=desc","statusCode":404,"duration":"1ms","ip":"::1"}
+{"timestamp":"2025-07-09T12:56:51.771Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/api/auth/me","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"timestamp":"2025-07-09T12:56:51.773Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/me","statusCode":200,"duration":"1ms","ip":"::1"}
+{"timestamp":"2025-07-09T12:56:52.205Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/api/products?page=1&limit=10&sortBy=id&sortOrder=asc","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"timestamp":"2025-07-09T12:56:52.205Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/?page=1&limit=10&sortBy=id&sortOrder=asc","statusCode":404,"duration":"0ms","ip":"::1"}
+{"timestamp":"2025-07-09T12:56:52.207Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/api/auth/me","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"timestamp":"2025-07-09T12:56:52.208Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/me","statusCode":200,"duration":"1ms","ip":"::1"}
+{"timestamp":"2025-07-09T12:56:53.247Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/api/admin/api-keys?page=1&limit=25&sortBy=createdAt&sortOrder=desc","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"timestamp":"2025-07-09T12:56:53.248Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/?page=1&limit=25&sortBy=createdAt&sortOrder=desc","statusCode":404,"duration":"1ms","ip":"::1"}
+{"timestamp":"2025-07-09T12:56:53.250Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/api/auth/me","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"timestamp":"2025-07-09T12:56:53.250Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/me","statusCode":200,"duration":"0ms","ip":"::1"}
+{"timestamp":"2025-07-09T12:56:57.927Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/api/stats","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"timestamp":"2025-07-09T12:56:57.927Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/","statusCode":404,"duration":"0ms","ip":"::1"}
+{"timestamp":"2025-07-09T12:56:57.930Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/api/auth/me","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"timestamp":"2025-07-09T12:56:57.935Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/me","statusCode":200,"duration":"5ms","ip":"::1"}
+{"timestamp":"2025-07-09T12:56:57.938Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/api/stats","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"timestamp":"2025-07-09T12:56:57.939Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/","statusCode":404,"duration":"0ms","ip":"::1"}
+{"timestamp":"2025-07-09T12:57:00.140Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/api/auth/me","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"timestamp":"2025-07-09T12:57:00.140Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/me","statusCode":200,"duration":"0ms","ip":"::1"}
+{"timestamp":"2025-07-09T12:57:02.481Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/api/stats","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"timestamp":"2025-07-09T12:57:02.482Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/","statusCode":404,"duration":"1ms","ip":"::1"}
+{"timestamp":"2025-07-09T12:57:02.484Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/api/auth/me","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"timestamp":"2025-07-09T12:57:02.484Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/me","statusCode":200,"duration":"0ms","ip":"::1"}
+{"timestamp":"2025-07-09T12:57:02.487Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/api/stats","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"timestamp":"2025-07-09T12:57:02.488Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/","statusCode":404,"duration":"1ms","ip":"::1"}
+{"timestamp":"2025-07-09T13:03:17.728Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/api/auth/me","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"timestamp":"2025-07-09T13:03:17.731Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/me","statusCode":200,"duration":"4ms","ip":"::1"}
+{"timestamp":"2025-07-09T13:07:48.529Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"POST","url":"/api/auth/login","ip":"::1","userAgent":"curl/8.7.1"}
+{"timestamp":"2025-07-09T13:07:48.538Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"POST","url":"/login","statusCode":200,"duration":"10ms","ip":"::1"}
+{"timestamp":"2025-07-09T13:10:52.617Z","level":"info","message":"📝 Received SIGINT, shutting down gracefully...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:10:52.624Z","level":"info","message":"🔄 Initiating graceful database shutdown...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:10:52.629Z","level":"info","message":"📝 Received SIGINT, shutting down gracefully...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:10:52.631Z","level":"info","message":"✅ HTTP server closed","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:10:52.654Z","level":"info","message":"✅ Database disconnected successfully","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:11:00.084Z","level":"info","message":"🚀 Starting Balloon Shop API server...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:11:00.086Z","level":"info","message":"🔄 Connecting to Redis...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:11:00.298Z","level":"info","message":"🔄 Redis Client Connecting...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:11:00.302Z","level":"info","message":"✅ Redis Client Ready","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:11:00.303Z","level":"info","message":"✅ Redis connected and ping successful","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:11:00.303Z","level":"info","message":"✅ Redis connected successfully","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:11:00.304Z","level":"info","message":"🔄 Connecting to database...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:11:00.310Z","level":"info","message":"Prisma Info Starting a postgresql pool with 17 connections.","service":"balloon-shop-backend","target":"quaint::pooled"}
+{"timestamp":"2025-07-09T13:11:00.329Z","level":"info","message":"✅ Database connected successfully","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:11:00.336Z","level":"info","message":"✅ Database health check passed","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:11:00.337Z","level":"info","message":"🎉 Server is running on port 3001","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:11:00.337Z","level":"info","message":"🌍 Environment: development","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:11:00.338Z","level":"info","message":"📍 API endpoint: http://localhost:3001/api","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:11:00.338Z","level":"info","message":"🏥 Health check: http://localhost:3001/health","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:11:00.338Z","level":"info","message":"🎯 Frontend URL: http://localhost:3000","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:11:00.338Z","level":"info","message":"📝 Logs level: info","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:11:02.696Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/api/auth/me","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"timestamp":"2025-07-09T13:11:02.752Z","level":"error","message":"Prisma Error \nInvalid `prisma.user.findUnique()` invocation in\n/Users/denisbogoslovskiy/WebstormProjects/e-commerce/api/src/routes/auth.routes.ts:295:40\n\n  292     });\n  293 }\n  294 \n→ 295 const user = await prisma.user.findUnique(\nInconsistent column data: Error creating UUID, invalid length: expected length 32 for simple format, found 1","service":"balloon-shop-backend","target":"user.findUnique"}
+{"timestamp":"2025-07-09T13:11:02.755Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/me","statusCode":500,"duration":"59ms","ip":"::1"}
+{"timestamp":"2025-07-09T13:11:06.605Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"POST","url":"/api/auth/login","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"timestamp":"2025-07-09T13:11:06.847Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"POST","url":"/login","statusCode":401,"duration":"243ms","ip":"::1"}
+{"timestamp":"2025-07-09T13:11:08.255Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"POST","url":"/api/auth/login","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"timestamp":"2025-07-09T13:11:08.524Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"POST","url":"/login","statusCode":401,"duration":"269ms","ip":"::1"}
+{"timestamp":"2025-07-09T13:11:09.770Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"POST","url":"/api/auth/login","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"timestamp":"2025-07-09T13:11:10.187Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"POST","url":"/login","statusCode":401,"duration":"421ms","ip":"::1"}
+{"timestamp":"2025-07-09T13:11:16.373Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"POST","url":"/api/auth/login","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"timestamp":"2025-07-09T13:11:16.819Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"POST","url":"/login","statusCode":401,"duration":"447ms","ip":"::1"}
+{"timestamp":"2025-07-09T13:11:58.766Z","level":"info","message":"📝 Received SIGINT, shutting down gracefully...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:11:58.767Z","level":"info","message":"🔄 Initiating graceful database shutdown...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:11:58.768Z","level":"info","message":"📝 Received SIGINT, shutting down gracefully...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:11:58.769Z","level":"info","message":"✅ HTTP server closed","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:11:58.779Z","level":"info","message":"✅ Database disconnected successfully","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:12:16.816Z","level":"info","message":"🚀 Starting Balloon Shop API server...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:12:16.817Z","level":"info","message":"🔄 Connecting to Redis...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:12:17.015Z","level":"info","message":"🔄 Redis Client Connecting...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:12:17.017Z","level":"info","message":"✅ Redis Client Ready","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:12:17.019Z","level":"info","message":"✅ Redis connected and ping successful","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:12:17.019Z","level":"info","message":"✅ Redis connected successfully","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:12:17.020Z","level":"info","message":"🔄 Connecting to database...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:12:17.022Z","level":"info","message":"Prisma Info Starting a postgresql pool with 17 connections.","service":"balloon-shop-backend","target":"quaint::pooled"}
+{"timestamp":"2025-07-09T13:12:17.050Z","level":"info","message":"✅ Database connected successfully","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:12:17.058Z","level":"info","message":"✅ Database health check passed","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:12:17.059Z","level":"info","message":"🎉 Server is running on port 3001","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:12:17.060Z","level":"info","message":"🌍 Environment: development","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:12:17.060Z","level":"info","message":"📍 API endpoint: http://localhost:3001/api","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:12:17.060Z","level":"info","message":"🏥 Health check: http://localhost:3001/health","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:12:17.060Z","level":"info","message":"🎯 Frontend URL: http://localhost:3000","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:12:17.060Z","level":"info","message":"📝 Logs level: info","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:12:21.885Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"POST","url":"/api/auth/login","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"timestamp":"2025-07-09T13:12:22.234Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"POST","url":"/login","statusCode":401,"duration":"350ms","ip":"::1"}
+{"timestamp":"2025-07-09T13:12:36.661Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"POST","url":"/api/auth/login","ip":"::1","userAgent":"curl/8.7.1"}
+{"timestamp":"2025-07-09T13:12:36.925Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"POST","url":"/login","statusCode":401,"duration":"264ms","ip":"::1"}
+{"timestamp":"2025-07-09T13:12:50.127Z","level":"info","message":"📝 Received SIGINT, shutting down gracefully...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:12:50.127Z","level":"info","message":"🔄 Initiating graceful database shutdown...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:12:50.128Z","level":"info","message":"📝 Received SIGINT, shutting down gracefully...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:12:50.128Z","level":"info","message":"✅ HTTP server closed","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:12:50.135Z","level":"info","message":"✅ Database disconnected successfully","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:12:54.648Z","level":"info","message":"🚀 Starting Balloon Shop API server...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:12:54.649Z","level":"info","message":"🔄 Connecting to Redis...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:12:54.815Z","level":"info","message":"🔄 Redis Client Connecting...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:12:54.818Z","level":"info","message":"✅ Redis Client Ready","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:12:54.819Z","level":"info","message":"✅ Redis connected and ping successful","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:12:54.819Z","level":"info","message":"✅ Redis connected successfully","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:12:54.819Z","level":"info","message":"🔄 Connecting to database...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:12:54.820Z","level":"info","message":"Prisma Info Starting a postgresql pool with 17 connections.","service":"balloon-shop-backend","target":"quaint::pooled"}
+{"timestamp":"2025-07-09T13:12:54.833Z","level":"info","message":"✅ Database connected successfully","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:12:54.836Z","level":"info","message":"✅ Database health check passed","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:12:54.837Z","level":"info","message":"🎉 Server is running on port 3001","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:12:54.837Z","level":"info","message":"🌍 Environment: development","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:12:54.837Z","level":"info","message":"📍 API endpoint: http://localhost:3001/api","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:12:54.837Z","level":"info","message":"🏥 Health check: http://localhost:3001/health","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:12:54.837Z","level":"info","message":"🎯 Frontend URL: http://localhost:3000","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:12:54.837Z","level":"info","message":"📝 Logs level: info","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:13:03.903Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"POST","url":"/api/auth/login","ip":"::1","userAgent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36"}
+{"timestamp":"2025-07-09T13:13:04.167Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"POST","url":"/login","statusCode":401,"duration":"264ms","ip":"::1"}
+{"timestamp":"2025-07-09T13:17:06.366Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"POST","url":"/api/auth/login","ip":"::1","userAgent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36"}
+{"timestamp":"2025-07-09T13:17:06.649Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"POST","url":"/login","statusCode":401,"duration":"283ms","ip":"::1"}
+{"timestamp":"2025-07-09T13:17:58.170Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"POST","url":"/api/auth/login","ip":"::1","userAgent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36"}
+{"timestamp":"2025-07-09T13:17:58.702Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"POST","url":"/login","statusCode":401,"duration":"532ms","ip":"::1"}
+{"timestamp":"2025-07-09T13:34:49.216Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"POST","url":"/api/auth/login","ip":"::1","userAgent":"curl/8.7.1"}
+{"timestamp":"2025-07-09T13:34:49.534Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"POST","url":"/login","statusCode":401,"duration":"322ms","ip":"::1"}
+{"timestamp":"2025-07-09T13:35:04.854Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"POST","url":"/api/auth/login","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"timestamp":"2025-07-09T13:35:05.106Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"POST","url":"/login","statusCode":401,"duration":"252ms","ip":"::1"}
+{"timestamp":"2025-07-09T13:48:52.938Z","level":"info","message":"📝 Received SIGINT, shutting down gracefully...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:48:52.943Z","level":"info","message":"🔄 Initiating graceful database shutdown...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:48:52.947Z","level":"info","message":"📝 Received SIGINT, shutting down gracefully...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:48:52.949Z","level":"info","message":"✅ HTTP server closed","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:48:52.967Z","level":"info","message":"📝 Received SIGINT, shutting down gracefully...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:48:52.967Z","level":"info","message":"🔄 Initiating graceful database shutdown...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:48:52.968Z","level":"info","message":"📝 Received SIGINT, shutting down gracefully...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:48:52.971Z","level":"info","message":"✅ HTTP server closed","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T13:48:52.975Z","level":"info","message":"✅ Database disconnected successfully","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:06:43.628Z","level":"info","message":"🚀 Starting Balloon Shop API server...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:06:43.633Z","level":"info","message":"🔄 Connecting to Redis...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:06:46.897Z","level":"info","message":"🔄 Redis Client Connecting...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:06:47.171Z","level":"info","message":"✅ Redis Client Ready","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:06:47.178Z","level":"info","message":"✅ Redis connected and ping successful","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:06:47.179Z","level":"info","message":"✅ Redis connected successfully","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:06:47.179Z","level":"info","message":"🔄 Connecting to database...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:06:47.190Z","level":"info","message":"Prisma Info Starting a postgresql pool with 17 connections.","service":"balloon-shop-backend","target":"quaint::pooled"}
+{"timestamp":"2025-07-09T15:06:47.359Z","level":"info","message":"✅ Database connected successfully","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:06:47.642Z","level":"info","message":"✅ Database health check passed","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:06:47.679Z","level":"info","message":"🎉 Server is running on port 3001","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:06:47.699Z","level":"info","message":"🌍 Environment: development","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:06:47.700Z","level":"info","message":"📍 API endpoint: http://localhost:3001/api","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:06:47.701Z","level":"info","message":"🏥 Health check: http://localhost:3001/health","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:06:47.701Z","level":"info","message":"🎯 Frontend URL: http://localhost:3000","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:06:47.701Z","level":"info","message":"📝 Logs level: info","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:08:56.249Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"POST","url":"/api/auth/login","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"timestamp":"2025-07-09T15:08:57.101Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"POST","url":"/login","statusCode":401,"duration":"853ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:10:52.541Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"POST","url":"/api/auth/login","ip":"::1","userAgent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36"}
+{"timestamp":"2025-07-09T15:10:52.991Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"POST","url":"/login","statusCode":401,"duration":"451ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:12:01.297Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"POST","url":"/api/auth/login","ip":"::1","userAgent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36"}
+{"timestamp":"2025-07-09T15:12:01.806Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"POST","url":"/login","statusCode":401,"duration":"518ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:14:34.476Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"POST","url":"/api/auth/login","ip":"::1","userAgent":"curl/8.7.1"}
+{"timestamp":"2025-07-09T15:14:34.767Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"POST","url":"/login","statusCode":401,"duration":"292ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:14:47.962Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"POST","url":"/api/auth/login","ip":"::1","userAgent":"curl/8.7.1"}
+{"timestamp":"2025-07-09T15:14:48.236Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"POST","url":"/login","statusCode":401,"duration":"274ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:16:59.139Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/health","ip":"::1","userAgent":"curl/8.7.1"}
+{"timestamp":"2025-07-09T15:16:59.152Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/health","statusCode":200,"duration":"13ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:16:59.172Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/api","ip":"::1","userAgent":"curl/8.7.1"}
+{"timestamp":"2025-07-09T15:16:59.175Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/","statusCode":404,"duration":"3ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:17:19.258Z","level":"info","message":"📝 Received SIGINT, shutting down gracefully...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:17:19.263Z","level":"info","message":"🔄 Initiating graceful database shutdown...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:17:19.268Z","level":"info","message":"📝 Received SIGINT, shutting down gracefully...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:17:19.270Z","level":"info","message":"✅ HTTP server closed","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:17:19.278Z","level":"info","message":"✅ Database disconnected successfully","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:17:31.225Z","level":"info","message":"🚀 Starting Balloon Shop API server...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:17:31.232Z","level":"info","message":"🔄 Connecting to Redis...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:17:32.593Z","level":"info","message":"🔄 Redis Client Connecting...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:17:32.603Z","level":"info","message":"✅ Redis Client Ready","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:17:32.628Z","level":"info","message":"✅ Redis connected and ping successful","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:17:32.629Z","level":"info","message":"✅ Redis connected successfully","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:17:32.661Z","level":"info","message":"🔄 Connecting to database...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:17:32.896Z","level":"info","message":"Prisma Info Starting a postgresql pool with 17 connections.","service":"balloon-shop-backend","target":"quaint::pooled"}
+{"timestamp":"2025-07-09T15:17:32.994Z","level":"info","message":"✅ Database connected successfully","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:17:33.027Z","level":"info","message":"✅ Database health check passed","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:17:33.032Z","level":"info","message":"🎉 Server is running on port 3001","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:17:33.034Z","level":"info","message":"🌍 Environment: development","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:17:33.034Z","level":"info","message":"📍 API endpoint: http://localhost:3001/api","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:17:33.034Z","level":"info","message":"🏥 Health check: http://localhost:3001/health","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:17:33.034Z","level":"info","message":"🎯 Frontend URL: http://localhost:3000","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:17:33.034Z","level":"info","message":"📝 Logs level: info","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:17:58.050Z","level":"info","message":"📝 Received SIGINT, shutting down gracefully...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:17:58.055Z","level":"info","message":"🔄 Initiating graceful database shutdown...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:17:58.057Z","level":"info","message":"📝 Received SIGINT, shutting down gracefully...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:17:58.077Z","level":"info","message":"✅ HTTP server closed","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:17:58.088Z","level":"info","message":"📝 Received SIGINT, shutting down gracefully...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:17:58.089Z","level":"info","message":"🔄 Initiating graceful database shutdown...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:17:58.089Z","level":"info","message":"📝 Received SIGINT, shutting down gracefully...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:17:58.090Z","level":"info","message":"✅ HTTP server closed","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:17:58.099Z","level":"info","message":"✅ Database disconnected successfully","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:18:11.042Z","level":"info","message":"🚀 Starting Balloon Shop API server...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:18:11.045Z","level":"info","message":"🔄 Connecting to Redis...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:18:11.708Z","level":"info","message":"🔄 Redis Client Connecting...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:18:11.716Z","level":"info","message":"✅ Redis Client Ready","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:18:11.723Z","level":"info","message":"✅ Redis connected and ping successful","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:18:11.724Z","level":"info","message":"✅ Redis connected successfully","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:18:11.724Z","level":"info","message":"🔄 Connecting to database...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:18:11.731Z","level":"info","message":"Prisma Info Starting a postgresql pool with 17 connections.","service":"balloon-shop-backend","target":"quaint::pooled"}
+{"timestamp":"2025-07-09T15:18:11.777Z","level":"info","message":"✅ Database connected successfully","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:18:11.807Z","level":"info","message":"✅ Database health check passed","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:18:11.812Z","level":"info","message":"🎉 Server is running on port 3001","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:18:11.813Z","level":"info","message":"🌍 Environment: development","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:18:11.813Z","level":"info","message":"📍 API endpoint: http://localhost:3001/api","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:18:11.813Z","level":"info","message":"🏥 Health check: http://localhost:3001/health","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:18:11.814Z","level":"info","message":"🎯 Frontend URL: http://localhost:3000","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:18:11.814Z","level":"info","message":"📝 Logs level: info","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:18:36.038Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"POST","url":"/api/auth/login","ip":"::1","userAgent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36"}
+{"timestamp":"2025-07-09T15:18:36.323Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"POST","url":"/login","statusCode":401,"duration":"284ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:20:38.500Z","level":"info","message":"📝 Received SIGINT, shutting down gracefully...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:20:38.521Z","level":"info","message":"🔄 Initiating graceful database shutdown...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:20:38.528Z","level":"info","message":"📝 Received SIGINT, shutting down gracefully...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:20:38.554Z","level":"info","message":"✅ HTTP server closed","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:20:38.570Z","level":"info","message":"📝 Received SIGINT, shutting down gracefully...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:20:38.570Z","level":"info","message":"🔄 Initiating graceful database shutdown...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:20:38.570Z","level":"info","message":"📝 Received SIGINT, shutting down gracefully...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:20:38.588Z","level":"info","message":"✅ HTTP server closed","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:20:38.589Z","level":"info","message":"📝 Received SIGINT, shutting down gracefully...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:20:38.589Z","level":"info","message":"🔄 Initiating graceful database shutdown...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:20:38.589Z","level":"info","message":"📝 Received SIGINT, shutting down gracefully...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:20:38.592Z","level":"info","message":"✅ HTTP server closed","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:20:38.603Z","level":"info","message":"✅ Database disconnected successfully","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:20:49.592Z","level":"info","message":"🚀 Starting Balloon Shop API server...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:20:49.597Z","level":"info","message":"🔄 Connecting to Redis...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:20:50.538Z","level":"info","message":"🔄 Redis Client Connecting...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:20:50.544Z","level":"info","message":"✅ Redis Client Ready","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:20:50.545Z","level":"info","message":"✅ Redis connected and ping successful","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:20:50.546Z","level":"info","message":"✅ Redis connected successfully","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:20:50.548Z","level":"info","message":"🔄 Connecting to database...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:20:50.554Z","level":"info","message":"Prisma Info Starting a postgresql pool with 17 connections.","service":"balloon-shop-backend","target":"quaint::pooled"}
+{"timestamp":"2025-07-09T15:20:50.686Z","level":"info","message":"✅ Database connected successfully","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:20:50.739Z","level":"info","message":"✅ Database health check passed","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:20:50.746Z","level":"info","message":"🎉 Server is running on port 3001","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:20:50.748Z","level":"info","message":"🌍 Environment: development","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:20:50.748Z","level":"info","message":"📍 API endpoint: http://localhost:3001/api","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:20:50.749Z","level":"info","message":"🏥 Health check: http://localhost:3001/health","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:20:50.749Z","level":"info","message":"🎯 Frontend URL: http://localhost:3000","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:20:50.749Z","level":"info","message":"📝 Logs level: info","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:21:02.679Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"POST","url":"/api/auth/login","ip":"::1","userAgent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36"}
+{"timestamp":"2025-07-09T15:21:03.980Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"POST","url":"/login","statusCode":401,"duration":"1301ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:23:57.190Z","level":"info","message":"📝 Received SIGINT, shutting down gracefully...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:23:57.208Z","level":"info","message":"🔄 Initiating graceful database shutdown...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:23:57.212Z","level":"info","message":"📝 Received SIGINT, shutting down gracefully...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:23:57.217Z","level":"info","message":"✅ HTTP server closed","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:23:57.235Z","level":"info","message":"📝 Received SIGINT, shutting down gracefully...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:23:57.235Z","level":"info","message":"🔄 Initiating graceful database shutdown...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:23:57.235Z","level":"info","message":"📝 Received SIGINT, shutting down gracefully...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:23:57.248Z","level":"info","message":"✅ HTTP server closed","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:23:57.262Z","level":"info","message":"✅ Database disconnected successfully","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:24:47.929Z","level":"info","message":"🚀 Starting Balloon Shop API server...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:24:47.930Z","level":"info","message":"🔄 Connecting to Redis...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:24:48.133Z","level":"info","message":"🔄 Redis Client Connecting...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:24:48.136Z","level":"info","message":"✅ Redis Client Ready","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:24:48.136Z","level":"info","message":"✅ Redis connected and ping successful","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:24:48.136Z","level":"info","message":"✅ Redis connected successfully","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:24:48.137Z","level":"info","message":"🔄 Connecting to database...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:24:48.139Z","level":"info","message":"Prisma Info Starting a postgresql pool with 17 connections.","service":"balloon-shop-backend","target":"quaint::pooled"}
+{"timestamp":"2025-07-09T15:24:48.176Z","level":"info","message":"✅ Database connected successfully","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:24:48.184Z","level":"info","message":"✅ Database health check passed","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:24:48.186Z","level":"info","message":"🎉 Server is running on port 3001","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:24:48.186Z","level":"info","message":"🌍 Environment: development","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:24:48.186Z","level":"info","message":"📍 API endpoint: http://localhost:3001/api","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:24:48.186Z","level":"info","message":"🏥 Health check: http://localhost:3001/health","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:24:48.186Z","level":"info","message":"🎯 Frontend URL: http://localhost:3000","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:24:48.186Z","level":"info","message":"📝 Logs level: info","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:24:57.259Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"POST","url":"/api/auth/login","ip":"::1","userAgent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36"}
+{"timestamp":"2025-07-09T15:24:57.718Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"POST","url":"/login","statusCode":401,"duration":"459ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:25:35.376Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"POST","url":"/api/auth/create-hash","ip":"::1","userAgent":"curl/8.7.1"}
+{"timestamp":"2025-07-09T15:25:36.769Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"POST","url":"/create-hash","statusCode":200,"duration":"1392ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:25:45.425Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"POST","url":"/api/auth/login","ip":"::1","userAgent":"curl/8.7.1"}
+{"timestamp":"2025-07-09T15:25:45.709Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"POST","url":"/login","statusCode":200,"duration":"284ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:25:58.951Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"POST","url":"/api/auth/login","ip":"::1","userAgent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36"}
+{"timestamp":"2025-07-09T15:25:59.580Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"POST","url":"/login","statusCode":200,"duration":"629ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:25:59.632Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"POST","url":"/api/admin/logs","ip":"::1","userAgent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36"}
+{"timestamp":"2025-07-09T15:25:59.636Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"POST","url":"/logs","statusCode":401,"duration":"4ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:25:59.658Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"POST","url":"/api/auth/refresh","ip":"::1","userAgent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36"}
+{"timestamp":"2025-07-09T15:25:59.668Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"POST","url":"/","statusCode":404,"duration":"10ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:26:07.754Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"POST","url":"/api/auth/login","ip":"::1","userAgent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36"}
+{"timestamp":"2025-07-09T15:26:08.120Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"POST","url":"/login","statusCode":200,"duration":"367ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:26:08.137Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"POST","url":"/api/admin/logs","ip":"::1","userAgent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36"}
+{"timestamp":"2025-07-09T15:26:08.137Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"POST","url":"/logs","statusCode":401,"duration":"0ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:26:08.142Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"POST","url":"/api/auth/refresh","ip":"::1","userAgent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36"}
+{"timestamp":"2025-07-09T15:26:08.142Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"POST","url":"/","statusCode":404,"duration":"0ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:27:47.058Z","level":"info","message":"🚀 Starting Balloon Shop API server...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:27:47.060Z","level":"info","message":"🔄 Connecting to Redis...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:27:47.329Z","level":"info","message":"🔄 Redis Client Connecting...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:27:47.336Z","level":"info","message":"✅ Redis Client Ready","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:27:47.339Z","level":"info","message":"✅ Redis connected and ping successful","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:27:47.339Z","level":"info","message":"✅ Redis connected successfully","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:27:47.340Z","level":"info","message":"🔄 Connecting to database...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:27:47.343Z","level":"info","message":"Prisma Info Starting a postgresql pool with 17 connections.","service":"balloon-shop-backend","target":"quaint::pooled"}
+{"timestamp":"2025-07-09T15:27:47.374Z","level":"info","message":"✅ Database connected successfully","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:27:47.383Z","level":"info","message":"✅ Database health check passed","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:27:47.386Z","level":"info","message":"🎉 Server is running on port 3001","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:27:47.387Z","level":"info","message":"🌍 Environment: development","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:27:47.387Z","level":"info","message":"📍 API endpoint: http://localhost:3001/api","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:27:47.387Z","level":"info","message":"🏥 Health check: http://localhost:3001/health","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:27:47.387Z","level":"info","message":"🎯 Frontend URL: http://localhost:3000","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:27:47.387Z","level":"info","message":"📝 Logs level: info","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:28:16.278Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"POST","url":"/api/auth/login","ip":"::1","userAgent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36"}
+{"timestamp":"2025-07-09T15:28:16.798Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"POST","url":"/login","statusCode":200,"duration":"520ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:28:16.818Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"POST","url":"/api/admin/logs","ip":"::1","userAgent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36"}
+{"timestamp":"2025-07-09T15:28:16.822Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"POST","url":"/logs","statusCode":401,"duration":"4ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:28:16.836Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"POST","url":"/api/auth/refresh","ip":"::1","userAgent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36"}
+{"timestamp":"2025-07-09T15:28:16.847Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"POST","url":"/refresh","statusCode":200,"duration":"12ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:28:16.853Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"POST","url":"/api/admin/logs","ip":"::1","userAgent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36"}
+{"timestamp":"2025-07-09T15:28:16.854Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"POST","url":"/logs","statusCode":401,"duration":"1ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:28:16.899Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/api/auth/me","ip":"::1","userAgent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36"}
+{"timestamp":"2025-07-09T15:28:16.910Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/me","statusCode":401,"duration":"11ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:28:16.935Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"POST","url":"/api/auth/refresh","ip":"::1","userAgent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36"}
+{"timestamp":"2025-07-09T15:28:16.953Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/api/auth/me","ip":"::1","userAgent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36"}
+{"timestamp":"2025-07-09T15:28:16.954Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/me","statusCode":401,"duration":"1ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:28:16.964Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"POST","url":"/refresh","statusCode":200,"duration":"29ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:28:16.974Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"POST","url":"/api/auth/refresh","ip":"::1","userAgent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36"}
+{"timestamp":"2025-07-09T15:28:16.982Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/api/auth/me","ip":"::1","userAgent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36"}
+{"timestamp":"2025-07-09T15:28:16.983Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/me","statusCode":401,"duration":"1ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:28:16.994Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"POST","url":"/refresh","statusCode":200,"duration":"20ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:28:17.094Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/api/auth/me","ip":"::1","userAgent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36"}
+{"timestamp":"2025-07-09T15:28:17.095Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/me","statusCode":401,"duration":"1ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:28:29.995Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"POST","url":"/api/auth/login","ip":"::1","userAgent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36"}
+{"timestamp":"2025-07-09T15:28:30.867Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"POST","url":"/login","statusCode":200,"duration":"873ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:28:30.897Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"POST","url":"/api/admin/logs","ip":"::1","userAgent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36"}
+{"timestamp":"2025-07-09T15:28:30.898Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"POST","url":"/logs","statusCode":401,"duration":"1ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:28:30.926Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"POST","url":"/api/auth/refresh","ip":"::1","userAgent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36"}
+{"timestamp":"2025-07-09T15:28:30.949Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"POST","url":"/refresh","statusCode":200,"duration":"22ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:28:30.965Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"POST","url":"/api/admin/logs","ip":"::1","userAgent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36"}
+{"timestamp":"2025-07-09T15:28:30.967Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"POST","url":"/logs","statusCode":401,"duration":"1ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:28:31.177Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/api/auth/me","ip":"::1","userAgent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36"}
+{"timestamp":"2025-07-09T15:28:31.178Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/me","statusCode":401,"duration":"1ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:28:31.498Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"POST","url":"/api/auth/refresh","ip":"::1","userAgent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36"}
+{"timestamp":"2025-07-09T15:28:31.506Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/api/auth/me","ip":"::1","userAgent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36"}
+{"timestamp":"2025-07-09T15:28:31.507Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/me","statusCode":401,"duration":"1ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:28:31.560Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"POST","url":"/refresh","statusCode":200,"duration":"62ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:28:31.562Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"POST","url":"/api/auth/refresh","ip":"::1","userAgent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36"}
+{"timestamp":"2025-07-09T15:28:31.584Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/api/auth/me","ip":"::1","userAgent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36"}
+{"timestamp":"2025-07-09T15:28:31.587Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/me","statusCode":401,"duration":"4ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:28:31.674Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"POST","url":"/refresh","statusCode":200,"duration":"112ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:28:31.727Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/api/auth/me","ip":"::1","userAgent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36"}
+{"timestamp":"2025-07-09T15:28:31.727Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/me","statusCode":401,"duration":"0ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:29:16.382Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"POST","url":"/api/auth/login","ip":"::1","userAgent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36"}
+{"timestamp":"2025-07-09T15:29:16.850Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"POST","url":"/login","statusCode":200,"duration":"468ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:29:16.864Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"POST","url":"/api/admin/logs","ip":"::1","userAgent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36"}
+{"timestamp":"2025-07-09T15:29:16.865Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"POST","url":"/logs","statusCode":401,"duration":"1ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:29:16.871Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"POST","url":"/api/auth/refresh","ip":"::1","userAgent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36"}
+{"timestamp":"2025-07-09T15:29:16.877Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"POST","url":"/refresh","statusCode":200,"duration":"6ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:29:16.881Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"POST","url":"/api/admin/logs","ip":"::1","userAgent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36"}
+{"timestamp":"2025-07-09T15:29:16.882Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"POST","url":"/logs","statusCode":401,"duration":"1ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:29:16.961Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/api/auth/me","ip":"::1","userAgent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36"}
+{"timestamp":"2025-07-09T15:29:16.962Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/me","statusCode":401,"duration":"1ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:29:16.967Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/api/auth/me","ip":"::1","userAgent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36"}
+{"timestamp":"2025-07-09T15:29:16.968Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/me","statusCode":401,"duration":"1ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:29:16.984Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"POST","url":"/api/auth/refresh","ip":"::1","userAgent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36"}
+{"timestamp":"2025-07-09T15:29:17.002Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"POST","url":"/api/auth/refresh","ip":"::1","userAgent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36"}
+{"timestamp":"2025-07-09T15:29:17.010Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"POST","url":"/refresh","statusCode":200,"duration":"26ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:29:17.014Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"POST","url":"/refresh","statusCode":200,"duration":"12ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:29:17.031Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/api/auth/me","ip":"::1","userAgent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36"}
+{"timestamp":"2025-07-09T15:29:17.033Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/me","statusCode":401,"duration":"1ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:29:17.047Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/api/auth/me","ip":"::1","userAgent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36"}
+{"timestamp":"2025-07-09T15:29:17.048Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/me","statusCode":401,"duration":"1ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:31:48.291Z","level":"info","message":"📝 Received SIGINT, shutting down gracefully...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:31:48.321Z","level":"info","message":"🔄 Initiating graceful database shutdown...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:31:48.336Z","level":"info","message":"📝 Received SIGINT, shutting down gracefully...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:31:48.384Z","level":"info","message":"✅ HTTP server closed","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:31:48.413Z","level":"info","message":"📝 Received SIGINT, shutting down gracefully...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:31:48.418Z","level":"info","message":"🔄 Initiating graceful database shutdown...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:31:48.445Z","level":"info","message":"📝 Received SIGINT, shutting down gracefully...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:31:48.468Z","level":"info","message":"✅ HTTP server closed","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:35:08.409Z","level":"info","message":"🚀 Starting Balloon Shop API server...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:35:08.414Z","level":"info","message":"🔄 Connecting to Redis...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:35:09.235Z","level":"info","message":"🔄 Redis Client Connecting...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:35:09.248Z","level":"info","message":"✅ Redis Client Ready","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:35:09.252Z","level":"info","message":"✅ Redis connected and ping successful","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:35:09.252Z","level":"info","message":"✅ Redis connected successfully","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:35:09.253Z","level":"info","message":"🔄 Connecting to database...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:35:09.292Z","level":"info","message":"Prisma Info Starting a postgresql pool with 17 connections.","service":"balloon-shop-backend","target":"quaint::pooled"}
+{"timestamp":"2025-07-09T15:35:09.398Z","level":"info","message":"✅ Database connected successfully","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:35:09.442Z","level":"info","message":"✅ Database health check passed","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:35:09.448Z","level":"info","message":"🎉 Server is running on port 3001","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:35:09.449Z","level":"info","message":"🌍 Environment: development","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:35:09.449Z","level":"info","message":"📍 API endpoint: http://localhost:3001/api","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:35:09.450Z","level":"info","message":"🏥 Health check: http://localhost:3001/health","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:35:09.451Z","level":"info","message":"🎯 Frontend URL: http://localhost:3000","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:35:09.451Z","level":"info","message":"📝 Logs level: info","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:35:19.214Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"POST","url":"/api/auth/login","ip":"::1","userAgent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36"}
+{"timestamp":"2025-07-09T15:35:20.183Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"POST","url":"/login","statusCode":200,"duration":"970ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:35:20.271Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"POST","url":"/api/admin/logs","ip":"::1","userAgent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36"}
+{"timestamp":"2025-07-09T15:35:20.273Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"POST","url":"/api/admin/logs","statusCode":404,"duration":"2ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:35:20.654Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/api/auth/me","ip":"::1","userAgent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36"}
+{"timestamp":"2025-07-09T15:35:20.695Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/me","statusCode":200,"duration":"41ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:35:20.954Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/api/auth/me","ip":"::1","userAgent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36"}
+{"timestamp":"2025-07-09T15:35:21.222Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/me","statusCode":200,"duration":"268ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:35:21.409Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/api/auth/me","ip":"::1","userAgent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36"}
+{"timestamp":"2025-07-09T15:35:21.570Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/me","statusCode":200,"duration":"161ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:35:22.962Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/api/stats","ip":"::1","userAgent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36"}
+{"timestamp":"2025-07-09T15:35:22.971Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/api/stats","statusCode":404,"duration":"9ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:35:23.175Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/api/stats","ip":"::1","userAgent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36"}
+{"timestamp":"2025-07-09T15:35:23.176Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/api/stats","statusCode":404,"duration":"1ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:35:23.869Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/api/auth/me","ip":"::1","userAgent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36"}
+{"timestamp":"2025-07-09T15:35:23.887Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/me","statusCode":200,"duration":"18ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:36:25.618Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/api/auth/me","ip":"::1","userAgent":"Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Mobile Safari/537.36"}
+{"timestamp":"2025-07-09T15:36:25.662Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/me","statusCode":200,"duration":"44ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:40:35.032Z","level":"info","message":"📝 Received SIGINT, shutting down gracefully...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:40:35.043Z","level":"info","message":"🔄 Initiating graceful database shutdown...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:40:35.049Z","level":"info","message":"📝 Received SIGINT, shutting down gracefully...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:40:35.053Z","level":"info","message":"✅ HTTP server closed","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:40:35.057Z","level":"info","message":"📝 Received SIGINT, shutting down gracefully...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:40:35.057Z","level":"info","message":"🔄 Initiating graceful database shutdown...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:40:35.057Z","level":"info","message":"📝 Received SIGINT, shutting down gracefully...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:40:35.062Z","level":"info","message":"✅ HTTP server closed","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:40:35.080Z","level":"info","message":"✅ Database disconnected successfully","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:40:54.170Z","level":"info","message":"🚀 Starting Balloon Shop API server...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:40:54.195Z","level":"info","message":"🔄 Connecting to Redis...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:40:57.814Z","level":"info","message":"🔄 Redis Client Connecting...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:40:57.851Z","level":"info","message":"✅ Redis Client Ready","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:40:57.854Z","level":"info","message":"✅ Redis connected and ping successful","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:40:57.856Z","level":"info","message":"✅ Redis connected successfully","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:40:57.856Z","level":"info","message":"🔄 Connecting to database...","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:40:57.863Z","level":"info","message":"Prisma Info Starting a postgresql pool with 17 connections.","service":"balloon-shop-backend","target":"quaint::pooled"}
+{"timestamp":"2025-07-09T15:40:57.944Z","level":"info","message":"✅ Database connected successfully","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:40:58.001Z","level":"info","message":"✅ Database health check passed","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:40:58.016Z","level":"info","message":"🎉 Server is running on port 3001","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:40:58.017Z","level":"info","message":"🌍 Environment: development","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:40:58.017Z","level":"info","message":"📍 API endpoint: http://localhost:3001/api","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:40:58.018Z","level":"info","message":"🏥 Health check: http://localhost:3001/health","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:40:58.018Z","level":"info","message":"🎯 Frontend URL: http://localhost:3000","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:40:58.018Z","level":"info","message":"📝 Logs level: info","service":"balloon-shop-backend"}
+{"timestamp":"2025-07-09T15:41:00.134Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"POST","url":"/api/auth/login","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"timestamp":"2025-07-09T15:41:00.895Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"POST","url":"/login","statusCode":200,"duration":"761ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:41:00.919Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"POST","url":"/api/admin/logs","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"timestamp":"2025-07-09T15:41:00.921Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"POST","url":"/api/admin/logs","statusCode":404,"duration":"2ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:41:00.985Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/api/auth/me","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"timestamp":"2025-07-09T15:41:01.010Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/me","statusCode":200,"duration":"25ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:41:01.013Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/api/auth/me","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"timestamp":"2025-07-09T15:41:01.029Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/me","statusCode":200,"duration":"16ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:41:01.146Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/api/auth/me","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"timestamp":"2025-07-09T15:41:01.154Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/me","statusCode":200,"duration":"14ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:41:01.884Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/api/stats","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"timestamp":"2025-07-09T15:41:01.884Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/api/stats","statusCode":404,"duration":"0ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:41:01.937Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/api/stats","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"timestamp":"2025-07-09T15:41:01.938Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/api/stats","statusCode":404,"duration":"0ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:41:02.801Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/api/auth/me","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"timestamp":"2025-07-09T15:41:02.812Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/me","statusCode":200,"duration":"11ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:42:02.655Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/api/auth/me","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"timestamp":"2025-07-09T15:42:02.668Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/me","statusCode":200,"duration":"13ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:42:02.708Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/api/orders?page=1&limit=25&sortBy=id&sortOrder=asc","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"timestamp":"2025-07-09T15:42:02.708Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/api/orders?page=1&limit=25&sortBy=id&sortOrder=asc","statusCode":404,"duration":"0ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:42:03.636Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/api/auth/me","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"timestamp":"2025-07-09T15:42:03.644Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/me","statusCode":200,"duration":"8ms","ip":"::1"}
+{"timestamp":"2025-07-09T15:42:06.278Z","level":"info","message":"Incoming request","service":"balloon-shop-backend","method":"GET","url":"/api/auth/me","ip":"::1","userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36"}
+{"timestamp":"2025-07-09T15:42:06.292Z","level":"info","message":"Request completed","service":"balloon-shop-backend","method":"GET","url":"/me","statusCode":200,"duration":"15ms","ip":"::1"}
