@@ -13,7 +13,10 @@ import {
     ImageInput,
     required,
     ReferenceInput,
-    SelectInput
+    SelectInput,
+    Show,
+    SimpleShowLayout, DateField,
+
 } from 'react-admin';
 
 export const ProductList = () => (
@@ -73,4 +76,17 @@ export const ProductCreate = () => (
             </ReferenceInput>
         </SimpleForm>
     </Create>
+);
+
+export const ProductShow = () => (
+    <Show>
+        <SimpleShowLayout>
+            <TextField source="id" />
+            <TextField source="name" />
+            <TextField source="description" />
+            <TextField source="price" />
+            <TextField source="category" />
+            <DateField source="createdAt" />
+        </SimpleShowLayout>
+    </Show>
 );

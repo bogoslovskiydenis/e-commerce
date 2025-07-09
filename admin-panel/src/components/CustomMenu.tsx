@@ -1,250 +1,142 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { Menu, usePermissions } from 'react-admin';
 import {
-    Menu,
-    MenuItemLink,
-    DashboardMenuItem,
-    useResourceDefinitions,
-    usePermissions
-} from 'react-admin';
-import { Collapse, List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
-import {
-    ExpandLess,
-    ExpandMore,
     Dashboard,
     ShoppingCart,
-    Phone,
-    Reviews,
     Inventory,
     Category,
     People,
-    Language,
+    Phone,
+    RateReview,
     Image,
     Article,
-    Settings as SettingsIcon,
     Menu as MenuIcon,
-    Security,
+    Settings,
+    AdminPanelSettings,
     History,
     Key,
-    AdminPanelSettings
+    Analytics
 } from '@mui/icons-material';
-import { PermissionsWrapper } from './PermissionsWrapper';
 
-export const CustomMenu = (props: any) => {
-    const [websiteOpen, setWebsiteOpen] = useState(false);
-    const [ordersOpen, setOrdersOpen] = useState(false);
-    const [catalogOpen, setCatalogOpen] = useState(false);
-    const [securityOpen, setSecurityOpen] = useState(false);
-    const resources = useResourceDefinitions();
+export const CustomMenu: React.FC = () => {
+    const { permissions } = usePermissions();
+
+    // Функция проверки разрешений
+    const hasPermission = (permission: string): boolean => {
+        if (!permissions) return false;
+        return permissions.includes(permission) || permissions.includes('admin.full_access');
+    };
+
+    const resources = [
+        // Дашборд - доступен всем
+        {
+            name: 'dashboard',
+            icon: <Dashboard />,
+            label: 'Дашборд'
+        },
+
+        // Заказы и клиенты
+        ...(hasPermission('orders.view') ? [{
+            name: 'orders',
+            icon: <ShoppingCart />,
+            label: 'Заказы'
+        }] : []),
+
+        ...(hasPermission('callbacks.view') ? [{
+            name: 'callbacks',
+            icon: <Phone />,
+            label: 'Обратные звонки'
+        }] : []),
+
+        ...(hasPermission('reviews.view') ? [{
+            name: 'comments',
+            icon: <RateReview />,
+            label: 'Отзывы'
+        }] : []),
+
+        ...(hasPermission('customers.view') ? [{
+            name: 'customers',
+            icon: <People />,
+            label: 'Клиенты'
+        }] : []),
+
+        // Каталог
+        ...(hasPermission('products.view') ? [{
+            name: 'products',
+            icon: <Inventory />,
+            label: 'Товары'
+        }] : []),
+
+        ...(hasPermission('categories.view') ? [{
+            name: 'categories',
+            icon: <Category />,
+            label: 'Категории'
+        }] : []),
+
+        // Контент сайта
+        ...(hasPermission('website.banners') ? [{
+            name: 'banners',
+            icon: <Image />,
+            label: 'Баннеры'
+        }] : []),
+
+        ...(hasPermission('website.pages') ? [{
+            name: 'pages',
+            icon: <Article />,
+            label: 'Страницы'
+        }] : []),
+
+        ...(hasPermission('website.navigation') ? [{
+            name: 'navigation',
+            icon: <MenuIcon />,
+            label: 'Навигация'
+        }] : []),
+
+        ...(hasPermission('website.settings') ? [{
+            name: 'settings',
+            icon: <Settings />,
+            label: 'Настройки'
+        }] : []),
+
+        // Аналитика
+        ...(hasPermission('analytics.view') ? [{
+            name: 'analytics',
+            icon: <Analytics />,
+            label: 'Аналитика'
+        }] : []),
+
+        // Администрирование
+        ...(hasPermission('users.view') ? [{
+            name: 'admin-users',
+            icon: <AdminPanelSettings />,
+            label: 'Пользователи'
+        }] : []),
+
+        ...(hasPermission('logs.view') ? [{
+            name: 'admin-logs',
+            icon: <History />,
+            label: 'Журнал действий'
+        }] : []),
+
+        ...(hasPermission('api_keys.manage') ? [{
+            name: 'api-keys',
+            icon: <Key />,
+            label: 'API ключи'
+        }] : [])
+    ];
 
     return (
-        <Menu {...props}>
-            <DashboardMenuItem />
-
-            {/* Секция Сайт */}
-            <PermissionsWrapper permission={['website.banners', 'website.pages', 'website.settings']}>
-                <ListItem
-                    button
-                    onClick={() => setWebsiteOpen(!websiteOpen)}
-                    sx={{
-                        paddingLeft: 2,
-                        backgroundColor: websiteOpen ? 'rgba(0, 0, 0, 0.04)' : 'transparent'
-                    }}
-                >
-                    <ListItemIcon>
-                        <Language />
-                    </ListItemIcon>
-                    <ListItemText primary="Сайт" />
-                    {websiteOpen ? <ExpandLess /> : <ExpandMore />}
-                </ListItem>
-
-                <Collapse in={websiteOpen} timeout="auto" unmountOnExit>
-                    <List component="div" disablePadding>
-                        <PermissionsWrapper permission="website.navigation">
-                            <MenuItemLink
-                                to="/navigation"
-                                primaryText="Навигация"
-                                leftIcon={<MenuIcon fontSize="small" />}
-                                sx={{ paddingLeft: 4 }}
-                            />
-                        </PermissionsWrapper>
-
-                        <PermissionsWrapper permission="website.banners">
-                            <MenuItemLink
-                                to="/banners"
-                                primaryText="Баннеры"
-                                leftIcon={<Image fontSize="small" />}
-                                sx={{ paddingLeft: 4 }}
-                            />
-                        </PermissionsWrapper>
-
-                        <PermissionsWrapper permission="website.pages">
-                            <MenuItemLink
-                                to="/pages"
-                                primaryText="Страницы"
-                                leftIcon={<Article fontSize="small" />}
-                                sx={{ paddingLeft: 4 }}
-                            />
-                        </PermissionsWrapper>
-
-                        <PermissionsWrapper permission="website.settings">
-                            <MenuItemLink
-                                to="/settings/1"
-                                primaryText="Настройки сайта"
-                                leftIcon={<SettingsIcon fontSize="small" />}
-                                sx={{ paddingLeft: 4 }}
-                            />
-                        </PermissionsWrapper>
-                    </List>
-                </Collapse>
-            </PermissionsWrapper>
-
-            {/* Секция Заказы */}
-            <PermissionsWrapper permission={['orders.view', 'callbacks.view', 'reviews.view']}>
-                <ListItem
-                    button
-                    onClick={() => setOrdersOpen(!ordersOpen)}
-                    sx={{
-                        paddingLeft: 2,
-                        backgroundColor: ordersOpen ? 'rgba(0, 0, 0, 0.04)' : 'transparent'
-                    }}
-                >
-                    <ListItemIcon>
-                        <ShoppingCart />
-                    </ListItemIcon>
-                    <ListItemText primary="Заказы" />
-                    {ordersOpen ? <ExpandLess /> : <ExpandMore />}
-                </ListItem>
-
-                <Collapse in={ordersOpen} timeout="auto" unmountOnExit>
-                    <List component="div" disablePadding>
-                        <PermissionsWrapper permission="orders.view">
-                            <MenuItemLink
-                                to="/orders"
-                                primaryText="Заказы"
-                                leftIcon={<ShoppingCart fontSize="small" />}
-                                sx={{ paddingLeft: 4 }}
-                            />
-                        </PermissionsWrapper>
-
-                        <PermissionsWrapper permission="callbacks.view">
-                            <MenuItemLink
-                                to="/callbacks"
-                                primaryText="Обратный звонок"
-                                leftIcon={<Phone fontSize="small" />}
-                                sx={{ paddingLeft: 4 }}
-                            />
-                        </PermissionsWrapper>
-
-                        <PermissionsWrapper permission="reviews.view">
-                            <MenuItemLink
-                                to="/reviews"
-                                primaryText="Комментарии и отзывы"
-                                leftIcon={<Reviews fontSize="small" />}
-                                sx={{ paddingLeft: 4 }}
-                            />
-                        </PermissionsWrapper>
-                    </List>
-                </Collapse>
-            </PermissionsWrapper>
-
-            {/* Секция Каталог */}
-            <PermissionsWrapper permission={['products.view', 'categories.view']}>
-                <ListItem
-                    button
-                    onClick={() => setCatalogOpen(!catalogOpen)}
-                    sx={{
-                        paddingLeft: 2,
-                        backgroundColor: catalogOpen ? 'rgba(0, 0, 0, 0.04)' : 'transparent'
-                    }}
-                >
-                    <ListItemIcon>
-                        <Inventory />
-                    </ListItemIcon>
-                    <ListItemText primary="Каталог" />
-                    {catalogOpen ? <ExpandLess /> : <ExpandMore />}
-                </ListItem>
-
-                <Collapse in={catalogOpen} timeout="auto" unmountOnExit>
-                    <List component="div" disablePadding>
-                        <PermissionsWrapper permission="products.view">
-                            <MenuItemLink
-                                to="/products"
-                                primaryText="Товары"
-                                leftIcon={<Inventory fontSize="small" />}
-                                sx={{ paddingLeft: 4 }}
-                            />
-                        </PermissionsWrapper>
-
-                        <PermissionsWrapper permission="categories.view">
-                            <MenuItemLink
-                                to="/categories"
-                                primaryText="Категории"
-                                leftIcon={<Category fontSize="small" />}
-                                sx={{ paddingLeft: 4 }}
-                            />
-                        </PermissionsWrapper>
-                    </List>
-                </Collapse>
-            </PermissionsWrapper>
-
-            {/* Клиенты */}
-            <PermissionsWrapper permission="customers.view">
-                <MenuItemLink
-                    to="/customers"
-                    primaryText="Клиенты"
-                    leftIcon={<People />}
-                    sx={{ paddingLeft: 2 }}
+        <Menu>
+            {resources.map(resource => (
+                <Menu.Item
+                    key={resource.name}
+                    to={`/${resource.name}`}
+                    primaryText={resource.label}
+                    leftIcon={resource.icon}
                 />
-            </PermissionsWrapper>
-
-            {/* Секция Безопасность и Администрирование */}
-            <PermissionsWrapper permission={['users.view', 'logs.view', 'api_keys.manage']}>
-                <ListItem
-                    button
-                    onClick={() => setSecurityOpen(!securityOpen)}
-                    sx={{
-                        paddingLeft: 2,
-                        backgroundColor: securityOpen ? 'rgba(0, 0, 0, 0.04)' : 'transparent'
-                    }}
-                >
-                    <ListItemIcon>
-                        <Security />
-                    </ListItemIcon>
-                    <ListItemText primary="Админ" />
-                    {securityOpen ? <ExpandLess /> : <ExpandMore />}
-                </ListItem>
-
-                <Collapse in={securityOpen} timeout="auto" unmountOnExit>
-                    <List component="div" disablePadding>
-                        <PermissionsWrapper permission="users.view">
-                            <MenuItemLink
-                                to="/admin-users"
-                                primaryText="Пользователи"
-                                leftIcon={<AdminPanelSettings fontSize="small" />}
-                                sx={{ paddingLeft: 4 }}
-                            />
-                        </PermissionsWrapper>
-
-                        <PermissionsWrapper permission="logs.view">
-                            <MenuItemLink
-                                to="/admin-logs"
-                                primaryText="Логи действий"
-                                leftIcon={<History fontSize="small" />}
-                                sx={{ paddingLeft: 4 }}
-                            />
-                        </PermissionsWrapper>
-
-                        <PermissionsWrapper permission="api_keys.manage">
-                            <MenuItemLink
-                                to="/api-keys"
-                                primaryText="API ключи"
-                                leftIcon={<Key fontSize="small" />}
-                                sx={{ paddingLeft: 4 }}
-                            />
-                        </PermissionsWrapper>
-                    </List>
-                </Collapse>
-            </PermissionsWrapper>
+            ))}
         </Menu>
     );
 };
+
+export default CustomMenu;

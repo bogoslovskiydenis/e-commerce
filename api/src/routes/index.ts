@@ -1,55 +1,88 @@
 import { Router } from 'express';
+import { Request, Response } from 'express';
 
-// Импортируем роуты
-let authRoutes: any = null;
-let adminRoutes: any = null;
-let permissionsRoutes: any = null;
+// Импорт маршрутов
+import authRoutes from './auth.routes.js';
+import adminRoutes from './admin.routes.js';
+import apiRoutes from './api.routes.js';
 
-try {
-    authRoutes = (await import('./auth.routes.js')).default;
-} catch (e) {
-    console.log('Auth routes not found');
-}
-
-try {
-    adminRoutes = (await import('./admin.routes.js')).default;
-} catch (e) {
-    console.log('Admin routes not found');
-}
-
-try {
-    permissionsRoutes = (await import('./permissions.routes.js')).default;
-} catch (e) {
-    console.log('Permissions routes not found');
-}
+// Импорт middleware
+import { authenticateToken } from '../middleware/auth.middleware.js';
+import { rateLimitByUser } from '../middleware/auth.middleware.js';
 
 const router = Router();
 
-// Тестовый роут
-router.get('/test', (req, res) => {
+// Здоровье API
+router.get('/health', (req: Request, res: Response) => {
     res.json({
         success: true,
-        message: 'API is working!',
+        message: 'API is healthy',
         timestamp: new Date().toISOString(),
-        availableRoutes: {
-            auth: authRoutes ? 'loaded' : 'not found',
-            admin: adminRoutes ? 'loaded' : 'not found',
-            permissions: permissionsRoutes ? 'loaded' : 'not found'
+        version: '1.0.0'
+    });
+});
+
+// Информация об API
+router.get('/info', (req: Request, res: Response) => {
+    res.json({
+        success: true,
+        data: {
+            name: 'Shop Admin API',
+            version: '1.0.0',
+            description: 'API для админ панели интернет-магазина шариков',
+            features: [
+                'Аутентификация с JWT',
+                'Двухфакторная аутентификация',
+                'Система разрешений',
+                'Логирование действий',
+                'Rate limiting',
+                'Управление товарами',
+                'Управление заказами',
+                'Управление клиентами',
+                'Аналитика и отчеты'
+            ],
+            endpoints: {
+                auth: '/auth/*',
+                admin: '/admin/*',
+                api: '/api/*'
+            }
         }
     });
 });
 
-// Подключаем роуты если они загружены
-if (authRoutes) {
-    router.use('/auth', authRoutes);
-}
+// Публичные маршруты (без аутентификации)
+router.use('/auth', authRoutes);
 
-if (adminRoutes) {
-    router.use('/admin', adminRoutes);
-}
+// Защищенные маршруты администратора
+router.use('/admin',
+    authenticateToken,
+    rateLimitByUser(200, 60000), // 200 запросов в минуту
+    adminRoutes
+);
 
-if (permissionsRoutes) {
-    router.use('/admin', permissionsRoutes);
-}
+// Защищенные API маршруты
+router.use('/api',
+    authenticateToken,
+    rateLimitByUser(500, 60000), // 500 запросов в минуту
+    apiRoutes
+);
+
+// Обработчик несуществующих маршрутов
+router.use('*', (req: Request, res: Response) => {
+    res.status(404).json({
+        success: false,
+        error: 'Route not found',
+        message: `Маршрут ${req.method} ${req.originalUrl} не найден`,
+        availableRoutes: [
+            'GET /health - Проверка состояния API',
+            'GET /info - Информация об API',
+            'POST /auth/login - Вход в систему',
+            'POST /auth/logout - Выход из системы',
+            'GET /auth/me - Информация о пользователе',
+            'GET /admin/* - Административные маршруты',
+            'GET /api/* - API маршруты'
+        ]
+    });
+});
 
 export default router;

@@ -7,7 +7,10 @@ import {
     SimpleForm,
     TextInput,
     required,
-    email
+    email,
+    Show,
+    SimpleShowLayout,
+    DateField
 } from 'react-admin';
 
 export const CustomerList = () => (
@@ -32,4 +35,16 @@ export const CustomerEdit = () => (
             <TextInput multiline source="address" />
         </SimpleForm>
     </Edit>
+);
+
+export const CustomerShow = () => (
+    <Show>
+        <SimpleShowLayout>
+            <TextField source="id" />
+            <TextField source="name" />
+            <TextField source="email" />
+            <TextField source="phone" />
+            <DateField source="createdAt" />
+        </SimpleShowLayout>
+    </Show>
 );

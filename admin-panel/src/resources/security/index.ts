@@ -6,5 +6,8 @@ export {
     UserShow
 } from './users';
 
+export {
+    AdminLogList,
+    AdminLogShow} from './logs'
 // Экспорт для модульности
 export {};

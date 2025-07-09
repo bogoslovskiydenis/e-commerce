@@ -14,7 +14,7 @@ import {
     required,
     NumberInput,
     BooleanField,
-    BooleanInput
+    BooleanInput, Show, SimpleShowLayout
 } from 'react-admin';
 
 // Компонент для отображения статуса заказа
@@ -139,4 +139,16 @@ export const OrderEdit = () => (
             <BooleanInput source="processing" label="Начать обработку" />
         </SimpleForm>
     </Edit>
+);
+
+export const OrderShow = () => (
+    <Show>
+        <SimpleShowLayout>
+            <TextField source="id" />
+            <TextField source="customerName" />
+            <TextField source="status" />
+            <TextField source="total" />
+            <DateField source="createdAt" />
+        </SimpleShowLayout>
+    </Show>
 );
