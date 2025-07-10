@@ -344,79 +344,149 @@ export const UserShow = () => {
     return (
         <Show title="Информация о пользователе">
             <SimpleShowLayout>
-                <Grid container spacing={3}>
-                    <Grid item xs={12} md={6}>
-                        <Card>
-                            <CardContent>
-                                <Typography variant="h6" gutterBottom>
-                                    Основная информация
+                {/* ОСНОВНАЯ ИНФОРМАЦИЯ */}
+                <Card sx={{ mb: 3 }}>
+                    <CardContent>
+                        <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+                            <Person sx={{ mr: 1 }} />
+                            Основная информация
+                        </Typography>
+
+                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #eee', pb: 1 }}>
+                                <Typography variant="body2" color="textSecondary" sx={{ minWidth: '120px' }}>
+                                    ID:
                                 </Typography>
-                                <Labeled label="ID">
+                                <Typography variant="body2" sx={{ fontFamily: 'monospace' }}>
                                     <TextField source="id" />
-                                </Labeled>
-                                <Labeled label="Логин">
-                                    <TextField source="username" />
-                                </Labeled>
-                                <Labeled label="Email">
-                                    <TextField source="email" />
-                                </Labeled>
-                                <Labeled label="Имя">
-                                    <TextField source="firstName" />
-                                </Labeled>
-                                <Labeled label="Фамилия">
-                                    <TextField source="lastName" />
-                                </Labeled>
-                                <Labeled label="Роль">
-                                    <WrapperField>
-                                        <UserRoleField />
-                                    </WrapperField>
-                                </Labeled>
-                                <Labeled label="Статус">
-                                    <WrapperField>
-                                        <UserStatusField />
-                                    </WrapperField>
-                                </Labeled>
-                            </CardContent>
-                        </Card>
-                    </Grid>
-
-                    <Grid item xs={12} md={6}>
-                        <Card>
-                            <CardContent>
-                                <Typography variant="h6" gutterBottom>
-                                    Безопасность
                                 </Typography>
-                                <Labeled label="2FA">
-                                    <WrapperField>
-                                        <TwoFactorStatusField />
-                                    </WrapperField>
-                                </Labeled>
-                                <Labeled label="Последний вход">
-                                    <DateField source="lastLogin" showTime />
-                                </Labeled>
-                                <Labeled label="IP последнего входа">
-                                    <TextField source="lastLoginIp" />
-                                </Labeled>
-                                <Labeled label="Создан">
-                                    <DateField source="createdAt" showTime />
-                                </Labeled>
-                                <Labeled label="Обновлен">
-                                    <DateField source="updatedAt" showTime />
-                                </Labeled>
+                            </Box>
 
-                                <Box sx={{ mt: 2 }}>
-                                    <Button
-                                        variant="outlined"
-                                        startIcon={<Security />}
-                                        onClick={() => setTwoFactorModalOpen(true)}
-                                    >
-                                        Настроить 2FA
-                                    </Button>
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #eee', pb: 1 }}>
+                                <Typography variant="body2" color="textSecondary" sx={{ minWidth: '120px' }}>
+                                    Логин:
+                                </Typography>
+                                <Typography variant="body2" sx={{ fontWeight: '600' }}>
+                                    <TextField source="username" />
+                                </Typography>
+                            </Box>
+
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #eee', pb: 1 }}>
+                                <Typography variant="body2" color="textSecondary" sx={{ minWidth: '120px' }}>
+                                    Email:
+                                </Typography>
+                                <Typography variant="body2" sx={{ fontFamily: 'monospace' }}>
+                                    <TextField source="email" />
+                                </Typography>
+                            </Box>
+
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #eee', pb: 1 }}>
+                                <Typography variant="body2" color="textSecondary" sx={{ minWidth: '120px' }}>
+                                    Имя:
+                                </Typography>
+                                <Typography variant="body2">
+                                    <TextField source="firstName" />
+                                </Typography>
+                            </Box>
+
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #eee', pb: 1 }}>
+                                <Typography variant="body2" color="textSecondary" sx={{ minWidth: '120px' }}>
+                                    Фамилия:
+                                </Typography>
+                                <Typography variant="body2">
+                                    <TextField source="lastName" />
+                                </Typography>
+                            </Box>
+
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #eee', pb: 1 }}>
+                                <Typography variant="body2" color="textSecondary" sx={{ minWidth: '120px' }}>
+                                    Роль:
+                                </Typography>
+                                <Box>
+                                    <UserRoleField />
                                 </Box>
-                            </CardContent>
-                        </Card>
-                    </Grid>
-                </Grid>
+                            </Box>
+
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', pb: 1 }}>
+                                <Typography variant="body2" color="textSecondary" sx={{ minWidth: '120px' }}>
+                                    Статус:
+                                </Typography>
+                                <Box>
+                                    <UserStatusField />
+                                </Box>
+                            </Box>
+                        </Box>
+                    </CardContent>
+                </Card>
+
+                {/* БЕЗОПАСНОСТЬ И АКТИВНОСТЬ */}
+                <Card sx={{ mb: 3 }}>
+                    <CardContent>
+                        <Typography variant="h6" gutterBottom sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+                            <Security sx={{ mr: 1 }} />
+                            Безопасность и активность
+                        </Typography>
+
+                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #eee', pb: 1 }}>
+                                <Typography variant="body2" color="textSecondary" sx={{ minWidth: '150px' }}>
+                                    Двухфакторная аутентификация:
+                                </Typography>
+                                <Box>
+                                    <TwoFactorStatusField />
+                                </Box>
+                            </Box>
+
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #eee', pb: 1 }}>
+                                <Typography variant="body2" color="textSecondary" sx={{ minWidth: '150px' }}>
+                                    Последний вход:
+                                </Typography>
+                                <Typography variant="body2" sx={{ fontFamily: 'monospace' }}>
+                                    <DateField source="lastLogin" showTime />
+                                </Typography>
+                            </Box>
+
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #eee', pb: 1 }}>
+                                <Typography variant="body2" color="textSecondary" sx={{ minWidth: '150px' }}>
+                                    IP последнего входа:
+                                </Typography>
+                                <Typography variant="body2" sx={{ fontFamily: 'monospace' }}>
+                                    <TextField source="lastLoginIp" />
+                                </Typography>
+                            </Box>
+
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #eee', pb: 1 }}>
+                                <Typography variant="body2" color="textSecondary" sx={{ minWidth: '150px' }}>
+                                    Дата создания:
+                                </Typography>
+                                <Typography variant="body2" sx={{ fontFamily: 'monospace' }}>
+                                    <DateField source="createdAt" showTime />
+                                </Typography>
+                            </Box>
+
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', pb: 1 }}>
+                                <Typography variant="body2" color="textSecondary" sx={{ minWidth: '150px' }}>
+                                    Последнее обновление:
+                                </Typography>
+                                <Typography variant="body2" sx={{ fontFamily: 'monospace' }}>
+                                    <DateField source="updatedAt" showTime />
+                                </Typography>
+                            </Box>
+                        </Box>
+
+                        {/* Кнопка настройки 2FA */}
+                        <Box sx={{ mt: 3, pt: 2, borderTop: '1px solid #eee' }}>
+                            <Button
+                                variant="outlined"
+                                startIcon={<Security />}
+                                onClick={() => setTwoFactorModalOpen(true)}
+                                sx={{ width: '100%' }}
+                            >
+                                Настроить двухфакторную аутентификацию
+                            </Button>
+                        </Box>
+                    </CardContent>
+                </Card>
 
                 <TwoFactorModal
                     open={twoFactorModalOpen}
