@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import authRoutes from './auth.routes.js';
+import adminUsersRoutes from './adminUsers.routes.js';
 
 const router = Router();
 
@@ -11,7 +12,7 @@ router.get('/', (req, res) => {
         version: '1.0.0',
         endpoints: {
             auth: '/auth/*',
-            health: '/health'
+            admin: '/admin/*'
         }
     });
 });
@@ -19,5 +20,7 @@ router.get('/', (req, res) => {
 // Маршруты аутентификации
 router.use('/auth', authRoutes);
 
+// Управление пользователями
+router.use('/admin/users', adminUsersRoutes);
 
 export default router;

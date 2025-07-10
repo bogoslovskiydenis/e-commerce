@@ -12,10 +12,17 @@ import { BannersController } from '../controllers/banners.controller';
 import { PagesController } from '../controllers/pages.controller';
 import { SettingsController } from '../controllers/settings.controller';
 
+// Импортируем маршруты для управления пользователями
+import adminUsersRoutes from './adminUsers.routes';
+
 const router = Router();
 
 // Применяем аутентификацию ко всем роутам
 router.use(authenticateToken);
+
+// === УПРАВЛЕНИЕ ПОЛЬЗОВАТЕЛЯМИ ===
+// Подключаем маршруты управления пользователями
+router.use('/admin/users', adminUsersRoutes);
 
 // Инициализация контроллеров
 const productsController = new ProductsController();
@@ -26,7 +33,7 @@ const bannersController = new BannersController();
 const pagesController = new PagesController();
 const settingsController = new SettingsController();
 
-// Товары
+// === ТОВАРЫ ===
 router.get('/products',
     requirePermission('products.view'),
     productsController.getProducts
@@ -55,7 +62,7 @@ router.delete('/products/:id',
     productsController.deleteProduct
 );
 
-// Заказы
+// === ЗАКАЗЫ ===
 router.get('/orders',
     requirePermission('orders.view'),
     ordersController.getOrders
@@ -72,7 +79,7 @@ router.patch('/orders/:id/status',
     ordersController.updateOrderStatus
 );
 
-// Клиенты
+// === КЛИЕНТЫ ===
 router.get('/customers',
     requirePermission('customers.view'),
     customersController.getCustomers
@@ -89,7 +96,7 @@ router.put('/customers/:id',
     customersController.updateCustomer
 );
 
-// Категории
+// === КАТЕГОРИИ ===
 router.get('/categories',
     requirePermission('categories.view'),
     categoriesController.getCategories
@@ -113,7 +120,7 @@ router.delete('/categories/:id',
     categoriesController.deleteCategory
 );
 
-// Баннеры
+// === БАННЕРЫ ===
 router.get('/banners',
     requirePermission('website.banners'),
     bannersController.getBanners
@@ -137,7 +144,7 @@ router.delete('/banners/:id',
     bannersController.deleteBanner
 );
 
-// Страницы
+// === СТРАНИЦЫ ===
 router.get('/pages',
     requirePermission('website.pages'),
     pagesController.getPages
@@ -161,7 +168,7 @@ router.delete('/pages/:id',
     pagesController.deletePage
 );
 
-// Настройки
+// === НАСТРОЙКИ ===
 router.get('/settings',
     requirePermission('website.settings'),
     settingsController.getSettings

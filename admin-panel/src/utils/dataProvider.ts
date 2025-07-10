@@ -1,7 +1,7 @@
-import { DataProvider, fetchUtils } from 'react-admin';
+import { DataProvider, fetchUtils, DeleteParams, Identifier } from 'react-admin';
 
-// API базовый URL
-const API_BASE_URL = 'http://localhost:3000/api';
+// API базовый URL - исправляем на правильный порт
+const API_BASE_URL = 'http://localhost:3001/api';
 
 // Утилита для получения токена
 const getAuthToken = () => localStorage.getItem('auth_token');
@@ -86,38 +86,88 @@ const convertRAParamsToAPI = (params: any) => {
 // Функция конвертации ответа API в формат react-admin
 const convertAPIResponseToRA = (response: any, type: string) => {
     if (!response.success) {
-        throw new Error(response.message || 'API Error');
+        throw new Error(response.error || 'API Error');
     }
 
     switch (type) {
         case 'getList':
-        case 'getManyReference':
             return {
-                data: response.data.items || response.data,
-                total: response.data.total || response.data.length,
+                data: response.data || [],
+                total: response.pagination?.total || response.data?.length || 0
             };
-
         case 'getOne':
         case 'create':
         case 'update':
             return { data: response.data };
-
-        case 'delete':
-            return { data: { id: response.data.id } };
-
         case 'getMany':
-            return { data: response.data };
-
+            return { data: response.data || [] };
+        case 'delete':
+            return { data: { id: response.id } };
         default:
-            return response.data;
+            return response;
     }
 };
 
-// Основной DataProvider
-export const apiDataProvider: DataProvider = {
+// Специальные операции для admin-users
+const handleAdminUserOperations = async (resource: string, params: any) => {
+    const { meta } = params;
 
+    if (resource === 'admin-users' && meta?.operation) {
+        switch (meta.operation) {
+            case 'changePassword':
+                const { json: passwordResponse } = await httpClient(
+                    `${API_BASE_URL}/admin/users/${params.id}/change-password`,
+                    {
+                        method: 'POST',
+                        body: JSON.stringify({ newPassword: meta.newPassword }),
+                    }
+                );
+                return { data: passwordResponse.data };
+
+            case 'toggleStatus':
+                const { json: statusResponse } = await httpClient(
+                    `${API_BASE_URL}/admin/users/${params.id}/toggle-status`,
+                    {
+                        method: 'POST',
+                    }
+                );
+                return { data: statusResponse.data };
+
+            case 'getRolesAndPermissions':
+                const { json: rolesResponse } = await httpClient(
+                    `${API_BASE_URL}/admin/users/system/roles-and-permissions`
+                );
+                return { data: rolesResponse.data };
+
+            case 'bulkOperation':
+                const { json: bulkResponse } = await httpClient(
+                    `${API_BASE_URL}/admin/users/bulk`,
+                    {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            userIds: meta.userIds,
+                            operation: meta.bulkOperation
+                        }),
+                    }
+                );
+                return { data: bulkResponse.data };
+
+            default:
+                throw new Error(`Unknown admin-users operation: ${meta.operation}`);
+        }
+    }
+
+    return null;
+};
+
+// Основной data provider
+export const customDataProvider: DataProvider = {
     // Получить список записей
     getList: async (resource, params) => {
+        // Проверяем специальные операции
+        const specialOperation = await handleAdminUserOperations(resource, params);
+        if (specialOperation) return specialOperation;
+
         const endpoint = RESOURCE_ENDPOINTS[resource];
         if (!endpoint) {
             throw new Error(`Unknown resource: ${resource}`);
@@ -126,8 +176,6 @@ export const apiDataProvider: DataProvider = {
         const apiParams = convertRAParamsToAPI(params);
         const query = new URLSearchParams(apiParams).toString();
         const url = `${API_BASE_URL}${endpoint}${query ? `?${query}` : ''}`;
-
-        console.log(`📋 Получение списка ${resource}:`, url);
 
         const { json } = await httpClient(url);
         return convertAPIResponseToRA(json, 'getList');
@@ -141,30 +189,29 @@ export const apiDataProvider: DataProvider = {
         }
 
         const url = `${API_BASE_URL}${endpoint}/${params.id}`;
-
-        console.log(`📄 Получение записи ${resource}:`, url);
-
         const { json } = await httpClient(url);
         return convertAPIResponseToRA(json, 'getOne');
     },
 
-    // Получить множество записей по ID
+    // Получить несколько записей по ID
     getMany: async (resource, params) => {
         const endpoint = RESOURCE_ENDPOINTS[resource];
         if (!endpoint) {
             throw new Error(`Unknown resource: ${resource}`);
         }
 
-        const ids = params.ids.join(',');
-        const url = `${API_BASE_URL}${endpoint}?ids=${ids}`;
+        // Делаем несколько запросов для каждого ID
+        const promises = params.ids.map(id =>
+            httpClient(`${API_BASE_URL}${endpoint}/${id}`)
+        );
 
-        console.log(`📋 Получение записей ${resource} по ID:`, url);
+        const responses = await Promise.all(promises);
+        const data = responses.map(({ json }) => json.data);
 
-        const { json } = await httpClient(url);
-        return convertAPIResponseToRA(json, 'getMany');
+        return { data };
     },
 
-    // Получить связанные записи
+    // Получить несколько записей с фильтрацией
     getManyReference: async (resource, params) => {
         const endpoint = RESOURCE_ENDPOINTS[resource];
         if (!endpoint) {
@@ -172,28 +219,28 @@ export const apiDataProvider: DataProvider = {
         }
 
         const apiParams = convertRAParamsToAPI(params);
+        // Добавляем фильтр по reference
         apiParams[params.target] = params.id;
 
         const query = new URLSearchParams(apiParams).toString();
-        const url = `${API_BASE_URL}${endpoint}?${query}`;
-
-        console.log(`🔗 Получение связанных записей ${resource}:`, url);
+        const url = `${API_BASE_URL}${endpoint}${query ? `?${query}` : ''}`;
 
         const { json } = await httpClient(url);
-        return convertAPIResponseToRA(json, 'getManyReference');
+        return convertAPIResponseToRA(json, 'getList');
     },
 
     // Создать запись
     create: async (resource, params) => {
+        // Проверяем специальные операции
+        const specialOperation = await handleAdminUserOperations(resource, params);
+        if (specialOperation) return specialOperation;
+
         const endpoint = RESOURCE_ENDPOINTS[resource];
         if (!endpoint) {
             throw new Error(`Unknown resource: ${resource}`);
         }
 
         const url = `${API_BASE_URL}${endpoint}`;
-
-        console.log(`➕ Создание записи ${resource}:`, params.data);
-
         const { json } = await httpClient(url, {
             method: 'POST',
             body: JSON.stringify(params.data),
@@ -204,15 +251,16 @@ export const apiDataProvider: DataProvider = {
 
     // Обновить запись
     update: async (resource, params) => {
+        // Проверяем специальные операции
+        const specialOperation = await handleAdminUserOperations(resource, params);
+        if (specialOperation) return specialOperation;
+
         const endpoint = RESOURCE_ENDPOINTS[resource];
         if (!endpoint) {
             throw new Error(`Unknown resource: ${resource}`);
         }
 
         const url = `${API_BASE_URL}${endpoint}/${params.id}`;
-
-        console.log(`✏️ Обновление записи ${resource}:`, params.data);
-
         const { json } = await httpClient(url, {
             method: 'PUT',
             body: JSON.stringify(params.data),
@@ -221,192 +269,104 @@ export const apiDataProvider: DataProvider = {
         return convertAPIResponseToRA(json, 'update');
     },
 
-    // Частичное обновление записи
+    // Частично обновить запись
     updateMany: async (resource, params) => {
         const endpoint = RESOURCE_ENDPOINTS[resource];
         if (!endpoint) {
             throw new Error(`Unknown resource: ${resource}`);
         }
 
-        const url = `${API_BASE_URL}${endpoint}/bulk`;
+        // Обновляем каждую запись отдельно
+        const promises = params.ids.map(id =>
+            httpClient(`${API_BASE_URL}${endpoint}/${id}`, {
+                method: 'PATCH',
+                body: JSON.stringify(params.data),
+            })
+        );
 
-        console.log(`✏️ Массовое обновление ${resource}:`, params);
-
-        await httpClient(url, {
-            method: 'PATCH',
-            body: JSON.stringify({
-                ids: params.ids,
-                data: params.data,
-            }),
-        });
-
+        await Promise.all(promises);
         return { data: params.ids };
     },
 
-    // Удалить запись
-    delete: async (resource, params) => {
+    // Удалить запись - исправляем тип возврата
+    delete: async <RecordType extends { id: Identifier }>(resource: string, params: DeleteParams<RecordType>) => {
         const endpoint = RESOURCE_ENDPOINTS[resource];
         if (!endpoint) {
             throw new Error(`Unknown resource: ${resource}`);
         }
 
         const url = `${API_BASE_URL}${endpoint}/${params.id}`;
-
-        console.log(`🗑️ Удаление записи ${resource}:`, params.id);
-
         await httpClient(url, {
             method: 'DELETE',
         });
 
-        // Используем previousData если доступно, иначе создаём минимальный объект
+        // Возвращаем правильный тип
         return {
-            data: params.previousData ?? { id: params.id } as any
+            data: {
+                ...params.previousData,
+                id: params.id
+            } as RecordType
         };
     },
 
-    // Массовое удаление
+    // Удалить несколько записей
     deleteMany: async (resource, params) => {
         const endpoint = RESOURCE_ENDPOINTS[resource];
         if (!endpoint) {
             throw new Error(`Unknown resource: ${resource}`);
         }
 
-        const url = `${API_BASE_URL}${endpoint}/bulk`;
+        // Удаляем каждую запись отдельно
+        const promises = params.ids.map(id =>
+            httpClient(`${API_BASE_URL}${endpoint}/${id}`, {
+                method: 'DELETE',
+            })
+        );
 
-        console.log(`🗑️ Массовое удаление ${resource}:`, params.ids);
-
-        await httpClient(url, {
-            method: 'DELETE',
-            body: JSON.stringify({ ids: params.ids }),
-        });
-
+        await Promise.all(promises);
         return { data: params.ids };
-    },
-} as DataProvider;
-
-// Расширенный DataProvider с кастомными методами
-export const customDataProvider = {
-    ...apiDataProvider,
-
-    // Получить статистику для дашборда
-    getStats: async () => {
-        try {
-            const { json } = await httpClient(`${API_BASE_URL}/stats`);
-            return json.data;
-        } catch (error) {
-            console.error('Error fetching stats:', error);
-            return {
-                totalUsers: 0,
-                totalOrders: 0,
-                totalProducts: 0,
-                revenue: 0,
-                newUsers: 0,
-                completedOrders: 0,
-            };
-        }
-    },
-
-    // Получить аналитику
-    getAnalytics: async (params: {
-        type: string;
-        period?: string;
-        startDate?: string;
-        endDate?: string
-    }) => {
-        try {
-            const query = new URLSearchParams(params).toString();
-            const { json } = await httpClient(`${API_BASE_URL}/analytics?${query}`);
-            return json.data;
-        } catch (error) {
-            console.error('Error fetching analytics:', error);
-            return {};
-        }
-    },
-
-    // Обновить статус заказа
-    updateOrderStatus: async (id: string, status: string) => {
-        try {
-            const { json } = await httpClient(`${API_BASE_URL}/orders/${id}/status`, {
-                method: 'PATCH',
-                body: JSON.stringify({ status }),
-            });
-            return json.data;
-        } catch (error) {
-            console.error('Error updating order status:', error);
-            throw error;
-        }
-    },
-
-    // Экспорт данных
-    exportData: async (resource: string, params: any = {}) => {
-        try {
-            const endpoint = RESOURCE_ENDPOINTS[resource];
-            if (!endpoint) {
-                throw new Error(`Unknown resource: ${resource}`);
-            }
-
-            const apiParams = convertRAParamsToAPI(params);
-            apiParams.export = 'true';
-            apiParams.format = params.format || 'csv';
-
-            const query = new URLSearchParams(apiParams).toString();
-            const url = `${API_BASE_URL}${endpoint}/export?${query}`;
-
-            const response = await fetch(url, {
-                headers: {
-                    'Authorization': `Bearer ${getAuthToken()}`,
-                },
-            });
-
-            if (!response.ok) {
-                throw new Error('Export failed');
-            }
-
-            // Возвращаем Blob для скачивания
-            const blob = await response.blob();
-            const downloadUrl = window.URL.createObjectURL(blob);
-
-            // Создаем ссылку для скачивания
-            const link = document.createElement('a');
-            link.href = downloadUrl;
-            link.download = `${resource}_export_${new Date().toISOString().split('T')[0]}.${params.format || 'csv'}`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-
-            window.URL.revokeObjectURL(downloadUrl);
-
-            return { success: true };
-        } catch (error) {
-            console.error('Error exporting data:', error);
-            throw error;
-        }
-    },
-
-    // Получить настройки сайта
-    getSiteSettings: async () => {
-        try {
-            const { json } = await httpClient(`${API_BASE_URL}/settings`);
-            return json.data;
-        } catch (error) {
-            console.error('Error fetching site settings:', error);
-            return {};
-        }
-    },
-
-    // Обновить настройки сайта
-    updateSiteSettings: async (settings: any) => {
-        try {
-            const { json } = await httpClient(`${API_BASE_URL}/settings`, {
-                method: 'PUT',
-                body: JSON.stringify(settings),
-            });
-            return json.data;
-        } catch (error) {
-            console.error('Error updating site settings:', error);
-            throw error;
-        }
     },
 };
 
-export default customDataProvider;
+// Вспомогательные функции для работы с admin-users
+export const adminUsersHelpers = {
+    // Сменить пароль пользователя
+    changePassword: async (userId: string, newPassword: string) => {
+        return customDataProvider.update('admin-users', {
+            id: userId,
+            data: {},
+            previousData: {},
+            meta: { operation: 'changePassword', newPassword }
+        });
+    },
+
+    // Переключить статус пользователя
+    toggleStatus: async (userId: string) => {
+        return customDataProvider.update('admin-users', {
+            id: userId,
+            data: {},
+            previousData: {},
+            meta: { operation: 'toggleStatus' }
+        });
+    },
+
+    // Получить роли и разрешения
+    getRolesAndPermissions: async () => {
+        return customDataProvider.update('admin-users', {
+            id: 'system',
+            data: {},
+            previousData: {},
+            meta: { operation: 'getRolesAndPermissions' }
+        });
+    },
+
+    // Массовые операции
+    bulkOperation: async (userIds: string[], operation: 'activate' | 'deactivate' | 'delete') => {
+        return customDataProvider.update('admin-users', {
+            id: 'bulk',
+            data: {},
+            previousData: {},
+            meta: { operation: 'bulkOperation', userIds, bulkOperation: operation }
+        });
+    }
+};
