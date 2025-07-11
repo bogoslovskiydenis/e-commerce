@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { authenticateToken, requirePermission } from '@/middleware/auth.middleware';
 import { productsController } from '@/controllers/products.controller';
-import { validate } from '@/middleware/validation.middleware';
+import { uploadSingle, handleUploadError } from '@/middleware/upload.middleware';
 import { z } from 'zod';
 
 const router = Router();
@@ -9,17 +9,17 @@ const router = Router();
 // Применяем аутентификацию ко всем маршрутам
 router.use(authenticateToken);
 
-// Схемы валидации
+// Схемы валидации для JSON данных (без файлов)
 const createProductSchema = z.object({
     body: z.object({
         title: z.string().min(1, 'Title is required').max(255, 'Title too long'),
-        slug: z.string().max(255).optional(), // ✅ ДОБАВЛЕНО
+        slug: z.string().max(255).optional(),
         description: z.string().optional(),
-        price: z.number().positive('Price must be positive').or(z.string().regex(/^\d+(\.\d{1,2})?$/, 'Invalid price format')),
-        salePrice: z.number().positive().optional().or(z.string().regex(/^\d+(\.\d{1,2})?$/).optional()),
+        price: z.number().positive('Price must be positive').or(z.string().regex(/^\d+(\.\d{1,2})?$/, 'Invalid price format').transform(Number)),
+        oldPrice: z.number().positive().optional().or(z.string().regex(/^\d+(\.\d{1,2})?$/).transform(Number).optional()),
         sku: z.string().max(100).optional(),
+        brand: z.string().max(100).optional(),
         categoryId: z.string().uuid('Invalid category ID').optional(),
-        images: z.array(z.string().url()).optional().default([]),
         isActive: z.boolean().optional().default(true),
         inStock: z.boolean().optional().default(true),
         stockQuantity: z.number().int().min(0).optional().default(0).or(z.string().regex(/^\d+$/).transform(Number)),
@@ -40,13 +40,13 @@ const updateProductSchema = z.object({
     }),
     body: z.object({
         title: z.string().min(1).max(255).optional(),
-        slug: z.string().max(255).optional(), // ✅ ДОБАВЛЕНО
+        slug: z.string().max(255).optional(),
         description: z.string().optional(),
-        price: z.number().positive().or(z.string().regex(/^\d+(\.\d{1,2})?$/)).optional(),
-        salePrice: z.number().positive().or(z.string().regex(/^\d+(\.\d{1,2})?$/)).optional().nullable(),
+        price: z.number().positive().or(z.string().regex(/^\d+(\.\d{1,2})?$/).transform(Number)).optional(),
+        oldPrice: z.number().positive().or(z.string().regex(/^\d+(\.\d{1,2})?$/).transform(Number)).optional().nullable(),
         sku: z.string().max(100).optional(),
+        brand: z.string().max(100).optional(),
         categoryId: z.string().uuid().optional().nullable(),
-        images: z.array(z.string().url()).optional(),
         isActive: z.boolean().optional(),
         inStock: z.boolean().optional(),
         stockQuantity: z.number().int().min(0).or(z.string().regex(/^\d+$/).transform(Number)).optional(),
@@ -55,7 +55,7 @@ const updateProductSchema = z.object({
             length: z.number().positive().optional(),
             width: z.number().positive().optional(),
             height: z.number().positive().optional()
-        }).optional().nullable(),
+        }).optional(),
         metaTitle: z.string().max(255).optional(),
         metaDescription: z.string().max(500).optional()
     })
@@ -73,44 +73,44 @@ const categoryProductsSchema = z.object({
     })
 });
 
-// Получить список товаров
 router.get('/',
     requirePermission('products.view'),
     productsController.getProducts
 );
 
-// Получить товары по категории
-router.get('/category/:categoryId',
-    requirePermission('products.view'),
-    validate(categoryProductsSchema),
-    productsController.getProductsByCategory
-);
-
 // Получить товар по ID
 router.get('/:id',
     requirePermission('products.view'),
-    validate(productIdSchema),
     productsController.getProduct
 );
 
-// Создать новый товар
+// Создать новый товар (с возможностью загрузки изображения)
 router.post('/',
     requirePermission('products.create'),
-    validate(createProductSchema),
+    uploadSingle('image'),
+    handleUploadError,
     productsController.createProduct
 );
 
-// Обновить товар
+// Обновить товар (с возможностью загрузки изображения)
 router.put('/:id',
     requirePermission('products.edit'),
-    validate(updateProductSchema),
+    uploadSingle('image'),
+    handleUploadError,
     productsController.updateProduct
+);
+
+// Отдельный endpoint для загрузки изображения
+router.post('/:id/upload-image',
+    requirePermission('products.edit'),
+    uploadSingle('image'),
+    handleUploadError,
+    productsController.uploadProductImage
 );
 
 // Удалить товар
 router.delete('/:id',
     requirePermission('products.delete'),
-    validate(productIdSchema),
     productsController.deleteProduct
 );
 

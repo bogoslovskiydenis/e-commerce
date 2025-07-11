@@ -1,7 +1,7 @@
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
-import { ApiError } from '../utils/apiError';
+import { Request, Response, NextFunction } from 'express';
 import { logger } from '../utils/logger';
 
 // Создаем папки для загрузки если их нет
@@ -63,7 +63,7 @@ const storage = multer.diskStorage({
 });
 
 // Фильтр для типов файлов
-const fileFilter = (req: any, file: Express.Multer.File, cb: any) => {
+const fileFilter = (req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
     // Разрешенные типы файлов
     const allowedMimes = [
         'image/jpeg',
@@ -81,7 +81,7 @@ const fileFilter = (req: any, file: Express.Multer.File, cb: any) => {
     if (allowedMimes.includes(file.mimetype) && allowedExtensions.includes(fileExtension)) {
         cb(null, true);
     } else {
-        cb(new ApiError(400, `File type not allowed. Allowed types: ${allowedExtensions.join(', ')}`), false);
+        cb(new Error(`File type not allowed. Allowed types: ${allowedExtensions.join(', ')}`), false);
     }
 };
 
@@ -112,27 +112,53 @@ export const uploadArray = (fieldName: string, maxCount: number = 5) =>
 export const uploadFields = (fields: Array<{ name: string; maxCount?: number }>) =>
     upload.fields(fields);
 
-// Middleware для обработки ошибок загрузки
-export const handleUploadError = (err: any, req: any, res: any, next: any) => {
+// ✅ ИСПРАВЛЕННАЯ ТИПИЗАЦИЯ: Middleware для обработки ошибок загрузки
+export const handleUploadError = (err: Error, req: Request, res: Response, next: NextFunction): void => {
     if (err instanceof multer.MulterError) {
+        let errorMessage = 'Upload error';
+        let statusCode = 400;
+
         switch (err.code) {
             case 'LIMIT_FILE_SIZE':
-                return next(new ApiError(400, 'File too large'));
+                errorMessage = 'File too large';
+                break;
             case 'LIMIT_FILE_COUNT':
-                return next(new ApiError(400, 'Too many files'));
+                errorMessage = 'Too many files';
+                break;
             case 'LIMIT_FIELD_KEY':
-                return next(new ApiError(400, 'Field name too long'));
+                errorMessage = 'Field name too long';
+                break;
             case 'LIMIT_FIELD_VALUE':
-                return next(new ApiError(400, 'Field value too long'));
+                errorMessage = 'Field value too long';
+                break;
             case 'LIMIT_FIELD_COUNT':
-                return next(new ApiError(400, 'Too many fields'));
+                errorMessage = 'Too many fields';
+                break;
             case 'LIMIT_UNEXPECTED_FILE':
-                return next(new ApiError(400, 'Unexpected file field'));
+                errorMessage = 'Unexpected file field';
+                break;
             default:
-                return next(new ApiError(400, 'Upload error: ' + err.message));
+                errorMessage = 'Upload error: ' + err.message;
         }
+
+        logger.error('Upload error:', { code: err.code, message: err.message });
+
+        return res.status(statusCode).json({
+            success: false,
+            error: errorMessage
+        });
     }
 
+    // Обработка других ошибок загрузки файлов
+    if (err && err.message.includes('File type not allowed')) {
+        logger.error('File type error:', err.message);
+        return res.status(400).json({
+            success: false,
+            error: err.message
+        });
+    }
+
+    // Если ошибка не связана с загрузкой, передаем дальше
     if (err) {
         return next(err);
     }
@@ -199,136 +225,10 @@ export const fileExists = (filePath: string): boolean => {
 };
 
 // Создание URL для файла
-export const createFileUrl = (filePath: string, req?: any): string => {
-    if (!filePath) return '';
+export const createFileUrl = (filePath: string, req?: Request): string => {
+    const baseUrl = req
+        ? `${req.protocol}://${req.get('Host')}`
+        : process.env.BASE_URL || 'http://localhost:3001';
 
-    // Если путь уже полный URL, возвращаем как есть
-    if (filePath.startsWith('http')) {
-        return filePath;
-    }
-
-    // Убираем начальный слеш если есть
-    const cleanPath = filePath.startsWith('/') ? filePath.slice(1) : filePath;
-
-    // Если есть объект запроса, формируем полный URL
-    if (req) {
-        const protocol = req.protocol;
-        const host = req.get('host');
-        return `${protocol}://${host}/${cleanPath}`;
-    }
-
-    // Иначе возвращаем относительный путь
-    return `/${cleanPath}`;
+    return `${baseUrl}/uploads/${path.basename(filePath)}`;
 };
-
-// Валидация размера изображения
-export const validateImageDimensions = (
-    minWidth?: number,
-    minHeight?: number,
-    maxWidth?: number,
-    maxHeight?: number
-) => {
-    return async (req: any, res: any, next: any) => {
-        if (!req.file) {
-            return next();
-        }
-
-        try {
-            // Здесь можно добавить проверку размеров изображения
-            // Для этого потребуется библиотека типа sharp или jimp
-            // const sharp = require('sharp');
-            // const metadata = await sharp(req.file.path).metadata();
-            //
-            // if (minWidth && metadata.width < minWidth) {
-            //     return next(new ApiError(400, `Image width must be at least ${minWidth}px`));
-            // }
-
-            next();
-        } catch (error) {
-            next(new ApiError(400, 'Invalid image file'));
-        }
-    };
-};
-
-// Сжатие изображений
-export const compressImage = (quality: number = 85) => {
-    return async (req: any, res: any, next: any) => {
-        if (!req.file) {
-            return next();
-        }
-
-        try {
-            // Здесь можно добавить сжатие изображения
-            // const sharp = require('sharp');
-            // await sharp(req.file.path)
-            //     .jpeg({ quality })
-            //     .toFile(req.file.path + '_compressed');
-
-            next();
-        } catch (error) {
-            next(new ApiError(500, 'Image compression failed'));
-        }
-    };
-};
-
-// Создание миниатюр
-export const createThumbnails = (sizes: Array<{ width: number; height: number; suffix: string }>) => {
-    return async (req: any, res: any, next: any) => {
-        if (!req.file) {
-            return next();
-        }
-
-        try {
-            // Здесь можно добавить создание миниатюр
-            // const sharp = require('sharp');
-            // const promises = sizes.map(size => {
-            //     const outputPath = req.file.path.replace(/(\.[^.]+)$/, `_${size.suffix}$1`);
-            //     return sharp(req.file.path)
-            //         .resize(size.width, size.height)
-            //         .toFile(outputPath);
-            // });
-            //
-            // await Promise.all(promises);
-
-            next();
-        } catch (error) {
-            next(new ApiError(500, 'Thumbnail creation failed'));
-        }
-    };
-};
-
-// Очистка временных файлов
-export const cleanupTempFiles = () => {
-    const tempDir = path.join(process.cwd(), 'uploads/temp');
-    const maxAge = 24 * 60 * 60 * 1000; // 24 часа
-
-    if (!fs.existsSync(tempDir)) {
-        return;
-    }
-
-    fs.readdir(tempDir, (err, files) => {
-        if (err) {
-            logger.error('Error reading temp directory:', err);
-            return;
-        }
-
-        files.forEach(file => {
-            const filePath = path.join(tempDir, file);
-
-            fs.stat(filePath, (err, stats) => {
-                if (err) return;
-
-                const now = new Date().getTime();
-                const fileTime = new Date(stats.ctime).getTime();
-
-                if (now - fileTime > maxAge) {
-                    deleteFile(`uploads/temp/${file}`)
-                        .catch(err => logger.error('Error deleting temp file:', err));
-                }
-            });
-        });
-    });
-};
-
-// Запуск очистки временных файлов каждый час
-setInterval(cleanupTempFiles, 60 * 60 * 1000);

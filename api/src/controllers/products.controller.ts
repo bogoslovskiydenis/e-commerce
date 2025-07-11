@@ -1,64 +1,46 @@
-import { Request, Response } from 'express';
-import { prisma } from '../config/database.js';
-import { AuthenticatedRequest } from '../middleware/auth.middleware.js';
+import { Response } from 'express';
+import { prisma } from '../config/database';
+import { AuthenticatedRequest } from '../middleware/auth.middleware';
 
 export class ProductsController {
     // Получить список товаров
     async getProducts(req: AuthenticatedRequest, res: Response) {
         try {
             const page = parseInt(req.query.page as string) || 1;
-            const limit = parseInt(req.query.limit as string) || 25;
+            const limit = parseInt(req.query.limit as string) || 10;
             const sortBy = req.query.sortBy as string || 'createdAt';
             const sortOrder = req.query.sortOrder as string || 'desc';
             const search = req.query.search as string;
             const categoryId = req.query.categoryId as string;
-            const isActive = req.query.isActive as string;
 
             const skip = (page - 1) * limit;
 
-            console.log('🛍️ Получение списка товаров из БД', { page, limit, sortBy, sortOrder, search, categoryId });
+            console.log('🛍️ Получение списка товаров из БД', {
+                page, limit, sortBy, sortOrder, search, categoryId
+            });
 
             // Строим условие поиска
             const where: any = {};
-
             if (search) {
                 where.OR = [
                     { title: { contains: search, mode: 'insensitive' } },
                     { description: { contains: search, mode: 'insensitive' } },
-                    { sku: { contains: search, mode: 'insensitive' } }
+                    { brand: { contains: search, mode: 'insensitive' } }
                 ];
             }
-
             if (categoryId) {
                 where.categoryId = categoryId;
             }
 
-            if (isActive !== undefined) {
-                where.isActive = isActive === 'true';
-            }
-
-            // Получаем товары с категориями
             const [products, totalCount] = await Promise.all([
                 prisma.product.findMany({
                     where,
                     skip,
                     take: limit,
-                    orderBy: {
-                        [sortBy]: sortOrder
-                    },
+                    orderBy: { [sortBy]: sortOrder },
                     include: {
                         category: {
-                            select: {
-                                id: true,
-                                name: true,
-                                slug: true
-                            }
-                        },
-                        _count: {
-                            select: {
-                                orderItems: true,
-                                reviews: true
-                            }
+                            select: { id: true, name: true, slug: true }
                         }
                     }
                 }),
@@ -95,26 +77,7 @@ export class ProductsController {
                 where: { id },
                 include: {
                     category: {
-                        select: {
-                            id: true,
-                            name: true,
-                            slug: true
-                        }
-                    },
-                    reviews: {
-                        take: 5,
-                        orderBy: { createdAt: 'desc' },
-                        include: {
-                            customer: {
-                                select: { name: true }
-                            }
-                        }
-                    },
-                    _count: {
-                        select: {
-                            orderItems: true,
-                            reviews: true
-                        }
+                        select: { id: true, name: true, slug: true }
                     }
                 }
             });
@@ -140,20 +103,21 @@ export class ProductsController {
         }
     }
 
+    // ✅ ИСПРАВЛЕННАЯ ФУНКЦИЯ: Создание товара
     async createProduct(req: AuthenticatedRequest, res: Response) {
         try {
             const {
                 title,
                 description,
                 price,
-                oldPrice, // изменили с salePrice на oldPrice
+                oldPrice,
+                discount, // ✅ ДОБАВЛЕНО
                 sku,
                 categoryId,
-                brand, // ✅ ДОБАВЛЕНО
-                images = [],
-                isActive = true,
-                inStock = true,
-                stockQuantity = 0,
+                brand,
+                isActive = 'true',
+                inStock = 'true',
+                stockQuantity = '0',
                 weight,
                 dimensions,
                 metaTitle,
@@ -165,10 +129,12 @@ export class ProductsController {
                 title,
                 price,
                 oldPrice,
-                brand, // ✅ ДОБАВЛЕНО В ЛОГ
+                discount, // ✅ ДОБАВЛЕНО В ЛОГ
+                brand,
                 sku,
                 categoryId,
-                stockQuantity
+                stockQuantity,
+                hasFile: !!req.file
             });
 
             // Валидация обязательных полей
@@ -179,15 +145,17 @@ export class ProductsController {
                 });
             }
 
-            // Генерируем slug если не передан
-            const finalSlug = slug || title.toLowerCase()
-                .replace(/[^a-zа-я0-9]/gi, '-')
-                .replace(/-+/g, '-')
-                .replace(/^-|-$/g, '');
+            // ✅ ИСПРАВЛЕНО: Обработка загруженного файла
+            let images: string[] = [];
+            if (req.file) {
+                const imageUrl = `/uploads/${req.file.filename}`;
+                images = [imageUrl];
+                console.log('📸 Изображение загружено:', imageUrl);
+            }
 
-            // Проверяем уникальность SKU если указан
+            // Проверяем уникальность SKU
             if (sku) {
-                const existingProduct = await prisma.product.findUnique({
+                const existingProduct = await prisma.product.findFirst({
                     where: { sku }
                 });
 
@@ -199,24 +167,13 @@ export class ProductsController {
                 }
             }
 
-            // Проверяем уникальность slug
-            const existingSlugProduct = await prisma.product.findUnique({
-                where: { slug: finalSlug }
-            });
-
-            if (existingSlugProduct) {
-                // Добавляем случайное число к slug
-                const randomSuffix = Math.random().toString(36).substring(2, 8);
-                finalSlug = `${finalSlug}-${randomSuffix}`;
-            }
-
             // Проверяем существование категории
             if (categoryId) {
-                const category = await prisma.category.findUnique({
+                const categoryExists = await prisma.category.findUnique({
                     where: { id: categoryId }
                 });
 
-                if (!category) {
+                if (!categoryExists) {
                     return res.status(400).json({
                         success: false,
                         error: 'Category not found'
@@ -224,19 +181,21 @@ export class ProductsController {
                 }
             }
 
+            // ✅ ИСПРАВЛЕНО: Правильное преобразование типов
             const product = await prisma.product.create({
                 data: {
                     title,
-                    slug: finalSlug,
+                    slug: slug || title.toLowerCase().replace(/\s+/g, '-'),
                     description,
                     price: parseFloat(price),
-                    oldPrice: oldPrice ? parseFloat(oldPrice) : null, // ✅ ИСПРАВЛЕНО: salePrice -> oldPrice
-                    brand, // ✅ ДОБАВЛЕНО
+                    oldPrice: oldPrice ? parseFloat(oldPrice) : null,
+                    discount: discount ? parseFloat(discount) : null, // ✅ ДОБАВЛЕНО
+                    brand,
                     sku,
                     categoryId,
                     images,
-                    isActive,
-                    inStock,
+                    isActive: isActive === 'true' || isActive === true, // ✅ ИСПРАВЛЕНО
+                    inStock: inStock === 'true' || inStock === true,   // ✅ ИСПРАВЛЕНО
                     stockQuantity: parseInt(stockQuantity) || 0,
                     weight: weight ? parseFloat(weight) : null,
                     dimensions,
@@ -270,24 +229,43 @@ export class ProductsController {
         }
     }
 
-    // Обновить товар
+    // ✅ ИСПРАВЛЕННАЯ ФУНКЦИЯ: Обновление товара
     async updateProduct(req: AuthenticatedRequest, res: Response) {
         try {
             const { id } = req.params;
-            const updateData = req.body;
+            const updateData = { ...req.body };
 
-            console.log('🛍️ Обновление товара:', id, Object.keys(updateData));
+            console.log('🛍️ Обновление товара:', id, Object.keys(updateData), 'hasFile:', !!req.file);
 
-            // Если обновляется SKU, проверяем уникальность
-            if (updateData.sku) {
-                const existingProduct = await prisma.product.findFirst({
+            // Проверяем существование товара
+            const existingProduct = await prisma.product.findUnique({
+                where: { id }
+            });
+
+            if (!existingProduct) {
+                return res.status(404).json({
+                    success: false,
+                    error: 'Product not found'
+                });
+            }
+
+            // ✅ ИСПРАВЛЕНО: Обработка загруженного файла
+            if (req.file) {
+                const imageUrl = `/uploads/${req.file.filename}`;
+                console.log('📸 Новое изображение загружено:', imageUrl);
+                updateData.images = [imageUrl];
+            }
+
+            // Проверяем уникальность SKU при обновлении
+            if (updateData.sku && updateData.sku !== existingProduct.sku) {
+                const existingProductWithSku = await prisma.product.findFirst({
                     where: {
                         sku: updateData.sku,
-                        NOT: { id }
+                        id: { not: id }
                     }
                 });
 
-                if (existingProduct) {
+                if (existingProductWithSku) {
                     return res.status(400).json({
                         success: false,
                         error: 'Product with this SKU already exists'
@@ -295,13 +273,37 @@ export class ProductsController {
                 }
             }
 
-            // Преобразуем числовые поля
+            // Проверяем существование категории
+            if (updateData.categoryId && updateData.categoryId !== existingProduct.categoryId) {
+                const categoryExists = await prisma.category.findUnique({
+                    where: { id: updateData.categoryId }
+                });
+
+                if (!categoryExists) {
+                    return res.status(400).json({
+                        success: false,
+                        error: 'Category not found'
+                    });
+                }
+            }
+
+            // ✅ ИСПРАВЛЕНО: Правильное преобразование типов данных
             if (updateData.price) updateData.price = parseFloat(updateData.price);
-            if (updateData.salePrice) updateData.oldPrice = parseFloat(updateData.salePrice);
+            if (updateData.oldPrice) updateData.oldPrice = parseFloat(updateData.oldPrice);
+            if (updateData.discount) updateData.discount = parseFloat(updateData.discount); // ✅ ДОБАВЛЕНО
             if (updateData.stockQuantity) updateData.stockQuantity = parseInt(updateData.stockQuantity);
             if (updateData.weight) updateData.weight = parseFloat(updateData.weight);
 
-            const product = await prisma.product.update({
+            // ✅ ИСПРАВЛЕНО: Преобразование строк в булевы значения
+            if (updateData.isActive !== undefined) {
+                updateData.isActive = updateData.isActive === 'true' || updateData.isActive === true;
+            }
+            if (updateData.inStock !== undefined) {
+                updateData.inStock = updateData.inStock === 'true' || updateData.inStock === true;
+            }
+
+            // Обновляем товар
+            const updatedProduct = await prisma.product.update({
                 where: { id },
                 data: {
                     ...updateData,
@@ -314,25 +316,66 @@ export class ProductsController {
                             name: true,
                             slug: true
                         }
-                    },
-                    _count: {
-                        select: {
-                            orderItems: true,
-                            reviews: true
-                        }
                     }
                 }
             });
 
-            console.log('✅ Товар обновлен:', product.title);
+            console.log('✅ Товар обновлен:', updatedProduct.title);
 
             res.json({
                 success: true,
-                data: product
+                data: updatedProduct
             });
 
         } catch (error) {
             console.error('❌ Ошибка обновления товара:', error);
+            if (error.code === 'P2025') {
+                return res.status(404).json({
+                    success: false,
+                    error: 'Product not found'
+                });
+            }
+            res.status(500).json({
+                success: false,
+                error: 'Internal server error'
+            });
+        }
+    }
+
+    // ✅ НОВАЯ ФУНКЦИЯ: Отдельный endpoint для загрузки изображений
+    async uploadProductImage(req: AuthenticatedRequest, res: Response) {
+        try {
+            const { id } = req.params;
+
+            if (!req.file) {
+                return res.status(400).json({
+                    success: false,
+                    error: 'No image file provided'
+                });
+            }
+
+            const imageUrl = `/uploads/${req.file.filename}`;
+            console.log('📸 Загрузка изображения для товара:', id, imageUrl);
+
+            // Обновляем товар с новым изображением
+            const updatedProduct = await prisma.product.update({
+                where: { id },
+                data: {
+                    images: [imageUrl],
+                    updatedAt: new Date()
+                }
+            });
+
+            res.json({
+                success: true,
+                data: {
+                    imageUrl,
+                    product: updatedProduct
+                }
+            });
+
+        } catch (error) {
+            console.error('❌ Ошибка загрузки изображения:', error);
             if (error.code === 'P2025') {
                 return res.status(404).json({
                     success: false,
@@ -352,7 +395,7 @@ export class ProductsController {
             const { id } = req.params;
             console.log('🛍️ Удаление товара:', id);
 
-            // Проверяем, есть ли заказы с этим товаром
+            // Проверяем, не используется ли товар в заказах
             const orderItemsCount = await prisma.orderItem.count({
                 where: { productId: id }
             });
@@ -360,7 +403,7 @@ export class ProductsController {
             if (orderItemsCount > 0) {
                 return res.status(400).json({
                     success: false,
-                    error: `Cannot delete product with ${orderItemsCount} order items. Archive the product instead.`
+                    error: `Cannot delete product used in ${orderItemsCount} orders. Archive the product instead.`
                 });
             }
 
