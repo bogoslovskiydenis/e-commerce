@@ -25,17 +25,28 @@ const roleSchema = z.enum(USER_ROLES, {
     errorMap: () => ({ message: `Role must be one of: ${USER_ROLES.join(', ')}` })
 });
 
-// Схема для создания пользователя
+
+
 export const createUserSchema = z.object({
     body: z.object({
         username: usernameSchema,
         email: emailSchema,
         password: passwordSchema,
-        fullName: fullNameSchema,
-        role: roleSchema,
+        // Поддерживаем оба варианта: fullName или firstName + lastName
+        fullName: fullNameSchema.optional(),
+        firstName: z.string().min(1).max(50).optional(),
+        lastName: z.string().min(1).max(50).optional(),
+        role: z.string().transform(val => val?.toUpperCase()).pipe(roleSchema), // Автоматически приводим к верхнему регистру
         customPermissions: z.array(z.string()).optional(),
-        isActive: z.boolean().optional().default(true)
-    })
+        isActive: z.boolean().optional().default(true),
+        twoFactorEnabled: z.boolean().optional().default(false)
+    }).refine(
+        (data) => data.fullName || (data.firstName && data.lastName),
+        {
+            message: 'Either fullName or both firstName and lastName must be provided',
+            path: ['fullName']
+        }
+    )
 });
 
 // Схема для обновления пользователя

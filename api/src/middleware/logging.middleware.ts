@@ -1,6 +1,7 @@
 import { AuthenticatedRequest } from './auth.middleware';
-import {NextFunction, Request, Response} from 'express';
-import {logger} from "@/utils/logger";
+import { NextFunction, Request, Response } from 'express';
+import { logger } from "@/utils/logger";
+import { prisma } from '@/config/database'; // ✅ ДОБАВИТЬ ЭТОТ ИМПОРТ
 
 // Middleware для логирования всех запросов
 export const requestLogger = (req: Request, res: Response, next: NextFunction) => {
@@ -56,10 +57,8 @@ export const adminActionLogger = (action: string, resourceType: string) => {
             userAgent: req.get('User-Agent')
         });
 
-        // Сохраняем в базу данных (если prisma доступна)
+        // Сохраняем в базу данных
         try {
-            const { prisma } = require('../config/database');
-
             await prisma.adminLog.create({
                 data: {
                     userId: user.id,

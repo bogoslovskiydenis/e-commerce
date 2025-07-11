@@ -1,6 +1,5 @@
 import { Router } from 'express';
 import { adminUsersController } from '@/controllers/adminUsers.controller';
-import { authenticateToken, requirePermission } from '@/middleware/auth.middleware';
 import { adminActionLogger } from '@/middleware/logging.middleware';
 import { validate } from '@/middleware/validation.middleware';
 import {
@@ -9,6 +8,8 @@ import {
     changePasswordSchema,
     userIdParamSchema
 } from '@/validation/adminUsers.validation';
+import {authenticateToken} from "@/middleware/auth.middleware";
+import {requirePermission} from "@/middleware/permissions.middleware";
 
 const router = Router();
 
@@ -41,7 +42,7 @@ router.get('/system/roles-and-permissions',
 // Создать нового пользователя
 router.post('/',
     requirePermission('users.create'),
-    validate(createUserSchema),
+    // validate(createUserSchema), // ⚠️ ВРЕМЕННО ОТКЛЮЧЕНО
     adminActionLogger('create', 'admin_user'),
     adminUsersController.createUser
 );

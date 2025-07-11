@@ -16,9 +16,29 @@ export function generateApiKey(): string {
     return `${prefix}${randomPart}`;
 }
 
-// Хеширование пароля
 export async function hashPassword(password: string): Promise<string> {
-    return bcrypt.hash(password, config.bcryptRounds);
+    console.log('🔐 hashPassword called with:', {
+        password: password ? `${password.length} chars` : 'undefined/null',
+        passwordType: typeof password,
+        // bcryptRounds: config.bcryptRounds, // временно закомментируйте
+        // bcryptRoundsType: typeof config.bcryptRounds
+    });
+
+    if (!password) {
+        throw new Error('Password is required');
+    }
+
+    // Временно используйте константу для отладки:
+    const BCRYPT_ROUNDS = 12;
+
+    try {
+        const hash = await bcrypt.hash(password, BCRYPT_ROUNDS);
+        console.log('✅ Hash created successfully, length:', hash.length);
+        return hash;
+    } catch (error) {
+        console.error('❌ bcrypt.hash error:', error);
+        throw error;
+    }
 }
 
 // Проверка пароля

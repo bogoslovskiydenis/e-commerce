@@ -229,8 +229,13 @@ export const customDataProvider: DataProvider = {
         return convertAPIResponseToRA(json, 'getList');
     },
 
-    // Создать запись
+    // Создать запись - ОБНОВЛЕННАЯ ВЕРСИЯ С ОТЛАДКОЙ
     create: async (resource, params) => {
+        console.log('🔍 DataProvider CREATE called:', {
+            resource,
+            params: JSON.stringify(params, null, 2)
+        });
+
         // Проверяем специальные операции
         const specialOperation = await handleAdminUserOperations(resource, params);
         if (specialOperation) return specialOperation;
@@ -240,6 +245,37 @@ export const customDataProvider: DataProvider = {
             throw new Error(`Unknown resource: ${resource}`);
         }
 
+        // Специальная обработка для товаров
+        if (resource === 'products') {
+            console.log('🛍️ Product creation data:', params.data);
+
+            // Убедимся что все поля правильно передаются
+            const productData = {
+                title: params.data.title,
+                price: parseFloat(params.data.price) || 0,
+                oldPrice: params.data.oldPrice ? parseFloat(params.data.oldPrice) : null,
+                brand: params.data.brand || null,
+                sku: params.data.sku || null,
+                description: params.data.description || null,
+                categoryId: params.data.categoryId,
+                isActive: params.data.isActive !== false, // default true
+                inStock: params.data.inStock !== false,   // default true
+                stockQuantity: parseInt(params.data.stockQuantity) || 0,
+                images: params.data.images || []
+            };
+
+            console.log('🔧 Transformed product data:', productData);
+
+            const url = `${API_BASE_URL}${endpoint}`;
+            const { json } = await httpClient(url, {
+                method: 'POST',
+                body: JSON.stringify(productData),
+            });
+
+            return convertAPIResponseToRA(json, 'create');
+        }
+
+        // Обычная обработка для других ресурсов
         const url = `${API_BASE_URL}${endpoint}`;
         const { json } = await httpClient(url, {
             method: 'POST',

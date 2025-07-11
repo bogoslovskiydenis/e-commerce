@@ -1,21 +1,19 @@
 import { Request, Response } from 'express';
-import { prisma } from '../../app';
-import { logger } from '../utils/logger';
-import { AuthenticatedRequest } from '../middleware/auth.middleware';
+import { AuthenticatedRequest } from '@/middleware/auth.middleware';
+import { prisma } from '@/config/database';
+import { logger } from '@/utils/logger';
 
 export class CustomersController {
-    async getCustomers(req: Request, res: Response) {
+    // Получить список клиентов
+    async getCustomers(req: AuthenticatedRequest, res: Response) {
         try {
-            const {
-                page = 1,
-                limit = 25,
-                search,
-                sortBy = 'createdAt',
-                sortOrder = 'desc'
-            } = req.query;
+            const { page = 1, limit = 10, search, sortBy = 'createdAt', sortOrder = 'desc' } = req.query;
 
-            const skip = (Number(page) - 1) * Number(limit);
+            const pageNum = parseInt(page as string);
+            const limitNum = parseInt(limit as string);
+            const offset = (pageNum - 1) * limitNum;
 
+            // Строим фильтры
             const where: any = {};
 
             if (search) {
@@ -26,63 +24,52 @@ export class CustomersController {
                 ];
             }
 
+            // Получаем клиентов
             const [customers, total] = await Promise.all([
                 prisma.customer.findMany({
                     where,
-                    include: {
-                        orders: {
-                            select: {
-                                id: true,
-                                totalAmount: true,
-                                status: true,
-                                createdAt: true
-                            },
-                            orderBy: {
-                                createdAt: 'desc'
-                            }
-                        },
-                        _count: {
-                            select: {
-                                orders: true
-                            }
-                        }
-                    },
+                    skip: offset,
+                    take: limitNum,
                     orderBy: {
                         [sortBy as string]: sortOrder
                     },
-                    skip,
-                    take: Number(limit),
+                    include: {
+                        _count: {
+                            select: {
+                                orders: true,
+                                reviews: true,
+                                callbacks: true
+                            }
+                        }
+                    }
                 }),
                 prisma.customer.count({ where })
             ]);
 
-            const customersWithStats = customers.map(customer => ({
-                ...customer,
-                totalOrders: customer._count.orders,
-                totalSpent: customer.orders.reduce((sum, order) => sum + Number(order.totalAmount), 0),
-                lastOrderDate: customer.orders[0]?.createdAt || null
-            }));
+            console.log('👥 Получение списка клиентов:', customers.length);
 
             res.json({
                 success: true,
-                data: customersWithStats,
+                data: customers,
                 pagination: {
-                    page: Number(page),
-                    limit: Number(limit),
+                    page: pageNum,
+                    limit: limitNum,
                     total,
-                    pages: Math.ceil(total / Number(limit))
+                    pages: Math.ceil(total / limitNum)
                 }
             });
 
         } catch (error) {
             logger.error('Get customers error:', error);
             res.status(500).json({
+                success: false,
                 error: 'Internal server error'
             });
         }
     }
 
-    async getCustomer(req: Request, res: Response) {
+    // Получить клиента по ID
+    async getCustomer(req: AuthenticatedRequest, res: Response) {
         try {
             const { id } = req.params;
 
@@ -90,26 +77,22 @@ export class CustomersController {
                 where: { id },
                 include: {
                     orders: {
-                        include: {
-                            items: {
-                                include: {
-                                    product: {
-                                        select: {
-                                            id: true,
-                                            title: true,
-                                            images: true
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        orderBy: {
-                            createdAt: 'desc'
-                        }
+                        orderBy: { createdAt: 'desc' },
+                        take: 10
+                    },
+                    reviews: {
+                        orderBy: { createdAt: 'desc' },
+                        take: 5
                     },
                     callbacks: {
-                        orderBy: {
-                            createdAt: 'desc'
+                        orderBy: { createdAt: 'desc' },
+                        take: 5
+                    },
+                    _count: {
+                        select: {
+                            orders: true,
+                            reviews: true,
+                            callbacks: true
                         }
                     }
                 }
@@ -117,9 +100,12 @@ export class CustomersController {
 
             if (!customer) {
                 return res.status(404).json({
+                    success: false,
                     error: 'Customer not found'
                 });
             }
+
+            console.log('👤 Получение клиента по ID:', id);
 
             res.json({
                 success: true,
@@ -129,11 +115,54 @@ export class CustomersController {
         } catch (error) {
             logger.error('Get customer error:', error);
             res.status(500).json({
+                success: false,
                 error: 'Internal server error'
             });
         }
     }
 
+    // Создать клиента
+    async createCustomer(req: AuthenticatedRequest, res: Response) {
+        try {
+            const { name, email, phone, address, notes, tags = [] } = req.body;
+
+            if (!name || !phone) {
+                return res.status(400).json({
+                    success: false,
+                    error: 'Name and phone are required'
+                });
+            }
+
+            const customer = await prisma.customer.create({
+                data: {
+                    name,
+                    email,
+                    phone,
+                    address,
+                    notes,
+                    tags,
+                    isActive: true
+                }
+            });
+
+            console.log('👤 Клиент создан:', customer.name);
+            logger.info(`Customer created: ${customer.name} by ${req.user?.username}`);
+
+            res.status(201).json({
+                success: true,
+                data: customer
+            });
+
+        } catch (error) {
+            logger.error('Create customer error:', error);
+            res.status(500).json({
+                success: false,
+                error: 'Internal server error'
+            });
+        }
+    }
+
+    // Обновить клиента
     async updateCustomer(req: AuthenticatedRequest, res: Response) {
         try {
             const { id } = req.params;
@@ -144,6 +173,9 @@ export class CustomersController {
                 data: updateData
             });
 
+            console.log('👤 Клиент обновлен:', customer.name);
+            logger.info(`Customer updated: ${customer.name} by ${req.user?.username}`);
+
             res.json({
                 success: true,
                 data: customer
@@ -152,8 +184,37 @@ export class CustomersController {
         } catch (error) {
             logger.error('Update customer error:', error);
             res.status(500).json({
+                success: false,
+                error: 'Internal server error'
+            });
+        }
+    }
+
+    // Удалить клиента
+    async deleteCustomer(req: AuthenticatedRequest, res: Response) {
+        try {
+            const { id } = req.params;
+
+            await prisma.customer.delete({
+                where: { id }
+            });
+
+            console.log('👤 Клиент удален:', id);
+            logger.info(`Customer deleted: ${id} by ${req.user?.username}`);
+
+            res.json({
+                success: true,
+                message: 'Customer deleted successfully'
+            });
+
+        } catch (error) {
+            logger.error('Delete customer error:', error);
+            res.status(500).json({
+                success: false,
                 error: 'Internal server error'
             });
         }
     }
 }
+
+export const customersController = new CustomersController();

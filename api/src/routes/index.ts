@@ -1,10 +1,11 @@
 import { Router } from 'express';
 import authRoutes from './auth.routes.js';
 import adminUsersRoutes from './adminUsers.routes.js';
+import categoriesRoutes from './categories.routes.js';
+import productsRoutes from './products.routes.js';
 
 const router = Router();
 
-// Базовая информация об API
 router.get('/', (req, res) => {
     res.json({
         success: true,
@@ -12,15 +13,16 @@ router.get('/', (req, res) => {
         version: '1.0.0',
         endpoints: {
             auth: '/auth/*',
-            admin: '/admin/*'
+            admin: '/admin/*',
+            categories: '/categories/*',
+            products: '/products/*' // ✅ ДОБАВЛЕНО
         }
     });
 });
 
-// Маршруты аутентификации
 router.use('/auth', authRoutes);
-
-// Управление пользователями
 router.use('/admin/users', adminUsersRoutes);
+router.use('/categories', categoriesRoutes);
+router.use('/products', productsRoutes);
 
 export default router;

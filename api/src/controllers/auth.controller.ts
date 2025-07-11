@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import speakeasy from 'speakeasy';
-import { prisma } from '../../app';
+import { prisma } from '../config/database';
 import { logger } from '../utils/logger';
 import { config } from '../config';
 import { AuthenticatedRequest } from '../middleware/auth.middleware';
@@ -13,8 +13,11 @@ export class AuthController {
         try {
             const { username, password, twoFactorCode } = req.body;
 
+            console.log('🔐 Login attempt:', { username }); О
+
             if (!username || !password) {
                 return res.status(400).json({
+                    success: false,
                     error: 'Username and password are required'
                 });
             }
@@ -29,16 +32,22 @@ export class AuthController {
                 }
             });
 
+            console.log('👤 User found:', user ? { id: user.id, username: user.username, active: user.isActive } : 'NOT FOUND');
+
             if (!user || !user.isActive) {
                 return res.status(401).json({
+                    success: false,
                     error: 'Invalid credentials'
                 });
             }
 
             // Проверить пароль
             const validPassword = await bcrypt.compare(password, user.passwordHash);
+            console.log('🔐 Password valid:', validPassword);
+
             if (!validPassword) {
                 return res.status(401).json({
+                    success: false,
                     error: 'Invalid credentials'
                 });
             }
@@ -47,75 +56,75 @@ export class AuthController {
             if (user.twoFactorEnabled) {
                 if (!twoFactorCode) {
                     return res.status(200).json({
-                        requires2FA: true,
+                        success: false,
+                        requiresTwoFactor: true,
                         message: 'Two-factor authentication required'
                     });
                 }
 
                 const verified = speakeasy.totp.verify({
-                    secret: user.twoFactorSecret!,
+                    secret: user.twoFactorSecret,
                     encoding: 'base32',
                     token: twoFactorCode,
-                    window: 1
+                    window: 2
                 });
 
                 if (!verified) {
                     return res.status(401).json({
+                        success: false,
                         error: 'Invalid two-factor code'
                     });
                 }
             }
 
-            // Создать токены
-            const accessToken = jwt.sign(
-                { userId: user.id, username: user.username },
+            // Создать JWT токен
+            const token = jwt.sign(
+                {
+                    id: user.id,
+                    username: user.username,
+                    role: user.role,
+                    permissions: user.permissions || []
+                },
                 config.jwtSecret,
                 { expiresIn: config.jwtExpiresIn }
             );
 
+            // Создать refresh токен
             const refreshToken = jwt.sign(
-                { userId: user.id },
+                { id: user.id },
                 config.jwtRefreshSecret,
                 { expiresIn: config.jwtRefreshExpiresIn }
             );
 
-            // Обновить время последнего входа
+            // Обновить последний вход
             await prisma.user.update({
                 where: { id: user.id },
-                data: { lastLogin: new Date() }
-            });
-
-            // Логировать вход
-            await prisma.adminLog.create({
                 data: {
-                    userId: user.id,
-                    action: 'login',
-                    resource: 'auth',
-                    description: 'User logged in',
-                    ipAddress: req.ip || 'unknown',
-                    userAgent: req.get('User-Agent') || 'unknown',
-                    metadata: {},
-                    level: 'INFO'
+                    lastLogin: new Date(),
+                    lastLoginIp: req.ip
                 }
             });
 
-            res.json({
+            // Убираем чувствительные данные
+            const { passwordHash, twoFactorSecret, ...userWithoutSecrets } = user;
+
+            console.log('✅ Login successful for user:', user.username);
+
+            return res.json({
                 success: true,
-                accessToken,
-                refreshToken,
-                user: {
-                    id: user.id,
-                    username: user.username,
-                    email: user.email,
-                    fullName: user.fullName,
-                    role: user.role,
-                    permissions: user.permissions,
+                data: {
+                    token,
+                    refreshToken,
+                    user: userWithoutSecrets
                 }
             });
 
         } catch (error) {
-            logger.error('Login error:', error);
-            res.status(500).json({
+            console.error('❌ Login error:', error);
+            logger.error('Login error', { error: error.message, stack: error.stack });
+
+            return res.status(500).json({
+                success: false,
                 error: 'Internal server error'
             });
         }
@@ -124,21 +133,8 @@ export class AuthController {
     // Выход из системы
     async logout(req: AuthenticatedRequest, res: Response) {
         try {
-            if (req.user) {
-                // Логировать выход
-                await prisma.adminLog.create({
-                    data: {
-                        userId: req.user.id,
-                        action: 'logout',
-                        resource: 'auth',
-                        description: 'User logged out',
-                        ipAddress: req.ip || 'unknown',
-                        userAgent: req.get('User-Agent') || 'unknown',
-                        metadata: {},
-                        level: 'INFO'
-                    }
-                });
-            }
+            // Здесь можно добавить логику для инвалидации токенов
+            // Например, добавить токен в черный список
 
             res.json({
                 success: true,
@@ -146,66 +142,30 @@ export class AuthController {
             });
 
         } catch (error) {
-            logger.error('Logout error:', error);
+            console.error('❌ Logout error:', error);
+            logger.error('Logout error', { error: error.message });
+
             res.status(500).json({
+                success: false,
                 error: 'Internal server error'
             });
         }
     }
 
-    // Обновление токена
-    async refresh(req: Request, res: Response) {
+    // Получить текущего пользователя
+    async me(req: AuthenticatedRequest, res: Response) {
         try {
-            const { refreshToken } = req.body;
+            const userId = req.user?.id;
 
-            if (!refreshToken) {
+            if (!userId) {
                 return res.status(401).json({
-                    error: 'Refresh token required'
+                    success: false,
+                    error: 'Unauthorized'
                 });
             }
 
-            const decoded = jwt.verify(refreshToken, config.jwtRefreshSecret) as any;
-
             const user = await prisma.user.findUnique({
-                where: { id: decoded.userId },
-                select: {
-                    id: true,
-                    username: true,
-                    email: true,
-                    isActive: true,
-                }
-            });
-
-            if (!user || !user.isActive) {
-                return res.status(401).json({
-                    error: 'Invalid refresh token'
-                });
-            }
-
-            const newAccessToken = jwt.sign(
-                { userId: user.id, username: user.username },
-                config.jwtSecret,
-                { expiresIn: config.jwtExpiresIn }
-            );
-
-            res.json({
-                success: true,
-                accessToken: newAccessToken
-            });
-
-        } catch (error) {
-            logger.error('Token refresh error:', error);
-            res.status(401).json({
-                error: 'Invalid refresh token'
-            });
-        }
-    }
-
-    // Получить профиль текущего пользователя
-    async getProfile(req: AuthenticatedRequest, res: Response) {
-        try {
-            const user = await prisma.user.findUnique({
-                where: { id: req.user!.id },
+                where: { id: userId },
                 select: {
                     id: true,
                     username: true,
@@ -213,30 +173,34 @@ export class AuthController {
                     fullName: true,
                     role: true,
                     permissions: true,
+                    isActive: true,
                     twoFactorEnabled: true,
-                    avatarUrl: true,
                     lastLogin: true,
                     createdAt: true,
+                    updatedAt: true
                 }
             });
 
             if (!user) {
                 return res.status(404).json({
+                    success: false,
                     error: 'User not found'
                 });
             }
 
             res.json({
                 success: true,
-                user
+                data: user
             });
 
         } catch (error) {
-            logger.error('Get profile error:', error);
+            console.error('❌ Get me error:', error);
+            logger.error('Get me error', { error: error.message });
+
             res.status(500).json({
+                success: false,
                 error: 'Internal server error'
             });
         }
     }
 }
-

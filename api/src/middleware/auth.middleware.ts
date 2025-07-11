@@ -61,14 +61,28 @@ export const authenticateToken = (req: AuthenticatedRequest, res: Response, next
         // Верифицируем JWT токен
         const decoded = jwt.verify(token, config.jwtSecret) as any;
         console.log('✅ Token verified for user:', decoded.username);
+        console.log('🔍 Decoded token:', { id: decoded.id, userId: decoded.userId, username: decoded.username });
+
+        // Исправляем проблему с id vs userId
+        const userId = decoded.id || decoded.userId;
+
+        if (!userId) {
+            console.log('❌ No user ID in token');
+            return res.status(401).json({
+                success: false,
+                error: 'Invalid token format',
+                message: 'Неверный формат токена'
+            });
+        }
 
         req.user = {
-            id: decoded.id,
+            id: userId,
             username: decoded.username,
             role: decoded.role,
             permissions: decoded.permissions || []
         };
 
+        console.log('✅ User set in request:', req.user);
         next();
     } catch (error) {
         console.error('❌ Token verification failed:', error.message);
@@ -133,18 +147,17 @@ export const requireRole = (roles: string | string[]) => {
         }
 
         const allowedRoles = Array.isArray(roles) ? roles : [roles];
-        const hasRole = allowedRoles.includes(req.user.role);
 
-        if (!hasRole) {
-            console.log(`❌ Role denied: ${req.user.username} (${req.user.role}) tried to access roles: ${allowedRoles.join(', ')}`);
+        if (!allowedRoles.includes(req.user.role)) {
+            console.log(`❌ Role denied: ${req.user.username} role ${req.user.role} not in ${allowedRoles}`);
             return res.status(403).json({
                 success: false,
-                error: 'Insufficient role',
+                error: 'Role access denied',
                 message: 'Недостаточный уровень доступа'
             });
         }
 
-        console.log(`✅ Role granted: ${req.user.username} (${req.user.role}) can access`);
+        console.log(`✅ Role granted: ${req.user.username} has role ${req.user.role}`);
         next();
     };
 };

@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,20 +7,29 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Перечисления
+// === ENUMS ===
+
 enum UserRole {
   SUPER_ADMIN
   ADMINISTRATOR
   MANAGER
   CRM_MANAGER
+  CUSTOMER
+
+  @@map("user_role")
 }
 
 enum OrderStatus {
   NEW
+  CONFIRMED
   PROCESSING
+  READY
   SHIPPED
   DELIVERED
   CANCELLED
+  REFUNDED
+
+  @@map("order_status")
 }
 
 enum PaymentStatus {
@@ -31,16 +37,67 @@ enum PaymentStatus {
   PAID
   FAILED
   REFUNDED
+  PARTIALLY_REFUNDED
+
+  @@map("payment_status")
+}
+
+enum CallbackStatus {
+  NEW
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+
+  @@map("callback_status")
+}
+
+enum CallbackPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+
+  @@map("callback_priority")
 }
 
 enum LogLevel {
+  DEBUG
   INFO
-  WARNING
+  WARN
   ERROR
-  CRITICAL
+
+  @@map("log_level")
 }
 
-// Основные модели
+enum ReviewStatus {
+  PENDING
+  APPROVED
+  REJECTED
+
+  @@map("review_status")
+}
+
+enum BannerPosition {
+  MAIN
+  CATEGORY
+  SIDEBAR
+  FOOTER
+  POPUP
+
+  @@map("banner_position")
+}
+
+enum PromotionType {
+  PERCENTAGE
+  FIXED_AMOUNT
+  FREE_SHIPPING
+  BUY_ONE_GET_ONE
+
+  @@map("promotion_type")
+}
+
+// === MODELS ===
+
 model User {
   id                String    @id @default(uuid())
   username          String    @unique
@@ -49,6 +106,7 @@ model User {
   fullName          String    @map("full_name")
   role              UserRole
   permissions       String[]
+  customPermissions String[]  @map("custom_permissions")
   isActive          Boolean   @default(true) @map("is_active")
   twoFactorEnabled  Boolean   @default(false) @map("two_factor_enabled")
   twoFactorSecret   String?   @map("two_factor_secret")
@@ -58,8 +116,11 @@ model User {
   updatedAt         DateTime  @updatedAt @map("updated_at")
 
   // Связи
-  adminLogs         AdminLog[]
-  assignedOrders    Order[]   @relation("OrderManager")
+  adminLogs          AdminLog[]
+  assignedOrders     Order[]    @relation("OrderManager")
+  processedCallbacks Callback[] @relation("CallbackManager")
+  moderatedReviews   Review[]   @relation("ReviewModerator")
+  moderatedComments  Comment[]  @relation("CommentModerator")
 
   @@map("users")
 }
@@ -71,125 +132,344 @@ model Customer {
   phone     String
   address   String?
   notes     String?
+  tags      String[]
+  metadata  Json?
+  isActive  Boolean  @default(true) @map("is_active")
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
   // Связи
   orders    Order[]
+  reviews   Review[]
+  callbacks Callback[]
 
   @@map("customers")
 }
 
 model Category {
-  id          String     @id @default(uuid())
-  name        String
-  slug        String     @unique
-  description String?
-  parentId    String?    @map("parent_id")
-  imageUrl    String?    @map("image_url")
-  isActive    Boolean    @default(true) @map("is_active")
-  sortOrder   Int        @default(0) @map("sort_order")
-  createdAt   DateTime   @default(now()) @map("created_at")
-  updatedAt   DateTime   @updatedAt @map("updated_at")
+  id              String   @id @default(uuid())
+  name            String
+  slug            String   @unique
+  description     String?
+  parentId        String?  @map("parent_id")
+  imageUrl        String?  @map("image_url")
+  isActive        Boolean  @default(true) @map("is_active")
+  sortOrder       Int      @default(0) @map("sort_order")
+  metaTitle       String?  @map("meta_title")
+  metaDescription String?  @map("meta_description")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
 
   // Связи
-  parent      Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
-  children    Category[] @relation("CategoryHierarchy")
-  products    Product[]
+  parent   Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children Category[] @relation("CategoryHierarchy")
+  products Product[]
 
   @@map("categories")
 }
 
 model Product {
-  id               String    @id @default(uuid())
+  id               String   @id @default(uuid())
   title            String
-  slug             String    @unique
+  slug             String   @unique
   description      String?
-  shortDescription String?   @map("short_description")
-  price            Decimal   @db.Decimal(10, 2)
-  oldPrice         Decimal?  @map("old_price") @db.Decimal(10, 2)
-  categoryId       String    @map("category_id")
+  shortDescription String?  @map("short_description")
+  price            Decimal  @db.Decimal(10, 2)
+  oldPrice         Decimal? @map("old_price") @db.Decimal(10, 2)
+  categoryId       String   @map("category_id")
   brand            String?
-  sku              String?   @unique
+  sku              String?  @unique
   images           String[]
   attributes       Json?
-  isActive         Boolean   @default(true) @map("is_active")
-  inStock          Boolean   @default(true) @map("in_stock")
-  stockQuantity    Int       @default(0) @map("stock_quantity")
-  createdAt        DateTime  @default(now()) @map("created_at")
-  updatedAt        DateTime  @updatedAt @map("updated_at")
+  tags             String[]
+  isActive         Boolean  @default(true) @map("is_active")
+  inStock          Boolean  @default(true) @map("in_stock")
+  stockQuantity    Int      @default(0) @map("stock_quantity")
+  featured         Boolean  @default(false)
+  weight           Decimal? @db.Decimal(8, 3)
+  dimensions       Json? // {length, width, height}
+  metaTitle        String?  @map("meta_title")
+  metaDescription  String?  @map("meta_description")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
 
   // Связи
-  category         Category  @relation(fields: [categoryId], references: [id])
-  orderItems       OrderItem[]
+  category          Category           @relation(fields: [categoryId], references: [id])
+  orderItems        OrderItem[]
+  reviews           Review[]
+  promotionProducts PromotionProduct[]
 
   @@map("products")
 }
 
 model Order {
-  id               String        @id @default(uuid())
-  orderNumber      String        @unique @map("order_number")
-  customerId       String        @map("customer_id")
-  managerId        String?       @map("manager_id")
-  status           OrderStatus   @default(NEW)
-  paymentStatus    PaymentStatus @default(PENDING) @map("payment_status")
-  paymentMethod    String?       @map("payment_method")
-  totalAmount      Decimal       @map("total_amount") @db.Decimal(10, 2)
-  shippingAddress  Json?         @map("shipping_address")
-  notes            String?
-  managerNotes     String?       @map("manager_notes")
-  source           String?
-  createdAt        DateTime      @default(now()) @map("created_at")
-  updatedAt        DateTime      @updatedAt @map("updated_at")
+  id              String        @id @default(uuid())
+  orderNumber     String        @unique @map("order_number")
+  customerId      String        @map("customer_id")
+  managerId       String?       @map("manager_id")
+  status          OrderStatus   @default(NEW)
+  paymentStatus   PaymentStatus @default(PENDING) @map("payment_status")
+  paymentMethod   String?       @map("payment_method")
+  totalAmount     Decimal       @map("total_amount") @db.Decimal(10, 2)
+  discountAmount  Decimal       @default(0) @map("discount_amount") @db.Decimal(10, 2)
+  shippingAmount  Decimal       @default(0) @map("shipping_amount") @db.Decimal(10, 2)
+  shippingAddress Json?         @map("shipping_address")
+  notes           String?
+  managerNotes    String?       @map("manager_notes")
+  source          String?       @default("website")
+  deliveryDate    DateTime?     @map("delivery_date")
+  completedAt     DateTime?     @map("completed_at")
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
 
   // Связи
-  customer         Customer      @relation(fields: [customerId], references: [id])
-  manager          User?         @relation("OrderManager", fields: [managerId], references: [id])
-  items            OrderItem[]
+  customer      Customer             @relation(fields: [customerId], references: [id])
+  manager       User?                @relation("OrderManager", fields: [managerId], references: [id])
+  items         OrderItem[]
+  statusHistory OrderStatusHistory[]
 
   @@map("orders")
 }
 
 model OrderItem {
-  id              String  @id @default(uuid())
-  orderId         String  @map("order_id")
-  productId       String  @map("product_id")
-  quantity        Int
-  price           Decimal @db.Decimal(10, 2)
-  total           Decimal @db.Decimal(10, 2)
+  id        String  @id @default(uuid())
+  orderId   String  @map("order_id")
+  productId String  @map("product_id")
+  quantity  Int
+  price     Decimal @db.Decimal(10, 2)
+  total     Decimal @db.Decimal(10, 2)
 
   // Связи
-  order           Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  product         Product @relation(fields: [productId], references: [id])
+  order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id])
 
   @@map("order_items")
 }
 
-model AdminLog {
-  id          String   @id @default(uuid())
-  userId      String   @map("user_id")
-  action      String
-  resource    String
-  resourceId  String?  @map("resource_id")
-  description String
-  ipAddress   String   @map("ip_address")
-  userAgent   String   @map("user_agent")
-  metadata    Json?
-  level       LogLevel @default(INFO)
-  createdAt   DateTime @default(now()) @map("created_at")
+model OrderStatusHistory {
+  id        String      @id @default(uuid())
+  orderId   String      @map("order_id")
+  status    OrderStatus
+  comment   String?
+  userId    String?     @map("user_id")
+  createdAt DateTime    @default(now()) @map("created_at")
 
   // Связи
-  user        User     @relation(fields: [userId], references: [id])
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@map("order_status_history")
+}
+
+model Callback {
+  id          String           @id @default(uuid())
+  customerId  String?          @map("customer_id")
+  name        String
+  phone       String
+  email       String?
+  message     String?
+  status      CallbackStatus   @default(NEW)
+  priority    CallbackPriority @default(MEDIUM)
+  source      String?          @default("website")
+  managerId   String?          @map("manager_id")
+  scheduledAt DateTime?        @map("scheduled_at")
+  completedAt DateTime?        @map("completed_at")
+  notes       String?
+  createdAt   DateTime         @default(now()) @map("created_at")
+  updatedAt   DateTime         @updatedAt @map("updated_at")
+
+  // Связи
+  customer Customer? @relation(fields: [customerId], references: [id])
+  manager  User?     @relation("CallbackManager", fields: [managerId], references: [id])
+
+  @@map("callbacks")
+}
+
+model Review {
+  id          String       @id @default(uuid())
+  productId   String       @map("product_id")
+  customerId  String?      @map("customer_id")
+  name        String
+  email       String?
+  rating      Int // 1-5
+  comment     String?
+  status      ReviewStatus @default(PENDING)
+  moderatorId String?      @map("moderator_id")
+  moderatedAt DateTime?    @map("moderated_at")
+  createdAt   DateTime     @default(now()) @map("created_at")
+  updatedAt   DateTime     @updatedAt @map("updated_at")
+
+  // Связи
+  product   Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  customer  Customer? @relation(fields: [customerId], references: [id])
+  moderator User?     @relation("ReviewModerator", fields: [moderatorId], references: [id])
+
+  @@map("reviews")
+}
+
+model Banner {
+  id             String         @id @default(uuid())
+  title          String
+  subtitle       String?
+  description    String?
+  imageUrl       String         @map("image_url")
+  mobileImageUrl String?        @map("mobile_image_url")
+  link           String?
+  buttonText     String?        @map("button_text")
+  position       BannerPosition @default(MAIN)
+  isActive       Boolean        @default(true) @map("is_active")
+  sortOrder      Int            @default(0) @map("sort_order")
+  startDate      DateTime?      @map("start_date")
+  endDate        DateTime?      @map("end_date")
+  createdAt      DateTime       @default(now()) @map("created_at")
+  updatedAt      DateTime       @updatedAt @map("updated_at")
+
+  @@map("banners")
+}
+
+model Page {
+  id              String   @id @default(uuid())
+  title           String
+  slug            String   @unique
+  content         String
+  excerpt         String?
+  isActive        Boolean  @default(true) @map("is_active")
+  metaTitle       String?  @map("meta_title")
+  metaDescription String?  @map("meta_description")
+  metaKeywords    String?  @map("meta_keywords")
+  template        String?  @default("default")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  @@map("pages")
+}
+
+model Promotion {
+  id             String        @id @default(uuid())
+  name           String
+  description    String?
+  code           String?       @unique
+  type           PromotionType
+  value          Decimal       @db.Decimal(10, 2)
+  minOrderAmount Decimal?      @map("min_order_amount") @db.Decimal(10, 2)
+  maxUsage       Int?          @map("max_usage")
+  usedCount      Int           @default(0) @map("used_count")
+  isActive       Boolean       @default(true) @map("is_active")
+  startDate      DateTime?     @map("start_date")
+  endDate        DateTime?     @map("end_date")
+  createdAt      DateTime      @default(now()) @map("created_at")
+  updatedAt      DateTime      @updatedAt @map("updated_at")
+
+  // Связи
+  products PromotionProduct[]
+
+  @@map("promotions")
+}
+
+model PromotionProduct {
+  id          String @id @default(uuid())
+  promotionId String @map("promotion_id")
+  productId   String @map("product_id")
+
+  // Связи
+  promotion Promotion @relation(fields: [promotionId], references: [id], onDelete: Cascade)
+  product   Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([promotionId, productId])
+  @@map("promotion_products")
+}
+
+model Comment {
+  id          String   @id @default(uuid())
+  name        String
+  email       String
+  message     String
+  isApproved  Boolean  @default(false) @map("is_approved")
+  moderatorId String?  @map("moderator_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // Связи
+  moderator User? @relation("CommentModerator", fields: [moderatorId], references: [id])
+
+  @@map("comments")
+}
+
+model AdminLog {
+  id           String   @id @default(uuid())
+  userId       String   @map("user_id")
+  username     String
+  action       String
+  resourceType String   @map("resource_type")
+  resourceId   String?  @map("resource_id")
+  description  String
+  ip           String
+  userAgent    String   @map("user_agent")
+  metadata     Json?
+  level        LogLevel @default(INFO)
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  // Связи
+  user User @relation(fields: [userId], references: [id])
 
   @@map("admin_logs")
 }
 
 model Setting {
+  id          String   @id @default(uuid())
+  key         String   @unique
+  value       Json
+  type        String   @default("string")
+  group       String?
+  description String?
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("settings")
+}
+
+model Newsletter {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String?
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("newsletter")
+}
+
+model Analytics {
+  id        String   @id @default(uuid())
+  event     String
+  data      Json
+  ip        String?
+  userAgent String?  @map("user_agent")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("analytics")
+}
+
+// Индексы для оптимизации
+model SearchIndex {
+  id        String   @id @default(uuid())
+  type      String // 'product', 'category', etc.
+  entityId  String   @map("entity_id")
+  content   String // Полнотекстовый поиск
+  tags      String[]
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([type, entityId])
+  @@map("search_index")
+}
+
+// Кэш для производительности
+model Cache {
   id        String   @id @default(uuid())
   key       String   @unique
   value     Json
-  type      String
-  updatedAt DateTime @updatedAt @map("updated_at")
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
 
-  @@map("settings")
+  @@index([expiresAt])
+  @@map("cache")
 }

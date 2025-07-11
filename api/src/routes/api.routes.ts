@@ -1,30 +1,25 @@
 import { Router } from 'express';
-import { authenticateToken } from '../middleware/auth.middleware';
-import { requirePermission } from '../middleware/permissions.middleware';
-import { adminActionLogger } from '../middleware/logging.middleware';
+import { authenticateToken } from '@/middleware/auth.middleware';
+import { requirePermission } from '@/middleware/permissions.middleware';
+import { adminActionLogger } from '@/middleware/logging.middleware';
 
 // Контроллеры
-import { ProductsController } from '../controllers/products.controller';
-import { OrdersController } from '../controllers/orders.controller';
-import { CustomersController } from '../controllers/customers.controller';
-import { CategoriesController } from '../controllers/categories.controller';
-import { BannersController } from '../controllers/banners.controller';
-import { PagesController } from '../controllers/pages.controller';
-import { SettingsController } from '../controllers/settings.controller';
+import { ProductsController } from '@/controllers/products.controller';
+import { OrdersController } from '@/controllers/orders.controller';
+import { CustomersController } from '@/controllers/customers.controller';
+import { CategoriesController } from '@/controllers/categories.controller';
+import { BannersController } from '@/controllers/banners.controller';
+import { PagesController } from '@/controllers/pages.controller';
+import { SettingsController } from '@/controllers/settings.controller';
 
-// Импортируем маршруты для управления пользователями
 import adminUsersRoutes from './adminUsers.routes';
 
 const router = Router();
 
-// Применяем аутентификацию ко всем роутам
 router.use(authenticateToken);
 
-// === УПРАВЛЕНИЕ ПОЛЬЗОВАТЕЛЯМИ ===
-// Подключаем маршруты управления пользователями
 router.use('/admin/users', adminUsersRoutes);
 
-// Инициализация контроллеров
 const productsController = new ProductsController();
 const ordersController = new OrdersController();
 const customersController = new CustomersController();
@@ -33,7 +28,6 @@ const bannersController = new BannersController();
 const pagesController = new PagesController();
 const settingsController = new SettingsController();
 
-// === ТОВАРЫ ===
 router.get('/products',
     requirePermission('products.view'),
     productsController.getProducts
@@ -178,6 +172,34 @@ router.put('/settings',
     requirePermission('website.settings'),
     adminActionLogger('edit', 'settings'),
     settingsController.updateSettings
+);
+
+router.get('/customers',
+    requirePermission('customers.view'),
+    customersController.getCustomers
+);
+
+router.get('/customers/:id',
+    requirePermission('customers.view'),
+    customersController.getCustomer
+);
+
+router.post('/customers',
+    requirePermission('customers.edit'),
+    adminActionLogger('create', 'customer'),
+    customersController.createCustomer
+);
+
+router.put('/customers/:id',
+    requirePermission('customers.edit'),
+    adminActionLogger('update', 'customer'),
+    customersController.updateCustomer
+);
+
+router.delete('/customers/:id',
+    requirePermission('customers.delete'),
+    adminActionLogger('delete', 'customer'),
+    customersController.deleteCustomer
 );
 
 export default router;

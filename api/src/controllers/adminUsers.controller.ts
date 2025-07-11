@@ -162,28 +162,65 @@ export class AdminUsersController {
         }
     }
 
-    // Создать нового администратора
+    // Замените функцию createUser в adminUsers.controller.ts на эту:
+
     async createUser(req: AuthenticatedRequest, res: Response) {
         try {
-            const { username, email, password, fullName, role, customPermissions, isActive = true } = req.body;
+            // 🔍 ОТЛАДОЧНОЕ ЛОГИРОВАНИЕ
+            console.log('🔍 Request body:', JSON.stringify(req.body, null, 2));
+
+            // 🔧 ОБРАБОТКА ДАННЫХ ОТ REACT ADMIN
+            const {
+                username,
+                email,
+                password,
+                firstName,
+                lastName,
+                fullName: providedFullName,
+                role: rawRole,
+                customPermissions,
+                isActive = true,
+                twoFactorEnabled
+            } = req.body;
+
+            // Объединяем firstName и lastName в fullName если fullName не предоставлен
+            const fullName = providedFullName || `${firstName || ''} ${lastName || ''}`.trim();
+
+            // Приводим роль к верхнему регистру
+            const role = rawRole?.toUpperCase();
+
+            console.log('🔧 Processed data:', {
+                username,
+                email,
+                fullName,
+                role,
+                hasPassword: !!password
+            });
 
             // Валидация обязательных полей
             if (!username || !email || !password || !fullName || !role) {
+                console.log('❌ Validation failed - missing required fields');
                 return res.status(400).json({
                     success: false,
                     error: 'Missing required fields',
-                    required: ['username', 'email', 'password', 'fullName', 'role']
+                    required: ['username', 'email', 'password', 'fullName (or firstName + lastName)', 'role'],
+                    received: Object.keys(req.body)
                 });
             }
 
             // Проверка роли
             if (!ROLE_PERMISSIONS[role as keyof typeof ROLE_PERMISSIONS]) {
+                console.log('❌ Invalid role:', role);
+                console.log('Available roles:', Object.keys(ROLE_PERMISSIONS));
                 return res.status(400).json({
                     success: false,
                     error: 'Invalid role',
+                    providedRole: role,
                     availableRoles: Object.keys(ROLE_PERMISSIONS)
                 });
             }
+
+            console.log('✅ Validation passed, checking user uniqueness...');
 
             // Проверка уникальности
             const existingUser = await prisma.user.findFirst({
@@ -196,12 +233,15 @@ export class AdminUsersController {
             });
 
             if (existingUser) {
+                console.log('❌ User already exists:', existingUser.username === username ? 'username' : 'email');
                 return res.status(400).json({
                     success: false,
                     error: 'User already exists',
                     field: existingUser.username === username ? 'username' : 'email'
                 });
             }
+
+            console.log('✅ User is unique, creating password hash...');
 
             // Хешируем пароль
             const passwordHash = await hashPassword(password);
@@ -212,6 +252,9 @@ export class AdminUsersController {
                 permissions = [...new Set([...permissions, ...customPermissions])];
             }
 
+            console.log('✅ Creating user in database...');
+            console.log('User data:', { username, email, fullName, role, permissions: permissions.length });
+
             // Создаем пользователя
             const user = await prisma.user.create({
                 data: {
@@ -221,7 +264,8 @@ export class AdminUsersController {
                     fullName,
                     role,
                     permissions,
-                    isActive: isActive ?? true
+                    isActive: isActive ?? true,
+                    twoFactorEnabled: twoFactorEnabled ?? false
                 },
                 select: {
                     id: true,
@@ -231,10 +275,12 @@ export class AdminUsersController {
                     role: true,
                     permissions: true,
                     isActive: true,
+                    twoFactorEnabled: true,
                     createdAt: true
                 }
             });
 
+            console.log('✅ User created successfully:', user.username);
             logger.info(`Admin user created: ${username} by ${req.user?.username}`);
 
             res.status(201).json({
@@ -244,10 +290,12 @@ export class AdminUsersController {
             });
 
         } catch (error) {
+            console.error('❌ Create user error:', error);
             logger.error('Create admin user error:', error);
             res.status(500).json({
                 success: false,
-                error: 'Internal server error'
+                error: 'Internal server error',
+                details: error instanceof Error ? error.message : 'Unknown error'
             });
         }
     }
