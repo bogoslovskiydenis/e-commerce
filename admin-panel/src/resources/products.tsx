@@ -45,15 +45,43 @@ const ProductImageField = () => {
     );
 };
 
-// Кастомный компонент для отображения скидки
-const DiscountField = () => {
+interface DiscountFieldProps {
+    source?: string;
+}
+
+const DiscountField = ({ source = 'discount' }: DiscountFieldProps) => {
     const record = useRecordContext();
 
-    if (!record || !record.discount) {
-        return <span>-</span>;
+    if (!record || !record[source]) {
+        return <span><strong></strong> -</span>;
     }
 
-    return <span style={{ color: '#d32f2f', fontWeight: 'bold' }}>-{record.discount}%</span>;
+    return (
+        <span>
+            <strong>Скидка %:</strong>
+            <span style={{ color: '#d32f2f', fontWeight: 'bold', marginLeft: '4px' }}>
+                -{record[source]}%
+            </span>
+        </span>
+    );
+
+
+    return (
+        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <span style={{ fontSize: '14px' }}>🏷️</span>
+            <strong></strong>
+            <span style={{
+                color: '#d32f2f',
+                fontWeight: 'bold',
+                backgroundColor: '#ffebee',
+                padding: '2px 6px',
+                borderRadius: '4px',
+                fontSize: '12px'
+            }}>
+                -{record.discount}%
+            </span>
+        </div>
+    );
 };
 
 export const ProductList = () => (
@@ -65,7 +93,7 @@ export const ProductList = () => (
             <TextField source="title" />
             <NumberField source="price" />
             <NumberField source="oldPrice" />
-            <DiscountField /> {/* ✅ ДОБАВЛЕНО */}
+            <DiscountField source="discount" />
             <ReferenceField source="categoryId" reference="categories">
                 <TextField source="name" />
             </ReferenceField>
@@ -89,7 +117,7 @@ export const ProductEdit = () => (
             <TextInput source="title" validate={[required()]} />
             <NumberInput source="price" validate={[required()]} />
             <NumberInput source="oldPrice" label="Старая цена" />
-            <NumberInput source="discount" label="Скидка %" min={0} max={100} /> {/* ✅ ДОБАВЛЕНО */}
+            <NumberInput source="discount" label="" min={0} max={100} /> {/* ✅ ДОБАВЛЕНО */}
             <TextInput source="sku" />
             <TextInput multiline source="description" />
             <ReferenceInput source="categoryId" reference="categories">
@@ -100,7 +128,6 @@ export const ProductEdit = () => (
             <BooleanInput source="inStock" />
             <NumberInput source="stockQuantity" />
 
-            {/* ✅ ИСПРАВЛЕННЫЙ ImageInput */}
             <ImageInput
                 source="image"
                 label="Изображение товара"
@@ -152,7 +179,7 @@ export const ProductShow = () => (
             <TextField source="description" />
             <NumberField source="price" />
             <NumberField source="oldPrice" />
-            <NumberField source="discount" label="Скидка %" /> {/* ✅ ДОБАВЛЕНО */}
+            <NumberField source="discount" label="Скидка %" />
             <TextField source="sku" />
             <TextField source="brand" />
             <ReferenceField source="categoryId" reference="categories">

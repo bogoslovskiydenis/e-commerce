@@ -176,6 +176,7 @@ model Product {
   shortDescription String?  @map("short_description")
   price            Decimal  @db.Decimal(10, 2)
   oldPrice         Decimal? @map("old_price") @db.Decimal(10, 2)
+  discount         Decimal? @db.Decimal(5, 2)
   categoryId       String   @map("category_id")
   brand            String?
   sku              String?  @unique

@@ -88,6 +88,7 @@ const createProductFormData = async (data: any): Promise<FormData> => {
     if (data.title) formData.append('title', data.title);
     if (data.price) formData.append('price', data.price.toString());
     if (data.oldPrice) formData.append('oldPrice', data.oldPrice.toString());
+    if (data.discount) formData.append('discount', data.discount.toString()); // ✅ ДОБАВЛЕНО поле discount
     if (data.brand) formData.append('brand', data.brand);
     if (data.sku) formData.append('sku', data.sku);
     if (data.description) formData.append('description', data.description);
