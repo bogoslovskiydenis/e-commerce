@@ -46,7 +46,7 @@ import {
 import {
     CategoryList,
     CategoryEdit,
-    CategoryCreate
+    CategoryCreate, CategoryShow
 } from './resources/categories';
 
 // Ресурсы - Администрирование
@@ -184,6 +184,7 @@ const App: React.FC = () => (
             list={withPermissions(CategoryList, 'categories.view')}
             edit={withPermissions(CategoryEdit, 'categories.edit')}
             create={withPermissions(CategoryCreate, 'categories.create')}
+            show={withPermissions(CategoryShow, 'categories.view')}  // Добавляем Show
             options={{
                 label: 'Категории'
             }}

@@ -1,44 +1,129 @@
 import { prisma } from '../config/database';
 import { ApiError } from '../utils/apiError';
 import { logger } from '../utils/logger';
-import { Category, CategoryCreateData, CategoryUpdateData } from '../types/product.types';
 
 export interface CategoryFilters {
     active?: boolean;
     parentId?: string;
+    search?: string;
+    type?: string;
+}
+
+export interface GetCategoriesParams {
+    page?: number;
+    limit?: number;
+    filters?: CategoryFilters;
+    sortBy?: string;
+    sortOrder?: 'asc' | 'desc';
+}
+
+export interface GetCategoriesResult {
+    categories: any[];
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
 }
 
 export class CategoriesService {
     // Получить все категории с фильтрацией
-    async getCategories(filters: CategoryFilters = {}): Promise<Category[]> {
+    async getCategories(params: GetCategoriesParams): Promise<GetCategoriesResult> {
         try {
+            const {
+                page = 1,
+                limit = 50,
+                filters = {},
+                sortBy = 'sortOrder',
+                sortOrder = 'asc'
+            } = params;
+
+            const skip = (page - 1) * limit;
+
+            // Построение условий фильтрации
             const where: any = {};
 
             if (filters.active !== undefined) {
-                where.active = filters.active;
+                where.isActive = filters.active;
             }
 
             if (filters.parentId !== undefined) {
                 where.parentId = filters.parentId;
             }
 
-            const categories = await prisma.category.findMany({
-                where,
-                orderBy: [
-                    { order: 'asc' },
-                    { name: 'asc' }
-                ],
-                include: {
-                    _count: {
-                        select: {
-                            products: true,
-                            children: true
+            if (filters.search) {
+                where.OR = [
+                    { name: { contains: filters.search, mode: 'insensitive' } },
+                    { description: { contains: filters.search, mode: 'insensitive' } }
+                ];
+            }
+
+            if (filters.type) {
+                where.type = filters.type;
+            }
+
+            // Построение сортировки
+            const orderBy: any = {};
+
+            // Маппинг полей для сортировки
+            const sortFieldMap: Record<string, string> = {
+                'order': 'sortOrder',
+                'active': 'isActive',
+                'name': 'name',
+                'slug': 'slug',
+                'createdAt': 'createdAt',
+                'updatedAt': 'updatedAt',
+                'id': 'id'
+            };
+
+            const actualSortField = sortFieldMap[sortBy] || 'sortOrder';
+            orderBy[actualSortField] = sortOrder;
+
+            const [categories, total] = await Promise.all([
+                prisma.category.findMany({
+                    where,
+                    skip,
+                    take: limit,
+                    orderBy,
+                    include: {
+                        parent: {
+                            select: {
+                                id: true,
+                                name: true,
+                                slug: true
+                            }
+                        },
+                        children: {
+                            where: { isActive: true },
+                            select: {
+                                id: true,
+                                name: true,
+                                slug: true,
+                                imageUrl: true
+                            },
+                            orderBy: [
+                                { sortOrder: 'asc' },
+                                { name: 'asc' }
+                            ]
+                        },
+                        _count: {
+                            select: {
+                                products: true,
+                                children: true
+                            }
                         }
                     }
-                }
-            });
+                }),
+                prisma.category.count({ where })
+            ]);
 
-            return categories.map(this.formatCategory);
+            return {
+                categories: categories.map(this.formatCategory),
+                total,
+                page,
+                limit,
+                totalPages: Math.ceil(total / limit)
+            };
+
         } catch (error) {
             logger.error('Error getting categories:', error);
             throw new ApiError(500, 'Failed to get categories');
@@ -46,24 +131,24 @@ export class CategoriesService {
     }
 
     // Получить дерево категорий
-    async getCategoriesTree(activeOnly: boolean = true): Promise<Category[]> {
+    async getCategoriesTree(activeOnly: boolean = true): Promise<any[]> {
         try {
             const where: any = { parentId: null };
             if (activeOnly) {
-                where.active = true;
+                where.isActive = true; // ИСПРАВЛЕНО
             }
 
             const rootCategories = await prisma.category.findMany({
                 where,
                 orderBy: [
-                    { order: 'asc' },
+                    { sortOrder: 'asc' }, // ИСПРАВЛЕНО
                     { name: 'asc' }
                 ],
                 include: {
                     children: {
-                        where: activeOnly ? { active: true } : {},
+                        where: activeOnly ? { isActive: true } : {}, // ИСПРАВЛЕНО
                         orderBy: [
-                            { order: 'asc' },
+                            { sortOrder: 'asc' }, // ИСПРАВЛЕНО
                             { name: 'asc' }
                         ],
                         include: {
@@ -93,7 +178,7 @@ export class CategoriesService {
     }
 
     // Получить категорию по ID
-    async getCategoryById(id: string): Promise<Category | null> {
+    async getCategoryById(id: string): Promise<any | null> {
         try {
             const category = await prisma.category.findUnique({
                 where: { id },
@@ -106,15 +191,15 @@ export class CategoriesService {
                         }
                     },
                     children: {
-                        where: { active: true },
+                        where: { isActive: true }, // ИСПРАВЛЕНО
                         select: {
                             id: true,
                             name: true,
                             slug: true,
-                            image: true
+                            imageUrl: true
                         },
                         orderBy: [
-                            { order: 'asc' },
+                            { sortOrder: 'asc' }, // ИСПРАВЛЕНО
                             { name: 'asc' }
                         ]
                     },
@@ -134,7 +219,7 @@ export class CategoriesService {
     }
 
     // Получить категорию по slug
-    async getCategoryBySlug(slug: string): Promise<Category | null> {
+    async getCategoryBySlug(slug: string): Promise<any | null> {
         try {
             const category = await prisma.category.findUnique({
                 where: { slug },
@@ -147,15 +232,15 @@ export class CategoriesService {
                         }
                     },
                     children: {
-                        where: { active: true },
+                        where: { isActive: true }, // ИСПРАВЛЕНО
                         select: {
                             id: true,
                             name: true,
                             slug: true,
-                            image: true
+                            imageUrl: true
                         },
                         orderBy: [
-                            { order: 'asc' },
+                            { sortOrder: 'asc' }, // ИСПРАВЛЕНО
                             { name: 'asc' }
                         ]
                     },
@@ -175,7 +260,7 @@ export class CategoriesService {
     }
 
     // Создать новую категорию
-    async createCategory(data: CategoryCreateData): Promise<Category> {
+    async createCategory(data: any): Promise<any> {
         try {
             // Проверяем уникальность slug
             const existingCategory = await prisma.category.findUnique({
@@ -198,20 +283,74 @@ export class CategoriesService {
             }
 
             // Если порядок не указан, ставим в конец
-            if (data.order === undefined) {
+            if (data.sortOrder === undefined) {
                 const lastCategory = await prisma.category.findFirst({
                     where: { parentId: data.parentId || null },
-                    orderBy: { order: 'desc' }
+                    orderBy: { sortOrder: 'desc' }
                 });
-                data.order = (lastCategory?.order || 0) + 1;
+                data.sortOrder = (lastCategory?.sortOrder || 0) + 1;
             }
 
+            // ИСПРАВЛЕНИЕ: Маппинг типов в правильный enum формат
+            const mapCategoryType = (type: string): string => {
+                const typeMapping: Record<string, string> = {
+                    'products': 'PRODUCTS',
+                    'balloons': 'BALLOONS',
+                    'gifts': 'GIFTS',
+                    'events': 'EVENTS',
+                    'colors': 'COLORS',
+                    'materials': 'MATERIALS',
+                    'occasions': 'OCCASIONS'
+                };
+
+                return typeMapping[type.toLowerCase()] || 'PRODUCTS';
+            };
+
+            // Очищаем и подготавливаем данные для Prisma
+            const createData: any = {
+                name: data.name,
+                slug: data.slug,
+                type: mapCategoryType(data.type || 'products'), // ИСПРАВЛЕНО: правильный маппинг
+                sortOrder: data.sortOrder,
+                isActive: true,
+                showInNavigation: data.showInNavigation !== false,
+            };
+
+            // Добавляем опциональные поля только если они определены
+            if (data.description !== undefined) createData.description = data.description;
+            if (data.parentId !== undefined) createData.parentId = data.parentId;
+            if (data.imageUrl !== undefined) createData.imageUrl = data.imageUrl;
+            if (data.bannerUrl !== undefined) createData.bannerUrl = data.bannerUrl;
+            if (data.metaTitle !== undefined) createData.metaTitle = data.metaTitle;
+            if (data.metaDescription !== undefined) createData.metaDescription = data.metaDescription;
+            if (data.metaKeywords !== undefined) createData.metaKeywords = data.metaKeywords;
+            if (data.filters !== undefined) createData.filters = data.filters;
+
+            console.log('🔍 Creating category with data:', JSON.stringify(createData, null, 2));
+
             const category = await prisma.category.create({
-                data: {
-                    ...data,
-                    active: data.active ?? true
-                },
+                data: createData,
                 include: {
+                    parent: {
+                        select: {
+                            id: true,
+                            name: true,
+                            slug: true
+                        }
+                    },
+                    children: {
+                        where: { isActive: true },
+                        select: {
+                            id: true,
+                            name: true,
+                            slug: true,
+                            imageUrl: true
+                        },
+                        orderBy: [
+                            { sortOrder: 'asc' },
+                            { name: 'asc' }
+                        ]
+                    },
                     _count: {
                         select: {
                             products: true,
@@ -232,7 +371,7 @@ export class CategoriesService {
     }
 
     // Обновить категорию
-    async updateCategory(id: string, data: CategoryUpdateData): Promise<Category> {
+    async updateCategory(id: string, data: any): Promise<any> {
         try {
             // Проверяем существование категории
             const existingCategory = await prisma.category.findUnique({
@@ -243,37 +382,37 @@ export class CategoriesService {
                 throw new ApiError(404, 'Category not found');
             }
 
-            // Проверяем уникальность slug, если он изменяется
-            if (data.slug && data.slug !== existingCategory.slug) {
-                const categoryWithSlug = await prisma.category.findUnique({
-                    where: { slug: data.slug }
-                });
-
-                if (categoryWithSlug) {
-                    throw new ApiError(400, 'Category with this slug already exists');
-                }
-            }
-
-            // Если меняется родитель, проверяем его существование
-            if (data.parentId && data.parentId !== existingCategory.parentId) {
-                const parent = await prisma.category.findUnique({
-                    where: { id: data.parentId }
-                });
-
-                if (!parent) {
-                    throw new ApiError(400, 'Parent category not found');
-                }
-
-                // Проверяем, что категория не становится родителем самой себе
-                if (data.parentId === id) {
-                    throw new ApiError(400, 'Category cannot be parent of itself');
-                }
+            // Маппинг полей
+            const updateData: any = { ...data };
+            if (updateData.active !== undefined) {
+                updateData.isActive = updateData.active; // ИСПРАВЛЕНО
+                delete updateData.active;
             }
 
             const category = await prisma.category.update({
                 where: { id },
-                data,
+                data: updateData,
                 include: {
+                    parent: {
+                        select: {
+                            id: true,
+                            name: true,
+                            slug: true
+                        }
+                    },
+                    children: {
+                        where: { isActive: true }, // ИСПРАВЛЕНО
+                        select: {
+                            id: true,
+                            name: true,
+                            slug: true,
+                            imageUrl: true
+                        },
+                        orderBy: [
+                            { sortOrder: 'asc' }, // ИСПРАВЛЕНО
+                            { name: 'asc' }
+                        ]
+                    },
                     _count: {
                         select: {
                             products: true,
@@ -285,7 +424,7 @@ export class CategoriesService {
 
             return this.formatCategory(category);
         } catch (error) {
-            logger.error(`Error updating category ${id}:`, error);
+            logger.error('Error updating category:', error);
             if (error instanceof ApiError) {
                 throw error;
             }
@@ -293,187 +432,21 @@ export class CategoriesService {
         }
     }
 
-    // Удалить категорию
-    async deleteCategory(id: string): Promise<void> {
+    // Переключить статус активности
+    async toggleCategoryStatus(id: string): Promise<any> {
         try {
             const category = await prisma.category.findUnique({
-                where: { id },
-                include: {
-                    children: true,
-                    products: true
-                }
-            });
-
-            if (!category) {
-                throw new ApiError(404, 'Category not found');
-            }
-
-            // Проверяем, есть ли дочерние категории
-            if (category.children && category.children.length > 0) {
-                throw new ApiError(400, 'Cannot delete category with subcategories');
-            }
-
-            // Проверяем, есть ли товары в категории
-            if (category.products && category.products.length > 0) {
-                throw new ApiError(400, 'Cannot delete category with products');
-            }
-
-            await prisma.category.delete({
                 where: { id }
             });
-        } catch (error) {
-            logger.error(`Error deleting category ${id}:`, error);
-            if (error instanceof ApiError) {
-                throw error;
-            }
-            throw new ApiError(500, 'Failed to delete category');
-        }
-    }
-
-    // Обновить порядок категорий
-    async reorderCategories(categories: Array<{ id: string; order: number }>): Promise<Category[]> {
-        try {
-            const updatePromises = categories.map(async (categoryData) => {
-                return await prisma.category.update({
-                    where: { id: categoryData.id },
-                    data: { order: categoryData.order }
-                });
-            });
-
-            await Promise.all(updatePromises);
-
-            // Возвращаем обновленные категории
-            const updatedCategories = await prisma.category.findMany({
-                where: {
-                    id: { in: categories.map(c => c.id) }
-                },
-                orderBy: { order: 'asc' },
-                include: {
-                    _count: {
-                        select: {
-                            products: true,
-                            children: true
-                        }
-                    }
-                }
-            });
-
-            return updatedCategories.map(this.formatCategory);
-        } catch (error) {
-            logger.error('Error reordering categories:', error);
-            throw new ApiError(500, 'Failed to reorder categories');
-        }
-    }
-
-    // Получить статистику категорий
-    async getCategoriesStats() {
-        try {
-            const [
-                total,
-                active,
-                withProducts,
-                rootCategories
-            ] = await Promise.all([
-                prisma.category.count(),
-                prisma.category.count({ where: { active: true } }),
-                prisma.category.count({
-                    where: {
-                        products: {
-                            some: {}
-                        }
-                    }
-                }),
-                prisma.category.count({ where: { parentId: null } })
-            ]);
-
-            return {
-                total,
-                active,
-                inactive: total - active,
-                withProducts,
-                withoutProducts: total - withProducts,
-                rootCategories
-            };
-        } catch (error) {
-            logger.error('Error getting categories stats:', error);
-            throw new ApiError(500, 'Failed to get categories stats');
-        }
-    }
-
-    // Получить популярные категории (по количеству товаров)
-    async getPopularCategories(limit: number = 10): Promise<Category[]> {
-        try {
-            const categories = await prisma.category.findMany({
-                where: { active: true },
-                take: limit,
-                orderBy: {
-                    products: {
-                        _count: 'desc'
-                    }
-                },
-                include: {
-                    _count: {
-                        select: {
-                            products: true,
-                            children: true
-                        }
-                    }
-                }
-            });
-
-            return categories.map(this.formatCategory);
-        } catch (error) {
-            logger.error('Error getting popular categories:', error);
-            throw new ApiError(500, 'Failed to get popular categories');
-        }
-    }
-
-    // Переместить категорию в другого родителя
-    async moveCategory(categoryId: string, newParentId: string | null): Promise<Category> {
-        try {
-            const category = await prisma.category.findUnique({
-                where: { id: categoryId }
-            });
 
             if (!category) {
                 throw new ApiError(404, 'Category not found');
             }
 
-            // Проверяем нового родителя если указан
-            if (newParentId) {
-                const newParent = await prisma.category.findUnique({
-                    where: { id: newParentId }
-                });
-
-                if (!newParent) {
-                    throw new ApiError(400, 'New parent category not found');
-                }
-
-                // Проверяем, что категория не становится родителем самой себе
-                if (newParentId === categoryId) {
-                    throw new ApiError(400, 'Category cannot be parent of itself');
-                }
-
-                // Проверяем циклические зависимости
-                const isDescendant = await this.isDescendant(categoryId, newParentId);
-                if (isDescendant) {
-                    throw new ApiError(400, 'Cannot move category to its descendant');
-                }
-            }
-
-            // Получаем новый порядок
-            const lastCategory = await prisma.category.findFirst({
-                where: { parentId: newParentId },
-                orderBy: { order: 'desc' }
-            });
-
-            const newOrder = (lastCategory?.order || 0) + 1;
-
             const updatedCategory = await prisma.category.update({
-                where: { id: categoryId },
+                where: { id },
                 data: {
-                    parentId: newParentId,
-                    order: newOrder
+                    isActive: !category.isActive // ИСПРАВЛЕНО
                 },
                 include: {
                     _count: {
@@ -487,107 +460,139 @@ export class CategoriesService {
 
             return this.formatCategory(updatedCategory);
         } catch (error) {
-            logger.error(`Error moving category ${categoryId}:`, error);
+            logger.error('Error toggling category status:', error);
             if (error instanceof ApiError) {
                 throw error;
             }
-            throw new ApiError(500, 'Failed to move category');
+            throw new ApiError(500, 'Failed to toggle category status');
         }
     }
 
-    // Проверка, является ли категория потомком другой категории
-    private async isDescendant(ancestorId: string, descendantId: string): Promise<boolean> {
+    // Удалить категорию
+    async deleteCategory(id: string, options: { moveProductsTo?: string } = {}): Promise<{ success: boolean; error?: string }> {
         try {
-            const descendant = await prisma.category.findUnique({
-                where: { id: descendantId },
-                select: { parentId: true }
+            const category = await prisma.category.findUnique({
+                where: { id },
+                include: {
+                    products: true,
+                    children: true
+                }
             });
 
-            if (!descendant || !descendant.parentId) {
-                return false;
+            if (!category) {
+                throw new ApiError(404, 'Category not found');
             }
 
-            if (descendant.parentId === ancestorId) {
-                return true;
+            // Проверяем есть ли дочерние категории
+            if (category.children.length > 0) {
+                throw new ApiError(400, 'Cannot delete category with subcategories');
             }
 
-            return await this.isDescendant(ancestorId, descendant.parentId);
+            // Если есть товары, перемещаем их в другую категорию или ошибка
+            if (category.products.length > 0) {
+                if (options.moveProductsTo) {
+                    await prisma.product.updateMany({
+                        where: { categoryId: id },
+                        data: { categoryId: options.moveProductsTo }
+                    });
+                } else {
+                    throw new ApiError(400, 'Cannot delete category with products. Specify moveProductsTo parameter.');
+                }
+            }
+
+            await prisma.category.delete({
+                where: { id }
+            });
+
+            return { success: true };
         } catch (error) {
-            logger.error('Error checking descendant relationship:', error);
-            return false;
+            logger.error('Error deleting category:', error);
+            if (error instanceof ApiError) {
+                throw error;
+            }
+            return { success: false, error: 'Failed to delete category' };
         }
     }
 
-    // Получить путь категории (breadcrumbs)
-    async getCategoryPath(categoryId: string): Promise<Category[]> {
+    // Получить навигационные категории
+    async getNavigationCategories(): Promise<any[]> {
         try {
-            const path: Category[] = [];
-            let currentId: string | null = categoryId;
-
-            while (currentId) {
-                const category = await prisma.category.findUnique({
-                    where: { id: currentId },
-                    select: {
-                        id: true,
-                        name: true,
-                        slug: true,
-                        parentId: true,
-                        image: true,
-                        active: true,
-                        order: true,
-                        description: true,
-                        createdAt: true,
-                        updatedAt: true
+            const categories = await prisma.category.findMany({
+                where: {
+                    isActive: true, // ИСПРАВЛЕНО
+                    showInNavigation: true
+                },
+                orderBy: [
+                    { sortOrder: 'asc' }, // ИСПРАВЛЕНО
+                    { name: 'asc' }
+                ],
+                include: {
+                    children: {
+                        where: {
+                            isActive: true, // ИСПРАВЛЕНО
+                            showInNavigation: true
+                        },
+                        orderBy: [
+                            { sortOrder: 'asc' }, // ИСПРАВЛЕНО
+                            { name: 'asc' }
+                        ]
+                    },
+                    _count: {
+                        select: {
+                            products: true
+                        }
                     }
-                });
+                }
+            });
 
-                if (!category) break;
-
-                path.unshift({
-                    id: category.id,
-                    name: category.name,
-                    slug: category.slug,
-                    description: category.description,
-                    parentId: category.parentId,
-                    image: category.image,
-                    active: category.active,
-                    order: category.order,
-                    createdAt: category.createdAt.toISOString(),
-                    updatedAt: category.updatedAt.toISOString()
-                });
-
-                currentId = category.parentId;
-            }
-
-            return path;
+            return categories.map(this.formatCategory);
         } catch (error) {
-            logger.error(`Error getting category path for ${categoryId}:`, error);
-            throw new ApiError(500, 'Failed to get category path');
+            logger.error('Error getting navigation categories:', error);
+            throw new ApiError(500, 'Failed to get navigation categories');
         }
     }
 
-    // Форматирование категории для API
-    private formatCategory = (category: any): Category => {
+    // Форматирование категории
+    private formatCategory = (category: any) => {
+        // Маппинг типов из enum в нижний регистр для UI
+        const mapCategoryTypeToUI = (type: string): string => {
+            const typeMapping: Record<string, string> = {
+                'PRODUCTS': 'products',
+                'BALLOONS': 'balloons',
+                'GIFTS': 'gifts',
+                'EVENTS': 'events',
+                'COLORS': 'colors',
+                'MATERIALS': 'materials',
+                'OCCASIONS': 'occasions'
+            };
+
+            return typeMapping[type] || 'products';
+        };
+
         return {
             id: category.id,
             name: category.name,
             slug: category.slug,
             description: category.description,
+            type: mapCategoryTypeToUI(category.type), // ИСПРАВЛЕНО: маппинг для UI
             parentId: category.parentId,
-            image: category.image,
-            active: category.active,
-            order: category.order,
-            createdAt: category.createdAt?.toISOString() || new Date().toISOString(),
-            updatedAt: category.updatedAt?.toISOString() || new Date().toISOString(),
-            // Дополнительные поля
+            imageUrl: category.imageUrl,
+            bannerUrl: category.bannerUrl,
+            active: category.isActive, // маппинг isActive -> active
+            showInNavigation: category.showInNavigation,
+            order: category.sortOrder, // маппинг sortOrder -> order
+            metaTitle: category.metaTitle,
+            metaDescription: category.metaDescription,
+            metaKeywords: category.metaKeywords,
+            filters: category.filters,
+            createdAt: category.createdAt,
+            updatedAt: category.updatedAt,
+            parent: category.parent,
+            children: category.children?.map(this.formatCategory),
             productsCount: category._count?.products || 0,
-            childrenCount: category._count?.children || 0,
-            parent: category.parent ? {
-                id: category.parent.id,
-                name: category.parent.name,
-                slug: category.parent.slug
-            } : undefined,
-            children: category.children || []
+            childrenCount: category._count?.children || 0
         };
     };
 }
+
+export const categoriesService = new CategoriesService();

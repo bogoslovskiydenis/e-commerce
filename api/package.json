@@ -4,9 +4,15 @@
   "type": "module",
   "scripts": {
     "dev": "tsx app.ts",
-    "start": "tsx app.ts",
     "build": "tsc",
-    "start:prod": "node dist/app.js"
+    "start": "node dist/app.js",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:migrate": "prisma migrate dev",
+    "db:studio": "prisma studio",
+    "db:reset": "prisma migrate reset",
+    "seed:categories": "tsx scripts/seedCategories.mjs",
+    "seed:all": "tsx scripts/seedAll.ts"
   },
   "dependencies": {
     "@prisma/client": "^5.7.1",

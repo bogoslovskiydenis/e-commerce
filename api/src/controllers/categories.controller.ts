@@ -1,67 +1,61 @@
+// src/controllers/categories.controller.ts
 import { Request, Response } from 'express';
-import { prisma } from '../config/database.js';
-import { AuthenticatedRequest } from '../middleware/auth.middleware.js';
+import { categoriesService } from '@/services/categories.service';
+import { logger } from '@/utils/logger';
+import { ApiError } from '@/utils/errors';
+import {AuthenticatedRequest} from "@/middleware/auth.middleware";
 
 export class CategoriesController {
-    // Получить список категорий
-    async getCategories(req: AuthenticatedRequest, res: Response) {
+    // Получить список всех категорий
+    async getCategories(req: Request, res: Response) {
         try {
-            const page = parseInt(req.query.page as string) || 1;
-            const limit = parseInt(req.query.limit as string) || 25;
-            const sortBy = req.query.sortBy as string || 'createdAt';
-            const sortOrder = req.query.sortOrder as string || 'desc';
-            const search = req.query.search as string;
+            const {
+                page = 1,
+                limit = 50,
+                parentId,
+                active,
+                search,
+                type,
+                sortBy = 'sortOrder', // Изменено с 'order' на 'sortOrder'
+                sortOrder = 'asc'
+            } = req.query;
 
-            const skip = (page - 1) * limit;
+            const filters = {
+                parentId: parentId ? String(parentId) : undefined,
+                active: active !== undefined ? active === 'true' : undefined,
+                search: search ? String(search) : undefined,
+                type: type ? String(type) : undefined
+            };
 
-            console.log('📂 Получение списка категорий из БД', { page, limit, sortBy, sortOrder, search });
-
-            // Строим условие поиска
-            const where: any = {};
-            if (search) {
-                where.OR = [
-                    { name: { contains: search, mode: 'insensitive' } },
-                    { description: { contains: search, mode: 'insensitive' } }
-                ];
-            }
-
-            // Получаем категории с подсчетом товаров
-            const [categories, totalCount] = await Promise.all([
-                prisma.category.findMany({
-                    where,
-                    skip,
-                    take: limit,
-                    orderBy: {
-                        [sortBy]: sortOrder
-                    },
-                    include: {
-                        parent: {
-                            select: { id: true, name: true }
-                        },
-                        _count: {
-                            select: {
-                                products: true,
-                                children: true
-                            }
-                        }
-                    }
-                }),
-                prisma.category.count({ where })
-            ]);
+            const result = await categoriesService.getCategories({
+                page: Number(page),
+                limit: Number(limit),
+                filters,
+                sortBy: String(sortBy),
+                sortOrder: sortOrder as 'asc' | 'desc'
+            });
 
             res.json({
                 success: true,
-                data: categories,
+                data: result.categories,
                 pagination: {
-                    page,
-                    limit,
-                    totalCount,
-                    totalPages: Math.ceil(totalCount / limit)
+                    page: result.page,
+                    limit: result.limit,
+                    total: result.total,
+                    totalPages: result.totalPages
                 }
             });
 
         } catch (error) {
-            console.error('❌ Ошибка получения категорий:', error);
+            logger.error('Get categories error:', error);
+
+            if (error instanceof ApiError) {
+                return res.status(error.statusCode).json({
+                    success: false,
+                    error: error.message
+                });
+            }
+
             res.status(500).json({
                 success: false,
                 error: 'Internal server error'
@@ -70,27 +64,10 @@ export class CategoriesController {
     }
 
     // Получить категорию по ID
-    async getCategory(req: AuthenticatedRequest, res: Response) {
+    async getCategory(req: Request, res: Response) {
         try {
             const { id } = req.params;
-            console.log('📂 Получение категории по ID:', id);
-
-            const category = await prisma.category.findUnique({
-                where: { id },
-                include: {
-                    parent: {
-                        select: { id: true, name: true, slug: true }
-                    },
-                    children: {
-                        select: { id: true, name: true, slug: true, isActive: true }
-                    },
-                    _count: {
-                        select: {
-                            products: true
-                        }
-                    }
-                }
-            });
+            const category = await categoriesService.getCategoryById(id);
 
             if (!category) {
                 return res.status(404).json({
@@ -105,71 +82,15 @@ export class CategoriesController {
             });
 
         } catch (error) {
-            console.error('❌ Ошибка получения категории:', error);
-            res.status(500).json({
-                success: false,
-                error: 'Internal server error'
-            });
-        }
-    }
+            logger.error('Get category error:', error);
 
-    // Создать новую категорию
-    async createCategory(req: AuthenticatedRequest, res: Response) {
-        try {
-            const { name, description, slug, parentId, isActive = true, sortOrder = 0, metaTitle, metaDescription } = req.body;
-
-            console.log('📂 Создание новой категории:', { name, description, slug, parentId });
-
-            // Генерируем slug если не передан
-            const finalSlug = slug || name.toLowerCase()
-                .replace(/[^a-zа-я0-9]/gi, '-')
-                .replace(/-+/g, '-')
-                .replace(/^-|-$/g, '');
-
-            // Проверяем уникальность slug
-            const existingCategory = await prisma.category.findUnique({
-                where: { slug: finalSlug }
-            });
-
-            if (existingCategory) {
-                return res.status(400).json({
+            if (error instanceof ApiError) {
+                return res.status(error.statusCode).json({
                     success: false,
-                    error: 'Category with this slug already exists'
+                    error: error.message
                 });
             }
 
-            const category = await prisma.category.create({
-                data: {
-                    name,
-                    description,
-                    slug: finalSlug,
-                    parentId: parentId || null,
-                    isActive,
-                    sortOrder,
-                    metaTitle,
-                    metaDescription
-                },
-                include: {
-                    parent: {
-                        select: { id: true, name: true }
-                    },
-                    _count: {
-                        select: {
-                            products: true
-                        }
-                    }
-                }
-            });
-
-            console.log('✅ Категория создана:', category.name);
-
-            res.status(201).json({
-                success: true,
-                data: category
-            });
-
-        } catch (error) {
-            console.error('❌ Ошибка создания категории:', error);
             res.status(500).json({
                 success: false,
                 error: 'Internal server error'
@@ -177,67 +98,257 @@ export class CategoriesController {
         }
     }
 
+    // Получить дерево категорий
+    async getCategoriesTree(req: Request, res: Response) {
+        try {
+            const { includeInactive = false, type } = req.query;
+
+            const tree = await categoriesService.getCategoriesTree({
+                includeInactive: includeInactive === 'true',
+                type: type ? String(type) as any : undefined
+            });
+
+            res.json({
+                success: true,
+                data: tree
+            });
+
+        } catch (error) {
+            logger.error('Get categories tree error:', error);
+
+            if (error instanceof ApiError) {
+                return res.status(error.statusCode).json({
+                    success: false,
+                    error: error.message
+                });
+            }
+
+            res.status(500).json({
+                success: false,
+                error: 'Internal server error'
+            });
+        }
+    }
+
+    // Получить категории для навигации (публичные)
+    async getNavigationCategories(req: Request, res: Response) {
+        try {
+            const categories = await categoriesService.getNavigationCategories();
+
+            res.json({
+                success: true,
+                data: categories
+            });
+
+        } catch (error) {
+            logger.error('Get navigation categories error:', error);
+
+            if (error instanceof ApiError) {
+                return res.status(error.statusCode).json({
+                    success: false,
+                    error: error.message
+                });
+            }
+
+            res.status(500).json({
+                success: false,
+                error: 'Internal server error'
+            });
+        }
+    }
+
+
+    async createCategory(req: AuthenticatedRequest, res: Response) {
+        try {
+            const categoryData = req.body;
+
+            // Логируем полученные данные
+            console.log('🐛 Received category data:', JSON.stringify(categoryData, null, 2));
+
+            // Очищаем данные и проверяем обязательные поля
+            const cleanCategoryData = {
+                name: categoryData.name,
+                slug: categoryData.slug,
+                type: categoryData.type || 'PRODUCTS',
+                description: categoryData.description,
+                parentId: categoryData.parentId,
+                imageUrl: categoryData.imageUrl,
+                bannerUrl: categoryData.bannerUrl,
+                showInNavigation: categoryData.showInNavigation,
+                metaTitle: categoryData.metaTitle,
+                metaDescription: categoryData.metaDescription,
+                metaKeywords: categoryData.metaKeywords,
+                filters: categoryData.filters,
+                sortOrder: categoryData.sortOrder || categoryData.order // Поддержка order -> sortOrder
+            };
+
+            // Удаляем undefined значения
+            Object.keys(cleanCategoryData).forEach(key => {
+                if (cleanCategoryData[key] === undefined) {
+                    delete cleanCategoryData[key];
+                }
+            });
+
+            console.log('🧹 Cleaned category data:', JSON.stringify(cleanCategoryData, null, 2));
+
+            // Проверяем обязательные поля
+            if (!cleanCategoryData.name || !cleanCategoryData.slug) {
+                return res.status(400).json({
+                    success: false,
+                    error: 'Name and slug are required'
+                });
+            }
+
+            const category = await categoriesService.createCategory(cleanCategoryData);
+
+            logger.info(`Category created: ${category.name} by ${req.user?.username}`);
+
+            res.status(201).json({
+                success: true,
+                data: category,
+                message: 'Category created successfully'
+            });
+
+        } catch (error) {
+            logger.error('Create category error:', error);
+
+            if (error instanceof ApiError) {
+                return res.status(error.statusCode).json({
+                    success: false,
+                    error: error.message
+                });
+            }
+
+            res.status(500).json({
+                success: false,
+                error: 'Internal server error'
+            });
+        }
+    }
     // Обновить категорию
-    async updateCategory(req: AuthenticatedRequest, res: Response) {
+    async updateCategory(req: Request, res: Response) {
         try {
             const { id } = req.params;
             const updateData = req.body;
 
-            console.log('📂 Обновление категории:', id, updateData);
+            const category = await categoriesService.updateCategory(id, updateData);
 
-            // Если обновляется slug, проверяем уникальность
-            if (updateData.slug) {
-                const existingCategory = await prisma.category.findFirst({
-                    where: {
-                        slug: updateData.slug,
-                        NOT: { id }
-                    }
-                });
-
-                if (existingCategory) {
-                    return res.status(400).json({
-                        success: false,
-                        error: 'Category with this slug already exists'
-                    });
-                }
-            }
-
-            const category = await prisma.category.update({
-                where: { id },
-                data: {
-                    ...updateData,
-                    updatedAt: new Date()
-                },
-                include: {
-                    parent: {
-                        select: { id: true, name: true }
-                    },
-                    children: {
-                        select: { id: true, name: true, slug: true }
-                    },
-                    _count: {
-                        select: {
-                            products: true
-                        }
-                    }
-                }
-            });
-
-            console.log('✅ Категория обновлена:', category.name);
+            logger.info(`Category updated: ${category.name} by ${(req as any).user?.username || 'unknown'}`);
 
             res.json({
                 success: true,
-                data: category
+                data: category,
+                message: 'Category updated successfully'
             });
 
         } catch (error) {
-            console.error('❌ Ошибка обновления категории:', error);
-            if (error.code === 'P2025') {
-                return res.status(404).json({
+            logger.error('Update category error:', error);
+
+            if (error instanceof ApiError) {
+                return res.status(error.statusCode).json({
                     success: false,
-                    error: 'Category not found'
+                    error: error.message
                 });
             }
+
+            res.status(500).json({
+                success: false,
+                error: 'Internal server error'
+            });
+        }
+    }
+
+    // Переключить статус активности категории
+    async toggleCategoryStatus(req: Request, res: Response) {
+        try {
+            const { id } = req.params;
+            const category = await categoriesService.toggleCategoryStatus(id);
+
+            logger.info(`Category ${category.active ? 'activated' : 'deactivated'}: ${category.name} by ${(req as any).user?.username || 'unknown'}`);
+
+            res.json({
+                success: true,
+                data: category,
+                message: `Category ${category.active ? 'activated' : 'deactivated'} successfully`
+            });
+
+        } catch (error) {
+            logger.error('Toggle category status error:', error);
+
+            if (error instanceof ApiError) {
+                return res.status(error.statusCode).json({
+                    success: false,
+                    error: error.message
+                });
+            }
+
+            res.status(500).json({
+                success: false,
+                error: 'Internal server error'
+            });
+        }
+    }
+
+    // Изменить порядок категорий
+    async reorderCategories(req: Request, res: Response) {
+        try {
+            const { items } = req.body; // [{ id: string, order: number }]
+
+            await categoriesService.reorderCategories(items);
+
+            logger.info(`Categories reordered by ${(req as any).user?.username || 'unknown'}`);
+
+            res.json({
+                success: true,
+                message: 'Categories reordered successfully'
+            });
+
+        } catch (error) {
+            logger.error('Reorder categories error:', error);
+
+            if (error instanceof ApiError) {
+                return res.status(error.statusCode).json({
+                    success: false,
+                    error: error.message
+                });
+            }
+
+            res.status(500).json({
+                success: false,
+                error: 'Internal server error'
+            });
+        }
+    }
+
+    // Переместить категорию
+    async moveCategory(req: Request, res: Response) {
+        try {
+            const { id } = req.params;
+            const { newParentId, newOrder } = req.body;
+
+            const category = await categoriesService.moveCategory(id, {
+                newParentId,
+                newOrder
+            });
+
+            logger.info(`Category moved: ${category.name} by ${(req as any).user?.username || 'unknown'}`);
+
+            res.json({
+                success: true,
+                data: category,
+                message: 'Category moved successfully'
+            });
+
+        } catch (error) {
+            logger.error('Move category error:', error);
+
+            if (error instanceof ApiError) {
+                return res.status(error.statusCode).json({
+                    success: false,
+                    error: error.message
+                });
+            }
+
             res.status(500).json({
                 success: false,
                 error: 'Internal server error'
@@ -246,54 +357,39 @@ export class CategoriesController {
     }
 
     // Удалить категорию
-    async deleteCategory(req: AuthenticatedRequest, res: Response) {
+    async deleteCategory(req: Request, res: Response) {
         try {
             const { id } = req.params;
-            console.log('📂 Удаление категории:', id);
+            const { moveProductsTo, force } = req.query;
 
-            // Проверяем, есть ли товары в категории
-            const productsCount = await prisma.product.count({
-                where: { categoryId: id }
+            const result = await categoriesService.deleteCategory(id, {
+                moveProductsTo: moveProductsTo ? String(moveProductsTo) : undefined
             });
 
-            if (productsCount > 0) {
+            if (!result.success) {
                 return res.status(400).json({
                     success: false,
-                    error: `Cannot delete category with ${productsCount} products. Move or delete products first.`
+                    error: result.error
                 });
             }
 
-            // Проверяем, есть ли дочерние категории
-            const childrenCount = await prisma.category.count({
-                where: { parentId: id }
-            });
-
-            if (childrenCount > 0) {
-                return res.status(400).json({
-                    success: false,
-                    error: `Cannot delete category with ${childrenCount} subcategories. Delete subcategories first.`
-                });
-            }
-
-            const deletedCategory = await prisma.category.delete({
-                where: { id }
-            });
-
-            console.log('✅ Категория удалена:', deletedCategory.name);
+            logger.info(`Category deleted: ${id} by ${(req as any).user?.username || 'unknown'}`);
 
             res.json({
                 success: true,
-                data: deletedCategory
+                message: 'Category deleted successfully'
             });
 
         } catch (error) {
-            console.error('❌ Ошибка удаления категории:', error);
-            if (error.code === 'P2025') {
-                return res.status(404).json({
+            logger.error('Delete category error:', error);
+
+            if (error instanceof ApiError) {
+                return res.status(error.statusCode).json({
                     success: false,
-                    error: 'Category not found'
+                    error: error.message
                 });
             }
+
             res.status(500).json({
                 success: false,
                 error: 'Internal server error'

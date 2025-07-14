@@ -1,3 +1,6 @@
+// schema.prisma - ИСПРАВЛЕННАЯ ВЕРСИЯ
+// Удалите дублированную модель Category и обновите существующую
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -96,6 +99,19 @@ enum PromotionType {
   @@map("promotion_type")
 }
 
+// НОВЫЙ ENUM для типов категорий
+enum CategoryType {
+  PRODUCTS
+  BALLOONS
+  GIFTS
+  EVENTS
+  COLORS
+  MATERIALS
+  OCCASIONS
+
+  @@map("category_type")
+}
+
 // === MODELS ===
 
 model User {
@@ -146,25 +162,37 @@ model Customer {
   @@map("customers")
 }
 
+// ОБНОВЛЕННАЯ модель Category с новыми полями
 model Category {
-  id              String   @id @default(uuid())
-  name            String
-  slug            String   @unique
-  description     String?
-  parentId        String?  @map("parent_id")
-  imageUrl        String?  @map("image_url")
-  isActive        Boolean  @default(true) @map("is_active")
-  sortOrder       Int      @default(0) @map("sort_order")
-  metaTitle       String?  @map("meta_title")
-  metaDescription String?  @map("meta_description")
-  createdAt       DateTime @default(now()) @map("created_at")
-  updatedAt       DateTime @updatedAt @map("updated_at")
+  id               String       @id @default(uuid())
+  name             String
+  slug             String       @unique
+  description      String?
+  type             CategoryType @default(PRODUCTS) // НОВОЕ ПОЛЕ
+  parentId         String?      @map("parent_id")
+  imageUrl         String?      @map("image_url")
+  bannerUrl        String?      @map("banner_url") // НОВОЕ ПОЛЕ
+  isActive         Boolean      @default(true) @map("is_active")
+  showInNavigation Boolean      @default(true) @map("show_in_navigation") // НОВОЕ ПОЛЕ
+  sortOrder        Int          @default(0) @map("sort_order")
+  metaTitle        String?      @map("meta_title")
+  metaDescription  String?      @map("meta_description")
+  metaKeywords     String?      @map("meta_keywords") // НОВОЕ ПОЛЕ
+  filters          Json? // НОВОЕ ПОЛЕ - для настроек UI
+  createdAt        DateTime     @default(now()) @map("created_at")
+  updatedAt        DateTime     @updatedAt @map("updated_at")
 
   // Связи
   parent   Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
   children Category[] @relation("CategoryHierarchy")
   products Product[]
 
+  // Индексы
+  @@index([type])
+  @@index([isActive])
+  @@index([showInNavigation])
+  @@index([parentId])
+  @@index([sortOrder])
   @@map("categories")
 }
 

@@ -1,51 +1,23 @@
 import { Router } from 'express';
-import { authenticateToken, requirePermission } from '@/middleware/auth.middleware';
 import { categoriesController } from '@/controllers/categories.controller';
+import { adminActionLogger } from '@/middleware/logging.middleware';
 import { validate } from '@/middleware/validation.middleware';
-import { z } from 'zod';
+import { authenticateToken } from '@/middleware/auth.middleware';
+import { requirePermission } from '@/middleware/permissions.middleware';
+import {
+    createCategorySchema,
+    updateCategorySchema,
+    categoryIdParamSchema
+} from '@/validation/categories.validation';
 
 const router = Router();
 
 // Применяем аутентификацию ко всем маршрутам
 router.use(authenticateToken);
 
-// Схемы валидации
-const createCategorySchema = z.object({
-    body: z.object({
-        name: z.string().min(1, 'Name is required').max(255, 'Name too long'),
-        description: z.string().optional(),
-        slug: z.string().optional(),
-        parentId: z.string().uuid().optional().nullable(),
-        isActive: z.boolean().optional().default(true),
-        sortOrder: z.number().int().min(0).optional().default(0),
-        metaTitle: z.string().max(255).optional(),
-        metaDescription: z.string().max(500).optional()
-    })
-});
+// === ПОЛУЧЕНИЕ ДАННЫХ ===
 
-const updateCategorySchema = z.object({
-    params: z.object({
-        id: z.string().uuid('Invalid category ID')
-    }),
-    body: z.object({
-        name: z.string().min(1).max(255).optional(),
-        description: z.string().optional(),
-        slug: z.string().optional(),
-        parentId: z.string().uuid().optional().nullable(),
-        isActive: z.boolean().optional(),
-        sortOrder: z.number().int().min(0).optional(),
-        metaTitle: z.string().max(255).optional(),
-        metaDescription: z.string().max(500).optional()
-    })
-});
-
-const categoryIdSchema = z.object({
-    params: z.object({
-        id: z.string().uuid('Invalid category ID')
-    })
-});
-
-// Получить список категорий
+// Получить список всех категорий
 router.get('/',
     requirePermission('categories.view'),
     categoriesController.getCategories
@@ -54,14 +26,28 @@ router.get('/',
 // Получить категорию по ID
 router.get('/:id',
     requirePermission('categories.view'),
-    validate(categoryIdSchema),
+    validate(categoryIdParamSchema),
     categoriesController.getCategory
 );
+
+// Получить дерево категорий
+router.get('/tree/hierarchy',
+    requirePermission('categories.view'),
+    categoriesController.getCategoriesTree
+);
+
+// Получить категории для навигации (активные)
+router.get('/navigation/public',
+    categoriesController.getNavigationCategories
+);
+
+// === СОЗДАНИЕ И ОБНОВЛЕНИЕ ===
 
 // Создать новую категорию
 router.post('/',
     requirePermission('categories.create'),
     validate(createCategorySchema),
+    adminActionLogger('create', 'category'),
     categoriesController.createCategory
 );
 
@@ -69,13 +55,50 @@ router.post('/',
 router.put('/:id',
     requirePermission('categories.edit'),
     validate(updateCategorySchema),
+    adminActionLogger('update', 'category'),
     categoriesController.updateCategory
 );
+
+// Частичное обновление категории
+router.patch('/:id',
+    requirePermission('categories.edit'),
+    validate(categoryIdParamSchema),
+    adminActionLogger('patch', 'category'),
+    categoriesController.updateCategory
+);
+
+// === СПЕЦИАЛЬНЫЕ ДЕЙСТВИЯ ===
+
+// Переключить статус активности категории
+router.post('/:id/toggle-status',
+    requirePermission('categories.edit'),
+    validate(categoryIdParamSchema),
+    adminActionLogger('toggle_status', 'category'),
+    categoriesController.toggleCategoryStatus
+);
+
+// Изменить порядок категорий
+router.post('/reorder',
+    requirePermission('categories.edit'),
+    adminActionLogger('reorder', 'category'),
+    categoriesController.reorderCategories
+);
+
+// Переместить категорию
+router.post('/:id/move',
+    requirePermission('categories.edit'),
+    validate(categoryIdParamSchema),
+    adminActionLogger('move', 'category'),
+    categoriesController.moveCategory
+);
+
+// === УДАЛЕНИЕ ===
 
 // Удалить категорию
 router.delete('/:id',
     requirePermission('categories.delete'),
-    validate(categoryIdSchema),
+    validate(categoryIdParamSchema),
+    adminActionLogger('delete', 'category'),
     categoriesController.deleteCategory
 );
 
