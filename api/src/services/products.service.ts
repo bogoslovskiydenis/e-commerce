@@ -1,6 +1,6 @@
-import { prisma } from '../config/database';
-import { ApiError } from '../utils/apiError';
-import { logger } from '../utils/logger';
+import { prisma } from '@/config/database';
+import { ApiError } from '@/utils/apiError';
+import { logger } from '@/utils/logger';
 import { Product, ProductCreateData, ProductUpdateData } from '../types/';
 
 export interface ProductFilters {

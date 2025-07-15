@@ -1,12 +1,12 @@
 import { Router } from 'express';
-import { validate } from '../middleware/validation.middleware.js';
-import { authenticateToken, AuthenticatedRequest } from '../middleware/auth.middleware.js';
+import { validate } from '@/middleware/validation.middleware';
+import { authenticateToken, AuthenticatedRequest } from '@/middleware/auth.middleware';
 import { z } from 'zod';
 import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { prisma } from '../config/database.js';
-import { config } from '../config/index.js';
+import { prisma } from '@/config/database';
+import { config } from '@/config';
 
 const router = Router();
 

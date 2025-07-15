@@ -1,6 +1,3 @@
-// schema.prisma - ИСПРАВЛЕННАЯ ВЕРСИЯ
-// Удалите дублированную модель Category и обновите существующую
-
 generator client {
   provider = "prisma-client-js"
 }

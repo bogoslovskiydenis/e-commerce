@@ -1,65 +1,104 @@
-import { Response } from 'express';
-import { prisma } from '../config/database';
-import { AuthenticatedRequest } from '../middleware/auth.middleware';
+import { Request, Response } from 'express';
+import { AuthenticatedRequest } from '@/middleware/auth.middleware';
+import { prisma } from '@/config/database';
+import { logger } from '@/utils/logger';
 
 export class ProductsController {
-    // Получить список товаров
+
     async getProducts(req: AuthenticatedRequest, res: Response) {
         try {
-            const page = parseInt(req.query.page as string) || 1;
-            const limit = parseInt(req.query.limit as string) || 10;
-            const sortBy = req.query.sortBy as string || 'createdAt';
-            const sortOrder = req.query.sortOrder as string || 'desc';
-            const search = req.query.search as string;
-            const categoryId = req.query.categoryId as string;
-
-            const skip = (page - 1) * limit;
+            const {
+                page = 1,
+                limit = 25,
+                sortBy = 'createdAt',
+                sortOrder = 'desc',
+                search,
+                categoryId
+            } = req.query;
 
             console.log('🛍️ Получение списка товаров из БД', {
-                page, limit, sortBy, sortOrder, search, categoryId
+                page: Number(page),
+                limit: Number(limit),
+                sortBy: String(sortBy),
+                sortOrder: String(sortOrder),
+                search: search ? String(search) : undefined,
+                categoryId: categoryId ? String(categoryId) : undefined
             });
 
-            // Строим условие поиска
-            const where: any = {};
+            const skip = (Number(page) - 1) * Number(limit);
+
+            // Условие поиска
+            const whereCondition: any = {};
+
             if (search) {
-                where.OR = [
-                    { title: { contains: search, mode: 'insensitive' } },
-                    { description: { contains: search, mode: 'insensitive' } },
-                    { brand: { contains: search, mode: 'insensitive' } }
+                whereCondition.OR = [
+                    { title: { contains: String(search), mode: 'insensitive' } },
+                    { description: { contains: String(search), mode: 'insensitive' } },
+                    { sku: { contains: String(search), mode: 'insensitive' } },
+                    { brand: { contains: String(search), mode: 'insensitive' } }
                 ];
             }
+
             if (categoryId) {
-                where.categoryId = categoryId;
+                whereCondition.categoryId = String(categoryId);
             }
 
-            const [products, totalCount] = await Promise.all([
+            // Определяем сортировку
+            const orderBy: any = {};
+            if (sortBy === 'price') {
+                orderBy.price = sortOrder;
+            } else if (sortBy === 'title') {
+                orderBy.title = sortOrder;
+            } else {
+                orderBy.createdAt = sortOrder;
+            }
+
+            const [products, total] = await Promise.all([
                 prisma.product.findMany({
-                    where,
-                    skip,
-                    take: limit,
-                    orderBy: { [sortBy]: sortOrder },
+                    where: whereCondition,
                     include: {
                         category: {
                             select: { id: true, name: true, slug: true }
                         }
-                    }
+                    },
+                    orderBy,
+                    skip,
+                    take: Number(limit)
                 }),
-                prisma.product.count({ where })
+                prisma.product.count({ where: whereCondition })
             ]);
 
             res.json({
-                success: true,
-                data: products,
-                pagination: {
-                    page,
-                    limit,
-                    totalCount,
-                    totalPages: Math.ceil(totalCount / limit)
-                }
+                data: products.map(product => ({
+                    id: product.id,
+                    title: product.title,
+                    slug: product.slug,
+                    description: product.description,
+                    shortDescription: product.shortDescription,
+                    price: Number(product.price),
+                    oldPrice: product.oldPrice ? Number(product.oldPrice) : null,
+                    discount: product.discount ? Number(product.discount) : null,
+                    brand: product.brand,
+                    sku: product.sku,
+                    images: product.images,
+                    categoryId: product.categoryId,
+                    category: product.category,
+                    attributes: product.attributes,
+                    tags: product.tags,
+                    isActive: product.isActive,
+                    inStock: product.inStock,
+                    stockQuantity: product.stockQuantity,
+                    featured: product.featured,
+                    weight: product.weight ? Number(product.weight) : null,
+                    dimensions: product.dimensions,
+                    createdAt: product.createdAt,
+                    updatedAt: product.updatedAt
+                })),
+                total: total
             });
 
         } catch (error) {
-            console.error('❌ Ошибка получения товаров:', error);
+            logger.error('Get products error:', error);
             res.status(500).json({
                 success: false,
                 error: 'Internal server error'
@@ -67,11 +106,9 @@ export class ProductsController {
         }
     }
 
-    // Получить товар по ID
     async getProduct(req: AuthenticatedRequest, res: Response) {
         try {
             const { id } = req.params;
-            console.log('🛍️ Получение товара по ID:', id);
 
             const product = await prisma.product.findUnique({
                 where: { id },
@@ -90,12 +127,35 @@ export class ProductsController {
             }
 
             res.json({
-                success: true,
-                data: product
+                data: {
+                    id: product.id,
+                    title: product.title,
+                    slug: product.slug,
+                    description: product.description,
+                    shortDescription: product.shortDescription,
+                    price: Number(product.price),
+                    oldPrice: product.oldPrice ? Number(product.oldPrice) : null,
+                    discount: product.discount ? Number(product.discount) : null,
+                    brand: product.brand,
+                    sku: product.sku,
+                    images: product.images,
+                    categoryId: product.categoryId,
+                    category: product.category,
+                    attributes: product.attributes,
+                    tags: product.tags,
+                    isActive: product.isActive,
+                    inStock: product.inStock,
+                    stockQuantity: product.stockQuantity,
+                    featured: product.featured,
+                    weight: product.weight ? Number(product.weight) : null,
+                    dimensions: product.dimensions,
+                    createdAt: product.createdAt,
+                    updatedAt: product.updatedAt
+                }
             });
 
         } catch (error) {
-            console.error('❌ Ошибка получения товара:', error);
+            logger.error('Get product error:', error);
             res.status(500).json({
                 success: false,
                 error: 'Internal server error'
@@ -103,141 +163,133 @@ export class ProductsController {
         }
     }
 
-    // ✅ ИСПРАВЛЕННАЯ ФУНКЦИЯ: Создание товара
-    async createProduct(req: AuthenticatedRequest, res: Response) {
-        try {
-            const {
-                title,
-                description,
-                price,
-                oldPrice,
-                discount, // ✅ ДОБАВЛЕНО
-                sku,
-                categoryId,
-                brand,
-                isActive = 'true',
-                inStock = 'true',
-                stockQuantity = '0',
-                weight,
-                dimensions,
-                metaTitle,
-                metaDescription,
-                slug
-            } = req.body;
+    private async generateUniqueSKU(title: string): Promise<string> {
+        const translit = (str: string): string => {
+            const ru = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя';
+            const en = 'abvgdeejzijklmnoprstufhcchshch_y_eyu';
 
-            console.log('🛍️ Создание нового товара:', {
-                title,
-                price,
-                oldPrice,
-                discount, // ✅ ДОБАВЛЕНО В ЛОГ
-                brand,
-                sku,
-                categoryId,
-                stockQuantity,
-                hasFile: !!req.file
+            return str.toLowerCase().split('').map(char => {
+                const index = ru.indexOf(char);
+                return index !== -1 ? en[index] : char;
+            }).join('');
+        };
+
+        const baseSKU = translit(title)
+            .replace(/[^a-z0-9]/g, '-')
+            .replace(/-+/g, '-')
+            .replace(/^-|-$/g, '')
+            .substring(0, 20)
+            .toUpperCase();
+
+        let sku = baseSKU;
+        let counter = 1;
+
+        while (true) {
+            const existingProduct = await prisma.product.findUnique({
+                where: { sku }
             });
 
-            // Валидация обязательных полей
-            if (!title || !price) {
-                return res.status(400).json({
-                    success: false,
-                    error: 'Title and price are required'
-                });
+            if (!existingProduct) {
+                return sku;
             }
 
-            // ✅ ИСПРАВЛЕНО: Обработка загруженного файла
-            let images: string[] = [];
-            if (req.file) {
-                const imageUrl = `/uploads/${req.file.filename}`;
-                images = [imageUrl];
-                console.log('📸 Изображение загружено:', imageUrl);
-            }
+            sku = `${baseSKU}-${counter.toString().padStart(3, '0')}`;
+            counter++;
 
-            // Проверяем уникальность SKU
-            if (sku) {
-                const existingProduct = await prisma.product.findFirst({
-                    where: { sku }
+            if (counter > 999) {
+                sku = `${baseSKU}-${Date.now()}`;
+                break;
+            }
+        }
+
+        return sku;
+    }
+
+    async createProduct(req: AuthenticatedRequest, res: Response) {
+        try {
+            const productData = req.body;
+
+            console.log('📦 Создание товара:', productData);
+
+            if (!productData.sku || productData.sku.trim() === '') {
+                productData.sku = await this.generateUniqueSKU(productData.title);
+                console.log(`🏷️ Сгенерирован SKU: ${productData.sku}`);
+            } else {
+                const existingProduct = await prisma.product.findUnique({
+                    where: { sku: productData.sku }
                 });
 
                 if (existingProduct) {
                     return res.status(400).json({
                         success: false,
-                        error: 'Product with this SKU already exists'
+                        error: `Товар с артикулом ${productData.sku} уже существует`
                     });
                 }
             }
 
-            // Проверяем существование категории
-            if (categoryId) {
-                const categoryExists = await prisma.category.findUnique({
-                    where: { id: categoryId }
-                });
+            const slug = productData.title
+                .toLowerCase()
+                .replace(/[^\w\s-]/g, '')
+                .replace(/[\s_-]+/g, '-')
+                .replace(/^-+|-+$/g, '');
 
-                if (!categoryExists) {
-                    return res.status(400).json({
-                        success: false,
-                        error: 'Category not found'
-                    });
-                }
-            }
-
-            // ✅ ИСПРАВЛЕНО: Правильное преобразование типов
             const product = await prisma.product.create({
                 data: {
-                    title,
-                    slug: slug || title.toLowerCase().replace(/\s+/g, '-'),
-                    description,
-                    price: parseFloat(price),
-                    oldPrice: oldPrice ? parseFloat(oldPrice) : null,
-                    discount: discount ? parseFloat(discount) : null, // ✅ ДОБАВЛЕНО
-                    brand,
-                    sku,
-                    categoryId,
-                    images,
-                    isActive: isActive === 'true' || isActive === true, // ✅ ИСПРАВЛЕНО
-                    inStock: inStock === 'true' || inStock === true,   // ✅ ИСПРАВЛЕНО
-                    stockQuantity: parseInt(stockQuantity) || 0,
-                    weight: weight ? parseFloat(weight) : null,
-                    dimensions,
-                    metaTitle,
-                    metaDescription
+                    title: productData.title,
+                    slug: slug,
+                    price: parseFloat(productData.price),
+                    oldPrice: productData.oldPrice ? parseFloat(productData.oldPrice) : null,
+                    discount: productData.discount ? parseFloat(productData.discount) : null,
+                    brand: productData.brand || null,
+                    sku: productData.sku,
+                    description: productData.description || null,
+                    shortDescription: productData.shortDescription || null,
+                    categoryId: productData.categoryId,
+                    images: productData.images || [],
+                    attributes: productData.attributes || {},
+                    tags: productData.tags || [],
+                    isActive: productData.isActive !== false,
+                    inStock: productData.inStock !== false,
+                    stockQuantity: parseInt(productData.stockQuantity) || 0,
+                    featured: productData.featured || false,
+                    weight: productData.weight ? parseFloat(productData.weight) : null,
+                    dimensions: productData.dimensions || null,
+                    metaTitle: productData.metaTitle || null,
+                    metaDescription: productData.metaDescription || null
                 },
                 include: {
-                    category: {
-                        select: {
-                            id: true,
-                            name: true,
-                            slug: true
-                        }
-                    }
+                    category: true
                 }
             });
 
-            console.log('✅ Товар создан:', product.title);
+            console.log(`✅ Товар создан: ${product.title} (SKU: ${product.sku})`);
 
             res.status(201).json({
-                success: true,
                 data: product
             });
 
         } catch (error) {
             console.error('❌ Ошибка создания товара:', error);
+
+            if (error.code === 'P2002' && error.meta?.target?.includes('sku')) {
+                return res.status(400).json({
+                    success: false,
+                    error: 'Товар с таким артикулом уже существует'
+                });
+            }
+
             res.status(500).json({
                 success: false,
-                error: 'Internal server error'
+                error: 'Ошибка при создании товара'
             });
         }
     }
 
-    // ✅ ИСПРАВЛЕННАЯ ФУНКЦИЯ: Обновление товара
     async updateProduct(req: AuthenticatedRequest, res: Response) {
         try {
             const { id } = req.params;
-            const updateData = { ...req.body };
+            const productData = req.body;
 
-            console.log('🛍️ Обновление товара:', id, Object.keys(updateData), 'hasFile:', !!req.file);
-
-            // Проверяем существование товара
             const existingProduct = await prisma.product.findUnique({
                 where: { id }
             });
@@ -249,92 +301,54 @@ export class ProductsController {
                 });
             }
 
-            // ✅ ИСПРАВЛЕНО: Обработка загруженного файла
-            if (req.file) {
-                const imageUrl = `/uploads/${req.file.filename}`;
-                console.log('📸 Новое изображение загружено:', imageUrl);
-                updateData.images = [imageUrl];
-            }
-
-            // Проверяем уникальность SKU при обновлении
-            if (updateData.sku && updateData.sku !== existingProduct.sku) {
-                const existingProductWithSku = await prisma.product.findFirst({
-                    where: {
-                        sku: updateData.sku,
-                        id: { not: id }
-                    }
+            if (productData.sku && productData.sku !== existingProduct.sku) {
+                const skuConflict = await prisma.product.findUnique({
+                    where: { sku: productData.sku }
                 });
 
-                if (existingProductWithSku) {
+                if (skuConflict) {
                     return res.status(400).json({
                         success: false,
-                        error: 'Product with this SKU already exists'
+                        error: `Product with SKU ${productData.sku} already exists`
                     });
                 }
             }
 
-            // Проверяем существование категории
-            if (updateData.categoryId && updateData.categoryId !== existingProduct.categoryId) {
-                const categoryExists = await prisma.category.findUnique({
-                    where: { id: updateData.categoryId }
-                });
-
-                if (!categoryExists) {
-                    return res.status(400).json({
-                        success: false,
-                        error: 'Category not found'
-                    });
-                }
-            }
-
-            // ✅ ИСПРАВЛЕНО: Правильное преобразование типов данных
-            if (updateData.price) updateData.price = parseFloat(updateData.price);
-            if (updateData.oldPrice) updateData.oldPrice = parseFloat(updateData.oldPrice);
-            if (updateData.discount) updateData.discount = parseFloat(updateData.discount); // ✅ ДОБАВЛЕНО
-            if (updateData.stockQuantity) updateData.stockQuantity = parseInt(updateData.stockQuantity);
-            if (updateData.weight) updateData.weight = parseFloat(updateData.weight);
-
-            // ✅ ИСПРАВЛЕНО: Преобразование строк в булевы значения
-            if (updateData.isActive !== undefined) {
-                updateData.isActive = updateData.isActive === 'true' || updateData.isActive === true;
-            }
-            if (updateData.inStock !== undefined) {
-                updateData.inStock = updateData.inStock === 'true' || updateData.inStock === true;
-            }
-
-            // Обновляем товар
             const updatedProduct = await prisma.product.update({
                 where: { id },
                 data: {
-                    ...updateData,
-                    updatedAt: new Date()
+                    title: productData.title,
+                    price: productData.price ? parseFloat(productData.price) : undefined,
+                    oldPrice: productData.oldPrice ? parseFloat(productData.oldPrice) : null,
+                    discount: productData.discount ? parseFloat(productData.discount) : null,
+                    brand: productData.brand,
+                    sku: productData.sku,
+                    description: productData.description,
+                    shortDescription: productData.shortDescription,
+                    categoryId: productData.categoryId,
+                    images: productData.images,
+                    attributes: productData.attributes,
+                    tags: productData.tags,
+                    isActive: productData.isActive,
+                    inStock: productData.inStock,
+                    stockQuantity: productData.stockQuantity ? parseInt(productData.stockQuantity) : undefined,
+                    featured: productData.featured,
+                    weight: productData.weight ? parseFloat(productData.weight) : null,
+                    dimensions: productData.dimensions,
+                    metaTitle: productData.metaTitle,
+                    metaDescription: productData.metaDescription
                 },
                 include: {
-                    category: {
-                        select: {
-                            id: true,
-                            name: true,
-                            slug: true
-                        }
-                    }
+                    category: true
                 }
             });
 
-            console.log('✅ Товар обновлен:', updatedProduct.title);
-
             res.json({
-                success: true,
                 data: updatedProduct
             });
 
         } catch (error) {
-            console.error('❌ Ошибка обновления товара:', error);
-            if (error.code === 'P2025') {
-                return res.status(404).json({
-                    success: false,
-                    error: 'Product not found'
-                });
-            }
+            logger.error('Update product error:', error);
             res.status(500).json({
                 success: false,
                 error: 'Internal server error'
@@ -342,144 +356,31 @@ export class ProductsController {
         }
     }
 
-    // ✅ НОВАЯ ФУНКЦИЯ: Отдельный endpoint для загрузки изображений
-    async uploadProductImage(req: AuthenticatedRequest, res: Response) {
-        try {
-            const { id } = req.params;
-
-            if (!req.file) {
-                return res.status(400).json({
-                    success: false,
-                    error: 'No image file provided'
-                });
-            }
-
-            const imageUrl = `/uploads/${req.file.filename}`;
-            console.log('📸 Загрузка изображения для товара:', id, imageUrl);
-
-            // Обновляем товар с новым изображением
-            const updatedProduct = await prisma.product.update({
-                where: { id },
-                data: {
-                    images: [imageUrl],
-                    updatedAt: new Date()
-                }
-            });
-
-            res.json({
-                success: true,
-                data: {
-                    imageUrl,
-                    product: updatedProduct
-                }
-            });
-
-        } catch (error) {
-            console.error('❌ Ошибка загрузки изображения:', error);
-            if (error.code === 'P2025') {
-                return res.status(404).json({
-                    success: false,
-                    error: 'Product not found'
-                });
-            }
-            res.status(500).json({
-                success: false,
-                error: 'Internal server error'
-            });
-        }
-    }
-
-    // Удалить товар
     async deleteProduct(req: AuthenticatedRequest, res: Response) {
         try {
             const { id } = req.params;
-            console.log('🛍️ Удаление товара:', id);
 
-            // Проверяем, не используется ли товар в заказах
-            const orderItemsCount = await prisma.orderItem.count({
-                where: { productId: id }
-            });
-
-            if (orderItemsCount > 0) {
-                return res.status(400).json({
-                    success: false,
-                    error: `Cannot delete product used in ${orderItemsCount} orders. Archive the product instead.`
-                });
-            }
-
-            const deletedProduct = await prisma.product.delete({
+            const existingProduct = await prisma.product.findUnique({
                 where: { id }
             });
 
-            console.log('✅ Товар удален:', deletedProduct.title);
-
-            res.json({
-                success: true,
-                data: deletedProduct
-            });
-
-        } catch (error) {
-            console.error('❌ Ошибка удаления товара:', error);
-            if (error.code === 'P2025') {
+            if (!existingProduct) {
                 return res.status(404).json({
                     success: false,
                     error: 'Product not found'
                 });
             }
-            res.status(500).json({
-                success: false,
-                error: 'Internal server error'
+
+            await prisma.product.delete({
+                where: { id }
             });
-        }
-    }
-
-    // Получить товары по категории
-    async getProductsByCategory(req: AuthenticatedRequest, res: Response) {
-        try {
-            const { categoryId } = req.params;
-            const page = parseInt(req.query.page as string) || 1;
-            const limit = parseInt(req.query.limit as string) || 25;
-
-            const skip = (page - 1) * limit;
-
-            console.log('🛍️ Получение товаров по категории:', categoryId);
-
-            const [products, totalCount] = await Promise.all([
-                prisma.product.findMany({
-                    where: {
-                        categoryId,
-                        isActive: true
-                    },
-                    skip,
-                    take: limit,
-                    orderBy: { createdAt: 'desc' },
-                    include: {
-                        category: {
-                            select: { id: true, name: true }
-                        }
-                    }
-                }),
-                prisma.product.count({
-                    where: {
-                        categoryId,
-                        isActive: true
-                    }
-                })
-            ]);
 
             res.json({
-                success: true,
-                data: products,
-                pagination: {
-                    page,
-                    limit,
-                    totalCount,
-                    totalPages: Math.ceil(totalCount / limit)
-                }
+                data: existingProduct
             });
 
         } catch (error) {
-            console.error('❌ Ошибка получения товаров по категории:', error);
+            logger.error('Delete product error:', error);
             res.status(500).json({
                 success: false,
                 error: 'Internal server error'

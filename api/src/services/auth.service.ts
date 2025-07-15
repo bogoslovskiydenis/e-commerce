@@ -1,8 +1,8 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { prisma } from '../config/database';
-import { config } from '../config';
-import { ApiError } from '../utils/apiError';
+import { prisma } from '@/config/database';
+import { config } from '@/config';
+import { ApiError } from '@/utils/apiError';
 
 export interface LoginData {
     username: string;

@@ -1,3 +1,5 @@
+// utils/dataProvider.ts - Исправленная версия
+
 import { DataProvider, fetchUtils, DeleteParams, DeleteResult, RaRecord } from 'react-admin';
 
 // API базовый URL
@@ -19,22 +21,6 @@ const httpClient = (url: string, options: any = {}) => {
     }
 
     return fetchUtils.fetchJson(url, options);
-};
-
-// HTTP клиент для файлов
-const httpClientFile = (url: string, options: any = {}) => {
-    const token = getAuthToken();
-
-    // НЕ устанавливаем Content-Type для FormData - браузер сделает это автоматически
-    if (!options.headers) {
-        options.headers = new Headers();
-    }
-
-    if (token) {
-        options.headers.set('Authorization', `Bearer ${token}`);
-    }
-
-    return fetch(url, options);
 };
 
 // Маппинг ресурсов к API endpoints
@@ -60,123 +46,106 @@ const RESOURCE_ENDPOINTS: Record<string, string> = {
     'stats': '/stats',
 };
 
-// Обработка изображений из React Admin
-const processImageField = async (data: any, fieldName: string) => {
-    const imageData = data[fieldName];
-
-    if (!imageData) return null;
-
-    // Если это массив файлов (множественная загрузка)
-    if (Array.isArray(imageData)) {
-        const files = imageData.filter(item => item.rawFile instanceof File);
-        return files.length > 0 ? files[0].rawFile : null;
-    }
-
-    // Если это одиночный файл
-    if (imageData.rawFile instanceof File) {
-        return imageData.rawFile;
-    }
-
-    return null;
-};
-
-// Создание FormData для продуктов
-const createProductFormData = async (data: any): Promise<FormData> => {
-    const formData = new FormData();
-
-    // Добавляем основные поля
-    if (data.title) formData.append('title', data.title);
-    if (data.price) formData.append('price', data.price.toString());
-    if (data.oldPrice) formData.append('oldPrice', data.oldPrice.toString());
-    if (data.discount) formData.append('discount', data.discount.toString()); // ✅ ДОБАВЛЕНО поле discount
-    if (data.brand) formData.append('brand', data.brand);
-    if (data.sku) formData.append('sku', data.sku);
-    if (data.description) formData.append('description', data.description);
-    if (data.categoryId) formData.append('categoryId', data.categoryId);
-
-    // Булевы поля
-    formData.append('isActive', data.isActive !== false ? 'true' : 'false');
-    formData.append('inStock', data.inStock !== false ? 'true' : 'false');
-
-    // Числовые поля
-    formData.append('stockQuantity', (data.stockQuantity || 0).toString());
-
-    // Обрабатываем изображение
-    const imageFile = await processImageField(data, 'image');
-    if (imageFile) {
-        formData.append('image', imageFile);
-        console.log('📸 Добавлен файл изображения:', imageFile.name);
-    }
-
-    return formData;
-};
-
-// Функция конвертации параметров react-admin в API параметры
+// ✅ ИСПРАВЛЕННАЯ функция конвертации параметров React Admin в API параметры
 const convertRAParamsToAPI = (params: any) => {
-    const { pagination, sort, filter } = params;
+    const { page, perPage, sort, filter } = params;
     const apiParams: any = {};
 
-    if (pagination) {
-        apiParams.page = pagination.page;
-        apiParams.limit = pagination.perPage;
-    }
+    // Пагинация
+    if (page) apiParams.page = page;
+    if (perPage) apiParams.limit = perPage;
 
-    if (sort) {
+    // Сортировка
+    if (sort?.field) {
         apiParams.sortBy = sort.field;
-        apiParams.sortOrder = sort.order.toLowerCase();
+        apiParams.sortOrder = sort.order?.toLowerCase() === 'desc' ? 'desc' : 'asc';
     }
 
-    if (filter) {
-        Object.keys(filter).forEach(key => {
-            if (filter[key] !== undefined && filter[key] !== '') {
-                apiParams[key] = filter[key];
-            }
-        });
+    // ✅ ФИЛЬТРЫ - передаем как JSON строку
+    if (filter && Object.keys(filter).length > 0) {
+        // Очищаем пустые значения из фильтров
+        const cleanedFilter = Object.fromEntries(
+            Object.entries(filter).filter(([key, value]) => {
+                if (value === null || value === undefined || value === '') return false;
+                if (Array.isArray(value) && value.length === 0) return false;
+                return true;
+            })
+        );
+
+        if (Object.keys(cleanedFilter).length > 0) {
+            apiParams.filter = JSON.stringify(cleanedFilter);
+        }
     }
+
+    console.log('🔄 Конвертация RA параметров:', { params, result: apiParams });
 
     return apiParams;
 };
 
-// Функция конвертации ответа API в формат react-admin
+// Функция конвертации ответа API в формат React Admin
 const convertAPIResponseToRA = (response: any, type: string) => {
-    if (!response.success) {
-        throw new Error(response.error || 'API Error');
-    }
+    console.log('📥 API ответ:', { type, response });
 
     switch (type) {
         case 'getList':
             return {
                 data: response.data || [],
-                total: response.pagination?.total || response.data?.length || 0
+                total: response.total || response.data?.length || 0
             };
+
         case 'getOne':
         case 'create':
         case 'update':
-            return { data: response.data };
-        case 'getMany':
-            return { data: response.data || [] };
+            return {
+                data: response.data || response
+            };
+
         case 'delete':
-            return { data: { id: response.id } };
+            return {
+                data: response.data || response
+            };
+
         default:
             return response;
     }
 };
 
-// Основной DataProvider
+// ✅ ОСНОВНОЙ DATA PROVIDER
 export const customDataProvider: DataProvider = {
-    // Получить список записей
+    // ✅ ИСПРАВЛЕННЫЙ getList с правильной передачей фильтров
     getList: async (resource, params) => {
         const endpoint = RESOURCE_ENDPOINTS[resource];
         if (!endpoint) {
             throw new Error(`Unknown resource: ${resource}`);
         }
 
-        const apiParams = convertRAParamsToAPI(params);
-        const query = new URLSearchParams(apiParams).toString();
-        const url = `${API_BASE_URL}${endpoint}${query ? `?${query}` : ''}`;
+        console.log('📋 getList вызов:', { resource, params });
 
-        const { json } = await httpClient(url);
-        return convertAPIResponseToRA(json, 'getList');
+        // Конвертируем параметры React Admin в API параметры
+        const apiParams = convertRAParamsToAPI(params);
+
+        // Формируем URL с параметрами
+        const query = new URLSearchParams();
+        Object.entries(apiParams).forEach(([key, value]) => {
+            if (value !== undefined && value !== null) {
+                query.append(key, String(value));
+            }
+        });
+
+        const url = `${API_BASE_URL}${endpoint}${query.toString() ? `?${query}` : ''}`;
+
+        console.log('🌐 Запрос URL:', url);
+
+        try {
+            const { json } = await httpClient(url);
+            const result = convertAPIResponseToRA(json, 'getList');
+
+            console.log('✅ getList результат:', result);
+            return result;
+        } catch (error) {
+            console.error('❌ Ошибка getList:', error);
+            throw error;
+        }
     },
 
     // Получить одну запись
@@ -187,8 +156,15 @@ export const customDataProvider: DataProvider = {
         }
 
         const url = `${API_BASE_URL}${endpoint}/${params.id}`;
-        const { json } = await httpClient(url);
-        return convertAPIResponseToRA(json, 'getOne');
+        console.log('🔍 getOne URL:', url);
+
+        try {
+            const { json } = await httpClient(url);
+            return convertAPIResponseToRA(json, 'getOne');
+        } catch (error) {
+            console.error('❌ Ошибка getOne:', error);
+            throw error;
+        }
     },
 
     // Получить несколько записей по ID
@@ -202,10 +178,14 @@ export const customDataProvider: DataProvider = {
             httpClient(`${API_BASE_URL}${endpoint}/${id}`)
         );
 
-        const responses = await Promise.all(promises);
-        const data = responses.map(({ json }) => json.data);
-
-        return { data };
+        try {
+            const responses = await Promise.all(promises);
+            const data = responses.map(({ json }) => json.data || json);
+            return { data };
+        } catch (error) {
+            console.error('❌ Ошибка getMany:', error);
+            throw error;
+        }
     },
 
     // Получить несколько записей с фильтрацией
@@ -215,118 +195,86 @@ export const customDataProvider: DataProvider = {
             throw new Error(`Unknown resource: ${resource}`);
         }
 
-        const apiParams = convertRAParamsToAPI(params);
-        apiParams[params.target] = params.id;
+        // Добавляем целевой ID к фильтрам
+        const filter = {
+            ...params.filter,
+            [params.target]: params.id
+        };
 
-        const query = new URLSearchParams(apiParams).toString();
-        const url = `${API_BASE_URL}${endpoint}${query ? `?${query}` : ''}`;
+        const apiParams = convertRAParamsToAPI({
+            ...params,
+            filter
+        });
 
-        const { json } = await httpClient(url);
-        return convertAPIResponseToRA(json, 'getList');
+        const query = new URLSearchParams();
+        Object.entries(apiParams).forEach(([key, value]) => {
+            if (value !== undefined && value !== null) {
+                query.append(key, String(value));
+            }
+        });
+
+        const url = `${API_BASE_URL}${endpoint}${query.toString() ? `?${query}` : ''}`;
+
+        try {
+            const { json } = await httpClient(url);
+            return convertAPIResponseToRA(json, 'getList');
+        } catch (error) {
+            console.error('❌ Ошибка getManyReference:', error);
+            throw error;
+        }
     },
 
     // Создать запись
     create: async (resource, params) => {
-        console.log('🔍 DataProvider CREATE called:', { resource, params });
-
         const endpoint = RESOURCE_ENDPOINTS[resource];
         if (!endpoint) {
             throw new Error(`Unknown resource: ${resource}`);
         }
 
-        const url = `${API_BASE_URL}${endpoint}`;
+        console.log('➕ create вызов:', { resource, data: params.data });
 
-        // Специальная обработка для продуктов с изображениями
-        if (resource === 'products') {
-            try {
-                const formData = await createProductFormData(params.data);
+        try {
+            const { json } = await httpClient(`${API_BASE_URL}${endpoint}`, {
+                method: 'POST',
+                body: JSON.stringify(params.data),
+            });
 
-                console.log('📦 Отправка FormData для продукта');
-
-                const response = await httpClientFile(url, {
-                    method: 'POST',
-                    body: formData,
-                });
-
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    console.error('❌ Ошибка создания продукта:', errorText);
-                    throw new Error(`Server error: ${response.status} ${errorText}`);
-                }
-
-                const json = await response.json();
-                return convertAPIResponseToRA(json, 'create');
-
-            } catch (error) {
-                console.error('❌ Ошибка в create products:', error);
-                throw error;
-            }
+            return convertAPIResponseToRA(json, 'create');
+        } catch (error) {
+            console.error('❌ Ошибка create:', error);
+            throw error;
         }
-
-        // Обычная обработка для других ресурсов
-        const { json } = await httpClient(url, {
-            method: 'POST',
-            body: JSON.stringify(params.data),
-        });
-
-        return convertAPIResponseToRA(json, 'create');
     },
 
     // Обновить запись
     update: async (resource, params) => {
-        console.log('🔍 DataProvider UPDATE called:', { resource, id: params.id, params });
-
         const endpoint = RESOURCE_ENDPOINTS[resource];
         if (!endpoint) {
             throw new Error(`Unknown resource: ${resource}`);
         }
 
-        const url = `${API_BASE_URL}${endpoint}/${params.id}`;
+        console.log('✏️ update вызов:', { resource, id: params.id, data: params.data });
 
-        // Специальная обработка для продуктов с изображениями
-        if (resource === 'products') {
-            try {
-                const formData = await createProductFormData(params.data);
+        try {
+            const { json } = await httpClient(`${API_BASE_URL}${endpoint}/${params.id}`, {
+                method: 'PUT',
+                body: JSON.stringify(params.data),
+            });
 
-                console.log('📦 Отправка FormData для обновления продукта');
-
-                const response = await httpClientFile(url, {
-                    method: 'PUT',
-                    body: formData,
-                });
-
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    console.error('❌ Ошибка обновления продукта:', errorText);
-                    throw new Error(`Server error: ${response.status} ${errorText}`);
-                }
-
-                const json = await response.json();
-                return convertAPIResponseToRA(json, 'update');
-
-            } catch (error) {
-                console.error('❌ Ошибка в update products:', error);
-                throw error;
-            }
+            return convertAPIResponseToRA(json, 'update');
+        } catch (error) {
+            console.error('❌ Ошибка update:', error);
+            throw error;
         }
-
-        // Обычная обработка для других ресурсов
-        const { json } = await httpClient(url, {
-            method: 'PUT',
-            body: JSON.stringify(params.data),
-        });
-
-        return convertAPIResponseToRA(json, 'update');
     },
 
-    // ✅ ДОБАВЛЕННАЯ ФУНКЦИЯ: Обновить несколько записей
+    // Обновить несколько записей
     updateMany: async (resource, params) => {
         const endpoint = RESOURCE_ENDPOINTS[resource];
         if (!endpoint) {
             throw new Error(`Unknown resource: ${resource}`);
         }
 
-        // Для простоты делаем множественные одиночные запросы
         const promises = params.ids.map(id =>
             httpClient(`${API_BASE_URL}${endpoint}/${id}`, {
                 method: 'PUT',
@@ -338,23 +286,28 @@ export const customDataProvider: DataProvider = {
         return { data: params.ids };
     },
 
-    // ✅ ИСПРАВЛЕННАЯ ФУНКЦИЯ: Удалить запись
+    // ✅ ИСПРАВЛЕННАЯ функция удаления
     delete: async <RecordType extends RaRecord = any>(resource: string, params: DeleteParams<RecordType>): Promise<DeleteResult<RecordType>> => {
         const endpoint = RESOURCE_ENDPOINTS[resource];
         if (!endpoint) {
             throw new Error(`Unknown resource: ${resource}`);
         }
 
-        const url = `${API_BASE_URL}${endpoint}/${params.id}`;
-        await httpClient(url, {
-            method: 'DELETE',
-        });
+        console.log('🗑️ delete вызов:', { resource, id: params.id });
 
-        // Возвращаем данные в правильном формате для React Admin
-        return { data: params.previousData as RecordType };
+        try {
+            const { json } = await httpClient(`${API_BASE_URL}${endpoint}/${params.id}`, {
+                method: 'DELETE',
+            });
+
+            return { data: params.previousData as RecordType };
+        } catch (error) {
+            console.error('❌ Ошибка delete:', error);
+            throw error;
+        }
     },
 
-    // ✅ ИСПРАВЛЕННАЯ ФУНКЦИЯ: Удалить несколько записей
+    // Удалить несколько записей
     deleteMany: async (resource, params) => {
         const endpoint = RESOURCE_ENDPOINTS[resource];
         if (!endpoint) {
