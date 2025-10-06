@@ -3,8 +3,9 @@ import authRoutes from './auth.routes.js';
 import adminUsersRoutes from './adminUsers.routes.js';
 import categoriesRoutes from './categories.routes.js';
 import productsRoutes from './products.routes.js';
-
+import navigationRoutes from './navigation.routes.js';
 const router = Router();
+import adminLogsRoutes from './adminLogs.routes.js';
 
 router.get('/', (req, res) => {
     res.json({
@@ -20,9 +21,13 @@ router.get('/', (req, res) => {
     });
 });
 
+
+
 router.use('/auth', authRoutes);
 router.use('/admin/users', adminUsersRoutes);
 router.use('/categories', categoriesRoutes);
 router.use('/products', productsRoutes);
+router.use('/navigation', navigationRoutes);
+router.use('/admin/logs', adminLogsRoutes);
 
 export default router;

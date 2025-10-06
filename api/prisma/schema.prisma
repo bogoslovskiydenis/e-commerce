@@ -180,9 +180,10 @@ model Category {
   updatedAt        DateTime     @updatedAt @map("updated_at")
 
   // Связи
-  parent   Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id])
-  children Category[] @relation("CategoryHierarchy")
-  products Product[]
+  parent         Category?        @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children       Category[]       @relation("CategoryHierarchy")
+  products       Product[]
+  NavigationItem NavigationItem[]
 
   // Индексы
   @@index([type])
@@ -498,4 +499,35 @@ model Cache {
 
   @@index([expiresAt])
   @@map("cache")
+}
+
+model NavigationItem {
+  id         String         @id @default(uuid())
+  name       String
+  url        String?
+  type       NavigationType @default(LINK)
+  categoryId String?
+  parentId   String?
+  sortOrder  Int            @default(0)
+  isActive   Boolean        @default(true)
+  openInNew  Boolean        @default(false)
+  icon       String?
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+
+  category Category?        @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  parent   NavigationItem?  @relation("NavigationHierarchy", fields: [parentId], references: [id], onDelete: Cascade)
+  children NavigationItem[] @relation("NavigationHierarchy")
+
+  @@index([parentId])
+  @@index([categoryId])
+  @@index([sortOrder])
+  @@map("navigation_items")
+}
+
+enum NavigationType {
+  LINK
+  CATEGORY
+  DROPDOWN
+  EXTERNAL
 }

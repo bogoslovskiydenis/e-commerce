@@ -1,20 +1,24 @@
+// admin-panel/src/App.tsx - Обновить существующий файл
 import React from 'react';
 import { Admin, Resource, CustomRoutes } from 'react-admin';
 import { Route } from 'react-router-dom';
 
-// Провайдеры
+// Провайдеры (существующие)
 import { authProvider } from './auth/authProvider';
-import { customDataProvider } from './utils/dataProvider';
+import dataProvider from './utils/dataProvider'
 
-// Кастомные компоненты
+// Кастомные компоненты (существующие)
 import LoginPage from './components/LoginPage';
 import Dashboard from './components/Dashboard';
 import { CustomMenu } from './components/CustomMenu';
 
-// HOC для проверки разрешений
+// HOC для проверки разрешений (существующий)
 import { withPermissions } from './components/PermissionGuard';
 
-// Ресурсы - Заказы и клиенты
+// 🆕 НОВЫЙ ИМПОРТ - Компонент управления навигацией
+import NavigationManager from './components/Navigation/NavigationManager';
+
+// Ресурсы - Заказы и клиенты (существующие)
 import {
     OrderList,
     OrderEdit
@@ -36,20 +40,22 @@ import {
     CustomerEdit
 } from './resources/customers';
 
-// Ресурсы - Каталог
+// Ресурсы - Каталог (существующие)
 import {
     ProductList,
     ProductEdit,
     ProductCreate
 } from './resources/products';
 
+// 🆕 ОБНОВЛЕННЫЙ ИМПОРТ - Категории с новыми полями навигации
 import {
     CategoryList,
     CategoryEdit,
-    CategoryCreate, CategoryShow
+    CategoryCreate,
+    CategoryShow
 } from './resources/categories';
 
-// Ресурсы - Администрирование
+// Ресурсы - Администрирование (существующие)
 import {
     UserList,
     UserEdit,
@@ -63,17 +69,17 @@ import {
     ApiKeyCreate
 } from './resources/security/apiKeys';
 
-// Кастомные страницы
+// Кастомные страницы (существующие)
 import ProfilePage from './pages/ProfilePage';
 import AnalyticsPage from './pages/AnalyticsPage';
 import SystemInfoPage from './pages/SystemInfoPage';
 
-// Создаём заглушки для Show компонентов если их нет
+// Создаём заглушки для Show компонентов если их нет (существующие)
 const OrderShow = () => <div>Order Show</div>;
 const ProductShow = () => <div>Product Show</div>;
 const CustomerShow = () => <div>Customer Show</div>;
 
-// Создаём заглушки для недостающих ресурсов
+// Создаём заглушки для недостающих ресурсов (существующие)
 const BannerList = () => <div>Banner List</div>;
 const BannerEdit = () => <div>Banner Edit</div>;
 const BannerCreate = () => <div>Banner Create</div>;
@@ -83,16 +89,12 @@ const PageEdit = () => <div>Page Edit</div>;
 const PageCreate = () => <div>Page Create</div>;
 const PageShow = () => <div>Page Show</div>;
 
-const NavigationList = () => <div>Navigation List</div>;
-const NavigationEdit = () => <div>Navigation Edit</div>;
-const NavigationCreate = () => <div>Navigation Create</div>;
-
 const SiteSettingsEdit = () => <div>Settings Edit</div>;
 
 const AdminLogList = () => <div>Admin Log List</div>;
 const AdminLogShow = () => <div>Admin Log Show</div>;
 
-// Создаем защищенные компоненты с проверкой разрешений
+// Создаем защищенные компоненты с проверкой разрешений (существующие)
 const SecureOrderList = withPermissions(OrderList, 'orders.view');
 const SecureOrderEdit = withPermissions(OrderEdit, 'orders.edit');
 const SecureOrderShow = withPermissions(OrderShow, 'orders.view');
@@ -101,6 +103,15 @@ const SecureProductList = withPermissions(ProductList, 'products.view');
 const SecureProductEdit = withPermissions(ProductEdit, 'products.edit');
 const SecureProductCreate = withPermissions(ProductCreate, 'products.create');
 const SecureProductShow = withPermissions(ProductShow, 'products.view');
+
+// 🆕 ЗАЩИЩЕННЫЕ КОМПОНЕНТЫ КАТЕГОРИЙ
+const SecureCategoryList = withPermissions(CategoryList, 'categories.view');
+const SecureCategoryEdit = withPermissions(CategoryEdit, 'categories.edit');
+const SecureCategoryCreate = withPermissions(CategoryCreate, 'categories.create');
+const SecureCategoryShow = withPermissions(CategoryShow, 'categories.view');
+
+// 🆕 ЗАЩИЩЕННЫЙ КОМПОНЕНТ НАВИГАЦИИ
+const SecureNavigationManager = withPermissions(NavigationManager, 'website.navigation');
 
 const SecureUserList = withPermissions(UserList, 'users.view');
 const SecureUserEdit = withPermissions(UserEdit, 'users.edit');
@@ -120,7 +131,7 @@ const SecureSystemInfoPage = withPermissions(SystemInfoPage, 'admin.full_access'
 const App: React.FC = () => (
     <Admin
         authProvider={authProvider}
-        dataProvider={customDataProvider}
+        dataProvider={dataProvider}
         dashboard={Dashboard}
         menu={CustomMenu}
         title="Админ панель - Шарики"
@@ -139,9 +150,19 @@ const App: React.FC = () => (
         />
 
         <Resource
+            name="customers"
+            list={CustomerList}
+            edit={CustomerEdit}
+            show={CustomerShow}
+            options={{
+                label: 'Клиенты'
+            }}
+        />
+
+        <Resource
             name="callbacks"
-            list={withPermissions(CallbackList, 'callbacks.view')}
-            edit={withPermissions(CallbackEdit, 'callbacks.edit')}
+            list={CallbackList}
+            edit={CallbackEdit}
             options={{
                 label: 'Обратные звонки'
             }}
@@ -149,21 +170,11 @@ const App: React.FC = () => (
 
         <Resource
             name="comments"
-            list={withPermissions(CommentList, 'reviews.view')}
-            edit={withPermissions(CommentEdit, 'reviews.edit')}
-            show={withPermissions(CommentShow, 'reviews.view')}
+            list={CommentList}
+            edit={CommentEdit}
+            show={CommentShow}
             options={{
-                label: 'Отзывы'
-            }}
-        />
-
-        <Resource
-            name="customers"
-            list={withPermissions(CustomerList, 'customers.view')}
-            edit={withPermissions(CustomerEdit, 'customers.edit')}
-            show={withPermissions(CustomerShow, 'customers.view')}
-            options={{
-                label: 'Клиенты'
+                label: 'Комментарии'
             }}
         />
 
@@ -179,23 +190,24 @@ const App: React.FC = () => (
             }}
         />
 
+        {/* 🆕 ОБНОВЛЕННЫЙ РЕСУРС КАТЕГОРИЙ */}
         <Resource
             name="categories"
-            list={withPermissions(CategoryList, 'categories.view')}
-            edit={withPermissions(CategoryEdit, 'categories.edit')}
-            create={withPermissions(CategoryCreate, 'categories.create')}
-            show={withPermissions(CategoryShow, 'categories.view')}  // Добавляем Show
+            list={SecureCategoryList}
+            edit={SecureCategoryEdit}
+            create={SecureCategoryCreate}
+            show={SecureCategoryShow}
             options={{
                 label: 'Категории'
             }}
         />
 
-        {/* === КОНТЕНТ САЙТА === */}
+        {/* === КОНТЕНТ И САЙТ === */}
         <Resource
             name="banners"
-            list={withPermissions(BannerList, 'website.banners')}
-            edit={withPermissions(BannerEdit, 'website.banners')}
-            create={withPermissions(BannerCreate, 'website.banners')}
+            list={BannerList}
+            edit={BannerEdit}
+            create={BannerCreate}
             options={{
                 label: 'Баннеры'
             }}
@@ -203,30 +215,12 @@ const App: React.FC = () => (
 
         <Resource
             name="pages"
-            list={withPermissions(PageList, 'website.pages')}
-            edit={withPermissions(PageEdit, 'website.pages')}
-            create={withPermissions(PageCreate, 'website.pages')}
-            show={withPermissions(PageShow, 'website.pages')}
+            list={PageList}
+            edit={PageEdit}
+            create={PageCreate}
+            show={PageShow}
             options={{
                 label: 'Страницы'
-            }}
-        />
-
-        <Resource
-            name="navigation"
-            list={withPermissions(NavigationList, 'website.navigation')}
-            edit={withPermissions(NavigationEdit, 'website.navigation')}
-            create={withPermissions(NavigationCreate, 'website.navigation')}
-            options={{
-                label: 'Навигация'
-            }}
-        />
-
-        <Resource
-            name="settings"
-            edit={withPermissions(SiteSettingsEdit, 'website.settings')}
-            options={{
-                label: 'Настройки сайта'
             }}
         />
 
@@ -247,7 +241,7 @@ const App: React.FC = () => (
             list={SecureAdminLogList}
             show={SecureAdminLogShow}
             options={{
-                label: 'Журнал действий'
+                label: 'Логи'
             }}
         />
 
@@ -261,16 +255,19 @@ const App: React.FC = () => (
             }}
         />
 
-        {/* === КАСТОМНЫЕ МАРШРУТЫ === */}
+        {/* 🆕 КАСТОМНЫЕ РОУТЫ */}
         <CustomRoutes>
-            {/* Страница профиля - доступна всем */}
+            {/* Страница управления навигацией */}
+            <Route
+                path="/navigation"
+                element={<SecureNavigationManager />}
+            />
+
+            {/* Существующие кастомные страницы */}
             <Route path="/profile" element={<ProfilePage />} />
-
-            {/* Аналитика - требует разрешение */}
             <Route path="/analytics" element={<SecureAnalyticsPage />} />
-
-            {/* Системная информация - только для супер админов */}
-            <Route path="/system-info" element={<SecureSystemInfoPage />} />
+            <Route path="/system" element={<SecureSystemInfoPage />} />
+            <Route path="/settings" element={<SiteSettingsEdit />} />
         </CustomRoutes>
     </Admin>
 );

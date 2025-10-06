@@ -1,14 +1,10 @@
-// utils/dataProvider.ts - Исправленная версия
-
+// admin-panel/src/utils/dataProvider.ts
 import { DataProvider, fetchUtils, DeleteParams, DeleteResult, RaRecord } from 'react-admin';
 
-// API базовый URL
 const API_BASE_URL = 'http://localhost:3001/api';
 
-// Утилита для получения токена
 const getAuthToken = () => localStorage.getItem('auth_token');
 
-// Создаем HTTP клиент с автоматической авторизацией
 const httpClient = (url: string, options: any = {}) => {
     const token = getAuthToken();
 
@@ -23,7 +19,6 @@ const httpClient = (url: string, options: any = {}) => {
     return fetchUtils.fetchJson(url, options);
 };
 
-// Маппинг ресурсов к API endpoints
 const RESOURCE_ENDPOINTS: Record<string, string> = {
     'products': '/products',
     'categories': '/categories',
@@ -46,73 +41,31 @@ const RESOURCE_ENDPOINTS: Record<string, string> = {
     'stats': '/stats',
 };
 
-// ✅ ИСПРАВЛЕННАЯ функция конвертации параметров React Admin в API параметры
 const convertRAParamsToAPI = (params: any) => {
     const { page, perPage, sort, filter } = params;
     const apiParams: any = {};
 
-    // Пагинация
     if (page) apiParams.page = page;
     if (perPage) apiParams.limit = perPage;
 
-    // Сортировка
     if (sort?.field) {
         apiParams.sortBy = sort.field;
         apiParams.sortOrder = sort.order?.toLowerCase() === 'desc' ? 'desc' : 'asc';
     }
 
-    // ✅ ФИЛЬТРЫ - передаем как JSON строку
-    if (filter && Object.keys(filter).length > 0) {
-        // Очищаем пустые значения из фильтров
-        const cleanedFilter = Object.fromEntries(
-            Object.entries(filter).filter(([key, value]) => {
-                if (value === null || value === undefined || value === '') return false;
-                if (Array.isArray(value) && value.length === 0) return false;
-                return true;
-            })
-        );
-
-        if (Object.keys(cleanedFilter).length > 0) {
-            apiParams.filter = JSON.stringify(cleanedFilter);
-        }
+    if (filter) {
+        Object.keys(filter).forEach(key => {
+            if (filter[key] !== undefined && filter[key] !== null && filter[key] !== '') {
+                apiParams[key] = filter[key];
+            }
+        });
     }
 
     console.log('🔄 Конвертация RA параметров:', { params, result: apiParams });
-
     return apiParams;
 };
 
-// Функция конвертации ответа API в формат React Admin
-const convertAPIResponseToRA = (response: any, type: string) => {
-    console.log('📥 API ответ:', { type, response });
-
-    switch (type) {
-        case 'getList':
-            return {
-                data: response.data || [],
-                total: response.total || response.data?.length || 0
-            };
-
-        case 'getOne':
-        case 'create':
-        case 'update':
-            return {
-                data: response.data || response
-            };
-
-        case 'delete':
-            return {
-                data: response.data || response
-            };
-
-        default:
-            return response;
-    }
-};
-
-// ✅ ОСНОВНОЙ DATA PROVIDER
-export const customDataProvider: DataProvider = {
-    // ✅ ИСПРАВЛЕННЫЙ getList с правильной передачей фильтров
+const dataProvider: DataProvider = {
     getList: async (resource, params) => {
         const endpoint = RESOURCE_ENDPOINTS[resource];
         if (!endpoint) {
@@ -121,66 +74,68 @@ export const customDataProvider: DataProvider = {
 
         console.log('📋 getList вызов:', { resource, params });
 
-        // Конвертируем параметры React Admin в API параметры
         const apiParams = convertRAParamsToAPI(params);
-
-        // Формируем URL с параметрами
-        const query = new URLSearchParams();
-        Object.entries(apiParams).forEach(([key, value]) => {
-            if (value !== undefined && value !== null) {
-                query.append(key, String(value));
-            }
-        });
-
-        const url = `${API_BASE_URL}${endpoint}${query.toString() ? `?${query}` : ''}`;
+        const query = new URLSearchParams(apiParams as any).toString();
+        const url = `${API_BASE_URL}${endpoint}?${query}`;
 
         console.log('🌐 Запрос URL:', url);
 
         try {
             const { json } = await httpClient(url);
-            const result = convertAPIResponseToRA(json, 'getList');
+            console.log('📥 API ответ:', { type: 'getList', response: json });
 
-            console.log('✅ getList результат:', result);
-            return result;
+            const data = json.data || [];
+            const total = json.total || json.pagination?.total || data.length;
+
+            console.log('✅ getList результат:', { data, total });
+
+            return {
+                data,
+                total,
+            };
         } catch (error) {
             console.error('❌ Ошибка getList:', error);
             throw error;
         }
     },
 
-    // Получить одну запись
     getOne: async (resource, params) => {
         const endpoint = RESOURCE_ENDPOINTS[resource];
         if (!endpoint) {
             throw new Error(`Unknown resource: ${resource}`);
         }
 
-        const url = `${API_BASE_URL}${endpoint}/${params.id}`;
-        console.log('🔍 getOne URL:', url);
+        console.log('🔍 getOne вызов:', { resource, id: params.id });
 
         try {
-            const { json } = await httpClient(url);
-            return convertAPIResponseToRA(json, 'getOne');
+            const { json } = await httpClient(`${API_BASE_URL}${endpoint}/${params.id}`);
+            console.log('📥 API ответ getOne:', json);
+
+            return { data: json.data || json };
         } catch (error) {
             console.error('❌ Ошибка getOne:', error);
             throw error;
         }
     },
 
-    // Получить несколько записей по ID
     getMany: async (resource, params) => {
         const endpoint = RESOURCE_ENDPOINTS[resource];
         if (!endpoint) {
             throw new Error(`Unknown resource: ${resource}`);
         }
 
-        const promises = params.ids.map(id =>
-            httpClient(`${API_BASE_URL}${endpoint}/${id}`)
-        );
+        console.log('📚 getMany вызов:', { resource, ids: params.ids });
 
         try {
-            const responses = await Promise.all(promises);
+            const requests = params.ids.map(id =>
+                httpClient(`${API_BASE_URL}${endpoint}/${id}`)
+            );
+
+            const responses = await Promise.all(requests);
             const data = responses.map(({ json }) => json.data || json);
+
+            console.log('✅ getMany результат:', data);
+
             return { data };
         } catch (error) {
             console.error('❌ Ошибка getMany:', error);
@@ -188,43 +143,33 @@ export const customDataProvider: DataProvider = {
         }
     },
 
-    // Получить несколько записей с фильтрацией
     getManyReference: async (resource, params) => {
         const endpoint = RESOURCE_ENDPOINTS[resource];
         if (!endpoint) {
             throw new Error(`Unknown resource: ${resource}`);
         }
 
-        // Добавляем целевой ID к фильтрам
-        const filter = {
-            ...params.filter,
-            [params.target]: params.id
-        };
+        console.log('🔗 getManyReference вызов:', { resource, params });
 
-        const apiParams = convertRAParamsToAPI({
-            ...params,
-            filter
-        });
+        const apiParams = convertRAParamsToAPI(params);
+        apiParams[params.target] = params.id;
 
-        const query = new URLSearchParams();
-        Object.entries(apiParams).forEach(([key, value]) => {
-            if (value !== undefined && value !== null) {
-                query.append(key, String(value));
-            }
-        });
-
-        const url = `${API_BASE_URL}${endpoint}${query.toString() ? `?${query}` : ''}`;
+        const query = new URLSearchParams(apiParams as any).toString();
+        const url = `${API_BASE_URL}${endpoint}?${query}`;
 
         try {
             const { json } = await httpClient(url);
-            return convertAPIResponseToRA(json, 'getList');
+
+            return {
+                data: json.data || [],
+                total: json.total || json.pagination?.total || 0,
+            };
         } catch (error) {
             console.error('❌ Ошибка getManyReference:', error);
             throw error;
         }
     },
 
-    // Создать запись
     create: async (resource, params) => {
         const endpoint = RESOURCE_ENDPOINTS[resource];
         if (!endpoint) {
@@ -239,14 +184,21 @@ export const customDataProvider: DataProvider = {
                 body: JSON.stringify(params.data),
             });
 
-            return convertAPIResponseToRA(json, 'create');
+            console.log('✅ create результат:', json);
+
+            // ИСПРАВЛЕНИЕ: правильный формат возврата
+            return {
+                data: {
+                    ...json.data,
+                    id: json.data?.id || json.id
+                }
+            };
         } catch (error) {
             console.error('❌ Ошибка create:', error);
             throw error;
         }
     },
 
-    // Обновить запись
     update: async (resource, params) => {
         const endpoint = RESOURCE_ENDPOINTS[resource];
         if (!endpoint) {
@@ -261,19 +213,22 @@ export const customDataProvider: DataProvider = {
                 body: JSON.stringify(params.data),
             });
 
-            return convertAPIResponseToRA(json, 'update');
+            console.log('✅ update результат:', json);
+
+            return { data: json.data || { ...params.data, id: params.id } };
         } catch (error) {
             console.error('❌ Ошибка update:', error);
             throw error;
         }
     },
 
-    // Обновить несколько записей
     updateMany: async (resource, params) => {
         const endpoint = RESOURCE_ENDPOINTS[resource];
         if (!endpoint) {
             throw new Error(`Unknown resource: ${resource}`);
         }
+
+        console.log('✏️✏️ updateMany вызов:', { resource, ids: params.ids, data: params.data });
 
         const promises = params.ids.map(id =>
             httpClient(`${API_BASE_URL}${endpoint}/${id}`, {
@@ -282,21 +237,36 @@ export const customDataProvider: DataProvider = {
             })
         );
 
-        await Promise.all(promises);
-        return { data: params.ids };
+        try {
+            await Promise.all(promises);
+            return { data: params.ids };
+        } catch (error) {
+            console.error('❌ Ошибка updateMany:', error);
+            throw error;
+        }
     },
 
-    // ✅ ИСПРАВЛЕННАЯ функция удаления
-    delete: async <RecordType extends RaRecord = any>(resource: string, params: DeleteParams<RecordType>): Promise<DeleteResult<RecordType>> => {
+    delete: async <RecordType extends RaRecord = any>(
+        resource: string,
+        params: DeleteParams<RecordType>
+    ): Promise<DeleteResult<RecordType>> => {
         const endpoint = RESOURCE_ENDPOINTS[resource];
         if (!endpoint) {
             throw new Error(`Unknown resource: ${resource}`);
         }
 
-        console.log('🗑️ delete вызов:', { resource, id: params.id });
+        console.log('🗑️ delete вызов:', { resource, id: params.id, meta: params.meta });
+
+        // Формируем URL с query параметрами из meta
+        let url = `${API_BASE_URL}${endpoint}/${params.id}`;
+        if (params.meta?.force) {
+            url += `?force=${params.meta.force}`;
+        }
+
+        console.log('🌐 DELETE URL:', url);
 
         try {
-            const { json } = await httpClient(`${API_BASE_URL}${endpoint}/${params.id}`, {
+            await httpClient(url, {
                 method: 'DELETE',
             });
 
@@ -307,12 +277,13 @@ export const customDataProvider: DataProvider = {
         }
     },
 
-    // Удалить несколько записей
     deleteMany: async (resource, params) => {
         const endpoint = RESOURCE_ENDPOINTS[resource];
         if (!endpoint) {
             throw new Error(`Unknown resource: ${resource}`);
         }
+
+        console.log('🗑️🗑️ deleteMany вызов:', { resource, ids: params.ids });
 
         const promises = params.ids.map(id =>
             httpClient(`${API_BASE_URL}${endpoint}/${id}`, {
@@ -320,7 +291,37 @@ export const customDataProvider: DataProvider = {
             })
         );
 
-        await Promise.all(promises);
-        return { data: params.ids };
+        try {
+            await Promise.all(promises);
+            return { data: params.ids };
+        } catch (error) {
+            console.error('❌ Ошибка deleteMany:', error);
+            throw error;
+        }
+    },
+
+    // ДОБАВЛЕНО: функция для получения статистики
+    getStats: async () => {
+        console.log('📊 getStats вызов');
+
+        try {
+            const { json } = await httpClient(`${API_BASE_URL}/stats`);
+            console.log('✅ getStats результат:', json);
+
+            return { data: json.data || {} };
+        } catch (error) {
+            console.warn('⚠️ Stats endpoint not implemented yet:', error);
+            // Возвращаем пустые данные вместо ошибки
+            return {
+                data: {
+                    totalOrders: 0,
+                    totalRevenue: 0,
+                    totalProducts: 0,
+                    totalCustomers: 0
+                }
+            };
+        }
     },
 };
+
+export default dataProvider;

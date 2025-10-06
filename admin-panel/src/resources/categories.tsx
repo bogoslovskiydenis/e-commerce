@@ -1,4 +1,3 @@
-// resources/categories.tsx
 import React from 'react';
 import {
     Create,
@@ -23,10 +22,12 @@ import {
     DeleteButton,
     Show,
     SimpleShowLayout,
-    DateField
+    DateField,
+    FunctionField  // ДОБАВЛЕНО
 } from "react-admin";
-import { Chip, Box, Typography } from '@mui/material';
-import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { Chip, Box, Typography, Button } from '@mui/material';
+import { Visibility, VisibilityOff, Navigation } from '@mui/icons-material';
+import {CategoryDeleteButton} from "../components/categories/CategoryDeleteButton";
 
 // Фильтры для списка категорий
 const CategoryFilter = () => (
@@ -44,13 +45,21 @@ const CategoryFilter = () => (
             defaultValue={true}
         />
 
+        <BooleanInput
+            label="В навигации"
+            source="showInNavigation"
+        />
+
         <SelectInput
             source="type"
             label="Тип категории"
             choices={[
                 { id: 'products', name: 'Товары' },
                 { id: 'balloons', name: 'Шарики' },
+                { id: 'bouquets', name: 'Букеты' },
                 { id: 'gifts', name: 'Подарки' },
+                { id: 'cups', name: 'Стаканчики' },
+                { id: 'sets', name: 'Наборы' },
                 { id: 'events', name: 'События' },
                 { id: 'colors', name: 'Цвета' },
                 { id: 'materials', name: 'Материалы' },
@@ -68,10 +77,18 @@ const CategoryFilter = () => (
     </Filter>
 );
 
-// Кастомный тулбар
+// Кастомный тулбар с кнопкой управления навигацией
 const CategoryListActions = () => (
     <TopToolbar>
         <CreateButton />
+        <Button
+            variant="contained"
+            startIcon={<Navigation />}
+            onClick={() => window.open('/navigation', '_blank')}
+            sx={{ ml: 1 }}
+        >
+            Управление навигацией
+        </Button>
     </TopToolbar>
 );
 
@@ -93,11 +110,9 @@ export const CategoryList = () => (
                 sx={{ fontFamily: 'monospace', fontSize: '0.875rem' }}
             />
 
-            {/* Тип категории с красивым отображением */}
-            <TextField
-                source="type"
+            <FunctionField
                 label="Тип"
-                render={({ record }: { record: any }) => (
+                render={(record: any) => (
                     <Chip
                         label={getCategoryTypeLabel(record?.type)}
                         size="small"
@@ -107,7 +122,6 @@ export const CategoryList = () => (
                 )}
             />
 
-            {/* Родительская категория */}
             <ReferenceField
                 source="parentId"
                 reference="categories"
@@ -118,14 +132,11 @@ export const CategoryList = () => (
                 <TextField source="name" />
             </ReferenceField>
 
-            {/* Порядок сортировки */}
             <NumberField source="order" label="Порядок" />
 
-            {/* Статус активности */}
-            <BooleanField
-                source="active"
+            <FunctionField
                 label="Статус"
-                render={({ record }: { record: any }) => (
+                render={(record: any) => (
                     <Chip
                         label={record?.active ? 'Активна' : 'Скрыта'}
                         color={record?.active ? 'success' : 'default'}
@@ -135,20 +146,33 @@ export const CategoryList = () => (
                 )}
             />
 
-            {/* Показ в навигации */}
-            <BooleanField
-                source="showInNavigation"
+            <FunctionField
                 label="В навигации"
-                render={({ record }: { record: any }) => (
-                    record?.showInNavigation ? '✅' : '❌'
+                render={(record: any) => (
+                    <Chip
+                        label={record?.showInNavigation ? 'Да' : 'Нет'}
+                        color={record?.showInNavigation ? 'success' : 'default'}
+                        size="small"
+                        variant="outlined"
+                        icon={<Navigation />}
+                    />
                 )}
             />
 
-            {/* Действия */}
-            <Box display="flex" gap={1}>
-                <EditButton />
-                <DeleteButton />
-            </Box>
+            {/* ИСПРАВЛЕНО: Действия в FunctionField с stopPropagation */}
+            <FunctionField
+                label="Действия"
+                render={() => (
+                    <Box
+                        display="flex"
+                        gap={1}
+                        onClick={(e: React.MouseEvent) => e.stopPropagation()}
+                    >
+                        <EditButton />
+                        <CategoryDeleteButton />
+                    </Box>
+                )}
+            />
         </Datagrid>
     </List>
 );
@@ -171,7 +195,6 @@ export const CategoryCreate = () => (
 const CategoryForm = () => (
     <SimpleForm>
         <Box display="flex" gap={3} width="100%">
-            {/* Левая колонка - основная информация */}
             <Box flex={2}>
                 <Typography variant="h6" gutterBottom>
                     Основная информация
@@ -206,7 +229,10 @@ const CategoryForm = () => (
                     choices={[
                         { id: 'products', name: 'Товары' },
                         { id: 'balloons', name: 'Шарики' },
+                        { id: 'bouquets', name: 'Букеты' },
                         { id: 'gifts', name: 'Подарки' },
+                        { id: 'cups', name: 'Стаканчики' },
+                        { id: 'sets', name: 'Наборы' },
                         { id: 'events', name: 'События' },
                         { id: 'colors', name: 'Цвета' },
                         { id: 'materials', name: 'Материалы' },
@@ -217,7 +243,6 @@ const CategoryForm = () => (
                 />
             </Box>
 
-            {/* Правая колонка - настройки */}
             <Box flex={1}>
                 <Typography variant="h6" gutterBottom>
                     Настройки
@@ -240,6 +265,7 @@ const CategoryForm = () => (
                     defaultValue={0}
                     min={0}
                     fullWidth
+                    helperText="Чем меньше число, тем выше в списке"
                 />
 
                 <BooleanInput
@@ -252,11 +278,11 @@ const CategoryForm = () => (
                     source="showInNavigation"
                     label="Показывать в навигации"
                     defaultValue={true}
+                    helperText="Отображать эту категорию в главном меню сайта"
                 />
             </Box>
         </Box>
 
-        {/* SEO настройки */}
         <Box mt={3}>
             <Typography variant="h6" gutterBottom>
                 SEO настройки
@@ -288,7 +314,6 @@ const CategoryForm = () => (
             />
         </Box>
 
-        {/* Настройки фильтров */}
         <Box mt={3}>
             <Typography variant="h6" gutterBottom>
                 Настройки фильтров для UI
@@ -321,7 +346,6 @@ const CategoryForm = () => (
             </Box>
         </Box>
 
-        {/* Дополнительные настройки */}
         <Box mt={3}>
             <Typography variant="h6" gutterBottom>
                 Дополнительные настройки
@@ -354,10 +378,10 @@ export const CategoryShow = () => (
             <TextField source="slug" label="URL" />
             <TextField source="description" label="Описание" />
 
-            <TextField
-                source="type"
+            {/* ИСПРАВЛЕНО: TextField -> FunctionField */}
+            <FunctionField
                 label="Тип"
-                render={({ record }: { record: any }) => getCategoryTypeLabel(record?.type)}
+                render={(record: any) => getCategoryTypeLabel(record?.type)}
             />
 
             <ReferenceField
@@ -373,16 +397,13 @@ export const CategoryShow = () => (
             <BooleanField source="active" label="Активна" />
             <BooleanField source="showInNavigation" label="Показывать в навигации" />
 
-            {/* SEO поля */}
             <TextField source="metaTitle" label="Meta Title" />
             <TextField source="metaDescription" label="Meta Description" />
             <TextField source="metaKeywords" label="Ключевые слова" />
 
-            {/* URLs */}
             <TextField source="imageUrl" label="URL изображения" />
             <TextField source="bannerUrl" label="URL баннера" />
 
-            {/* Системные поля */}
             <DateField source="createdAt" label="Создана" showTime />
             <DateField source="updatedAt" label="Обновлена" showTime />
         </SimpleShowLayout>
@@ -394,14 +415,20 @@ const getCategoryTypeLabel = (type: string): string => {
     const typeLabels: Record<string, string> = {
         'products': 'Товары',
         'balloons': 'Шарики',
+        'bouquets': 'Букеты',
         'gifts': 'Подарки',
+        'cups': 'Стаканчики',
+        'sets': 'Наборы',
         'events': 'События',
         'colors': 'Цвета',
         'materials': 'Материалы',
         'occasions': 'Поводы',
         'PRODUCTS': 'Товары',
         'BALLOONS': 'Шарики',
+        'BOUQUETS': 'Букеты',
         'GIFTS': 'Подарки',
+        'CUPS': 'Стаканчики',
+        'SETS': 'Наборы',
         'EVENTS': 'События',
         'COLORS': 'Цвета',
         'MATERIALS': 'Материалы',

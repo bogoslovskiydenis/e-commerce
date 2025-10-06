@@ -382,11 +382,19 @@ export class CategoriesService {
                 throw new ApiError(404, 'Category not found');
             }
 
-            // Маппинг полей
+            /// Маппинг полей из UI в БД
             const updateData: any = { ...data };
+
+// active → isActive
             if (updateData.active !== undefined) {
-                updateData.isActive = updateData.active; // ИСПРАВЛЕНО
+                updateData.isActive = updateData.active;
                 delete updateData.active;
+            }
+
+// order → sortOrder (ИСПРАВЛЕНИЕ)
+            if (updateData.order !== undefined) {
+                updateData.sortOrder = updateData.order;
+                delete updateData.order;
             }
 
             const category = await prisma.category.update({
@@ -469,7 +477,10 @@ export class CategoriesService {
     }
 
     // Удалить категорию
-    async deleteCategory(id: string, options: { moveProductsTo?: string } = {}): Promise<{ success: boolean; error?: string }> {
+    async deleteCategory(
+        id: string,
+        options: { moveProductsTo?: string; force?: boolean } = {}
+    ): Promise<{ success: boolean; message?: string }> {
         try {
             const category = await prisma.category.findUnique({
                 where: { id },
@@ -484,8 +495,11 @@ export class CategoriesService {
             }
 
             // Проверяем есть ли дочерние категории
-            if (category.children.length > 0) {
-                throw new ApiError(400, 'Cannot delete category with subcategories');
+            if (category.children.length > 0 && !options.force) {
+                throw new ApiError(
+                    400,
+                    'Cannot delete category with subcategories. Use force parameter or delete subcategories first.'
+                );
             }
 
             // Если есть товары, перемещаем их в другую категорию или ошибка
@@ -495,22 +509,49 @@ export class CategoriesService {
                         where: { categoryId: id },
                         data: { categoryId: options.moveProductsTo }
                     });
-                } else {
-                    throw new ApiError(400, 'Cannot delete category with products. Specify moveProductsTo parameter.');
+                } else if (!options.force) {
+                    throw new ApiError(
+                        400,
+                        `Cannot delete category with ${category.products.length} products. Specify moveProductsTo parameter or use force.`
+                    );
                 }
             }
 
+            // Если используется force, сначала удаляем связанные данные
+            if (options.force) {
+                // Удаляем связи товаров с категорией
+                await prisma.product.deleteMany({
+                    where: { categoryId: id }
+                });
+                // Удаляем дочерние категории (рекурсивно)
+                if (category.children.length > 0) {
+                    for (const child of category.children) {
+                        await this.deleteCategory(child.id, { force: true });
+                    }
+                }
+            }
+
+            // Удаляем категорию
             await prisma.category.delete({
                 where: { id }
             });
 
-            return { success: true };
+            logger.info(`Category deleted: ${category.name} (ID: ${id})`);
+
+            return {
+                success: true,
+                message: 'Category deleted successfully'
+            };
         } catch (error) {
             logger.error('Error deleting category:', error);
+
+            // КРИТИЧЕСКИ ВАЖНО: пробрасываем ApiError дальше
             if (error instanceof ApiError) {
                 throw error;
             }
-            return { success: false, error: 'Failed to delete category' };
+
+            // Для других ошибок создаём ApiError
+            throw new ApiError(500, 'Failed to delete category');
         }
     }
 

@@ -36,51 +36,22 @@ export const requestLogger = (req: Request, res: Response, next: NextFunction) =
 
 // Middleware для логирования действий администраторов
 export const adminActionLogger = (action: string, resourceType: string) => {
-    return async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-        const user = req.user;
-
-        if (!user) {
-            return next();
-        }
-
+    return (req: Request, res: Response, next: NextFunction) => {
         // Логируем действие
         logger.info('Admin action', {
             type: 'admin_action',
-            userId: user.id,
-            username: user.username,
+            userId: (req as any).user?.id,
+            username: (req as any).user?.username,
             action,
             resourceType,
             resourceId: req.params.id,
             method: req.method,
-            url: req.url,
+            url: req.path,
             ip: req.ip,
-            userAgent: req.get('User-Agent')
+            userAgent: req.get('user-agent')
         });
 
-        // Сохраняем в базу данных
-        try {
-            await prisma.adminLog.create({
-                data: {
-                    userId: user.id,
-                    username: user.username,
-                    action,
-                    resourceType,
-                    resourceId: req.params.id || null,
-                    description: `${action} ${resourceType}`,
-                    ip: req.ip,
-                    userAgent: req.get('User-Agent'),
-                    level: 'INFO',
-                    metadata: {
-                        method: req.method,
-                        url: req.url,
-                        body: req.body
-                    }
-                }
-            });
-        } catch (error) {
-            logger.error('Failed to save admin log to database:', error);
-        }
-
+        // ВАЖНО: просто пробрасываем дальше, НЕ перехватываем ошибки
         next();
     };
 };
