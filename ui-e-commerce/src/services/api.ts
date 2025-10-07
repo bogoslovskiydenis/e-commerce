@@ -1,3 +1,7 @@
+// API Service для работы с бэкендом
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+
+// Типы данных
 export interface Category {
     id: string;
     name: string;
@@ -10,235 +14,345 @@ export interface Category {
     active: boolean;
     showInNavigation: boolean;
     order: number;
+    href?: string;
     metaTitle?: string;
     metaDescription?: string;
     metaKeywords?: string;
     filters?: any;
+    createdAt?: string;
+    updatedAt?: string;
+    productsCount?: number;
+    childrenCount?: number;
+    parent?: {
+        id: string;
+        name: string;
+        slug: string;
+    };
     children?: Category[];
-    productsCount: number;
-    childrenCount: number;
-    href?: string;
 }
 
 export interface Product {
     id: string;
-    name: string;
-    slug: string;
-    description?: string;
+    title: string;
+    name?: string;
+    brand?: string;
     price: number;
     oldPrice?: number;
     discount?: number;
-    imageUrl?: string;
+    category?: string;
+    categoryId?: string;
+    image?: string;
     images?: string[];
+    description?: string;
     inStock: boolean;
-    category?: Category;
-    categoryId: string;
-    colors?: string[];
-    material?: string;
-    withHelium?: boolean;
-    size?: string;
-    type?: string;
-    items?: any[];
+    quantity?: number;
     featured?: boolean;
-    new?: boolean;
+    tags?: string[];
+    metadata?: Record<string, any>;
+    createdAt?: string;
+    updatedAt?: string;
+}
+
+export interface ApiResponse<T> {
+    success: boolean;
+    data?: T;
+    error?: string;
+    pagination?: {
+        page: number;
+        limit: number;
+        total: number;
+        totalPages: number;
+    };
 }
 
 class ApiService {
     private baseUrl: string;
 
     constructor() {
-        this.baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+        this.baseUrl = API_BASE_URL;
     }
 
-    private async request(endpoint: string, options: RequestInit = {}) {
+    // Базовый метод для запросов
+    private async request<T>(
+        endpoint: string,
+        options: RequestInit = {}
+    ): Promise<T> {
+        const url = `${this.baseUrl}${endpoint}`;
+
         try {
-            const response = await fetch(`${this.baseUrl}${endpoint}`, {
+            const response = await fetch(url, {
+                ...options,
                 headers: {
                     'Content-Type': 'application/json',
                     ...options.headers,
                 },
-                cache: 'no-store',
-                ...options,
             });
 
             if (!response.ok) {
-                throw new Error(`API request failed: ${response.status}`);
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
             }
 
-            return await response.json();
+            const data = await response.json();
+            return data;
         } catch (error) {
-            console.error(`API Error for ${endpoint}:`, error);
+            console.error(`API request failed for ${endpoint}:`, error);
             throw error;
         }
     }
 
+    // ==================== КАТЕГОРИИ ====================
+
+    /**
+     * Получить все категории для навигации
+     */
     async getNavigationCategories(): Promise<Category[]> {
         try {
-            const data = await this.request('/categories/navigation');
-            return this.formatCategoriesForNavigation(data.data || data);
+            const response = await this.request<ApiResponse<Category[]>>(
+                '/categories/navigation'
+            );
+            return response.data || [];
         } catch (error) {
             console.error('Error fetching navigation categories:', error);
-            return this.getFallbackCategories();
-        }
-    }
-
-    async getProductsByCategory(categorySlug: string, limit?: number): Promise<Product[]> {
-        try {
-            const params = new URLSearchParams();
-            if (limit) params.append('limit', limit.toString());
-            params.append('active', 'true');
-
-            const data = await this.request(`/products/category/${categorySlug}?${params.toString()}`);
-            return data.data || [];
-        } catch (error) {
-            console.error(`Error fetching products for category ${categorySlug}:`, error);
             return [];
         }
     }
 
-    async searchProducts(query: string, limit: number = 20): Promise<Product[]> {
+    /**
+     * Получить категории по типу
+     */
+    async getCategoriesByType(type: string): Promise<Category[]> {
         try {
-            const data = await this.request(
-                `/products/search?q=${encodeURIComponent(query)}&limit=${limit}`
+            const response = await this.request<ApiResponse<Category[]>>(
+                `/categories?type=${type}&active=true&limit=100`
             );
-            return data.data || [];
+            return response.data || [];
         } catch (error) {
-            console.error('Error searching products:', error);
+            console.error(`Error fetching categories by type ${type}:`, error);
             return [];
         }
     }
 
-    async getFeaturedProducts(limit: number = 8, categoryType?: string): Promise<Product[]> {
+    /**
+     * Получить все категории с фильтрами
+     */
+    async getCategories(params?: {
+        page?: number;
+        limit?: number;
+        parentId?: string;
+        active?: boolean;
+        search?: string;
+        type?: string;
+    }): Promise<{ categories: Category[]; total: number; page: number; limit: number }> {
         try {
-            const params = new URLSearchParams();
-            params.append('limit', limit.toString());
-            if (categoryType) params.append('categoryType', categoryType);
+            const queryParams = new URLSearchParams();
 
-            const data = await this.request(`/products/featured?${params.toString()}`);
-            return data.data || [];
+            if (params?.page) queryParams.append('page', params.page.toString());
+            if (params?.limit) queryParams.append('limit', params.limit.toString());
+            if (params?.parentId) queryParams.append('parentId', params.parentId);
+            if (params?.active !== undefined) queryParams.append('active', params.active.toString());
+            if (params?.search) queryParams.append('search', params.search);
+            if (params?.type) queryParams.append('type', params.type);
+
+            const response = await this.request<ApiResponse<Category[]>>(
+                `/categories?${queryParams.toString()}`
+            );
+
+            return {
+                categories: response.data || [],
+                total: response.pagination?.total || 0,
+                page: response.pagination?.page || 1,
+                limit: response.pagination?.limit || 50
+            };
+        } catch (error) {
+            console.error('Error fetching categories:', error);
+            return { categories: [], total: 0, page: 1, limit: 50 };
+        }
+    }
+
+    /**
+     * Получить дерево категорий
+     */
+    async getCategoriesTree(params?: {
+        includeInactive?: boolean;
+        type?: string;
+    }): Promise<Category[]> {
+        try {
+            const queryParams = new URLSearchParams();
+
+            if (params?.includeInactive) {
+                queryParams.append('includeInactive', 'true');
+            }
+            if (params?.type) {
+                queryParams.append('type', params.type);
+            }
+
+            const response = await this.request<ApiResponse<Category[]>>(
+                `/categories/tree?${queryParams.toString()}`
+            );
+            return response.data || [];
+        } catch (error) {
+            console.error('Error fetching categories tree:', error);
+            return [];
+        }
+    }
+
+    /**
+     * Получить категорию по ID
+     */
+    async getCategoryById(id: string): Promise<Category | null> {
+        try {
+            const response = await this.request<ApiResponse<Category>>(
+                `/categories/${id}`
+            );
+            return response.data || null;
+        } catch (error) {
+            console.error(`Error fetching category ${id}:`, error);
+            return null;
+        }
+    }
+
+    /**
+     * Получить категорию по slug
+     */
+    async getCategoryBySlug(slug: string): Promise<Category | null> {
+        try {
+            const response = await this.request<ApiResponse<Category>>(
+                `/categories/slug/${slug}`
+            );
+            return response.data || null;
+        } catch (error) {
+            console.error(`Error fetching category by slug ${slug}:`, error);
+            return null;
+        }
+    }
+
+    // ==================== ТОВАРЫ ====================
+
+    /**
+     * Получить все товары с фильтрами
+     */
+    async getProducts(params?: {
+        page?: number;
+        limit?: number;
+        categoryId?: string;
+        search?: string;
+        featured?: boolean;
+        inStock?: boolean;
+        minPrice?: number;
+        maxPrice?: number;
+        sortBy?: string;
+        sortOrder?: 'asc' | 'desc';
+    }): Promise<{ products: Product[]; total: number; page: number; limit: number }> {
+        try {
+            const queryParams = new URLSearchParams();
+
+            if (params?.page) queryParams.append('page', params.page.toString());
+            if (params?.limit) queryParams.append('limit', params.limit.toString());
+            if (params?.categoryId) queryParams.append('categoryId', params.categoryId);
+            if (params?.search) queryParams.append('search', params.search);
+            if (params?.featured !== undefined) queryParams.append('featured', params.featured.toString());
+            if (params?.inStock !== undefined) queryParams.append('inStock', params.inStock.toString());
+            if (params?.minPrice) queryParams.append('minPrice', params.minPrice.toString());
+            if (params?.maxPrice) queryParams.append('maxPrice', params.maxPrice.toString());
+            if (params?.sortBy) queryParams.append('sortBy', params.sortBy);
+            if (params?.sortOrder) queryParams.append('sortOrder', params.sortOrder);
+
+            const response = await this.request<ApiResponse<Product[]>>(
+                `/products?${queryParams.toString()}`
+            );
+
+            return {
+                products: response.data || [],
+                total: response.pagination?.total || 0,
+                page: response.pagination?.page || 1,
+                limit: response.pagination?.limit || 20
+            };
+        } catch (error) {
+            console.error('Error fetching products:', error);
+            return { products: [], total: 0, page: 1, limit: 20 };
+        }
+    }
+
+    /**
+     * Получить товар по ID
+     */
+    async getProductById(id: string): Promise<Product | null> {
+        try {
+            const response = await this.request<ApiResponse<Product>>(
+                `/products/${id}`
+            );
+            return response.data || null;
+        } catch (error) {
+            console.error(`Error fetching product ${id}:`, error);
+            return null;
+        }
+    }
+
+    /**
+     * Получить рекомендуемые товары
+     */
+    async getFeaturedProducts(limit: number = 8): Promise<Product[]> {
+        try {
+            const response = await this.request<ApiResponse<Product[]>>(
+                `/products?featured=true&limit=${limit}`
+            );
+            return response.data || [];
         } catch (error) {
             console.error('Error fetching featured products:', error);
             return [];
         }
     }
 
-    private formatCategoriesForNavigation(categories: Category[]): Category[] {
-        return categories
-            .filter(cat => cat.active && cat.showInNavigation)
-            .sort((a, b) => a.order - b.order)
-            .map(category => ({
-                ...category,
-                href: this.getCategoryHref(category),
-                children: category.children ? 
-                    this.formatCategoriesForNavigation(category.children) : []
-            }));
+    /**
+     * Получить товары по категории
+     */
+    async getProductsByCategory(categoryId: string, params?: {
+        page?: number;
+        limit?: number;
+        sortBy?: string;
+        sortOrder?: 'asc' | 'desc';
+    }): Promise<{ products: Product[]; total: number }> {
+        try {
+            const queryParams = new URLSearchParams();
+            queryParams.append('categoryId', categoryId);
+
+            if (params?.page) queryParams.append('page', params.page.toString());
+            if (params?.limit) queryParams.append('limit', params.limit.toString());
+            if (params?.sortBy) queryParams.append('sortBy', params.sortBy);
+            if (params?.sortOrder) queryParams.append('sortOrder', params.sortOrder);
+
+            const response = await this.request<ApiResponse<Product[]>>(
+                `/products?${queryParams.toString()}`
+            );
+
+            return {
+                products: response.data || [],
+                total: response.pagination?.total || 0
+            };
+        } catch (error) {
+            console.error(`Error fetching products for category ${categoryId}:`, error);
+            return { products: [], total: 0 };
+        }
     }
 
-    private getCategoryHref(category: Category): string {
-        const typeMap: Record<string, string> = {
-            'balloons': '/balloons',
-            'bouquets': '/bouquets',
-            'gifts': '/gifts',
-            'cups': '/cups',
-            'sets': '/sets',
-            'events': '/events',
-            'occasions': '/occasions'
-        };
-
-        const basePath = typeMap[category.type] || '/products';
-        return category.slug ? `${basePath}/${category.slug}` : basePath;
-    }
-
-    private getFallbackCategories(): Category[] {
-        return [
-            {
-                id: '1',
-                name: 'Шарики',
-                slug: 'balloons',
-                type: 'balloons',
-                active: true,
-                showInNavigation: true,
-                order: 1,
-                productsCount: 245,
-                childrenCount: 7,
-                href: '/balloons',
-                children: [
-                    {
-                        id: '1-1',
-                        name: 'Фольгированные',
-                        slug: 'foil',
-                        type: 'balloons',
-                        active: true,
-                        showInNavigation: true,
-                        order: 1,
-                        productsCount: 120,
-                        childrenCount: 0,
-                        href: '/balloons/foil'
-                    },
-                    {
-                        id: '1-2',
-                        name: 'Латексные',
-                        slug: 'latex',
-                        type: 'balloons',
-                        active: true,
-                        showInNavigation: true,
-                        order: 2,
-                        productsCount: 87,
-                        childrenCount: 0,
-                        href: '/balloons/latex'
-                    }
-                ]
-            },
-            {
-                id: '2',
-                name: 'Букеты из шаров',
-                slug: 'bouquets',
-                type: 'bouquets',
-                active: true,
-                showInNavigation: true,
-                order: 2,
-                productsCount: 156,
-                childrenCount: 4,
-                href: '/bouquets'
-            },
-            {
-                id: '3',
-                name: 'Стаканчики',
-                slug: 'cups',
-                type: 'cups',
-                active: true,
-                showInNavigation: true,
-                order: 3,
-                productsCount: 95,
-                childrenCount: 3,
-                href: '/cups'
-            },
-            {
-                id: '4',
-                name: 'Подарки',
-                slug: 'gifts',
-                type: 'gifts',
-                active: true,
-                showInNavigation: true,
-                order: 4,
-                productsCount: 203,
-                childrenCount: 4,
-                href: '/gifts'
-            },
-            {
-                id: '5',
-                name: 'Наборы',
-                slug: 'sets',
-                type: 'sets',
-                active: true,
-                showInNavigation: true,
-                order: 5,
-                productsCount: 112,
-                childrenCount: 4,
-                href: '/sets'
-            }
-        ];
+    /**
+     * Поиск товаров
+     */
+    async searchProducts(query: string, limit: number = 20): Promise<Product[]> {
+        try {
+            const response = await this.request<ApiResponse<Product[]>>(
+                `/products?search=${encodeURIComponent(query)}&limit=${limit}`
+            );
+            return response.data || [];
+        } catch (error) {
+            console.error(`Error searching products with query "${query}":`, error);
+            return [];
+        }
     }
 }
 
+// Экспортируем единственный экземпляр сервиса
 export const apiService = new ApiService();
+
+export default apiService;

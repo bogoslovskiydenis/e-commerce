@@ -393,6 +393,48 @@ export class CategoriesController {
         }
     }
 
+    async getCategoryBySlug(req: Request, res: Response) {
+        try {
+            const { slug } = req.params;
+
+            if (!slug) {
+                return res.status(400).json({
+                    success: false,
+                    error: 'Slug is required'
+                });
+            }
+
+            const category = await categoriesService.getCategoryBySlug(slug);
+
+            if (!category) {
+                return res.status(404).json({
+                    success: false,
+                    error: 'Category not found'
+                });
+            }
+
+            res.json({
+                success: true,
+                data: category
+            });
+
+        } catch (error) {
+            logger.error('Get category by slug error:', error);
+
+            if (error instanceof ApiError) {
+                return res.status(error.statusCode).json({
+                    success: false,
+                    error: error.message
+                });
+            }
+
+            res.status(500).json({
+                success: false,
+                error: 'Internal server error'
+            });
+        }
+    }
+
 }
 
 export const categoriesController = new CategoriesController();

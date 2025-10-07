@@ -100,21 +100,21 @@ export default function SidebarFilters({
         <div className={`bg-white ${isMobile ? '' : 'rounded-lg border'}`}>
             {/* Категории */}
             <div className={`${isMobile ? 'p-4' : 'p-4 border-b'}`}>
-                <h2 className="font-semibold text-lg mb-4">Категории</h2>
-                <nav className="space-y-1">
-                    {config.categories.map((category) => (
-                        <Link
-                            key={category.href}
-                            href={category.href}
-                            className="flex items-center justify-between px-3 py-2 text-sm rounded-lg transition-colors text-gray-700 hover:bg-gray-50"
-                        >
-                            <span>{category.name}</span>
-                            {category.count > 0 && (
-                                <span className="text-gray-400 text-xs">({category.count})</span>
-                            )}
-                        </Link>
-                    ))}
-                </nav>
+                {/*<h2 className="font-semibold text-lg mb-4">Категории</h2>*/}
+                {/*<nav className="space-y-1">*/}
+                {/*    {config.categories.map((category) => (*/}
+                {/*        <Link*/}
+                {/*            key={category.href}*/}
+                {/*            href={category.href}*/}
+                {/*            className="flex items-center justify-between px-3 py-2 text-sm rounded-lg transition-colors text-gray-700 hover:bg-gray-50"*/}
+                {/*        >*/}
+                {/*            <span>{category.name}</span>*/}
+                {/*            {category.count > 0 && (*/}
+                {/*                <span className="text-gray-400 text-xs">({category.count})</span>*/}
+                {/*            )}*/}
+                {/*        </Link>*/}
+                {/*    ))}*/}
+                {/*</nav>*/}
             </div>
 
             {/* Фильтры */}

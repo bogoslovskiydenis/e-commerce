@@ -1,105 +1,106 @@
+// api/src/routes/categories.routes.ts
 import { Router } from 'express';
-import { categoriesController } from '@/controllers/categories.controller';
-import { adminActionLogger } from '@/middleware/logging.middleware';
-import { validate } from '@/middleware/validation.middleware';
+import { CategoriesController } from '@/controllers/categories.controller';
 import { authenticateToken } from '@/middleware/auth.middleware';
 import { requirePermission } from '@/middleware/permissions.middleware';
 import {
     createCategorySchema,
     updateCategorySchema,
-    categoryIdParamSchema
+    categoryIdParamSchema,
+    reorderCategoriesSchema,
+    moveCategorySchema,
+    deleteCategorySchema
 } from '@/validation/categories.validation';
+import { validate } from '@/middleware/validation.middleware';
 
 const router = Router();
+const controller = new CategoriesController();
 
-// Применяем аутентификацию ко всем маршрутам
-router.use(authenticateToken);
+// ============================================
+// ПУБЛИЧНЫЕ МАРШРУТЫ (без авторизации)
+// ============================================
 
-// === ПОЛУЧЕНИЕ ДАННЫХ ===
-
-// Получить список всех категорий
-router.get('/',
-    requirePermission('categories.view'),
-    categoriesController.getCategories
-);
-
-// Получить категорию по ID
-router.get('/:id',
-    requirePermission('categories.view'),
-    validate(categoryIdParamSchema),
-    categoriesController.getCategory
+// Получить список всех активных категорий
+router.get(
+    '/',
+    controller.getCategories.bind(controller)
 );
 
 // Получить дерево категорий
-router.get('/tree/hierarchy',
-    requirePermission('categories.view'),
-    categoriesController.getCategoriesTree
+router.get(
+    '/tree',
+    controller.getCategoriesTree.bind(controller)
 );
 
-// Получить категории для навигации (активные)
-router.get('/navigation/public',
-    categoriesController.getNavigationCategories
+// Получить категории для навигации
+router.get(
+    '/navigation',
+    controller.getNavigationCategories.bind(controller)
 );
 
-// === СОЗДАНИЕ И ОБНОВЛЕНИЕ ===
+// ✅ НОВЫЙ РОУТ: Получить категорию по slug (для фронтенда)
+router.get(
+    '/slug/:slug',
+    controller.getCategoryBySlug.bind(controller)
+);
+
+// Получить категорию по ID
+router.get(
+    '/:id',
+    validate(categoryIdParamSchema),
+    controller.getCategory.bind(controller)
+);
+
+// ============================================
+// ЗАЩИЩЕННЫЕ МАРШРУТЫ (требуют авторизации)
+// ============================================
 
 // Создать новую категорию
-router.post('/',
+router.post(
+    '/',
+    authenticateToken,
     requirePermission('categories.create'),
     validate(createCategorySchema),
-    adminActionLogger('create', 'category'),
-    categoriesController.createCategory
+    controller.createCategory.bind(controller)
 );
 
 // Обновить категорию
-router.put('/:id',
+router.put(
+    '/:id',
+    authenticateToken,
     requirePermission('categories.edit'),
+    validate(categoryIdParamSchema),
     validate(updateCategorySchema),
-    adminActionLogger('update', 'category'),
-    categoriesController.updateCategory
-);
-
-// Частичное обновление категории
-router.patch('/:id',
-    requirePermission('categories.edit'),
-    validate(categoryIdParamSchema),
-    adminActionLogger('patch', 'category'),
-    categoriesController.updateCategory
-);
-
-// === СПЕЦИАЛЬНЫЕ ДЕЙСТВИЯ ===
-
-// Переключить статус активности категории
-router.post('/:id/toggle-status',
-    requirePermission('categories.edit'),
-    validate(categoryIdParamSchema),
-    adminActionLogger('toggle_status', 'category'),
-    categoriesController.toggleCategoryStatus
+    controller.updateCategory.bind(controller)
 );
 
 // Изменить порядок категорий
-router.post('/reorder',
+router.post(
+    '/reorder',
+    authenticateToken,
     requirePermission('categories.edit'),
-    adminActionLogger('reorder', 'category'),
-    categoriesController.reorderCategories
+    validate(reorderCategoriesSchema),
+    controller.reorderCategories.bind(controller)
 );
 
 // Переместить категорию
-router.post('/:id/move',
+router.post(
+    '/:id/move',
+    authenticateToken,
     requirePermission('categories.edit'),
     validate(categoryIdParamSchema),
-    adminActionLogger('move', 'category'),
-    categoriesController.moveCategory
+    validate(moveCategorySchema),
+    controller.moveCategory.bind(controller)
 );
 
-// === УДАЛЕНИЕ ===
-
 // Удалить категорию
-router.delete('/:id',
+router.delete(
+    '/:id',
+    authenticateToken,
     requirePermission('categories.delete'),
     validate(categoryIdParamSchema),
-    adminActionLogger('delete', 'category'),
-    categoriesController.deleteCategory
+    validate(deleteCategorySchema),
+    controller.deleteCategory.bind(controller)
 );
 
 export default router;

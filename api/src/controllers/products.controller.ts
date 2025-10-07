@@ -69,6 +69,7 @@ export class ProductsController {
             ]);
 
             res.json({
+                success: true,
                 data: products.map(product => ({
                     id: product.id,
                     title: product.title,
@@ -127,6 +128,7 @@ export class ProductsController {
             }
 
             res.json({
+                success: true,  // ← Вот сюда!
                 data: {
                     id: product.id,
                     title: product.title,
@@ -265,6 +267,7 @@ export class ProductsController {
             console.log(`✅ Товар создан: ${product.title} (SKU: ${product.sku})`);
 
             res.status(201).json({
+                success: true,
                 data: product
             });
 
@@ -344,6 +347,7 @@ export class ProductsController {
             });
 
             res.json({
+                success: true,
                 data: updatedProduct
             });
 
@@ -376,6 +380,7 @@ export class ProductsController {
             });
 
             res.json({
+                success: true,
                 data: existingProduct
             });
 
