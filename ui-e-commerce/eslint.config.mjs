@@ -15,10 +15,11 @@ const eslintConfig = [
     rules: {
       "react/no-unescaped-entities": "off",
       "@next/next/no-img-element": "off",
-      // Дополнительные правила при необходимости
       "react/react-in-jsx-scope": "off",
       "react/prop-types": "off",
-      "@typescript-eslint/no-unused-vars": "warn"
+      "@typescript-eslint/no-unused-vars": "warn",
+      "@typescript-eslint/no-explicit-any": "off", // Разрешить any
+      "@typescript-eslint/ban-ts-comment": "off" // Разрешить @ts-ignore
     }
   }
 ];

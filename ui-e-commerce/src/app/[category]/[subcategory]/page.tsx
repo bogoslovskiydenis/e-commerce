@@ -2,6 +2,7 @@ import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import UniversalCategoryPage from '@/components/UniversalCategoryPage/UniversalCategoryPage'
 import { CategoryConfig } from '@/config/categoryConfig'
+import { PageProps, resolveParams } from '@/types/next'
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api'
 
@@ -53,10 +54,10 @@ async function getCategoryProducts(categoryId: string) {
 }
 
 // Генерация метаданных для SEO
-export async function generateMetadata(
-    { params }: { params: Promise<{ category: string; subcategory: string }> }
-): Promise<Metadata> {
-    const { subcategory: subcategorySlug, category: categorySlug } = await params
+export async function generateMetadata({
+                                           params
+                                       }: PageProps<{ category: string; subcategory: string }>): Promise<Metadata> {
+    const { subcategory: subcategorySlug, category: categorySlug } = await resolveParams(params)
     const subcategory = await getCategory(subcategorySlug)
     const parentCategory = await getCategory(categorySlug)
 
@@ -83,37 +84,36 @@ export async function generateMetadata(
             type: 'website'
         },
         alternates: {
-            canonical: `/${params.category}/${params.subcategory}`
+            canonical: `/${categorySlug}/${subcategorySlug}`
         }
     }
 }
-
 
 // Основной компонент страницы подкатегории
 export default async function SubcategoryPage({
                                                   params,
                                                   searchParams
-                                              }: {
-    params: { category: string; subcategory: string }
-    searchParams: { [key: string]: string | string[] | undefined }
-}) {
+                                              }: PageProps<{ category: string; subcategory: string }>) {
+    // Получаем параметры (работает и с Promise и без)
+    const { category: categorySlug, subcategory: subcategorySlug } = await resolveParams(params)
+
     // ============================================
     // ШАГ 1: ПОЛУЧЕНИЕ ДАННЫХ КАТЕГОРИЙ
     // ============================================
 
     // Получаем родительскую категорию
-    const parentCategory = await getCategory(params.category)
+    const parentCategory = await getCategory(categorySlug)
 
     if (!parentCategory) {
-        console.error(`Parent category not found: ${params.category}`)
+        console.error(`Parent category not found: ${categorySlug}`)
         notFound()
     }
 
     // Получаем подкатегорию
-    const subcategory = await getCategory(params.subcategory)
+    const subcategory = await getCategory(subcategorySlug)
 
     if (!subcategory) {
-        console.error(`Subcategory not found: ${params.subcategory}`)
+        console.error(`Subcategory not found: ${subcategorySlug}`)
         notFound()
     }
 
@@ -126,10 +126,16 @@ export default async function SubcategoryPage({
         notFound()
     }
 
+    // ============================================
+    // ШАГ 3: ЗАГРУЗКА ТОВАРОВ
+    // ============================================
 
     // Получаем товары подкатегории
     const products = await getCategoryProducts(subcategory.id)
 
+    // ============================================
+    // ШАГ 4: КОНФИГУРАЦИЯ СТРАНИЦЫ
+    // ============================================
 
     // Формируем конфигурацию для UniversalCategoryPage
     const config: CategoryConfig = {
