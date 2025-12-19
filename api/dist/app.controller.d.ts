@@ -18,6 +18,8 @@ export declare class AppController {
             settings: string;
             navigation: string;
             adminLogs: string;
+            callbacks: string;
+            reviews: string;
         };
     };
     getHealth(): {

@@ -13,6 +13,8 @@ import { BannersModule } from './banners/banners.module';
 import { PagesModule } from './pages/pages.module';
 import { SettingsModule } from './settings/settings.module';
 import { AdminLogsModule } from './admin-logs/admin-logs.module';
+import { CallbacksModule } from './callbacks/callbacks.module';
+import { ReviewsModule } from './reviews/reviews.module';
 import { AppController } from './app.controller';
 
 @Module({
@@ -43,6 +45,8 @@ import { AppController } from './app.controller';
     PagesModule,
     SettingsModule,
     AdminLogsModule,
+    CallbacksModule,
+    ReviewsModule,
   ],
   controllers: [AppController],
 })

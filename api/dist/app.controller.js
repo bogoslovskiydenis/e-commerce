@@ -38,6 +38,8 @@ let AppController = class AppController {
                 settings: '/api/settings/*',
                 navigation: '/api/navigation/*',
                 adminLogs: '/api/admin/logs/*',
+                callbacks: '/api/callbacks/*',
+                reviews: '/api/reviews/*',
             },
         };
     }

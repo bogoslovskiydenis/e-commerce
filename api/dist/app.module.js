@@ -22,6 +22,8 @@ const banners_module_1 = require("./banners/banners.module");
 const pages_module_1 = require("./pages/pages.module");
 const settings_module_1 = require("./settings/settings.module");
 const admin_logs_module_1 = require("./admin-logs/admin-logs.module");
+const callbacks_module_1 = require("./callbacks/callbacks.module");
+const reviews_module_1 = require("./reviews/reviews.module");
 const app_controller_1 = require("./app.controller");
 let AppModule = class AppModule {
 };
@@ -55,6 +57,8 @@ exports.AppModule = AppModule = __decorate([
             pages_module_1.PagesModule,
             settings_module_1.SettingsModule,
             admin_logs_module_1.AdminLogsModule,
+            callbacks_module_1.CallbacksModule,
+            reviews_module_1.ReviewsModule,
         ],
         controllers: [app_controller_1.AppController],
     })

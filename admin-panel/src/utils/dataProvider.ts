@@ -25,7 +25,7 @@ const RESOURCE_ENDPOINTS: Record<string, string> = {
     'orders': '/orders',
     'customers': '/customers',
     'callbacks': '/callbacks',
-    'comments': '/comments',
+    'comments': '/reviews',
     'reviews': '/reviews',
     'banners': '/banners',
     'pages': '/pages',
@@ -41,7 +41,7 @@ const RESOURCE_ENDPOINTS: Record<string, string> = {
     'stats': '/stats',
 };
 
-const convertRAParamsToAPI = (params: any) => {
+const convertRAParamsToAPI = (params: any, resource?: string) => {
     const { page, perPage, sort, filter } = params;
     const apiParams: any = {};
 
@@ -56,13 +56,59 @@ const convertRAParamsToAPI = (params: any) => {
     if (filter) {
         Object.keys(filter).forEach(key => {
             if (filter[key] !== undefined && filter[key] !== null && filter[key] !== '') {
-                apiParams[key] = filter[key];
+                // Трансформируем статус для ресурса 'comments' (new -> PENDING, approved -> APPROVED, rejected -> REJECTED)
+                if (resource === 'comments' && key === 'status') {
+                    const statusMap: Record<string, string> = {
+                        'new': 'PENDING',
+                        'approved': 'APPROVED',
+                        'rejected': 'REJECTED',
+                        'spam': 'REJECTED'
+                    };
+                    apiParams[key] = statusMap[filter[key]] || filter[key];
+                } else {
+                    apiParams[key] = filter[key];
+                }
             }
         });
     }
 
     console.log('🔄 Конвертация RA параметров:', { params, result: apiParams });
     return apiParams;
+};
+
+// Трансформация Review в формат Comment для совместимости с компонентом comments.tsx
+const transformReviewToComment = (review: any) => {
+    const statusMap: Record<string, string> = {
+        'PENDING': 'new',
+        'APPROVED': 'approved',
+        'REJECTED': 'rejected'
+    };
+
+    return {
+        id: review.id,
+        subject: review.product?.title || 'Отзыв о товаре',
+        content: review.comment || '',
+        status: statusMap[review.status] || 'new',
+        type: 'review',
+        author: {
+            name: review.name || '',
+            email: review.email || '',
+            phone: review.customer?.phone || ''
+        },
+        user: review.customer ? {
+            name: review.customer.name || '',
+            role: 'customer'
+        } : undefined,
+        recordType: review.product?.title || 'Товар',
+        recordId: review.productId || '',
+        template: `Рейтинг: ${review.rating}/5`,
+        isVisible: review.status === 'APPROVED',
+        moderatorNote: review.moderator ? `Модератор: ${review.moderator.fullName || review.moderator.username}` : '',
+        createdAt: review.createdAt,
+        // Дополнительные поля из Review для совместимости
+        rating: review.rating,
+        product: review.product
+    };
 };
 
 const dataProvider: DataProvider = {
@@ -74,7 +120,7 @@ const dataProvider: DataProvider = {
 
         console.log('📋 getList вызов:', { resource, params });
 
-        const apiParams = convertRAParamsToAPI(params);
+        const apiParams = convertRAParamsToAPI(params, resource);
         const query = new URLSearchParams(apiParams as any).toString();
         const url = `${API_BASE_URL}${endpoint}?${query}`;
 
@@ -84,8 +130,13 @@ const dataProvider: DataProvider = {
             const { json } = await httpClient(url);
             console.log('📥 API ответ:', { type: 'getList', response: json });
 
-            const data = json.data || [];
+            let data = json.data || [];
             const total = json.total || json.pagination?.total || data.length;
+
+            // Трансформируем данные для ресурса 'comments'
+            if (resource === 'comments') {
+                data = data.map(transformReviewToComment);
+            }
 
             console.log('✅ getList результат:', { data, total });
 
@@ -111,7 +162,14 @@ const dataProvider: DataProvider = {
             const { json } = await httpClient(`${API_BASE_URL}${endpoint}/${params.id}`);
             console.log('📥 API ответ getOne:', json);
 
-            return { data: json.data || json };
+            let data = json.data || json;
+            
+            // Трансформируем данные для ресурса 'comments'
+            if (resource === 'comments') {
+                data = transformReviewToComment(data);
+            }
+
+            return { data };
         } catch (error) {
             console.error('❌ Ошибка getOne:', error);
             throw error;
@@ -151,7 +209,7 @@ const dataProvider: DataProvider = {
 
         console.log('🔗 getManyReference вызов:', { resource, params });
 
-        const apiParams = convertRAParamsToAPI(params);
+        const apiParams = convertRAParamsToAPI(params, resource);
         apiParams[params.target] = params.id;
 
         const query = new URLSearchParams(apiParams as any).toString();
@@ -208,14 +266,41 @@ const dataProvider: DataProvider = {
         console.log('✏️ update вызов:', { resource, id: params.id, data: params.data });
 
         try {
+            let updateData = params.data;
+            
+            // Трансформируем данные обратно для ресурса 'comments' (Comment -> Review)
+            if (resource === 'comments') {
+                const statusMap: Record<string, string> = {
+                    'new': 'PENDING',
+                    'approved': 'APPROVED',
+                    'rejected': 'REJECTED',
+                    'spam': 'REJECTED'
+                };
+                
+                updateData = {
+                    status: statusMap[params.data.status] || params.data.status,
+                    name: params.data.author?.name || params.data.name,
+                    email: params.data.author?.email || params.data.email,
+                    comment: params.data.content || params.data.comment,
+                    rating: params.data.rating
+                };
+            }
+
             const { json } = await httpClient(`${API_BASE_URL}${endpoint}/${params.id}`, {
                 method: 'PUT',
-                body: JSON.stringify(params.data),
+                body: JSON.stringify(updateData),
             });
 
             console.log('✅ update результат:', json);
 
-            return { data: json.data || { ...params.data, id: params.id } };
+            let resultData = json.data || { ...params.data, id: params.id };
+            
+            // Трансформируем ответ для ресурса 'comments'
+            if (resource === 'comments') {
+                resultData = transformReviewToComment(resultData);
+            }
+
+            return { data: resultData };
         } catch (error) {
             console.error('❌ Ошибка update:', error);
             throw error;
