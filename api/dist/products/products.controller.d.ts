@@ -1,0 +1,123 @@
+import { ProductsService } from './products.service';
+import { CreateProductDto, UpdateProductDto, ProductQueryDto } from './dto';
+export declare class ProductsController {
+    private productsService;
+    constructor(productsService: ProductsService);
+    getProducts(query: ProductQueryDto): Promise<{
+        success: boolean;
+        data: {
+            id: any;
+            title: any;
+            slug: any;
+            description: any;
+            shortDescription: any;
+            price: number;
+            oldPrice: number;
+            discount: number;
+            brand: any;
+            sku: any;
+            images: any;
+            categoryId: any;
+            category: any;
+            attributes: any;
+            tags: any;
+            isActive: any;
+            inStock: any;
+            stockQuantity: any;
+            featured: any;
+            weight: number;
+            dimensions: any;
+            createdAt: any;
+            updatedAt: any;
+        }[];
+        total: number;
+    }>;
+    getProduct(id: string): Promise<{
+        success: boolean;
+        data: {
+            id: any;
+            title: any;
+            slug: any;
+            description: any;
+            shortDescription: any;
+            price: number;
+            oldPrice: number;
+            discount: number;
+            brand: any;
+            sku: any;
+            images: any;
+            categoryId: any;
+            category: any;
+            attributes: any;
+            tags: any;
+            isActive: any;
+            inStock: any;
+            stockQuantity: any;
+            featured: any;
+            weight: number;
+            dimensions: any;
+            createdAt: any;
+            updatedAt: any;
+        };
+    }>;
+    createProduct(createProductDto: CreateProductDto): Promise<{
+        success: boolean;
+        data: {
+            id: any;
+            title: any;
+            slug: any;
+            description: any;
+            shortDescription: any;
+            price: number;
+            oldPrice: number;
+            discount: number;
+            brand: any;
+            sku: any;
+            images: any;
+            categoryId: any;
+            category: any;
+            attributes: any;
+            tags: any;
+            isActive: any;
+            inStock: any;
+            stockQuantity: any;
+            featured: any;
+            weight: number;
+            dimensions: any;
+            createdAt: any;
+            updatedAt: any;
+        };
+    }>;
+    updateProduct(id: string, updateProductDto: UpdateProductDto): Promise<{
+        success: boolean;
+        data: {
+            id: any;
+            title: any;
+            slug: any;
+            description: any;
+            shortDescription: any;
+            price: number;
+            oldPrice: number;
+            discount: number;
+            brand: any;
+            sku: any;
+            images: any;
+            categoryId: any;
+            category: any;
+            attributes: any;
+            tags: any;
+            isActive: any;
+            inStock: any;
+            stockQuantity: any;
+            featured: any;
+            weight: number;
+            dimensions: any;
+            createdAt: any;
+            updatedAt: any;
+        };
+    }>;
+    deleteProduct(id: string): Promise<{
+        success: boolean;
+        message: string;
+    }>;
+}

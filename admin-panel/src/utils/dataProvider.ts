@@ -314,10 +314,13 @@ const dataProvider: DataProvider = {
             // Возвращаем пустые данные вместо ошибки
             return {
                 data: {
+                    totalUsers: 0,
                     totalOrders: 0,
-                    totalRevenue: 0,
                     totalProducts: 0,
-                    totalCustomers: 0
+                    totalCustomers: 0,
+                    revenue: 0,
+                    newUsers: 0,
+                    completedOrders: 0
                 }
             };
         }

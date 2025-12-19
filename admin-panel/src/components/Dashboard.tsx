@@ -42,7 +42,15 @@ const Dashboard: React.FC = () => {
 
             // Используем кастомный метод dataProvider для получения статистики
             const statsData = await dataProvider.getStats();
-            setStats(statsData);
+            // Извлекаем data из ответа и устанавливаем значения по умолчанию для отсутствующих полей
+            setStats({
+                totalUsers: statsData.data?.totalUsers ?? 0,
+                totalOrders: statsData.data?.totalOrders ?? 0,
+                totalProducts: statsData.data?.totalProducts ?? 0,
+                revenue: statsData.data?.revenue ?? 0,
+                newUsers: statsData.data?.newUsers ?? 0,
+                completedOrders: statsData.data?.completedOrders ?? 0
+            });
 
         } catch (error) {
             console.error('Ошибка загрузки статистики:', error);

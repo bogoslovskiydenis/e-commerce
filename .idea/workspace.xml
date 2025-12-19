@@ -1,0 +1,386 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="cc69a437-414e-4395-a1be-55730bb45aca" name="Changes" comment="убрал ненужные категории , которые нам не нужны , у нас создается страница с продукцией под товар">
+      <change beforePath="$PROJECT_DIR$/admin-panel/src/components/Dashboard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/admin-panel/src/components/Dashboard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin-panel/src/utils/dataProvider.ts" beforeDir="false" afterPath="$PROJECT_DIR$/admin-panel/src/utils/dataProvider.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/.env" beforeDir="false" afterPath="$PROJECT_DIR$/api/.env" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/app.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/create-hash.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/generateNewHash.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/api/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/api/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/prisma/database.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/config/database.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/config/index.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/config/redis.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/controllers/adminLogs.controller.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/controllers/adminUsers.controller.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/controllers/auth.controller.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/controllers/banners.controller.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/controllers/categories.controller.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/controllers/customers.controller.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/controllers/dashboard.controller.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/controllers/navigation.controller.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/controllers/orders.controller.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/controllers/pages.controller.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/controllers/permissions.controller.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/controllers/permissions.validation.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/controllers/products.controller.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/controllers/settings.controller.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/hook/useNavigation.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/jobs/permissions.job.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/middleware/auth.middleware.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/middleware/error.middleware.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/middleware/logging.middleware.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/middleware/notFound.middleware.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/middleware/permissions.middleware.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/middleware/upload.middleware.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/middleware/validation.middleware.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/models/Navigation.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/routes/admin.routes.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/routes/adminLogs.routes.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/routes/adminUsers.routes.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/routes/api.routes.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/routes/auth.routes.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/routes/categories.routes.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/routes/index.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/routes/navigation.routes.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/routes/permissions.routes.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/routes/products.routes.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/seeds/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/seeds/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/seeds/products.seed.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/seeds/products.seed.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/services/auth.service.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/services/categories.service.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/services/navigation.service.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/services/permissions.service.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/services/products.service.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/types/category.types.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/types/product.types.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/utils/apiError.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/utils/errors.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/utils/helpers.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/utils/logger.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/utils/pagination.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/utils/permissions.utils.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/validation/adminUsers.validation.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/validation/categories.validation.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/validation/permissions.validation.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/validation/validation.middleware.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/api/tsconfig.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/updateFullHash.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/verifyPassword.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/команды.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/стрктура.txt" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="JavaScript File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RESET_MODE" value="HARD" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 6
+}</component>
+  <component name="ProjectId" id="2zbHw7gAfn8SP6oALfzdpgKhiUH" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "/Users/denisbogoslovskiy/WebstormProjects/e-commerce/ui-e-commerce/src",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "npm.build.executor": "Run",
+    "npm.db:generate.executor": "Run",
+    "npm.dev.executor": "Run",
+    "npm.seed:all.executor": "Run",
+    "npm.seed:categories.executor": "Run",
+    "npm.start.executor": "Run",
+    "ts.external.directory.path": "/Users/denisbogoslovskiy/WebstormProjects/e-commerce/ui-e-commerce/node_modules/typescript/lib",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/ui-e-commerce/src" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/ui-e-commerce/src/components/Admin" />
+      <recent name="$PROJECT_DIR$/api/scripts" />
+      <recent name="$PROJECT_DIR$/api" />
+      <recent name="$PROJECT_DIR$/api/src" />
+    </key>
+  </component>
+  <component name="RunManager" selected="npm.dev">
+    <configuration name="build" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/ui-e-commerce/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="build" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <configuration name="dev" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/ui-e-commerce/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="dev" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <configuration name="seed:all" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/api/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="seed:all" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <configuration name="seed:categories" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/api/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="seed:categories" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <configuration name="start" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/ui-e-commerce/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="start" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="npm.dev" />
+        <item itemvalue="npm.build" />
+        <item itemvalue="npm.start" />
+        <item itemvalue="npm.seed:all" />
+        <item itemvalue="npm.seed:categories" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-1d06a55b98c1-74d2a5396914-JavaScript-WS-241.14494.235" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="cc69a437-414e-4395-a1be-55730bb45aca" name="Changes" comment="" />
+      <created>1751993087802</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1751993087802</updated>
+      <workItem from="1751993088938" duration="30000" />
+      <workItem from="1752043389713" duration="14689000" />
+      <workItem from="1752059909699" duration="6173000" />
+      <workItem from="1752073527871" duration="6213000" />
+      <workItem from="1752150531344" duration="15633000" />
+      <workItem from="1752210807661" duration="4339000" />
+      <workItem from="1752224191737" duration="8751000" />
+      <workItem from="1752239700172" duration="6685000" />
+      <workItem from="1752499457579" duration="6993000" />
+      <workItem from="1752564277971" duration="7474000" />
+      <workItem from="1752576514710" duration="9333000" />
+      <workItem from="1756217432725" duration="40000" />
+      <workItem from="1759742738448" duration="8879000" />
+      <workItem from="1759755138209" duration="8506000" />
+      <workItem from="1759820497463" duration="9079000" />
+      <workItem from="1759854722329" duration="762000" />
+      <workItem from="1766148050924" duration="5539000" />
+    </task>
+    <task id="LOCAL-00001" summary="добавил аунтификацию по ролям">
+      <option name="closed" value="true" />
+      <created>1752049198338</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1752049198338</updated>
+    </task>
+    <task id="LOCAL-00002" summary="добавил аунтификацию по ролям включил PgAdmin">
+      <option name="closed" value="true" />
+      <created>1752076156444</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1752076156444</updated>
+    </task>
+    <task id="LOCAL-00003" summary="просмотр зарегенистрированных пользователей в админ панели">
+      <option name="closed" value="true" />
+      <created>1752154781995</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1752154781995</updated>
+    </task>
+    <task id="LOCAL-00004" summary="изменил на более дружелюбный интерфейс , удалил ненужное">
+      <option name="closed" value="true" />
+      <created>1752158226990</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1752158226990</updated>
+    </task>
+    <task id="LOCAL-00005" summary="добавил , добавление пользователя по ролям , добавил добавление Товара (не добавляется фотографии!!!)">
+      <option name="closed" value="true" />
+      <created>1752227762851</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1752227762851</updated>
+    </task>
+    <task id="LOCAL-00006" summary="добавляется фото к товару , нужно добавить скидку !!">
+      <option name="closed" value="true" />
+      <created>1752232921246</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1752232921246</updated>
+    </task>
+    <task id="LOCAL-00007" summary="добавил скидку">
+      <option name="closed" value="true" />
+      <created>1752245572899</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1752245572899</updated>
+    </task>
+    <task id="LOCAL-00008" summary="добавление категории под категории">
+      <option name="closed" value="true" />
+      <created>1752507521413</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1752507521413</updated>
+    </task>
+    <task id="LOCAL-00009" summary="изменил проблему с аунтификацие и отображением секций для менеджера , немного изменил секции для продукции &#10;Нужно добавить фильтр!!!!">
+      <option name="closed" value="true" />
+      <created>1752576274458</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1752576274458</updated>
+    </task>
+    <task id="LOCAL-00010" summary="исправил с удалением категории">
+      <option name="closed" value="true" />
+      <created>1759753934003</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1759753934003</updated>
+    </task>
+    <task id="LOCAL-00011" summary="добавление товаров и категорий из админки в наш сайт">
+      <option name="closed" value="true" />
+      <created>1759824927610</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1759824927610</updated>
+    </task>
+    <task id="LOCAL-00012" summary="исправил деплой в версел">
+      <option name="closed" value="true" />
+      <created>1759827809430</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1759827809430</updated>
+    </task>
+    <task id="LOCAL-00013" summary="исправил деплой в версел">
+      <option name="closed" value="true" />
+      <created>1759828091929</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1759828091929</updated>
+    </task>
+    <task id="LOCAL-00014" summary="убрал ненужные категории , которые нам не нужны , у нас создается страница с продукцией под товар">
+      <option name="closed" value="true" />
+      <created>1759834527307</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1759834527307</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="origin/main" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="добавил аунтификацию по ролям" />
+    <MESSAGE value="добавил аунтификацию по ролям включил PgAdmin" />
+    <MESSAGE value="просмотр зарегенистрированных пользователей в админ панели" />
+    <MESSAGE value="изменил на более дружелюбный интерфейс , удалил ненужное" />
+    <MESSAGE value="добавил , добавление пользователя по ролям , добавил добавление Товара (не добавляется фотографии!!!)" />
+    <MESSAGE value="добавляется фото к товару , нужно добавить скидку !!" />
+    <MESSAGE value="добавил скидку" />
+    <MESSAGE value="добавление категории под категории" />
+    <MESSAGE value="Бд призмы" />
+    <MESSAGE value="изменил проблему с аунтификацие и отображением секций для менеджера , немного изменил секции для продукции &#10;Нужно добавить фильтр!!!!" />
+    <MESSAGE value="исправил с удалением категории" />
+    <MESSAGE value="добавление товаров и категорий из админки в наш сайт" />
+    <MESSAGE value="исправил деплой в версел" />
+    <MESSAGE value="убрал ненужные категории , которые нам не нужны , у нас создается страница с продукцией под товар" />
+    <option name="LAST_COMMIT_MESSAGE" value="убрал ненужные категории , которые нам не нужны , у нас создается страница с продукцией под товар" />
+  </component>
+</project>

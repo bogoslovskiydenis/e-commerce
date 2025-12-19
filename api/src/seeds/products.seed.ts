@@ -369,12 +369,24 @@ async function seedProducts() {
         const products = generateProducts(createdCategories);
 
         for (const productData of products) {
+            // Генерируем slug из title
+            const slug = productData.title
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/(^-|-$)/g, '');
+            
             const product = await prisma.product.upsert({
                 where: {
-                    title: productData.title
+                    slug: slug
                 },
-                update: productData,
-                create: productData
+                update: {
+                    ...productData,
+                    slug: slug
+                },
+                create: {
+                    ...productData,
+                    slug: slug
+                }
             });
             console.log(`✅ Product created: ${product.title}`);
         }
@@ -387,15 +399,6 @@ async function seedProducts() {
     } finally {
         await prisma.$disconnect();
     }
-}
-
-// Запускаем сидинг, если файл выполняется напрямую
-if (require.main === module) {
-    seedProducts()
-        .catch((error) => {
-            console.error(error);
-            process.exit(1);
-        });
 }
 
 export default seedProducts;

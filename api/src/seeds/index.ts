@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, BannerPosition } from '@prisma/client';
 import seedProducts from './products.seed';
 
 const prisma = new PrismaClient();
@@ -12,18 +12,16 @@ async function main() {
 
         // Удаляем в правильном порядке (сначала зависимые таблицы)
         await prisma.orderItem.deleteMany();
-        await prisma.orderStatusLog.deleteMany();
+        await prisma.orderStatusHistory.deleteMany();
         await prisma.order.deleteMany();
         await prisma.review.deleteMany();
         await prisma.product.deleteMany();
         await prisma.category.deleteMany();
         await prisma.callback.deleteMany();
-        await prisma.address.deleteMany();
-        await prisma.refreshToken.deleteMany();
         await prisma.user.deleteMany();
         await prisma.banner.deleteMany();
         await prisma.page.deleteMany();
-        await prisma.settings.deleteMany();
+        await prisma.setting.deleteMany();
 
         console.log('✅ Database cleaned');
 
@@ -34,13 +32,13 @@ async function main() {
         console.log('👤 Creating admin user...');
         const adminUser = await prisma.user.create({
             data: {
+                username: 'admin',
                 email: 'admin@balloonshop.com',
-                password: '$2b$10$K7L/VQkgf8.3VrT0lQIeHOexNBl7OjJ8gw6rKr/hGz.kKY8sT3QXu', // password: admin123
-                firstName: 'Admin',
-                lastName: 'User',
-                role: 'ADMIN',
+                passwordHash: '$2b$10$K7L/VQkgf8.3VrT0lQIeHOexNBl7OjJ8gw6rKr/hGz.kKY8sT3QXu', // password: admin123
+                fullName: 'Admin User',
+                role: 'SUPER_ADMIN',
                 isActive: true,
-                emailVerified: true
+                permissions: ['admin.full_access']
             }
         });
         console.log(`✅ Admin user created: ${adminUser.email}`);
@@ -49,46 +47,16 @@ async function main() {
         console.log('👤 Creating manager user...');
         const managerUser = await prisma.user.create({
             data: {
+                username: 'manager',
                 email: 'manager@balloonshop.com',
-                password: '$2b$10$K7L/VQkgf8.3VrT0lQIeHOexNBl7OjJ8gw6rKr/hGz.kKY8sT3QXu', // password: admin123
-                firstName: 'Manager',
-                lastName: 'User',
+                passwordHash: '$2b$10$K7L/VQkgf8.3VrT0lQIeHOexNBl7OjJ8gw6rKr/hGz.kKY8sT3QXu', // password: admin123
+                fullName: 'Manager User',
                 role: 'MANAGER',
                 isActive: true,
-                emailVerified: true
+                permissions: ['orders.view', 'orders.edit', 'orders.create', 'customers.view', 'customers.edit']
             }
         });
         console.log(`✅ Manager user created: ${managerUser.email}`);
-
-        // Создаем несколько тестовых клиентов
-        console.log('👥 Creating test customers...');
-        const customers = await Promise.all([
-            prisma.user.create({
-                data: {
-                    email: 'customer1@example.com',
-                    password: '$2b$10$K7L/VQkgf8.3VrT0lQIeHOexNBl7OjJ8gw6rKr/hGz.kKY8sT3QXu',
-                    firstName: 'Анна',
-                    lastName: 'Петрова',
-                    phone: '+380501234567',
-                    role: 'CUSTOMER',
-                    isActive: true,
-                    emailVerified: true
-                }
-            }),
-            prisma.user.create({
-                data: {
-                    email: 'customer2@example.com',
-                    password: '$2b$10$K7L/VQkgf8.3VrT0lQIeHOexNBl7OjJ8gw6rKr/hGz.kKY8sT3QXu',
-                    firstName: 'Иван',
-                    lastName: 'Сидоров',
-                    phone: '+380679876543',
-                    role: 'CUSTOMER',
-                    isActive: true,
-                    emailVerified: true
-                }
-            })
-        ]);
-        console.log(`✅ Created ${customers.length} test customers`);
 
         // Создаем тестовые заявки на обратный звонок
         console.log('📞 Creating test callbacks...');
@@ -111,7 +79,7 @@ async function main() {
                     message: 'Интересует доставка воздушных шаров на свадьбу',
                     status: 'IN_PROGRESS',
                     priority: 'HIGH',
-                    manager: 'Manager User',
+                    managerId: managerUser.id,
                     source: 'phone'
                 }
             })
@@ -159,10 +127,14 @@ async function main() {
         ];
 
         for (const setting of settings) {
-            await prisma.settings.upsert({
+            await prisma.setting.upsert({
                 where: { key: setting.key },
-                update: setting,
-                create: setting
+                update: { value: JSON.parse(setting.value), type: setting.type },
+                create: {
+                    key: setting.key,
+                    value: JSON.parse(setting.value),
+                    type: setting.type
+                }
             });
         }
         console.log(`✅ Created ${settings.length} site settings`);
@@ -193,8 +165,14 @@ async function main() {
         for (const page of pages) {
             await prisma.page.upsert({
                 where: { slug: page.slug },
-                update: page,
-                create: page
+                update: {
+                    ...page,
+                    isActive: page.active
+                },
+                create: {
+                    ...page,
+                    isActive: page.active
+                }
             });
         }
         console.log(`✅ Created ${pages.length} test pages`);
@@ -209,7 +187,7 @@ async function main() {
                 image: '/images/banners/discount-banner.jpg',
                 buttonText: 'Купить сейчас',
                 buttonUrl: '/products',
-                position: 'main',
+                position: BannerPosition.MAIN,
                 active: true,
                 order: 1
             },
@@ -220,7 +198,7 @@ async function main() {
                 image: '/images/banners/new-collection.jpg',
                 buttonText: 'Посмотреть',
                 buttonUrl: '/products?filter=new',
-                position: 'main',
+                position: BannerPosition.MAIN,
                 active: true,
                 order: 2
             }
@@ -228,7 +206,17 @@ async function main() {
 
         for (const banner of banners) {
             await prisma.banner.create({
-                data: banner
+                data: {
+                    title: banner.title,
+                    subtitle: banner.subtitle,
+                    description: banner.description,
+                    imageUrl: banner.image,
+                    link: banner.buttonUrl,
+                    buttonText: banner.buttonText,
+                    position: banner.position,
+                    isActive: banner.active,
+                    sortOrder: banner.order
+                }
             });
         }
         console.log(`✅ Created ${banners.length} test banners`);
@@ -239,7 +227,7 @@ async function main() {
         console.log(`- Products: ${await prisma.product.count()}`);
         console.log(`- Users: ${await prisma.user.count()}`);
         console.log(`- Callbacks: ${await prisma.callback.count()}`);
-        console.log(`- Settings: ${await prisma.settings.count()}`);
+        console.log(`- Settings: ${await prisma.setting.count()}`);
         console.log(`- Pages: ${await prisma.page.count()}`);
         console.log(`- Banners: ${await prisma.banner.count()}`);
 
