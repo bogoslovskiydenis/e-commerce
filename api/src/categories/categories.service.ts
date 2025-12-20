@@ -8,7 +8,10 @@ export class CategoriesService {
 
   async getCategories(query: any) {
     const { page = 1, limit = 50, parentId, active, search, type, sortBy = 'sortOrder', sortOrder = 'asc' } = query;
-    const skip = (page - 1) * limit;
+    // Преобразуем строковые значения в числа для Prisma
+    const pageNum = parseInt(String(page), 10) || 1;
+    const limitNum = parseInt(String(limit), 10) || 50;
+    const skip = (pageNum - 1) * limitNum;
 
     const where: any = {};
 
@@ -46,10 +49,14 @@ export class CategoriesService {
           children: {
             select: { id: true, name: true, slug: true },
           },
+          products: {
+            select: { id: true },
+            where: { isActive: true }
+          },
         },
         orderBy,
         skip,
-        take: limit,
+        take: limitNum,
       }),
       this.prisma.category.count({ where }),
     ]);

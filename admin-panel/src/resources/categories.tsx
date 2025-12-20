@@ -23,11 +23,40 @@ import {
     Show,
     SimpleShowLayout,
     DateField,
-    FunctionField  // ДОБАВЛЕНО
+    FunctionField,
+    useRecordContext
 } from "react-admin";
 import { Chip, Box, Typography, Button } from '@mui/material';
 import { Visibility, VisibilityOff, Navigation } from '@mui/icons-material';
 import {CategoryDeleteButton} from "../components/categories/CategoryDeleteButton";
+
+// Вспомогательная функция для получения названия типа категории
+const getCategoryTypeLabel = (type: string): string => {
+    const typeLabels: Record<string, string> = {
+        'products': 'Товары',
+        'balloons': 'Шарики',
+        'bouquets': 'Букеты',
+        'gifts': 'Подарки',
+        'cups': 'Стаканчики',
+        'sets': 'Наборы',
+        'events': 'События',
+        'colors': 'Цвета',
+        'materials': 'Материалы',
+        'occasions': 'Поводы',
+        'PRODUCTS': 'Товары',
+        'BALLOONS': 'Шарики',
+        'BOUQUETS': 'Букеты',
+        'GIFTS': 'Подарки',
+        'CUPS': 'Стаканчики',
+        'SETS': 'Наборы',
+        'EVENTS': 'События',
+        'COLORS': 'Цвета',
+        'MATERIALS': 'Материалы',
+        'OCCASIONS': 'Поводы'
+    };
+
+    return typeLabels[type] || type;
+};
 
 // Фильтры для списка категорий
 const CategoryFilter = () => (
@@ -97,12 +126,50 @@ export const CategoryList = () => (
     <List
         filters={<CategoryFilter />}
         actions={<CategoryListActions />}
-        sort={{ field: 'order', order: 'ASC' }}
+        sort={{ field: 'sortOrder', order: 'ASC' }}
         perPage={50}
         title="Управление категориями"
     >
         <Datagrid rowClick="edit" bulkActionButtons={false}>
-            <TextField source="name" label="Название" />
+            <FunctionField
+                label="Название"
+                render={(record: any) => (
+                    <Box display="flex" alignItems="center" gap={1}>
+                        {record?.parentId && (
+                            <Box
+                                component="span"
+                                sx={{
+                                    display: 'inline-block',
+                                    width: '20px',
+                                    height: '20px',
+                                    position: 'relative',
+                                    '&::before': {
+                                        content: '""',
+                                        position: 'absolute',
+                                        left: '8px',
+                                        top: '50%',
+                                        width: '12px',
+                                        height: '1px',
+                                        backgroundColor: '#9ca3af',
+                                    },
+                                    '&::after': {
+                                        content: '""',
+                                        position: 'absolute',
+                                        left: '8px',
+                                        top: '0',
+                                        width: '1px',
+                                        height: '50%',
+                                        backgroundColor: '#9ca3af',
+                                    }
+                                }}
+                            />
+                        )}
+                        <span style={{ fontWeight: record?.parentId ? 'normal' : '500' }}>
+                            {record?.name}
+                        </span>
+                    </Box>
+                )}
+            />
 
             <TextField
                 source="slug"
@@ -132,7 +199,7 @@ export const CategoryList = () => (
                 <TextField source="name" />
             </ReferenceField>
 
-            <NumberField source="order" label="Порядок" />
+            <NumberField source="sortOrder" label="Порядок" />
 
             <FunctionField
                 label="Статус"
@@ -192,75 +259,76 @@ export const CategoryCreate = () => (
 );
 
 // Общая форма для создания и редактирования
-const CategoryForm = () => (
-    <SimpleForm>
-        <Box display="flex" gap={3} width="100%">
-            <Box flex={2}>
-                <Typography variant="h6" gutterBottom>
-                    Основная информация
-                </Typography>
+const CategoryForm = () => {
+    const record = useRecordContext();
+    
+    return (
+        <SimpleForm>
+            <Box display="flex" gap={3} width="100%">
+                <Box flex={2}>
+                    <Typography variant="h6" gutterBottom>
+                        Основная информация
+                    </Typography>
 
-                <TextInput
-                    source="name"
-                    label="Название категории"
-                    validate={[required()]}
-                    fullWidth
-                />
-
-                <TextInput
-                    source="slug"
-                    label="URL (slug)"
-                    validate={[required()]}
-                    fullWidth
-                    helperText="Используется в адресе страницы. Только латинские буквы, цифры и дефисы"
-                />
-
-                <TextInput
-                    multiline
-                    source="description"
-                    label="Описание"
-                    rows={3}
-                    fullWidth
-                />
-
-                <SelectInput
-                    source="type"
-                    label="Тип категории"
-                    choices={[
-                        { id: 'products', name: 'Товары' },
-                        { id: 'balloons', name: 'Шарики' },
-                        { id: 'bouquets', name: 'Букеты' },
-                        { id: 'gifts', name: 'Подарки' },
-                        { id: 'cups', name: 'Стаканчики' },
-                        { id: 'sets', name: 'Наборы' },
-                        { id: 'events', name: 'События' },
-                        { id: 'colors', name: 'Цвета' },
-                        { id: 'materials', name: 'Материалы' },
-                        { id: 'occasions', name: 'Поводы' }
-                    ]}
-                    validate={[required()]}
-                    fullWidth
-                />
-            </Box>
-
-            <Box flex={1}>
-                <Typography variant="h6" gutterBottom>
-                    Настройки
-                </Typography>
-
-                <ReferenceInput
-                    source="parentId"
-                    reference="categories"
-                    label="Родительская категория"
-                >
-                    <SelectInput
-                        optionText="name"
-                        emptyText="Корневая категория"
+                    <TextInput
+                        source="name"
+                        label="Название категории"
+                        validate={[required()]}
+                        fullWidth
                     />
-                </ReferenceInput>
+
+                    <TextInput
+                        source="slug"
+                        label="URL (slug)"
+                        validate={[required()]}
+                        fullWidth
+                        helperText="Используется в адресе страницы. Только латинские буквы, цифры и дефисы"
+                    />
+
+                    <TextInput
+                        multiline
+                        source="description"
+                        label="Описание"
+                        rows={3}
+                        fullWidth
+                    />
+
+                    <SelectInput
+                        source="type"
+                        label="Тип категории"
+                        choices={[
+                            { id: 'PRODUCTS', name: 'Товары' },
+                            { id: 'BALLOONS', name: 'Шарики' },
+                            { id: 'GIFTS', name: 'Подарки' },
+                            { id: 'EVENTS', name: 'События' },
+                            { id: 'COLORS', name: 'Цвета' },
+                            { id: 'MATERIALS', name: 'Материалы' },
+                            { id: 'OCCASIONS', name: 'Поводы' }
+                        ]}
+                        validate={[required()]}
+                        fullWidth
+                    />
+                </Box>
+
+                <Box flex={1}>
+                    <Typography variant="h6" gutterBottom>
+                        Настройки
+                    </Typography>
+
+                    <ReferenceInput
+                        source="parentId"
+                        reference="categories"
+                        label="Родительская категория"
+                        filter={record?.id ? { id: { not: record.id } } : {}}
+                    >
+                        <SelectInput
+                            optionText="name"
+                            emptyText="Корневая категория (без родителя)"
+                        />
+                    </ReferenceInput>
 
                 <NumberInput
-                    source="order"
+                    source="sortOrder"
                     label="Порядок сортировки"
                     defaultValue={0}
                     min={0}
@@ -367,8 +435,9 @@ const CategoryForm = () => (
                 />
             </Box>
         </Box>
-    </SimpleForm>
-);
+        </SimpleForm>
+    );
+};
 
 // Компонент просмотра категории
 export const CategoryShow = () => (
@@ -393,7 +462,7 @@ export const CategoryShow = () => (
                 <TextField source="name" />
             </ReferenceField>
 
-            <NumberField source="order" label="Порядок сортировки" />
+            <NumberField source="sortOrder" label="Порядок сортировки" />
             <BooleanField source="active" label="Активна" />
             <BooleanField source="showInNavigation" label="Показывать в навигации" />
 
@@ -409,31 +478,3 @@ export const CategoryShow = () => (
         </SimpleShowLayout>
     </Show>
 );
-
-// Вспомогательная функция для получения названия типа категории
-const getCategoryTypeLabel = (type: string): string => {
-    const typeLabels: Record<string, string> = {
-        'products': 'Товары',
-        'balloons': 'Шарики',
-        'bouquets': 'Букеты',
-        'gifts': 'Подарки',
-        'cups': 'Стаканчики',
-        'sets': 'Наборы',
-        'events': 'События',
-        'colors': 'Цвета',
-        'materials': 'Материалы',
-        'occasions': 'Поводы',
-        'PRODUCTS': 'Товары',
-        'BALLOONS': 'Шарики',
-        'BOUQUETS': 'Букеты',
-        'GIFTS': 'Подарки',
-        'CUPS': 'Стаканчики',
-        'SETS': 'Наборы',
-        'EVENTS': 'События',
-        'COLORS': 'Цвета',
-        'MATERIALS': 'Материалы',
-        'OCCASIONS': 'Поводы'
-    };
-
-    return typeLabels[type] || type;
-};

@@ -108,20 +108,29 @@ export default function NavigationManager() {
             setError(null);
 
             // Отправляем обновления на сервер
-            await Promise.all(
+            const results = await Promise.allSettled(
                 categories.map(category =>
                     adminApiService.updateCategoryNavigation(category.id, {
                         showInNavigation: category.isVisible,
-                        order: category.order
+                        order: category.order,
+                        active: category.active
                     })
                 )
             );
 
+            // Проверяем результаты
+            const failed = results.filter(r => r.status === 'rejected');
+            if (failed.length > 0) {
+                console.error('Some updates failed:', failed);
+                throw new Error(`Не удалось сохранить ${failed.length} категорий`);
+            }
+
             setHasChanges(false);
-            alert('Изменения сохранены успешно!');
-        } catch (error) {
+            // Перезагружаем данные после успешного сохранения
+            await loadCategories();
+        } catch (error: any) {
             console.error('Save error:', error);
-            setError('Ошибка сохранения изменений');
+            setError(error.message || 'Ошибка сохранения изменений');
         } finally {
             setSaving(false);
         }

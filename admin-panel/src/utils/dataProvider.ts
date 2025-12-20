@@ -49,7 +49,12 @@ const convertRAParamsToAPI = (params: any, resource?: string) => {
     if (perPage) apiParams.limit = perPage;
 
     if (sort?.field) {
-        apiParams.sortBy = sort.field;
+        // Маппинг полей сортировки
+        let sortField = sort.field;
+        if (sortField === 'order') sortField = 'sortOrder';
+        if (sortField === 'date') sortField = 'createdAt';
+        
+        apiParams.sortBy = sortField;
         apiParams.sortOrder = sort.order?.toLowerCase() === 'desc' ? 'desc' : 'asc';
     }
 
@@ -65,7 +70,12 @@ const convertRAParamsToAPI = (params: any, resource?: string) => {
                         'spam': 'REJECTED'
                     };
                     apiParams[key] = statusMap[filter[key]] || filter[key];
-                } else {
+                } 
+                // Трансформируем active -> isActive для категорий
+                else if (resource === 'categories' && key === 'active') {
+                    apiParams.isActive = filter[key];
+                }
+                else {
                     apiParams[key] = filter[key];
                 }
             }
@@ -178,6 +188,15 @@ const dataProvider: DataProvider = {
                 data = data.map(transformOrder);
             }
 
+            // Трансформируем данные для ресурса 'categories'
+            if (resource === 'categories') {
+                data = data.map((category: any) => ({
+                    ...category,
+                    active: category.isActive !== undefined ? category.isActive : true,
+                    order: category.sortOrder || 0
+                }));
+            }
+
             console.log('✅ getList результат:', { data, total });
 
             return {
@@ -212,6 +231,15 @@ const dataProvider: DataProvider = {
             // Трансформируем данные для ресурса 'orders'
             if (resource === 'orders') {
                 data = transformOrder(data);
+            }
+
+            // Трансформируем данные для ресурса 'categories'
+            if (resource === 'categories') {
+                data = {
+                    ...data,
+                    active: data.isActive !== undefined ? data.isActive : true,
+                    order: data.sortOrder || 0
+                };
             }
 
             return { data };
@@ -282,9 +310,22 @@ const dataProvider: DataProvider = {
         console.log('➕ create вызов:', { resource, data: params.data });
 
         try {
+            let createData = params.data;
+            
+            // Трансформируем данные для ресурса 'categories' (react-admin -> API)
+            if (resource === 'categories') {
+                createData = {
+                    ...params.data,
+                    isActive: params.data.active !== undefined ? params.data.active : params.data.isActive,
+                    sortOrder: params.data.order !== undefined ? params.data.order : params.data.sortOrder
+                };
+                delete createData.active;
+                delete createData.order;
+            }
+
             const { json } = await httpClient(`${API_BASE_URL}${endpoint}`, {
                 method: 'POST',
-                body: JSON.stringify(params.data),
+                body: JSON.stringify(createData),
             });
 
             console.log('✅ create результат:', json);
@@ -349,6 +390,18 @@ const dataProvider: DataProvider = {
                 };
             }
 
+            // Трансформируем данные обратно для ресурса 'categories' (react-admin -> API)
+            if (resource === 'categories') {
+                updateData = {
+                    ...params.data,
+                    isActive: params.data.active !== undefined ? params.data.active : params.data.isActive,
+                    sortOrder: params.data.order !== undefined ? params.data.order : params.data.sortOrder
+                };
+                // Удаляем временные поля
+                delete updateData.active;
+                delete updateData.order;
+            }
+
             const { json } = await httpClient(`${API_BASE_URL}${endpoint}/${params.id}`, {
                 method: 'PUT',
                 body: JSON.stringify(updateData),
@@ -366,6 +419,15 @@ const dataProvider: DataProvider = {
             // Трансформируем ответ для ресурса 'orders'
             if (resource === 'orders') {
                 resultData = transformOrder(resultData);
+            }
+
+            // Трансформируем ответ для ресурса 'categories'
+            if (resource === 'categories') {
+                resultData = {
+                    ...resultData,
+                    active: resultData.isActive !== undefined ? resultData.isActive : true,
+                    order: resultData.sortOrder || 0
+                };
             }
 
             return { data: resultData };

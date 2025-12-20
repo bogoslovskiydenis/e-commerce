@@ -39,50 +39,44 @@ class AdminApiService {
 
     async getNavigationCategories(): Promise<Category[]> {
         try {
-            const data = await this.request('/categories?sort=order');
-            return data.data || [];
+            // Получаем все категории для управления навигацией
+            const data = await this.request('/categories?limit=100&sortBy=sortOrder&sortOrder=asc');
+            const categories = data.data || [];
+            
+            // Трансформируем данные из API формата в формат Category
+            return categories.map((cat: any) => ({
+                id: cat.id,
+                name: cat.name,
+                slug: cat.slug,
+                type: cat.type,
+                showInNavigation: cat.showInNavigation !== undefined ? cat.showInNavigation : true,
+                order: cat.sortOrder || 0,
+                active: cat.isActive !== undefined ? cat.isActive : true,
+                productsCount: cat.products?.length || 0,
+                parentId: cat.parentId
+            }));
         } catch (error) {
             console.error('Error fetching categories:', error);
-            // Возвращаем тестовые данные если API недоступно
-            return [
-                {
-                    id: '1',
-                    name: 'Шарики',
-                    slug: 'balloons',
-                    type: 'balloons',
-                    showInNavigation: true,
-                    order: 1,
-                    active: true,
-                    productsCount: 245
-                },
-                {
-                    id: '2', 
-                    name: 'Букеты из шаров',
-                    slug: 'bouquets',
-                    type: 'bouquets',
-                    showInNavigation: true,
-                    order: 2,
-                    active: true,
-                    productsCount: 156
-                },
-                {
-                    id: '3',
-                    name: 'Подарки', 
-                    slug: 'gifts',
-                    type: 'gifts',
-                    showInNavigation: false,
-                    order: 3,
-                    active: true,
-                    productsCount: 203
-                }
-            ];
+            return [];
         }
     }
 
     async updateCategoryNavigation(categoryId: string, updates: Partial<Category>) {
+        // Трансформируем данные: order -> sortOrder, active -> isActive
+        const apiUpdates: any = {};
+        if (updates.showInNavigation !== undefined) {
+            apiUpdates.showInNavigation = updates.showInNavigation;
+        }
+        if (updates.order !== undefined) {
+            apiUpdates.sortOrder = updates.order;
+        }
+        if (updates.active !== undefined) {
+            apiUpdates.isActive = updates.active;
+        }
+        
         return this.request(`/categories/${categoryId}`, {
-            method: 'PATCH',
-            body: JSON.stringify(updates),
+            method: 'PUT',
+            body: JSON.stringify(apiUpdates),
         });
     }
 }
