@@ -98,6 +98,7 @@ export class CategoriesService {
       where: {
         isActive: true,
         showInNavigation: true,
+        parentId: null, // Только родительские категории для навигации
       },
       include: {
         children: {

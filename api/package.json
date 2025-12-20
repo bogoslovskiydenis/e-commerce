@@ -18,6 +18,7 @@
     "seed:callbacks": "tsx scripts/seedCallbacks.mjs",
     "seed:customers": "tsx scripts/seedCustomers.mjs",
     "seed:orders": "tsx scripts/seedOrders.mjs",
+    "seed:structured": "tsx scripts/seedStructuredData.mjs",
     "seed:all": "tsx scripts/seedAll.mjs"
   },
   "dependencies": {
