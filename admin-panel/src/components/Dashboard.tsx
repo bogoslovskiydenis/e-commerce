@@ -4,9 +4,11 @@ import {
     Grid,
     Card,
     CardContent,
+    CardHeader,
     Typography,
     CircularProgress,
-    Alert
+    Alert,
+    Chip
 } from '@mui/material';
 import {
     TrendingUp,
@@ -15,7 +17,8 @@ import {
     Inventory,
     AttachMoney
 } from '@mui/icons-material';
-import { useDataProvider, useNotify } from 'react-admin';
+import { useDataProvider, useNotify, useGetList } from 'react-admin';
+import { LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 interface DashboardStats {
     totalUsers: number;
@@ -26,11 +29,53 @@ interface DashboardStats {
     completedOrders: number;
 }
 
+interface ChartData {
+    date: string;
+    visitors: number;
+    orders: number;
+    conversion: number;
+}
+
+const chartData: ChartData[] = [
+    { date: '17.06', visitors: 0, orders: 0, conversion: 0 },
+    { date: '18.06', visitors: 0, orders: 0, conversion: 0 },
+    { date: '19.06', visitors: 0, orders: 0, conversion: 0 },
+    { date: '20.06', visitors: 0, orders: 0, conversion: 0 },
+    { date: '21.06', visitors: 0, orders: 0, conversion: 0 },
+    { date: '22.06', visitors: 0, orders: 0, conversion: 0 },
+    { date: '23.06', visitors: 4, orders: 2, conversion: 0.5 },
+    { date: '24.06', visitors: 0, orders: 0, conversion: 0 },
+];
+
+const ChartCard: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
+    <Card sx={{ height: 300 }}>
+        <CardHeader title={title} />
+        <CardContent sx={{ height: 240 }}>
+            {children}
+        </CardContent>
+    </Card>
+);
+
+const TimePeriods = () => (
+    <Box sx={{ display: 'flex', gap: 1, mb: 3 }}>
+        <Chip label="Сегодня" variant="outlined" />
+        <Chip label="Вчера" variant="outlined" />
+        <Chip label="Неделя" variant="outlined" />
+        <Chip label="Месяц" variant="outlined" />
+        <Chip label="Квартал" variant="filled" color="primary" />
+    </Box>
+);
+
 const Dashboard: React.FC = () => {
     const [stats, setStats] = useState<DashboardStats | null>(null);
     const [loading, setLoading] = useState(true);
     const dataProvider = useDataProvider();
     const notify = useNotify();
+    
+    const { data: orders } = useGetList('orders', {
+        pagination: { page: 1, perPage: 1000 },
+        sort: { field: 'date', order: 'DESC' }
+    });
 
     useEffect(() => {
         loadStats();
@@ -185,6 +230,57 @@ const Dashboard: React.FC = () => {
                 ))}
             </Grid>
 
+            <Box sx={{ mb: 3, mt: 4 }}>
+                <Typography variant="h5" component="h2" gutterBottom>
+                    Обзор
+                </Typography>
+                <TimePeriods />
+            </Box>
+
+            <Grid container spacing={3} sx={{ mb: 4 }}>
+                <Grid item xs={12} md={4}>
+                    <ChartCard title="Посетители">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <AreaChart data={chartData}>
+                                <CartesianGrid strokeDasharray="3 3" />
+                                <XAxis dataKey="date" />
+                                <YAxis />
+                                <Tooltip />
+                                <Area type="monotone" dataKey="visitors" stroke="#9CA3AF" fill="#F3F4F6" />
+                            </AreaChart>
+                        </ResponsiveContainer>
+                    </ChartCard>
+                </Grid>
+
+                <Grid item xs={12} md={4}>
+                    <ChartCard title="Заказы">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <AreaChart data={chartData}>
+                                <CartesianGrid strokeDasharray="3 3" />
+                                <XAxis dataKey="date" />
+                                <YAxis />
+                                <Tooltip />
+                                <Area type="monotone" dataKey="orders" stroke="#10B981" fill="#D1FAE5" />
+                            </AreaChart>
+                        </ResponsiveContainer>
+                    </ChartCard>
+                </Grid>
+
+                <Grid item xs={12} md={4}>
+                    <ChartCard title="Конверсия">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <LineChart data={chartData}>
+                                <CartesianGrid strokeDasharray="3 3" />
+                                <XAxis dataKey="date" />
+                                <YAxis />
+                                <Tooltip />
+                                <Line type="monotone" dataKey="conversion" stroke="#06B6D4" strokeWidth={2} />
+                            </LineChart>
+                        </ResponsiveContainer>
+                    </ChartCard>
+                </Grid>
+            </Grid>
+
             <Grid container spacing={3} sx={{ mt: 3 }}>
                 <Grid item xs={12} md={6}>
                     <Card>
@@ -213,6 +309,19 @@ const Dashboard: React.FC = () => {
                                 • Последнее обновление: {new Date().toLocaleDateString()}<br />
                                 • Статус API: Подключено<br />
                                 • Аутентификация: Активна
+                            </Typography>
+                        </CardContent>
+                    </Card>
+                </Grid>
+            </Grid>
+
+            <Grid container spacing={3} sx={{ mt: 3 }}>
+                <Grid item xs={12} md={6}>
+                    <Card>
+                        <CardHeader title="Последние заказы" />
+                        <CardContent>
+                            <Typography variant="body2" color="text.secondary">
+                                Всего заказов: {orders?.length || 0}
                             </Typography>
                         </CardContent>
                     </Card>
