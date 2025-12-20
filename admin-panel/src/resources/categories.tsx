@@ -19,7 +19,6 @@ import {
     Filter,
     TopToolbar,
     CreateButton,
-    DeleteButton,
     Show,
     SimpleShowLayout,
     DateField,

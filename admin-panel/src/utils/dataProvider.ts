@@ -42,11 +42,14 @@ const RESOURCE_ENDPOINTS: Record<string, string> = {
 };
 
 const convertRAParamsToAPI = (params: any, resource?: string) => {
-    const { page, perPage, sort, filter } = params;
+    const { pagination, sort, filter } = params;
+    const page = pagination?.page;
+    const perPage = pagination?.perPage;
     const apiParams: any = {};
 
-    if (page) apiParams.page = page;
-    if (perPage) apiParams.limit = perPage;
+    // Всегда передаем параметры пагинации (используем переданные значения или дефолты)
+    apiParams.page = page !== undefined ? page : 1;
+    apiParams.limit = perPage !== undefined ? perPage : 25;
 
     if (sort?.field) {
         // Маппинг полей сортировки
@@ -61,8 +64,12 @@ const convertRAParamsToAPI = (params: any, resource?: string) => {
     if (filter) {
         Object.keys(filter).forEach(key => {
             if (filter[key] !== undefined && filter[key] !== null && filter[key] !== '') {
+                // Трансформируем q -> search для поиска
+                if (key === 'q') {
+                    apiParams.search = filter[key];
+                }
                 // Трансформируем статус для ресурса 'comments' (new -> PENDING, approved -> APPROVED, rejected -> REJECTED)
-                if (resource === 'comments' && key === 'status') {
+                else if (resource === 'comments' && key === 'status') {
                     const statusMap: Record<string, string> = {
                         'new': 'PENDING',
                         'approved': 'APPROVED',
@@ -163,20 +170,39 @@ const dataProvider: DataProvider = {
             throw new Error(`Unknown resource: ${resource}`);
         }
 
-        console.log('📋 getList вызов:', { resource, params });
+        console.log('📋 getList вызов:', { 
+            resource, 
+            params, 
+            perPage: params.pagination?.perPage, 
+            page: params.pagination?.page 
+        });
 
         const apiParams = convertRAParamsToAPI(params, resource);
-        const query = new URLSearchParams(apiParams as any).toString();
-        const url = `${API_BASE_URL}${endpoint}?${query}`;
+        
+        // Убеждаемся, что числовые параметры передаются как числа в строке
+        const queryParams = new URLSearchParams();
+        Object.keys(apiParams).forEach(key => {
+            const value = apiParams[key];
+            if (value !== undefined && value !== null && value !== '') {
+                queryParams.append(key, String(value));
+            }
+        });
+        
+        const url = `${API_BASE_URL}${endpoint}?${queryParams.toString()}`;
 
         console.log('🌐 Запрос URL:', url);
+        console.log('📊 API параметры:', apiParams);
 
         try {
             const { json } = await httpClient(url);
             console.log('📥 API ответ:', { type: 'getList', response: json });
 
             let data = json.data || [];
-            const total = json.total || json.pagination?.total || data.length;
+            // Правильная обработка пагинации - сначала проверяем pagination объект
+            const total = json.pagination?.total || json.total || data.length;
+            
+            // Логируем для отладки
+            console.log('📦 Получено данных:', data.length, 'Ожидалось:', apiParams.limit, 'Всего:', total);
 
             // Трансформируем данные для ресурса 'comments'
             if (resource === 'comments') {

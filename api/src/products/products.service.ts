@@ -8,7 +8,10 @@ export class ProductsService {
 
   async getProducts(query: ProductQueryDto) {
     const { page = 1, limit = 25, sortBy = 'createdAt', sortOrder = 'desc', search, categoryId } = query;
-    const skip = (page - 1) * limit;
+    // Убеждаемся, что limit - это число
+    const limitNum = Number(limit) || 25;
+    const pageNum = Number(page) || 1;
+    const skip = (pageNum - 1) * limitNum;
 
     const where: any = {};
 
@@ -44,15 +47,31 @@ export class ProductsService {
         },
         orderBy,
         skip,
-        take: limit,
+        take: limitNum,
       }),
       this.prisma.product.count({ where }),
     ]);
 
+    const totalPages = Math.ceil(total / limitNum);
+
+    // Логируем для отладки
+    console.log('📦 Products API:', { 
+      requestedLimit: limit, 
+      actualLimit: limitNum, 
+      returnedCount: products.length, 
+      total, 
+      page: pageNum 
+    });
+
     return {
       success: true,
       data: products.map(this.formatProduct),
-      total,
+      pagination: {
+        page: pageNum,
+        limit: limitNum,
+        total,
+        totalPages,
+      },
     };
   }
 

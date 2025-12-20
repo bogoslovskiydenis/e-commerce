@@ -28,6 +28,8 @@ export default function UniversalCategoryPage({
     const [sortBy, setSortBy] = useState('popular')
     const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
     const [showMobileFilters, setShowMobileFilters] = useState(false)
+    const [currentPage, setCurrentPage] = useState(1)
+    const productsPerPage = 20
     const [filters, setFilters] = useState<FilterState>({
         priceRange: { from: '', to: '' },
         colors: [],
@@ -156,6 +158,20 @@ export default function UniversalCategoryPage({
         }
     }, [filteredProducts, sortBy])
 
+    // Пагинация товаров
+    const totalPages = Math.ceil(sortedProducts.length / productsPerPage)
+    const paginatedProducts = useMemo(() => {
+        const startIndex = (currentPage - 1) * productsPerPage
+        const endIndex = startIndex + productsPerPage
+        return sortedProducts.slice(startIndex, endIndex)
+    }, [sortedProducts, currentPage, productsPerPage])
+
+    // Сброс на первую страницу при изменении фильтров или сортировки
+    const handlePageChange = (page: number) => {
+        setCurrentPage(page)
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+
     // Функция для закрытия мобильных фильтров
     const closeMobileFilters = () => {
         setShowMobileFilters(false)
@@ -164,6 +180,7 @@ export default function UniversalCategoryPage({
     // Обработка изменения фильтров
     const handleFiltersChange = (newFilters: FilterState) => {
         setFilters(newFilters)
+        setCurrentPage(1) // Сброс на первую страницу при изменении фильтров
     }
 
     // Получение активных фильтров для отображения
@@ -331,7 +348,10 @@ export default function UniversalCategoryPage({
                     {/* Тулбар с фильтрами и сортировкой */}
                     <ToolbarSection
                         sortBy={sortBy}
-                        setSortBy={setSortBy}
+                        setSortBy={(newSort) => {
+                            setSortBy(newSort)
+                            setCurrentPage(1) // Сброс на первую страницу при изменении сортировки
+                        }}
                         viewMode={viewMode}
                         setViewMode={setViewMode}
                         onShowMobileFilters={() => setShowMobileFilters(true)}
@@ -349,9 +369,9 @@ export default function UniversalCategoryPage({
 
                     {/* Товары в сетке или списке */}
                     {viewMode === 'grid' ? (
-                        <ProductGrid products={sortedProducts} basePath={config.basePath} />
+                        <ProductGrid products={paginatedProducts} basePath={config.basePath} />
                     ) : (
-                        <ProductList products={sortedProducts} basePath={config.basePath} />
+                        <ProductList products={paginatedProducts} basePath={config.basePath} />
                     )}
 
                     {/* Сообщение если нет товаров */}
@@ -374,7 +394,13 @@ export default function UniversalCategoryPage({
                     )}
 
                     {/* Пагинация */}
-                    {sortedProducts.length > 0 && <PaginationSection />}
+                    {sortedProducts.length > 0 && totalPages > 1 && (
+                        <PaginationSection
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            onPageChange={handlePageChange}
+                        />
+                    )}
                 </div>
             </div>
 

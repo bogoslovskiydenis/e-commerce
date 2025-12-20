@@ -12,7 +12,7 @@ import {
     Chip,
     CircularProgress
 } from '@mui/material';
-import { adminApiService, Category } from '../../services/api';
+import { adminApiService } from '../../services/api';
 
 // Интерфейс для элемента навигации
 interface NavigationItem {

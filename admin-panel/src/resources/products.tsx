@@ -26,8 +26,10 @@ import {
     SearchInput,
     TopToolbar,
     CreateButton,
-    ExportButton
+    ExportButton,
+    FunctionField
 } from 'react-admin';
+import CustomPagination from '../components/CustomPagination';
 
 // ✅ ИСПРАВЛЕННЫЕ ФИЛЬТРЫ
 const ProductFilter = () => (
@@ -61,15 +63,16 @@ export const ProductList = () => (
                 <ExportButton />
             </TopToolbar>
         }
-        perPage={25}
+        perPage={10}
         sort={{ field: 'createdAt', order: 'DESC' }}
+        pagination={<CustomPagination />}
     >
         <Datagrid rowClick="edit" bulkActionButtons={false}>
             {/* ✅ SKU с правильным типом */}
-            <TextField
+            <FunctionField
                 source="sku"
                 label="Артикул"
-                render={({ record }: { record: any }) => record?.sku ? (
+                render={(record: any) => record?.sku ? (
                     <span style={{
                         fontFamily: 'monospace',
                         backgroundColor: '#f5f5f5',
@@ -85,10 +88,10 @@ export const ProductList = () => (
             />
 
             {/* ✅ Изображение с показом пути */}
-            <TextField
+            <FunctionField
                 source="images"
                 label="Фото"
-                render={({ record }: { record: any }) => {
+                render={(record: any) => {
                     if (!record?.images || !Array.isArray(record.images) || record.images.length === 0) {
                         return <span style={{ color: '#999' }}>Нет изображения</span>;
                     }
@@ -154,10 +157,10 @@ export const ProductList = () => (
             />
 
             {/* ✅ Скидка с правильным типом */}
-            <TextField
+            <FunctionField
                 source="discount"
                 label="Скидка"
-                render={({ record }: { record: any }) => record?.discount ? (
+                render={(record: any) => record?.discount ? (
                     <span style={{
                         color: '#d32f2f',
                         fontWeight: 'bold',
@@ -279,10 +282,10 @@ export const ProductShow = () => (
             <TextField source="id" />
 
             {/* ✅ SKU с правильным типом */}
-            <TextField
+            <FunctionField
                 source="sku"
                 label="Артикул (SKU)"
-                render={({ record }: { record: any }) => record?.sku ? (
+                render={(record: any) => record?.sku ? (
                     <span style={{
                         fontFamily: 'monospace',
                         backgroundColor: '#f5f5f5',
@@ -330,10 +333,10 @@ export const ProductShow = () => (
             <NumberField source="stockQuantity" />
 
             {/* ✅ Изображение с путем */}
-            <TextField
+            <FunctionField
                 source="images"
                 label="Изображение"
-                render={({ record }: { record: any }) => {
+                render={(record: any) => {
                     if (!record?.images || !Array.isArray(record.images) || record.images.length === 0) {
                         return <span style={{ color: '#999' }}>Нет изображения</span>;
                     }

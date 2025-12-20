@@ -20,8 +20,7 @@ import {
     Filter,
     SearchInput,
     TopToolbar,
-    ExportButton,
-    CreateButton
+    ExportButton
 } from 'react-admin';
 
 // Компонент для отображения статуса заказа

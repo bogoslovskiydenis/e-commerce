@@ -77,11 +77,7 @@ const Dashboard: React.FC = () => {
         sort: { field: 'date', order: 'DESC' }
     });
 
-    useEffect(() => {
-        loadStats();
-    }, []);
-
-    const loadStats = async () => {
+    const loadStats = React.useCallback(async () => {
         try {
             setLoading(true);
 
@@ -113,7 +109,11 @@ const Dashboard: React.FC = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [dataProvider, notify]);
+
+    useEffect(() => {
+        loadStats();
+    }, [loadStats]);
 
     if (loading) {
         return (
