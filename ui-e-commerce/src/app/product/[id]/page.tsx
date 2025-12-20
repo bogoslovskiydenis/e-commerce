@@ -16,6 +16,7 @@ export default function ProductPage() {
                             src="/images/products/1.jpg"
                             alt="Product"
                             fill
+                            sizes="(max-width: 768px) 100vw, 50vw"
                             className="object-cover rounded-lg"
                         />
                     </div>
@@ -26,6 +27,7 @@ export default function ProductPage() {
                                     src="/images/products/1.jpg"
                                     alt={`Preview ${i}`}
                                     fill
+                                    sizes="(max-width: 768px) 25vw, 12.5vw"
                                     className="object-cover rounded-lg"
                                 />
                             </div>

@@ -62,6 +62,7 @@ export function DropdownMenu({ content }: DropdownMenuProps) {
                                                 src={card.image}
                                                 alt={card.title}
                                                 fill
+                                                sizes="100px"
                                                 className="object-cover"
                                             />
                                         </div>

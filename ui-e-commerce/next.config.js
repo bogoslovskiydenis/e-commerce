@@ -13,6 +13,8 @@ const nextConfig = {
                 hostname: '**',
             },
         ],
+        unoptimized: false,
+        formats: ['image/avif', 'image/webp'],
     },
 }
 

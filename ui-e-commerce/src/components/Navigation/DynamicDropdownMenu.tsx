@@ -145,6 +145,7 @@ export function DynamicDropdownMenu({ categoryType, categoryId, children }: Dyna
                                                     src={product.image}
                                                     alt={product.title || product.name || 'Product'}
                                                     fill
+                                                    sizes="64px"
                                                     className="object-cover group-hover:scale-110 transition-transform duration-200"
                                                 />
                                             ) : (

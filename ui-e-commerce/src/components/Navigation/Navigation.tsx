@@ -112,6 +112,8 @@ export default function Navigation() {
 
     // Показываем индикатор загрузки
     if (isLoading) {
+        // Фиксированные значения для предотвращения hydration mismatch
+        const skeletonWidths = [80, 100, 90, 85, 95];
         return (
             <div className="relative">
                 <nav className="bg-white border-t border-b">
@@ -122,7 +124,7 @@ export default function Navigation() {
                                     <div
                                         key={i}
                                         className="h-4 bg-gray-200 rounded animate-pulse"
-                                        style={{ width: `${Math.random() * 60 + 60}px` }}
+                                        style={{ width: `${skeletonWidths[i - 1]}px` }}
                                     />
                                 ))}
                             </div>

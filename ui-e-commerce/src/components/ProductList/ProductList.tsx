@@ -95,6 +95,7 @@ export default function ProductList({
                                     src={product.image}
                                     alt={product.name}
                                     fill
+                                    sizes="128px"
                                     className="object-cover rounded-lg transition-transform duration-300 group-hover:scale-105"
                                 />
                             </Link>

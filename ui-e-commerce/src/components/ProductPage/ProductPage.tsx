@@ -262,6 +262,7 @@ export default function ProductPage({ params }: ProductPageProps) {
                                     src={product.images[selectedImage]}
                                     alt={product.name}
                                     fill
+                                    sizes="(max-width: 768px) 100vw, 50vw"
                                     className="object-cover"
                                 />
                                 {product.discount && (
@@ -285,6 +286,7 @@ export default function ProductPage({ params }: ProductPageProps) {
                                             src={image}
                                             alt={`${product.name} ${index + 1}`}
                                             fill
+                                            sizes="(max-width: 768px) 25vw, 12.5vw"
                                             className="object-cover"
                                         />
                                     </button>
@@ -568,6 +570,7 @@ export default function ProductPage({ params }: ProductPageProps) {
                                         src="/images/hard.jpg"
                                         alt="Похожий товар"
                                         fill
+                                        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                                         className="object-cover"
                                     />
                                 </div>
