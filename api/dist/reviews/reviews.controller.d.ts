@@ -5,35 +5,35 @@ export declare class ReviewsController {
     getReviews(query: any): Promise<{
         success: boolean;
         data: ({
+            customer: {
+                id: string;
+                email: string;
+                name: string;
+            };
             product: {
                 id: string;
                 title: string;
                 slug: string;
                 images: string[];
             };
-            customer: {
-                id: string;
-                name: string;
-                email: string;
-            };
             moderator: {
-                id: string;
                 username: string;
+                id: string;
                 fullName: string;
             };
         } & {
-            id: string;
-            productId: string;
-            customerId: string | null;
-            name: string;
-            email: string | null;
-            rating: number;
             comment: string | null;
-            status: import(".prisma/client").$Enums.ReviewStatus;
-            moderatorId: string | null;
-            moderatedAt: Date | null;
+            id: string;
+            email: string | null;
             createdAt: Date;
             updatedAt: Date;
+            name: string;
+            status: import(".prisma/client").$Enums.ReviewStatus;
+            customerId: string | null;
+            productId: string;
+            rating: number;
+            moderatorId: string | null;
+            moderatedAt: Date | null;
         })[];
         pagination: {
             page: number;
@@ -45,98 +45,98 @@ export declare class ReviewsController {
     getReview(id: string): Promise<{
         success: boolean;
         data: {
+            customer: {
+                id: string;
+                email: string;
+                name: string;
+            };
             product: {
                 id: string;
                 title: string;
                 slug: string;
                 images: string[];
             };
-            customer: {
-                id: string;
-                name: string;
-                email: string;
-            };
             moderator: {
-                id: string;
                 username: string;
+                id: string;
                 fullName: string;
             };
         } & {
-            id: string;
-            productId: string;
-            customerId: string | null;
-            name: string;
-            email: string | null;
-            rating: number;
             comment: string | null;
-            status: import(".prisma/client").$Enums.ReviewStatus;
-            moderatorId: string | null;
-            moderatedAt: Date | null;
+            id: string;
+            email: string | null;
             createdAt: Date;
             updatedAt: Date;
+            name: string;
+            status: import(".prisma/client").$Enums.ReviewStatus;
+            customerId: string | null;
+            productId: string;
+            rating: number;
+            moderatorId: string | null;
+            moderatedAt: Date | null;
         };
     }>;
     createReview(body: any): Promise<{
         success: boolean;
         data: {
+            customer: {
+                id: string;
+                email: string;
+                name: string;
+            };
             product: {
                 id: string;
                 title: string;
                 slug: string;
                 images: string[];
             };
-            customer: {
-                id: string;
-                name: string;
-                email: string;
-            };
         } & {
-            id: string;
-            productId: string;
-            customerId: string | null;
-            name: string;
-            email: string | null;
-            rating: number;
             comment: string | null;
-            status: import(".prisma/client").$Enums.ReviewStatus;
-            moderatorId: string | null;
-            moderatedAt: Date | null;
+            id: string;
+            email: string | null;
             createdAt: Date;
             updatedAt: Date;
+            name: string;
+            status: import(".prisma/client").$Enums.ReviewStatus;
+            customerId: string | null;
+            productId: string;
+            rating: number;
+            moderatorId: string | null;
+            moderatedAt: Date | null;
         };
     }>;
     updateReview(id: string, body: any): Promise<{
         success: boolean;
         data: {
+            customer: {
+                id: string;
+                email: string;
+                name: string;
+            };
             product: {
                 id: string;
                 title: string;
                 slug: string;
                 images: string[];
             };
-            customer: {
-                id: string;
-                name: string;
-                email: string;
-            };
             moderator: {
-                id: string;
                 username: string;
+                id: string;
                 fullName: string;
             };
         } & {
-            id: string;
-            productId: string;
-            customerId: string | null;
-            name: string;
-            email: string | null;
-            rating: number;
             comment: string | null;
-            status: import(".prisma/client").$Enums.ReviewStatus;
-            moderatorId: string | null;
-            moderatedAt: Date | null;
+            id: string;
+            email: string | null;
             createdAt: Date;
             updatedAt: Date;
+            name: string;
+            status: import(".prisma/client").$Enums.ReviewStatus;
+            customerId: string | null;
+            productId: string;
+            rating: number;
+            moderatorId: string | null;
+            moderatedAt: Date | null;
         };
     }>;
     deleteReview(id: string): Promise<{

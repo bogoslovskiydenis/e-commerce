@@ -14,7 +14,14 @@ import {
     required,
     NumberInput,
     BooleanField,
-    BooleanInput, Show, SimpleShowLayout
+    BooleanInput,
+    Show,
+    SimpleShowLayout,
+    Filter,
+    SearchInput,
+    TopToolbar,
+    ExportButton,
+    CreateButton
 } from 'react-admin';
 
 // Компонент для отображения статуса заказа
@@ -53,17 +60,61 @@ const TotalField = ({ record }: any) => {
     return <span>{record?.total} {record?.currency || 'грн'}</span>;
 };
 
+// Фильтры для списка заказов
+const OrderFilter = (props: any) => (
+    <Filter {...props}>
+        <SearchInput source="q" alwaysOn placeholder="Поиск по номеру, клиенту, телефону" />
+        <SelectInput
+            source="status"
+            label="Статус"
+            choices={[
+                { id: 'new', name: 'Новый' },
+                { id: 'processing', name: 'Обрабатывается' },
+                { id: 'shipped', name: 'Отправлен' },
+                { id: 'delivered', name: 'Доставлен' },
+                { id: 'cancelled', name: 'Отменен' },
+            ]}
+            alwaysOn
+        />
+        <SelectInput
+            source="paymentMethod"
+            label="Способ оплаты"
+            choices={[
+                { id: 'monobank', name: 'Monobank' },
+                { id: 'privat24', name: 'Приват24' },
+                { id: 'cash', name: 'Наличными' },
+                { id: 'card', name: 'Картой при получении' },
+            ]}
+        />
+        <DateInput source="date_gte" label="Дата от" />
+        <DateInput source="date_lte" label="Дата до" />
+    </Filter>
+);
+
+// Панель инструментов
+const ListActions = () => (
+    <TopToolbar>
+        <ExportButton />
+    </TopToolbar>
+);
+
 export const OrderList = () => (
-    <List title="Заказы" perPage={25}>
+    <List
+        title="Заказы"
+        perPage={25}
+        filters={<OrderFilter />}
+        actions={<ListActions />}
+        sort={{ field: 'date', order: 'DESC' }}
+    >
         <Datagrid rowClick="edit">
-            <NumberField source="orderNumber" label="№ заказа" />
-            <DateField source="date" label="Дата создания" showTime />
-            <TextField source="customer.name" label="Клиент" />
+            <NumberField source="orderNumber" label="№ заказа" sortable />
+            <DateField source="date" label="Дата создания" showTime sortable />
+            <TextField source="customer.name" label="Клиент" sortable />
             <TextField source="customer.phone" label="Телефон" />
-            <StatusField source="status" label="Статус" />
+            <StatusField source="status" label="Статус" sortable />
             <TextField source="paymentMethod" label="Способ оплаты" />
-            <TotalField source="total" label="Сумма" />
-            <BooleanField source="processing" label="Начать обработку" />
+            <TotalField source="total" label="Сумма" sortable />
+            <BooleanField source="processing" label="Обработка" />
         </Datagrid>
     </List>
 );
@@ -142,13 +193,25 @@ export const OrderEdit = () => (
 );
 
 export const OrderShow = () => (
-    <Show>
+    <Show title="Просмотр заказа">
         <SimpleShowLayout>
-            <TextField source="id" />
-            <TextField source="customerName" />
-            <TextField source="status" />
-            <TextField source="total" />
-            <DateField source="createdAt" />
+            <NumberField source="orderNumber" label="Номер заказа" />
+            <DateField source="date" label="Дата создания" showTime />
+            <StatusField source="status" label="Статус" />
+            
+            <TextField source="customer.name" label="Имя клиента" />
+            <TextField source="customer.phone" label="Телефон" />
+            <TextField source="customer.email" label="Email" />
+            
+            <TextField source="paymentMethod" label="Способ оплаты" />
+            <TextField source="deliveryMethod" label="Способ доставки" />
+            <TextField source="deliveryAddress" label="Адрес доставки" />
+            
+            <TotalField source="total" label="Общая сумма" />
+            <TextField source="currency" label="Валюта" />
+            
+            <TextField source="notes" label="Примечания" />
+            <BooleanField source="processing" label="Обработка" />
         </SimpleShowLayout>
     </Show>
 );

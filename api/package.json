@@ -17,7 +17,8 @@
     "seed:users": "tsx scripts/seedUsers.mjs",
     "seed:callbacks": "tsx scripts/seedCallbacks.mjs",
     "seed:customers": "tsx scripts/seedCustomers.mjs",
-    "seed:all": "tsx src/seeds/index.ts"
+    "seed:orders": "tsx scripts/seedOrders.mjs",
+    "seed:all": "tsx scripts/seedAll.mjs"
   },
   "dependencies": {
     "@nestjs/common": "^10.3.0",

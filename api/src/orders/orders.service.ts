@@ -27,6 +27,9 @@ export class OrdersService {
       if (dateTo) where.createdAt.lte = new Date(dateTo);
     }
 
+    // Маппинг полей сортировки: 'date' -> 'createdAt'
+    const sortField = sortBy === 'date' ? 'createdAt' : sortBy;
+
     const [orders, total] = await Promise.all([
       this.prisma.order.findMany({
         where,
@@ -35,7 +38,7 @@ export class OrdersService {
           manager: { select: { id: true, fullName: true, username: true } },
           items: { include: { product: { select: { id: true, title: true, images: true } } } },
         },
-        orderBy: { [sortBy]: sortOrder },
+        orderBy: { [sortField]: sortOrder },
         skip,
         take: Number(limit),
       }),

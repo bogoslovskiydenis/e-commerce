@@ -111,6 +111,41 @@ const transformReviewToComment = (review: any) => {
     };
 };
 
+// Трансформация Order из API формата в формат react-admin
+const transformOrder = (order: any) => {
+    const statusMap: Record<string, string> = {
+        'NEW': 'new',
+        'CONFIRMED': 'processing',
+        'PROCESSING': 'processing',
+        'READY': 'processing',
+        'SHIPPED': 'shipped',
+        'DELIVERED': 'delivered',
+        'CANCELLED': 'cancelled',
+        'REFUNDED': 'cancelled'
+    };
+
+    return {
+        ...order,
+        id: order.id,
+        orderNumber: order.orderNumber,
+        date: order.createdAt, // Маппинг createdAt -> date для react-admin
+        status: statusMap[order.status] || 'new',
+        total: Number(order.totalAmount),
+        currency: 'грн',
+        customer: order.customer ? {
+            name: order.customer.name,
+            phone: order.customer.phone,
+            email: order.customer.email
+        } : null,
+        paymentMethod: order.paymentMethod || '',
+        deliveryMethod: order.shippingAddress ? 'Доставка' : 'Самовывоз',
+        deliveryAddress: order.shippingAddress ? JSON.stringify(order.shippingAddress) : '',
+        items: order.items || [],
+        processing: order.status === 'PROCESSING' || order.status === 'CONFIRMED',
+        notes: order.notes || ''
+    };
+};
+
 const dataProvider: DataProvider = {
     getList: async (resource, params) => {
         const endpoint = RESOURCE_ENDPOINTS[resource];
@@ -136,6 +171,11 @@ const dataProvider: DataProvider = {
             // Трансформируем данные для ресурса 'comments'
             if (resource === 'comments') {
                 data = data.map(transformReviewToComment);
+            }
+
+            // Трансформируем данные для ресурса 'orders'
+            if (resource === 'orders') {
+                data = data.map(transformOrder);
             }
 
             console.log('✅ getList результат:', { data, total });
@@ -167,6 +207,11 @@ const dataProvider: DataProvider = {
             // Трансформируем данные для ресурса 'comments'
             if (resource === 'comments') {
                 data = transformReviewToComment(data);
+            }
+
+            // Трансформируем данные для ресурса 'orders'
+            if (resource === 'orders') {
+                data = transformOrder(data);
             }
 
             return { data };
@@ -286,6 +331,24 @@ const dataProvider: DataProvider = {
                 };
             }
 
+            // Трансформируем данные обратно для ресурса 'orders' (react-admin -> API)
+            if (resource === 'orders') {
+                const statusMap: Record<string, string> = {
+                    'new': 'NEW',
+                    'processing': 'PROCESSING',
+                    'shipped': 'SHIPPED',
+                    'delivered': 'DELIVERED',
+                    'cancelled': 'CANCELLED'
+                };
+                
+                updateData = {
+                    status: statusMap[params.data.status] || params.data.status,
+                    paymentMethod: params.data.paymentMethod,
+                    notes: params.data.notes,
+                    managerNotes: params.data.managerNotes
+                };
+            }
+
             const { json } = await httpClient(`${API_BASE_URL}${endpoint}/${params.id}`, {
                 method: 'PUT',
                 body: JSON.stringify(updateData),
@@ -298,6 +361,11 @@ const dataProvider: DataProvider = {
             // Трансформируем ответ для ресурса 'comments'
             if (resource === 'comments') {
                 resultData = transformReviewToComment(resultData);
+            }
+
+            // Трансформируем ответ для ресурса 'orders'
+            if (resource === 'orders') {
+                resultData = transformOrder(resultData);
             }
 
             return { data: resultData };

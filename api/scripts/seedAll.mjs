@@ -1,5 +1,6 @@
+// scripts/seedAll.mjs
 import { PrismaClient, BannerPosition } from '@prisma/client';
-import seedProducts from './products.seed';
+import seedProducts from './seedProducts.mjs';
 
 const prisma = new PrismaClient();
 
@@ -221,11 +222,112 @@ async function main() {
         }
         console.log(`✅ Created ${banners.length} test banners`);
 
+        // Создаем тестовых клиентов
+        console.log('👥 Creating test customers...');
+        const customers = await Promise.all([
+            prisma.customer.create({
+                data: {
+                    name: 'Иван Петров',
+                    email: 'ivan@example.com',
+                    phone: '+380501234567',
+                    address: 'ул. Главная, 1, Киев',
+                    isActive: true
+                }
+            }),
+            prisma.customer.create({
+                data: {
+                    name: 'Мария Сидорова',
+                    email: 'maria@example.com',
+                    phone: '+380502345678',
+                    address: 'ул. Центральная, 15, Львов',
+                    isActive: true
+                }
+            }),
+            prisma.customer.create({
+                data: {
+                    name: 'Алексей Коваленко',
+                    email: 'alex@example.com',
+                    phone: '+380503456789',
+                    address: 'пр. Победы, 25, Одесса',
+                    isActive: true
+                }
+            })
+        ]);
+        console.log(`✅ Created ${customers.length} test customers`);
+
+        // Получаем товары для создания заказов
+        const products = await prisma.product.findMany({ take: 5 });
+        if (products.length === 0) {
+            console.log('⚠️ No products found, skipping orders creation');
+        } else {
+            console.log('📦 Creating test orders...');
+            
+            // Создаем заказы
+            const orders = [];
+            for (let i = 0; i < 5; i++) {
+                const customer = customers[i % customers.length];
+                const orderNumber = `ORD-${String(Date.now() + i).slice(-8)}`;
+                const statuses = ['NEW', 'CONFIRMED', 'PROCESSING', 'SHIPPED', 'DELIVERED'];
+                const paymentStatuses = ['PENDING', 'PAID', 'PAID', 'PAID', 'PAID'];
+                const paymentMethods = ['monobank', 'privat24', 'cash', 'card', 'monobank'];
+                
+                // Выбираем случайные товары для заказа
+                const orderProducts = products.slice(0, Math.min(2 + Math.floor(Math.random() * 3), products.length));
+                const items = orderProducts.map((product) => {
+                    const quantity = 1 + Math.floor(Math.random() * 3);
+                    const price = Number(product.price);
+                    return {
+                        productId: product.id,
+                        quantity,
+                        price,
+                        total: price * quantity
+                    };
+                });
+                
+                const totalAmount = items.reduce((sum, item) => sum + item.total, 0);
+                const discountAmount = i % 2 === 0 ? totalAmount * 0.1 : 0;
+                const shippingAmount = totalAmount < 1000 ? 150 : 0;
+                
+                const order = await prisma.order.create({
+                    data: {
+                        orderNumber,
+                        customerId: customer.id,
+                        managerId: i > 2 ? managerUser.id : null,
+                        status: statuses[i],
+                        paymentStatus: paymentStatuses[i],
+                        paymentMethod: paymentMethods[i],
+                        totalAmount: totalAmount - discountAmount + shippingAmount,
+                        discountAmount,
+                        shippingAmount,
+                        shippingAddress: {
+                            city: customer.address?.split(',')[1]?.trim() || 'Киев',
+                            street: customer.address || 'ул. Неизвестная',
+                            apartment: `${10 + i}`
+                        },
+                        notes: i === 0 ? 'Срочная доставка' : null,
+                        source: 'website',
+                        createdAt: new Date(Date.now() - i * 24 * 60 * 60 * 1000),
+                        items: {
+                            create: items
+                        }
+                    },
+                    include: {
+                        items: true,
+                        customer: true
+                    }
+                });
+                orders.push(order);
+            }
+            console.log(`✅ Created ${orders.length} test orders`);
+        }
+
         console.log('🎉 Database seeding completed successfully!');
         console.log('\n📊 Summary:');
         console.log(`- Categories: ${await prisma.category.count()}`);
         console.log(`- Products: ${await prisma.product.count()}`);
         console.log(`- Users: ${await prisma.user.count()}`);
+        console.log(`- Customers: ${await prisma.customer.count()}`);
+        console.log(`- Orders: ${await prisma.order.count()}`);
         console.log(`- Callbacks: ${await prisma.callback.count()}`);
         console.log(`- Settings: ${await prisma.setting.count()}`);
         console.log(`- Pages: ${await prisma.page.count()}`);
