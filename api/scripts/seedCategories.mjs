@@ -3,82 +3,108 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
+// Категории товаров
+const CATEGORIES = [
+    {
+        name: 'День рождения мальчика',
+        slug: 'boy-birthday',
+        description: 'Воздушные шары для празднования дня рождения мальчиков',
+        type: 'PRODUCTS',
+        sortOrder: 1,
+        showInNavigation: true,
+        isActive: true
+    },
+    {
+        name: 'День рождения девочки',
+        slug: 'girl-birthday',
+        description: 'Воздушные шары для празднования дня рождения девочек',
+        type: 'PRODUCTS',
+        sortOrder: 2,
+        showInNavigation: true,
+        isActive: true
+    },
+    {
+        name: 'Романтические',
+        slug: 'romantic',
+        description: 'Воздушные шары для романтических событий',
+        type: 'PRODUCTS',
+        sortOrder: 3,
+        showInNavigation: true,
+        isActive: true
+    },
+    {
+        name: 'Выписка из роддома',
+        slug: 'newborn',
+        description: 'Воздушные шары для выписки из роддома',
+        type: 'PRODUCTS',
+        sortOrder: 4,
+        showInNavigation: true,
+        isActive: true
+    },
+    {
+        name: 'Выпускной',
+        slug: 'graduation',
+        description: 'Воздушные шары для выпускных мероприятий',
+        type: 'PRODUCTS',
+        sortOrder: 5,
+        showInNavigation: true,
+        isActive: true
+    },
+    {
+        name: 'Юбилей',
+        slug: 'anniversary',
+        description: 'Воздушные шары для юбилеев и годовщин',
+        type: 'PRODUCTS',
+        sortOrder: 6,
+        showInNavigation: true,
+        isActive: true
+    },
+    {
+        name: 'Новый год',
+        slug: 'new-year',
+        description: 'Воздушные шары для новогодних праздников',
+        type: 'PRODUCTS',
+        sortOrder: 7,
+        showInNavigation: true,
+        isActive: true
+    },
+    {
+        name: 'Свадьба',
+        slug: 'wedding',
+        description: 'Воздушные шары для свадебных торжеств',
+        type: 'PRODUCTS',
+        sortOrder: 8,
+        showInNavigation: true,
+        isActive: true
+    },
+    {
+        name: 'Тематические',
+        slug: 'themed',
+        description: 'Тематические воздушные шары',
+        type: 'PRODUCTS',
+        sortOrder: 9,
+        showInNavigation: true,
+        isActive: true
+    },
+    {
+        name: 'Фольгированные',
+        slug: 'foil',
+        description: 'Фольгированные воздушные шары',
+        type: 'PRODUCTS',
+        sortOrder: 10,
+        showInNavigation: true,
+        isActive: true
+    }
+];
+
 async function seedCategories() {
-    console.log('🌱 Создание тестовых категорий...');
+    console.log('🌱 Создание категорий...');
 
     try {
-        // Создаем основные категории по типам
-        const categories = [
-            {
-                name: 'Фольгированные шарики',
-                slug: 'foil-balloons',
-                description: 'Яркие и долговечные фольгированные шары для любого праздника',
-                type: 'BALLOONS',
-                sortOrder: 1,
-                showInNavigation: true,
-                metaTitle: 'Фольгированные шарики - купить в Киеве',
-                metaDescription: 'Большой выбор фольгированных шаров различных форм и размеров.',
-                metaKeywords: 'фольгированные шары, шарики из фольги, праздничные шары'
-            },
-            {
-                name: 'Латексные шарики',
-                slug: 'latex-balloons',
-                description: 'Классические латексные шары различных размеров и цветов',
-                type: 'BALLOONS',
-                sortOrder: 2,
-                showInNavigation: true,
-                metaTitle: 'Латексные шарики - широкий выбор цветов',
-                metaDescription: 'Качественные латексные шары для оформления праздников.',
-                metaKeywords: 'латексные шары, воздушные шарики, цветные шары'
-            },
-            {
-                name: 'День рождения',
-                slug: 'birthday-balloons',
-                description: 'Праздничные шары и композиции для незабываемого дня рождения',
-                type: 'EVENTS',
-                sortOrder: 3,
-                showInNavigation: true,
-                metaTitle: 'Шарики на день рождения',
-                metaDescription: 'Широкий выбор шаров для дня рождения.',
-                metaKeywords: 'шары день рождения, праздничные шары'
-            },
-            {
-                name: 'Свадебные шарики',
-                slug: 'wedding-balloons',
-                description: 'Элегантные шары и композиции для свадебного торжества',
-                type: 'EVENTS',
-                sortOrder: 4,
-                showInNavigation: true,
-                metaTitle: 'Свадебные шарики',
-                metaDescription: 'Элегантные воздушные шары для свадебного оформления.',
-                metaKeywords: 'свадебные шары, шары на свадьбу'
-            },
-            {
-                name: 'Красные шарики',
-                slug: 'red-balloons',
-                description: 'Яркие красные шары для создания праздничного настроения',
-                type: 'COLORS',
-                sortOrder: 5,
-                showInNavigation: true,
-                metaTitle: 'Красные шарики',
-                metaDescription: 'Красные воздушные шары различных оттенков.',
-                metaKeywords: 'красные шары, алые шары'
-            },
-            {
-                name: 'Подарочные наборы',
-                slug: 'gift-sets',
-                description: 'Готовые композиции и наборы шаров для подарка',
-                type: 'GIFTS',
-                sortOrder: 6,
-                showInNavigation: true,
-                metaTitle: 'Подарочные наборы шаров',
-                metaDescription: 'Красивые подарочные наборы из воздушных шаров.',
-                metaKeywords: 'подарочные наборы, букеты шаров'
-            }
-        ];
+        let createdCount = 0;
+        let skippedCount = 0;
 
-        // Создаем категории
-        for (const categoryData of categories) {
+        for (const categoryData of CATEGORIES) {
             try {
                 const existingCategory = await prisma.category.findUnique({
                     where: { slug: categoryData.slug }
@@ -86,14 +112,18 @@ async function seedCategories() {
 
                 if (!existingCategory) {
                     await prisma.category.create({
-                        data: {
-                            ...categoryData,
-                            isActive: true
-                        }
+                        data: categoryData
                     });
                     console.log(`✅ Создана категория: ${categoryData.name}`);
+                    createdCount++;
                 } else {
-                    console.log(`⚠️  Категория уже существует: ${categoryData.name}`);
+                    // Обновляем существующую категорию
+                    await prisma.category.update({
+                        where: { slug: categoryData.slug },
+                        data: categoryData
+                    });
+                    console.log(`🔄 Обновлена категория: ${categoryData.name}`);
+                    skippedCount++;
                 }
             } catch (error) {
                 console.error(`❌ Ошибка создания категории ${categoryData.name}:`, error.message);
@@ -101,13 +131,19 @@ async function seedCategories() {
         }
 
         console.log('🎉 Создание категорий завершено!');
+        console.log(`📊 Статистика: создано ${createdCount}, обновлено ${skippedCount}`);
 
     } catch (error) {
         console.error('❌ Ошибка при создании категорий:', error);
+        throw error;
     } finally {
         await prisma.$disconnect();
     }
 }
 
-// Запускаем скрипт
-seedCategories();
+// Запускаем скрипт, если он вызывается напрямую
+if (import.meta.url === `file://${process.argv[1]}`) {
+    seedCategories();
+}
+
+export default seedCategories;

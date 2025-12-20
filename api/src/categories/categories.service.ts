@@ -31,8 +31,10 @@ export class CategoriesService {
       where.type = type;
     }
 
+    // Маппинг полей сортировки: 'order' -> 'sortOrder'
+    const sortField = sortBy === 'order' ? 'sortOrder' : sortBy;
     const orderBy: any = {};
-    orderBy[sortBy] = sortOrder;
+    orderBy[sortField] = sortOrder;
 
     const [categories, total] = await Promise.all([
       this.prisma.category.findMany({
