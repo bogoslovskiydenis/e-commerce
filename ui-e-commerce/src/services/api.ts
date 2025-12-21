@@ -350,6 +350,27 @@ class ApiService {
             return [];
         }
     }
+
+    /**
+     * Получение популярных поисковых запросов
+     */
+    async getPopularSearchQueries(limit: number = 6): Promise<string[]> {
+        try {
+            const response = await this.request<ApiResponse<string[]>>(
+                `/products/popular-queries?limit=${limit}`
+            );
+            return response.data || [];
+        } catch (error) {
+            console.error('Error getting popular search queries:', error);
+            // Возвращаем дефолтные запросы при ошибке
+            return [
+                'фольгированные шары',
+                'букеты из шаров',
+                'день рождения',
+                'свадебные шары',
+            ];
+        }
+    }
 }
 
 // Экспортируем единственный экземпляр сервиса

@@ -26,6 +26,16 @@ export class ProductsController {
     return this.productsService.getProducts(query);
   }
 
+  @Get('popular-queries')
+  async getPopularQueries(@Query('limit') limit?: string) {
+    const limitNum = limit ? parseInt(limit, 10) : 6;
+    const queries = await this.productsService.getPopularSearchQueries(limitNum);
+    return {
+      success: true,
+      data: queries,
+    };
+  }
+
   @Get(':id')
   async getProduct(@Param('id') id: string) {
     return this.productsService.getProductById(id);

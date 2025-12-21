@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { Search, X, Clock, TrendingUp } from 'lucide-react'
+import { Search, X, Clock } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { apiService, Product } from '@/services/api'
@@ -25,16 +25,6 @@ interface SearchAutocompleteProps {
     placeholder?: string
     className?: string
 }
-
-// Популярные поисковые запросы (можно загружать из API в будущем)
-const POPULAR_SEARCHES = [
-    'фольгированные шары',
-    'букеты из шаров',
-    'день рождения',
-    'свадебные шары',
-    'детские наборы',
-    'цифры из шаров'
-]
 
 export default function SearchAutocomplete({
                                                placeholder = "Пошук шариків, подарків, стаканчиків...",
@@ -73,6 +63,7 @@ export default function SearchAutocomplete({
             }
         }
     }, [])
+
 
     // Загрузка результатов поиска из API при вводе запроса
     useEffect(() => {
@@ -194,12 +185,6 @@ export default function SearchAutocomplete({
             item.query.toLowerCase().includes(query.toLowerCase())
         )
         : searchHistory
-
-    const filteredPopular = query
-        ? POPULAR_SEARCHES.filter(item =>
-            item.toLowerCase().includes(query.toLowerCase())
-        )
-        : POPULAR_SEARCHES.slice(0, 4)
 
     return (
         <div ref={searchRef} className={`relative ${className}`}>
@@ -357,29 +342,8 @@ export default function SearchAutocomplete({
                         </div>
                     )}
 
-                    {/* Популярные запросы */}
-                    {filteredPopular.length > 0 && (
-                        <div className="p-4">
-                            <h3 className="text-sm font-medium text-gray-900 mb-3 flex items-center gap-2">
-                                <TrendingUp size={16} />
-                                Популярні запити
-                            </h3>
-                            <div className="space-y-1">
-                                {filteredPopular.map((suggestion, index) => (
-                                    <button
-                                        key={index}
-                                        onClick={() => handleSuggestionClick(suggestion)}
-                                        className="block w-full text-left text-sm text-gray-700 hover:bg-gray-50 px-2 py-1 rounded"
-                                    >
-                                        {suggestion}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-
                     {/* Пустое состояние */}
-                    {query && !isLoading && searchResults.length === 0 && filteredHistory.length === 0 && filteredPopular.length === 0 && (
+                    {query && !isLoading && searchResults.length === 0 && filteredHistory.length === 0 && (
                         <div className="p-4 text-center text-gray-500">
                             <p className="text-sm">Нічого не знайдено</p>
                         </div>

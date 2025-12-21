@@ -13,14 +13,19 @@ export class ProductsService {
     const pageNum = Number(page) || 1;
     const skip = (pageNum - 1) * limitNum;
 
-    const where: any = {};
+    const where: any = {
+      isActive: true, // Показываем только активные товары
+    };
 
     if (search) {
+      const searchLower = search.toLowerCase();
       where.OR = [
         { title: { contains: search, mode: 'insensitive' } },
         { description: { contains: search, mode: 'insensitive' } },
+        { shortDescription: { contains: search, mode: 'insensitive' } },
         { sku: { contains: search, mode: 'insensitive' } },
         { brand: { contains: search, mode: 'insensitive' } },
+        { tags: { hasSome: [search, searchLower] } }, // Поиск по тегам
       ];
     }
 
@@ -202,6 +207,58 @@ export class ProductsService {
       createdAt: product.createdAt,
       updatedAt: product.updatedAt,
     };
+  }
+
+  async getPopularSearchQueries(limit: number = 6): Promise<string[]> {
+    // Пытаемся получить популярные запросы из Analytics
+    try {
+      const last30Days = new Date();
+      last30Days.setDate(last30Days.getDate() - 30);
+
+      const searchEvents = await this.prisma.analytics.findMany({
+        where: {
+          event: 'search',
+          createdAt: { gte: last30Days },
+        },
+        select: {
+          data: true,
+        },
+      });
+
+      // Подсчитываем частоту запросов
+      const queryCounts = new Map<string, number>();
+      searchEvents.forEach((event) => {
+        const query = (event.data as any)?.query;
+        if (query && typeof query === 'string') {
+          const normalizedQuery = query.toLowerCase().trim();
+          queryCounts.set(normalizedQuery, (queryCounts.get(normalizedQuery) || 0) + 1);
+        }
+      });
+
+      // Сортируем по частоте и возвращаем топ запросов
+      const sortedQueries = Array.from(queryCounts.entries())
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, limit)
+        .map(([query]) => query);
+
+      // Если есть данные из Analytics, возвращаем их
+      if (sortedQueries.length > 0) {
+        return sortedQueries;
+      }
+    } catch (error) {
+      console.error('Error getting popular queries from analytics:', error);
+    }
+
+    // Если нет данных в Analytics, возвращаем дефолтные популярные запросы
+    // Можно настроить через Settings в будущем
+    return [
+      'фольгированные шары',
+      'букеты из шаров',
+      'день рождения',
+      'свадебные шары',
+      'детские наборы',
+      'цифры из шаров',
+    ].slice(0, limit);
   }
 
   private generateSlug(title: string): string {
