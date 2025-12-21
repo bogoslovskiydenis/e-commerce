@@ -136,33 +136,7 @@ export default function Navigation() {
         return staticDropdowns[item.title] || [];
     };
 
-    // Показываем индикатор загрузки
-    if (isLoading) {
-        // Фиксированные значения для предотвращения hydration mismatch
-        const skeletonWidths = [80, 100, 90, 85, 95];
-        return (
-            <div className="relative">
-                <nav className="bg-white border-t border-b">
-                    <div className="container mx-auto">
-                        <div className="flex items-center h-14">
-                            <div className="flex space-x-6">
-                                {[1, 2, 3, 4, 5].map(i => (
-                                    <div
-                                        key={i}
-                                        className="h-4 bg-gray-200 rounded animate-pulse"
-                                        style={{ width: `${skeletonWidths[i - 1]}px` }}
-                                    />
-                                ))}
-                            </div>
-                            <div className="ml-4 text-sm text-blue-600">
-                                🔄 Загружаем навигацию из админ панели...
-                            </div>
-                        </div>
-                    </div>
-                </nav>
-            </div>
-        );
-    }
+    // Не показываем индикатор загрузки - навигация загружается из кеша мгновенно
 
     return (
         <div className="relative">
@@ -251,17 +225,6 @@ export default function Navigation() {
                         </div>
                     </div>
                 </div>
-            )}
-
-            {/* Кнопка обновления для разработчиков */}
-            {process.env.NODE_ENV === 'development' && (
-                <button
-                    onClick={() => window.location.reload()}
-                    className="fixed bottom-4 right-4 bg-teal-600 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-teal-700 transition-colors z-50 text-sm"
-                    title="Обновить навигацию"
-                >
-                    🔄 Обновить
-                </button>
             )}
 
             <style jsx>{`

@@ -138,27 +138,7 @@ export default function DynamicNavigation() {
         setHoveredItem(null);
     };
 
-    if (isLoading) {
-        return (
-            <div className="relative">
-                <nav className="bg-white border-t border-b">
-                    <div className="container mx-auto">
-                        <div className="flex items-center h-14">
-                            <div className="flex space-x-6">
-                                {[1, 2, 3, 4, 5].map(i => (
-                                    <div
-                                        key={i}
-                                        className="h-4 bg-gray-200 rounded animate-pulse"
-                                        style={{ width: `${Math.random() * 60 + 60}px` }}
-                                    />
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                </nav>
-            </div>
-        );
-    }
+    // Не показываем индикатор загрузки - навигация загружается из кеша мгновенно
 
     return (
         <div className="relative">
@@ -210,17 +190,6 @@ export default function DynamicNavigation() {
                     </ul>
                 </div>
             </nav>
-
-            {/* Кнопка обновления для админов */}
-            {process.env.NODE_ENV === 'development' && (
-                <button
-                    onClick={loadNavigationData}
-                    className="fixed bottom-4 right-4 bg-teal-600 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-teal-700 transition-colors z-50"
-                    title="Обновить навигацию"
-                >
-                    🔄 Обновить
-                </button>
-            )}
 
             <style jsx>{`
                 .nav-item {
