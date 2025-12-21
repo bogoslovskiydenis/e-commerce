@@ -1,6 +1,10 @@
+'use client'
+
 import Link from 'next/link'
 import Image from 'next/image'
-import { Heart, ShoppingBag } from 'lucide-react'
+import { useState } from 'react'
+import { Heart, ShoppingBag, Check } from 'lucide-react'
+import { cartUtils } from '@/utils/cart'
 
 interface BalloonProduct {
     id: string
@@ -30,11 +34,41 @@ export default function ProductList({
                                         className = "",
                                         basePath = "/balloons"
                                     }: ProductListProps) {
+    const [addedItems, setAddedItems] = useState<Set<string>>(new Set())
 
     // Функция для определения правильной ссылки на товар
     const getProductLink = (product: BalloonProduct) => {
         // Используем универсальный роут /product/[id] для всех товаров
         return `/product/${product.id}`
+    }
+
+    const handleAddToCart = (e: React.MouseEvent, product: BalloonProduct) => {
+        e.preventDefault()
+        e.stopPropagation()
+        
+        if (!product.inStock) return
+
+        cartUtils.addToCart({
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            image: product.image || '/api/placeholder/300/300',
+            productId: product.id,
+            attributes: {
+                size: product.size,
+                withHelium: product.withHelium,
+                color: product.colors?.[0]
+            }
+        })
+
+        setAddedItems(prev => new Set(prev).add(product.id))
+        setTimeout(() => {
+            setAddedItems(prev => {
+                const newSet = new Set(prev)
+                newSet.delete(product.id)
+                return newSet
+            })
+        }, 2000)
     }
 
     // Определяем цвет бейджа для материала
@@ -131,10 +165,20 @@ export default function ProductList({
                                     </button>
                                     {product.inStock && (
                                         <button
-                                            className="p-2 rounded-full bg-teal-600 text-white hover:bg-teal-700"
+                                            onClick={(e) => handleAddToCart(e, product)}
+                                            className={`p-2 rounded-full transition-colors ${
+                                                addedItems.has(product.id)
+                                                    ? 'bg-green-600 text-white'
+                                                    : 'bg-teal-600 text-white hover:bg-teal-700'
+                                            }`}
                                             aria-label="Добавить в корзину"
+                                            title={addedItems.has(product.id) ? 'Додано в кошик' : 'Додати в кошик'}
                                         >
-                                            <ShoppingBag size={18} />
+                                            {addedItems.has(product.id) ? (
+                                                <Check size={18} />
+                                            ) : (
+                                                <ShoppingBag size={18} />
+                                            )}
                                         </button>
                                     )}
                                 </div>

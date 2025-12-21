@@ -5,8 +5,9 @@ import { use } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Heart, ShoppingBag, Share2, Minus, Plus, Truck, Award, RefreshCw } from 'lucide-react'
+import { Heart, ShoppingBag, Share2, Minus, Plus, Truck, Award, RefreshCw, Check } from 'lucide-react'
 import { apiService } from '@/services/api'
+import { cartUtils } from '@/utils/cart'
 
 interface ProductPageProps {
     params: Promise<{ id: string }>
@@ -23,6 +24,7 @@ export default function ProductPage({ params }: ProductPageProps) {
     const [withHelium, setWithHelium] = useState(true)
     const [quantity, setQuantity] = useState(1)
     const [activeTab, setActiveTab] = useState('description')
+    const [isAdded, setIsAdded] = useState(false)
 
     useEffect(() => {
         const loadProduct = async () => {
@@ -81,6 +83,33 @@ export default function ProductPage({ params }: ProductPageProps) {
         } else if (action === 'decrease' && quantity > 1) {
             setQuantity(prev => prev - 1)
         }
+    }
+
+    const handleAddToCart = () => {
+        if (!inStock) return
+
+        cartUtils.addToCart({
+            id: product.id,
+            name: product.title || product.name || '',
+            price: currentPrice,
+            image: images[0],
+            productId: product.id,
+            quantity: quantity,
+            attributes: {
+                color: selectedColor,
+                size: selectedSize,
+                withHelium: withHelium
+            }
+        })
+
+        setIsAdded(true)
+        setTimeout(() => setIsAdded(false), 2000)
+    }
+
+    const handleQuickOrder = () => {
+        handleAddToCart()
+        // Можно добавить редирект на страницу быстрого заказа
+        router.push('/checkout')
     }
 
     const currentPrice = withHelium ? Number(product.price) + 30 : Number(product.price)
@@ -289,21 +318,40 @@ export default function ProductPage({ params }: ProductPageProps) {
                             <div className="space-y-3">
                                 {inStock ? (
                                     <>
-                                        <button className="w-full bg-teal-600 text-white py-4 rounded-lg hover:bg-teal-700 font-medium text-lg transition-colors flex items-center justify-center gap-2">
-                                            <ShoppingBag size={20} />
-                                            КУПИТЬ
+                                        <button 
+                                            onClick={handleAddToCart}
+                                            className={`w-full py-4 rounded-lg font-medium text-lg transition-colors flex items-center justify-center gap-2 ${
+                                                isAdded
+                                                    ? 'bg-green-600 text-white'
+                                                    : 'bg-teal-600 text-white hover:bg-teal-700'
+                                            }`}
+                                        >
+                                            {isAdded ? (
+                                                <>
+                                                    <Check size={20} />
+                                                    ДОДАНО В КОШИК
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <ShoppingBag size={20} />
+                                                    КУПИТИ
+                                                </>
+                                            )}
                                         </button>
-                                        <button className="w-full border-2 border-teal-600 text-teal-600 py-4 rounded-lg hover:bg-teal-50 font-medium text-lg transition-colors">
-                                            БЫСТРАЯ ПОКУПКА
+                                        <button 
+                                            onClick={handleQuickOrder}
+                                            className="w-full border-2 border-teal-600 text-teal-600 py-4 rounded-lg hover:bg-teal-50 font-medium text-lg transition-colors"
+                                        >
+                                            ШВИДКЕ ЗАМОВЛЕННЯ
                                         </button>
                                     </>
                                 ) : (
                                     <div className="space-y-3">
                                         <div className="w-full bg-gray-300 text-gray-600 py-4 rounded-lg font-medium text-lg text-center">
-                                            НЕТ В НАЛИЧИИ
+                                            НЕМАЄ В НАЯВНОСТІ
                                         </div>
                                         <button className="w-full border-2 border-gray-300 text-gray-600 py-4 rounded-lg font-medium text-lg transition-colors hover:border-gray-400">
-                                            УВЕДОМИТЬ О ПОСТУПЛЕНИИ
+                                            ПОВІДОМИТИ ПРО НАДХОДЖЕННЯ
                                         </button>
                                     </div>
                                 )}

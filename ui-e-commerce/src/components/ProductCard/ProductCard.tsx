@@ -1,6 +1,10 @@
+'use client'
+
 import Image from 'next/image'
 import Link from 'next/link'
-import { Heart, ShoppingBag } from 'lucide-react'
+import { useState } from 'react'
+import { Heart, ShoppingBag, Check } from 'lucide-react'
+import { cartUtils } from '@/utils/cart'
 
 interface ProductCardProps {
     id: string
@@ -37,6 +41,36 @@ export default function ProductCard({
                                         className = "",
                                         basePath = "/balloons" // По умолчанию используем balloons
                                     }: ProductCardProps) {
+    const [isAdded, setIsAdded] = useState(false)
+
+    const handleAddToCart = (e: React.MouseEvent) => {
+        e.preventDefault()
+        e.stopPropagation()
+        
+        if (!inStock) return
+
+        cartUtils.addToCart({
+            id,
+            name,
+            price,
+            image: image || '/api/placeholder/300/300',
+            productId: id,
+            attributes: {
+                size: size,
+                withHelium: withHelium,
+                color: colors[0]
+            }
+        })
+
+        setIsAdded(true)
+        setTimeout(() => setIsAdded(false), 2000)
+    }
+
+    const handleQuickOrder = (e: React.MouseEvent) => {
+        e.preventDefault()
+        handleAddToCart(e)
+        // Можно добавить редирект на страницу быстрого заказа
+    }
     // Определяем цвет бейджа для материала
     const getMaterialBadgeColor = (material?: string) => {
         switch (material) {
@@ -103,10 +137,16 @@ export default function ProductCard({
                     </button>
                     {inStock && (
                         <button
-                            className="p-2 rounded-full bg-teal-600 text-white shadow-md hover:bg-teal-700"
+                            onClick={handleAddToCart}
+                            className={`p-2 rounded-full shadow-md transition-colors ${
+                                isAdded 
+                                    ? 'bg-green-600 text-white' 
+                                    : 'bg-teal-600 text-white hover:bg-teal-700'
+                            }`}
                             aria-label="Добавить в корзину"
+                            title={isAdded ? 'Додано в кошик' : 'Додати в кошик'}
                         >
-                            <ShoppingBag size={20} />
+                            {isAdded ? <Check size={20} /> : <ShoppingBag size={20} />}
                         </button>
                     )}
                 </div>
@@ -165,12 +205,19 @@ export default function ProductCard({
 
                     {/* Кнопка быстрого заказа */}
                     {inStock ? (
-                        <button className="w-full bg-teal-600 text-white py-2 rounded-lg hover:bg-teal-700 text-sm font-medium transition-colors">
-                            Быстрый заказ
+                        <button 
+                            onClick={handleQuickOrder}
+                            className={`w-full py-2 rounded-lg text-sm font-medium transition-colors ${
+                                isAdded
+                                    ? 'bg-green-600 text-white'
+                                    : 'bg-teal-600 text-white hover:bg-teal-700'
+                            }`}
+                        >
+                            {isAdded ? '✓ Додано в кошик' : 'Швидке замовлення'}
                         </button>
                     ) : (
                         <button className="w-full bg-gray-300 text-gray-600 py-2 rounded-lg text-sm font-medium cursor-not-allowed">
-                            Нет в наличии
+                            Немає в наявності
                         </button>
                     )}
                 </div>

@@ -1,19 +1,30 @@
 'use client'
 
 import Link from 'next/link'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Heart, ShoppingBag, User, Menu, Mail, Phone } from 'lucide-react'
 import Navigation from '@/components/Navigation/Navigation'
 import MobileMenu from './MobileMenu'
 import { AuthPrompt } from "@/components/AuthModal/AuthPrompt"
 import {AuthModal} from "@/components/AuthModal/AuthModal"
 import SearchAutocomplete from '@/components/Search/SearchAutocomplete'
+import { cartUtils } from '@/utils/cart'
 
 export default function Header() {
     const [showPrompt, setShowPrompt] = useState(false)
     const [showAuth, setShowAuth] = useState(false)
     const [authType, setAuthType] = useState<'login' | 'register'>('login')
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+    const [cartCount, setCartCount] = useState(0)
+
+    useEffect(() => {
+        const updateCartCount = () => {
+            setCartCount(cartUtils.getCartCount())
+        }
+        updateCartCount()
+        window.addEventListener('cartUpdated', updateCartCount)
+        return () => window.removeEventListener('cartUpdated', updateCartCount)
+    }, [])
 
     return (
         <>
@@ -67,8 +78,13 @@ export default function Header() {
                                 <Link href="/favorites">
                                     <Heart size={24} />
                                 </Link>
-                                <Link href="/cart">
+                                <Link href="/cart" className="relative">
                                     <ShoppingBag size={24} />
+                                    {cartCount > 0 && (
+                                        <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                                            {cartCount > 99 ? '99+' : cartCount}
+                                        </span>
+                                    )}
                                 </Link>
                             </div>
                         </div>
@@ -134,9 +150,14 @@ export default function Header() {
                                     <Heart size={20} />
                                     <span>Улюблене</span>
                                 </Link>
-                                <Link href="/cart" className="flex items-center gap-2 text-sm">
+                                <Link href="/cart" className="flex items-center gap-2 text-sm relative">
                                     <ShoppingBag size={20} />
                                     <span>Кошик</span>
+                                    {cartCount > 0 && (
+                                        <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                                            {cartCount > 99 ? '99+' : cartCount}
+                                        </span>
+                                    )}
                                 </Link>
                             </nav>
                         </div>
