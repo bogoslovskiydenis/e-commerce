@@ -128,6 +128,15 @@ const transformReviewToComment = (review: any) => {
     };
 };
 
+// Функция для извлечения URL из данных изображения
+const extractImageUrl = (imageData: any): string | null => {
+    if (!imageData) return null;
+    if (typeof imageData === 'string') return imageData;
+    // Если это объект (старый формат ImageInput), извлекаем src
+    if (imageData.src) return imageData.src;
+    return null;
+};
+
 // Трансформация Order из API формата в формат react-admin
 const transformOrder = (order: any) => {
     const statusMap: Record<string, string> = {
@@ -250,6 +259,19 @@ const dataProvider: DataProvider = {
                 }));
             }
 
+            // Трансформируем данные для ресурса 'banners' (API -> react-admin)
+            if (resource === 'banners') {
+                data = data.map((banner: any) => ({
+                    ...banner,
+                    image: banner.imageUrl,
+                    mobileImage: banner.mobileImageUrl,
+                    buttonUrl: banner.link,
+                    active: banner.isActive !== undefined ? banner.isActive : true,
+                    order: banner.sortOrder || 0,
+                    position: banner.position?.toLowerCase() || 'main'
+                }));
+            }
+
             console.log('✅ getList результат:', { data, total });
 
             return {
@@ -319,6 +341,19 @@ const dataProvider: DataProvider = {
                     parent: data.parent,
                     children: data.children || [],
                     childrenCount: data.childrenCount || 0
+                };
+            }
+
+            // Трансформируем данные для ресурса 'banners' (API -> react-admin)
+            if (resource === 'banners') {
+                data = {
+                    ...data,
+                    image: data.imageUrl,
+                    mobileImage: data.mobileImageUrl,
+                    buttonUrl: data.link,
+                    active: data.isActive !== undefined ? data.isActive : true,
+                    order: data.sortOrder || 0,
+                    position: data.position?.toLowerCase() || 'main'
                 };
             }
 
@@ -418,6 +453,32 @@ const dataProvider: DataProvider = {
                 };
             }
 
+            // Трансформируем данные для ресурса 'banners' (react-admin -> API)
+            if (resource === 'banners') {
+                const positionMap: Record<string, string> = {
+                    'main': 'MAIN',
+                    'category': 'CATEGORY',
+                    'sidebar': 'SIDEBAR',
+                    'footer': 'FOOTER',
+                    'popup': 'POPUP',
+                    'promo': 'CATEGORY' // promo -> CATEGORY для совместимости
+                };
+                createData = {
+                    title: params.data.title,
+                    subtitle: params.data.subtitle,
+                    description: params.data.description,
+                    imageUrl: extractImageUrl(params.data.image) || params.data.imageUrl || '',
+                    mobileImageUrl: extractImageUrl(params.data.mobileImage) || params.data.mobileImageUrl || null,
+                    link: params.data.buttonUrl || params.data.link || null,
+                    buttonText: params.data.buttonText || null,
+                    position: positionMap[params.data.position?.toLowerCase()] || params.data.position?.toUpperCase() || 'MAIN',
+                    isActive: params.data.active !== undefined ? params.data.active : params.data.isActive !== undefined ? params.data.isActive : true,
+                    sortOrder: params.data.order !== undefined ? params.data.order : params.data.sortOrder || 0,
+                    startDate: params.data.startDate || null,
+                    endDate: params.data.endDate || null
+                };
+            }
+
             const { json } = await httpClient(`${API_BASE_URL}${endpoint}`, {
                 method: 'POST',
                 body: JSON.stringify(createData),
@@ -451,6 +512,19 @@ const dataProvider: DataProvider = {
                     parent: resultData.parent,
                     children: resultData.children || [],
                     childrenCount: resultData.childrenCount || 0
+                };
+            }
+
+            // Трансформируем ответ для ресурса 'banners'
+            if (resource === 'banners') {
+                resultData = {
+                    ...resultData,
+                    image: resultData.imageUrl,
+                    mobileImage: resultData.mobileImageUrl,
+                    buttonUrl: resultData.link,
+                    active: resultData.isActive !== undefined ? resultData.isActive : true,
+                    order: resultData.sortOrder || 0,
+                    position: resultData.position?.toLowerCase() || 'main'
                 };
             }
 
@@ -541,6 +615,36 @@ const dataProvider: DataProvider = {
                 };
             }
 
+            // Трансформируем данные обратно для ресурса 'banners' (react-admin -> API)
+            if (resource === 'banners') {
+                const positionMap: Record<string, string> = {
+                    'main': 'MAIN',
+                    'category': 'CATEGORY',
+                    'sidebar': 'SIDEBAR',
+                    'footer': 'FOOTER',
+                    'popup': 'POPUP',
+                    'promo': 'CATEGORY' // promo -> CATEGORY для совместимости
+                };
+                // Для update сохраняем существующие значения, если новое изображение не загружено
+                const existingImageUrl = params.previousData?.imageUrl;
+                const existingMobileImageUrl = params.previousData?.mobileImageUrl;
+                
+                updateData = {
+                    title: params.data.title,
+                    subtitle: params.data.subtitle,
+                    description: params.data.description,
+                    imageUrl: extractImageUrl(params.data.image) || params.data.imageUrl || existingImageUrl || '',
+                    mobileImageUrl: extractImageUrl(params.data.mobileImage) || params.data.mobileImageUrl || existingMobileImageUrl || null,
+                    link: params.data.buttonUrl || params.data.link || null,
+                    buttonText: params.data.buttonText || null,
+                    position: positionMap[params.data.position?.toLowerCase()] || params.data.position?.toUpperCase() || 'MAIN',
+                    isActive: params.data.active !== undefined ? params.data.active : params.data.isActive !== undefined ? params.data.isActive : true,
+                    sortOrder: params.data.order !== undefined ? params.data.order : params.data.sortOrder || 0,
+                    startDate: params.data.startDate || null,
+                    endDate: params.data.endDate || null
+                };
+            }
+
             const { json } = await httpClient(`${API_BASE_URL}${endpoint}/${params.id}`, {
                 method: 'PUT',
                 body: JSON.stringify(updateData),
@@ -593,6 +697,19 @@ const dataProvider: DataProvider = {
                     parent: resultData.parent,
                     children: resultData.children || [],
                     childrenCount: resultData.childrenCount || 0
+                };
+            }
+
+            // Трансформируем ответ для ресурса 'banners'
+            if (resource === 'banners') {
+                resultData = {
+                    ...resultData,
+                    image: resultData.imageUrl,
+                    mobileImage: resultData.mobileImageUrl,
+                    buttonUrl: resultData.link,
+                    active: resultData.isActive !== undefined ? resultData.isActive : true,
+                    order: resultData.sortOrder || 0,
+                    position: resultData.position?.toLowerCase() || 'main'
                 };
             }
 

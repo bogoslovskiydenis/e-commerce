@@ -69,6 +69,13 @@ import {
     ApiKeyCreate
 } from './resources/security/apiKeys';
 
+// Ресурсы - Сайт (существующие)
+import {
+    BannerList,
+    BannerEdit,
+    BannerCreate
+} from './resources/website/banners';
+
 // Кастомные страницы (существующие)
 import ProfilePage from './pages/ProfilePage';
 import AnalyticsPage from './pages/AnalyticsPage';
@@ -78,11 +85,6 @@ import SystemInfoPage from './pages/SystemInfoPage';
 const OrderShow = () => <div>Order Show</div>;
 const ProductShow = () => <div>Product Show</div>;
 const CustomerShow = () => <div>Customer Show</div>;
-
-// Создаём заглушки для недостающих ресурсов (существующие)
-const BannerList = () => <div>Banner List</div>;
-const BannerEdit = () => <div>Banner Edit</div>;
-const BannerCreate = () => <div>Banner Create</div>;
 
 const PageList = () => <div>Page List</div>;
 const PageEdit = () => <div>Page Edit</div>;
@@ -124,6 +126,10 @@ const SecureAdminLogShow = withPermissions(AdminLogShow, 'logs.view');
 const SecureApiKeyList = withPermissions(ApiKeyList, 'api_keys.manage');
 const SecureApiKeyEdit = withPermissions(ApiKeyEdit, 'api_keys.manage');
 const SecureApiKeyCreate = withPermissions(ApiKeyCreate, 'api_keys.manage');
+
+const SecureBannerList = withPermissions(BannerList, 'website.banners');
+const SecureBannerEdit = withPermissions(BannerEdit, 'website.banners');
+const SecureBannerCreate = withPermissions(BannerCreate, 'website.banners');
 
 const SecureAnalyticsPage = withPermissions(AnalyticsPage, 'analytics.view');
 const SecureSystemInfoPage = withPermissions(SystemInfoPage, 'admin.full_access');
@@ -205,9 +211,9 @@ const App: React.FC = () => (
         {/* === КОНТЕНТ И САЙТ === */}
         <Resource
             name="banners"
-            list={BannerList}
-            edit={BannerEdit}
-            create={BannerCreate}
+            list={SecureBannerList}
+            edit={SecureBannerEdit}
+            create={SecureBannerCreate}
             options={{
                 label: 'Баннеры'
             }}

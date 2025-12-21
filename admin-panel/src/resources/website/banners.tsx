@@ -4,6 +4,7 @@ import {
     Datagrid,
     TextField,
     DateField,
+    FunctionField,
     Edit,
     Create,
     SimpleForm,
@@ -13,8 +14,6 @@ import {
     required,
     BooleanInput,
     NumberInput,
-    ImageField,
-    ImageInput,
     useRecordContext,
     TopToolbar,
     EditButton,
@@ -77,7 +76,8 @@ const PositionField = () => {
         'main': 'Главная страница',
         'category': 'Страницы категорий',
         'sidebar': 'Боковая панель',
-        'promo': 'Промо блок'
+        'footer': 'Футер',
+        'popup': 'Всплывающее окно'
     };
 
     return (
@@ -145,10 +145,34 @@ export const BannerList = () => (
         actions={<BannerListActions />}
     >
         <Datagrid rowClick="edit">
-            <NumberInput source="order" label="Порядок" />
+            <TextField source="order" label="Порядок" />
             <TextField source="title" label="Заголовок" />
-            <TextField source="position" label="Позиция" />
-            <TextField source="active" label="Статус" />
+            <FunctionField label="Позиция" render={(record: any) => {
+                const positionLabels = {
+                    'main': 'Главная страница',
+                    'category': 'Страницы категорий',
+                    'sidebar': 'Боковая панель',
+                    'footer': 'Футер',
+                    'popup': 'Всплывающее окно'
+                };
+                return positionLabels[record.position as keyof typeof positionLabels] || record.position;
+            }} />
+            <FunctionField label="Статус" render={(record: any) => {
+                const now = new Date();
+                const startDate = record.startDate ? new Date(record.startDate) : null;
+                const endDate = record.endDate ? new Date(record.endDate) : null;
+
+                if (!record.active) {
+                    return 'Неактивен';
+                }
+                if (startDate && now < startDate) {
+                    return 'Запланирован';
+                }
+                if (endDate && now > endDate) {
+                    return 'Истек';
+                }
+                return 'Активен';
+            }} />
             <DateField source="startDate" label="Дата начала" />
             <DateField source="endDate" label="Дата окончания" />
             <DateField source="updatedAt" label="Обновлен" showTime />
@@ -215,22 +239,20 @@ export const BannerEdit = () => {
                             Изображения
                         </Typography>
 
-                        <ImageInput
+                        <TextInput
                             source="image"
-                            label="Основное изображение"
-                            accept="image/*"
+                            label="URL основного изображения"
+                            fullWidth
                             validate={[required()]}
-                        >
-                            <ImageField source="src" title="title" />
-                        </ImageInput>
+                            helperText="Введите полный URL изображения (например: /images/banner.png или http://example.com/image.jpg)"
+                        />
 
-                        <ImageInput
+                        <TextInput
                             source="mobileImage"
-                            label="Изображение для мобильных"
-                            accept="image/*"
-                        >
-                            <ImageField source="src" title="title" />
-                        </ImageInput>
+                            label="URL изображения для мобильных"
+                            fullWidth
+                            helperText="Введите полный URL изображения для мобильных устройств"
+                        />
                     </Box>
 
                     {/* Правая колонка - настройки */}
@@ -246,7 +268,8 @@ export const BannerEdit = () => {
                                 { id: 'main', name: 'Главная страница' },
                                 { id: 'category', name: 'Страницы категорий' },
                                 { id: 'sidebar', name: 'Боковая панель' },
-                                { id: 'promo', name: 'Промо блок' }
+                                { id: 'footer', name: 'Футер' },
+                                { id: 'popup', name: 'Всплывающее окно' }
                             ]}
                             validate={[required()]}
                             fullWidth
@@ -350,22 +373,20 @@ export const BannerCreate = () => {
                             Изображения
                         </Typography>
 
-                        <ImageInput
+                        <TextInput
                             source="image"
-                            label="Основное изображение"
-                            accept="image/*"
+                            label="URL основного изображения"
+                            fullWidth
                             validate={[required()]}
-                        >
-                            <ImageField source="src" title="title" />
-                        </ImageInput>
+                            helperText="Введите полный URL изображения (например: /images/banner.png или http://example.com/image.jpg)"
+                        />
 
-                        <ImageInput
+                        <TextInput
                             source="mobileImage"
-                            label="Изображение для мобильных"
-                            accept="image/*"
-                        >
-                            <ImageField source="src" title="title" />
-                        </ImageInput>
+                            label="URL изображения для мобильных"
+                            fullWidth
+                            helperText="Введите полный URL изображения для мобильных устройств"
+                        />
                     </Box>
 
                     {/* Правая колонка */}
@@ -381,7 +402,8 @@ export const BannerCreate = () => {
                                 { id: 'main', name: 'Главная страница' },
                                 { id: 'category', name: 'Страницы категорий' },
                                 { id: 'sidebar', name: 'Боковая панель' },
-                                { id: 'promo', name: 'Промо блок' }
+                                { id: 'footer', name: 'Футер' },
+                                { id: 'popup', name: 'Всплывающее окно' }
                             ]}
                             validate={[required()]}
                             fullWidth
