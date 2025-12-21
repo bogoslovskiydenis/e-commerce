@@ -200,3 +200,4 @@ async function seedCallbacks() {
 
 // Запускаем скрипт
 seedCallbacks();
+

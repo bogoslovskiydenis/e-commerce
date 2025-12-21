@@ -23,6 +23,7 @@ const DEFAULT_OPTIONS: UseNavigationOptions = {
 };
 
 const CACHE_KEY = 'navigation_categories';
+const CACHE_VERSION = '4'; // Увеличиваем версию при изменении структуры навигации (dropdown с подкатегориями)
 
 export function useNavigation(options: UseNavigationOptions = {}) {
     const config = { ...DEFAULT_OPTIONS, ...options };
@@ -45,7 +46,14 @@ export function useNavigation(options: UseNavigationOptions = {}) {
             const cached = localStorage.getItem(CACHE_KEY);
             if (!cached) return null;
 
-            const { data, timestamp } = JSON.parse(cached);
+            const { data, timestamp, version } = JSON.parse(cached);
+            
+            // Проверяем версию кеша
+            if (version !== CACHE_VERSION) {
+                localStorage.removeItem(CACHE_KEY);
+                return null;
+            }
+            
             const now = Date.now();
 
             if (now - timestamp > config.cacheTimeout!) {
@@ -69,7 +77,8 @@ export function useNavigation(options: UseNavigationOptions = {}) {
         try {
             const cacheData = {
                 data,
-                timestamp: Date.now()
+                timestamp: Date.now(),
+                version: CACHE_VERSION
             };
             localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
         } catch (error) {

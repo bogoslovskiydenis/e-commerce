@@ -10,7 +10,7 @@ import FeaturesSection from '@/components/HomePageComponent/FeaturesSection/Feat
 import TestimonialsSection from '@/components/HomePageComponent/TestimonialsSection/TestimonialsSection'
 import CTASection from '@/components/HomePageComponent/CTASection/CTASection'
 import QuickOrderSection from '@/components/HomePageComponent/QuickOrderSection/QuickOrderSection'
-import { FEATURED_PRODUCTS, MAIN_CATEGORIES, REVIEWS } from '@/data/balloonData'
+import { apiService, Product, Category } from '@/services/api'
 
 // Данные для слайдера баннеров
 const BANNER_SLIDES = [
@@ -99,6 +99,40 @@ const CTA_BUTTONS = [
 
 export default function HomePage() {
     const [currentSlide, setCurrentSlide] = useState(0)
+    const [featuredProducts, setFeaturedProducts] = useState<Product[]>([])
+    const [mainCategories, setMainCategories] = useState<Category[]>([])
+    const [loading, setLoading] = useState(true)
+
+    // Загрузка данных из API
+    useEffect(() => {
+        const loadData = async () => {
+            try {
+                setLoading(true)
+                // Загружаем рекомендуемые товары
+                const products = await apiService.getFeaturedProducts(8)
+                setFeaturedProducts(products)
+
+                // Загружаем категории для главной страницы (только родительские)
+                const categories = await apiService.getNavigationCategories()
+                // Преобразуем категории в формат для CategorySection
+                const formattedCategories = categories
+                    .filter(cat => !cat.parentId) // Только родительские категории
+                    .slice(0, 5) // Берем первые 5
+                    .map(cat => ({
+                        name: cat.name,
+                        image: cat.imageUrl || cat.bannerUrl || '/api/placeholder/400/400',
+                        href: `/${cat.slug}`,
+                        count: cat.productsCount ? `${cat.productsCount}+` : '0+'
+                    }))
+                setMainCategories(formattedCategories as any)
+            } catch (error) {
+                console.error('Error loading homepage data:', error)
+            } finally {
+                setLoading(false)
+            }
+        }
+        loadData()
+    }, [])
 
     // Автоматическое переключение слайдов
     useEffect(() => {
@@ -208,21 +242,34 @@ export default function HomePage() {
             />
 
             {/* Популярные категории */}
-            <CategorySection
-                title="Популярные категории"
-                categories={MAIN_CATEGORIES}
-                columns={5}
-            />
+            {!loading && mainCategories.length > 0 && (
+                <CategorySection
+                    title="Популярные категории"
+                    categories={mainCategories}
+                    columns={5}
+                />
+            )}
 
             {/* Хиты продаж */}
-            <FeaturedProductsSection
-                title="Хиты продаж"
-                products={FEATURED_PRODUCTS}
-                viewAllLink="/products"
-                viewAllText="Посмотреть все"
-                bgColor="bg-gray-50"
-                slidesToShow={4}
-            />
+            {!loading && (
+                <FeaturedProductsSection
+                    title="Хиты продаж"
+                    products={featuredProducts.map(product => ({
+                        id: product.id,
+                        name: product.title || product.name || '',
+                        price: Number(product.price) || 0,
+                        oldPrice: product.oldPrice ? Number(product.oldPrice) : undefined,
+                        discount: product.discount ? Number(product.discount) : undefined,
+                        image: product.images?.[0] || product.image || '/api/placeholder/300/300',
+                        category: product.category || product.categoryId || '',
+                        link: `/product/${product.id}`
+                    }))}
+                    viewAllLink="/products"
+                    viewAllText="Посмотреть все"
+                    bgColor="bg-gray-50"
+                    slidesToShow={4}
+                />
+            )}
 
             {/* Преимущества */}
             <FeaturesSection
@@ -231,10 +278,26 @@ export default function HomePage() {
                 columns={4}
             />
 
-            {/* Отзывы */}
+            {/* Отзывы - пока оставляем статичные, так как нет API для отзывов */}
             <TestimonialsSection
                 title="Отзывы наших клиентов"
-                testimonials={REVIEWS}
+                testimonials={[
+                    {
+                        name: 'Анна',
+                        text: 'Заказывала букет на день рождения дочки. Все очень красиво и качественно! Доставили точно в срок.',
+                        rating: 5
+                    },
+                    {
+                        name: 'Дмитрий',
+                        text: 'Отличный сервис! Быстро оформили заказ, привезли шарики для корпоратива. Все остались довольны.',
+                        rating: 5
+                    },
+                    {
+                        name: 'Елена',
+                        text: 'Красивые фольгированные шары для свадьбы. Качество отличное, продержались весь день!',
+                        rating: 5
+                    }
+                ]}
                 bgColor="bg-gray-50"
                 slidesToShow={3}
             />

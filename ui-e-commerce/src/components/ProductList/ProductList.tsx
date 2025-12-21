@@ -33,20 +33,8 @@ export default function ProductList({
 
     // Функция для определения правильной ссылки на товар
     const getProductLink = (product: BalloonProduct) => {
-        if (product.category === 'bouquets') {
-            return `/bouquets/${product.id}`
-        }
-        if (product.category === 'sets' || product.type === 'set') {
-            return `/sets/${product.id}`
-        }
-        if (product.category === 'cups' || product.type === 'cup') {
-            return `/cups/${product.id}`
-        }
-        if (['plush', 'souvenir', 'jewelry', 'sweets', 'flowers'].includes(product.type)) {
-            return `/gifts/${product.id}`
-        }
-        // Все остальное (шары) - ведем на /balloons/category/id
-        return `${basePath}/${product.category}/${product.id}`
+        // Используем универсальный роут /product/[id] для всех товаров
+        return `/product/${product.id}`
     }
 
     // Определяем цвет бейджа для материала

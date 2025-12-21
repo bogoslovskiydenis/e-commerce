@@ -19,7 +19,10 @@
     "seed:customers": "tsx scripts/seedCustomers.mjs",
     "seed:orders": "tsx scripts/seedOrders.mjs",
     "seed:structured": "tsx scripts/seedStructuredData.mjs",
-    "seed:all": "tsx scripts/seedAll.mjs"
+    "seed:disable-old-nav": "tsx scripts/disableOldCategoriesNavigation.mjs",
+    "seed:disable-empty": "tsx scripts/disableEmptyCategoriesNavigation.mjs",
+    "seed:all": "tsx scripts/seedAll.mjs",
+    "delete:categories": "tsx scripts/deleteCategories.mjs"
   },
   "dependencies": {
     "@nestjs/common": "^10.3.0",
@@ -31,7 +34,7 @@
     "@nestjs/platform-express": "^10.3.0",
     "@nestjs/serve-static": "^4.0.0",
     "@nestjs/throttler": "^5.0.1",
-    "@prisma/client": "^5.7.1",
+    "@prisma/client": "^5.22.0",
     "@types/helmet": "^0.0.48",
     "bcrypt": "^5.1.1",
     "class-transformer": "^0.5.1",
@@ -59,7 +62,7 @@
     "@types/node": "^20.10.5",
     "@types/passport-jwt": "^4.0.1",
     "@types/speakeasy": "^2.0.10",
-    "prisma": "^5.7.1",
+    "prisma": "^5.22.0",
     "ts-loader": "^9.5.1",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",

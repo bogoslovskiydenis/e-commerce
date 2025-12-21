@@ -94,6 +94,7 @@ export class CategoriesService {
   }
 
   async getNavigationCategories() {
+    // Получаем только родительские категории с showInNavigation: true
     const categories = await this.prisma.category.findMany({
       where: {
         isActive: true,
@@ -104,14 +105,61 @@ export class CategoriesService {
         children: {
           where: { isActive: true, showInNavigation: true },
           orderBy: { sortOrder: 'asc' },
+          include: {
+            _count: {
+              select: { products: true }
+            }
+          }
         },
+        _count: {
+          select: { products: true }
+        }
       },
       orderBy: { sortOrder: 'asc' },
     });
 
+    // Добавляем информацию о количестве товаров в дочерних категориях
+    const categoriesWithChildrenInfo = await Promise.all(
+      categories.map(async (category) => {
+        // Подсчитываем товары в дочерних категориях
+        const childrenWithProducts = await this.prisma.category.findMany({
+          where: {
+            parentId: category.id,
+            isActive: true,
+            showInNavigation: true,
+          },
+          include: {
+            _count: {
+              select: { products: true }
+            }
+          }
+        });
+
+        const totalChildrenProducts = childrenWithProducts.reduce(
+          (sum, child) => sum + child._count.products,
+          0
+        );
+
+        // Добавляем количество товаров к каждой дочерней категории
+        const childrenWithCounts = category.children.map(child => {
+          const childData = childrenWithProducts.find(c => c.id === child.id);
+          return {
+            ...child,
+            productsCount: childData?._count?.products || 0,
+          };
+        });
+
+        return {
+          ...category,
+          children: childrenWithCounts,
+          childrenProductsCount: totalChildrenProducts,
+        };
+      })
+    );
+
     return {
       success: true,
-      data: categories,
+      data: categoriesWithChildrenInfo,
     };
   }
 
@@ -207,13 +255,41 @@ export class CategoriesService {
     };
   }
 
-  async deleteCategory(id: string) {
+  async deleteCategory(id: string, force: boolean = false) {
     const category = await this.prisma.category.findUnique({
       where: { id },
+      include: {
+        children: true,
+        _count: {
+          select: { products: true }
+        }
+      }
     });
 
     if (!category) {
       throw new NotFoundException('Category not found');
+    }
+
+    // Проверяем наличие дочерних категорий
+    if (category.children && category.children.length > 0) {
+      throw new BadRequestException(
+        `Cannot delete category: it has ${category.children.length} subcategories. Delete subcategories first or use force delete.`
+      );
+    }
+
+    // Проверяем наличие товаров
+    const productsCount = category._count?.products || 0;
+    if (productsCount > 0 && !force) {
+      throw new BadRequestException(
+        `Cannot delete category: it has ${productsCount} products. Delete products first or use force delete.`
+      );
+    }
+
+    // Если force=true, удаляем все товары категории
+    if (force && productsCount > 0) {
+      await this.prisma.product.deleteMany({
+        where: { categoryId: id }
+      });
     }
 
     await this.prisma.category.delete({
@@ -233,4 +309,5 @@ export class CategoriesService {
       .replace(/(^-|-$)/g, '');
   }
 }
+
 

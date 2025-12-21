@@ -69,7 +69,7 @@ export class ProductsService {
       pagination: {
         page: pageNum,
         limit: limitNum,
-        total,
+      total,
         totalPages,
       },
     };
@@ -211,4 +211,5 @@ export class ProductsService {
       .replace(/(^-|-$)/g, '');
   }
 }
+
 

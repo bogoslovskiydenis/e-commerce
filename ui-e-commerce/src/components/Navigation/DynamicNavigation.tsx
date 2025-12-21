@@ -4,11 +4,13 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Category, apiService } from '@/services/api'
 import { DynamicDropdownMenu } from './DynamicDropdownMenu'
+import { BalloonsDropdownMenu } from './BalloonsDropdownMenu'
 
 interface NavigationItem {
     id: string;
     title: string;
     href: string;
+    slug?: string;
     isSpecial?: boolean;
     hasDropdown?: boolean;
     type: string;
@@ -31,14 +33,17 @@ export default function DynamicNavigation() {
             setIsLoading(true);
             const categories = await apiService.getNavigationCategories();
 
-            // Преобразуем категории в элементы навигации
+            // Преобразуем категории в элементы навигации (только родительские категории)
             const items = categories.map(category => ({
                 id: category.id,
                 title: category.name,
                 href: category.href || `/${category.slug}`,
-                hasDropdown: (category.children && category.children.length > 0) || category.productsCount > 0,
+                slug: category.slug,
+                hasDropdown: (category.children && category.children.length > 0) || 
+                           (category._count?.products > 0) || 
+                           (category.childrenProductsCount > 0),
                 type: category.type,
-                order: category.order,
+                order: category.sortOrder || category.order || 0,
                 children: category.children,
                 isSpecial: category.type === 'promotions' || category.slug === 'sale'
             }));
@@ -56,7 +61,10 @@ export default function DynamicNavigation() {
                 }
             ];
 
-            const allItems = [...items, ...specialItems].sort((a, b) => a.order - b.order);
+            // Сортируем по order
+            const allItems = [...items, ...specialItems].sort((a, b) => {
+                return (a.order || 0) - (b.order || 0);
+            });
             setNavigationItems(allItems);
         } catch (error) {
             console.error('Error loading navigation data:', error);
@@ -180,11 +188,23 @@ export default function DynamicNavigation() {
 
                                 {item.hasDropdown && hoveredItem === item.id && (
                                     <div className="nav-dropdown">
-                                        <DynamicDropdownMenu
-                                            categoryType={item.type}
-                                            categoryId={item.id}
-                                            children={item.children}
-                                        />
+                                        {/* Специальный dropdown для категории "Шарики" */}
+                                        {(item.title.toLowerCase().includes('шарик') || 
+                                          item.slug === 'balloons' || 
+                                          item.slug === 'шарики') ? (
+                                            <BalloonsDropdownMenu
+                                                categoryId={item.id}
+                                                categoryName={item.title}
+                                                children={item.children}
+                                            />
+                                        ) : (
+                                            <DynamicDropdownMenu
+                                                categoryType={item.type}
+                                                categoryId={item.id}
+                                                categoryName={item.title}
+                                                children={item.children}
+                                            />
+                                        )}
                                     </div>
                                 )}
                             </li>

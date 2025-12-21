@@ -62,8 +62,9 @@ export default function ProductCard({
         return colorMap[colorName] || 'bg-gray-400'
     }
 
-    // Формируем правильную ссылку
-    const productLink = `${basePath}/${category}/${id}`
+    // Формируем правильную ссылку на товар
+    // Используем универсальный роут /product/[id] для всех товаров
+    const productLink = `/product/${id}`
 
     return (
         <div className={`group relative flex flex-col h-full bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow ${className}`}>

@@ -8,10 +8,11 @@ import { Category, Product, apiService } from '@/services/api'
 interface DynamicDropdownMenuProps {
     categoryType: string;
     categoryId: string;
+    categoryName?: string;
     children?: Category[];
 }
 
-export function DynamicDropdownMenu({ categoryType, categoryId, children }: DynamicDropdownMenuProps) {
+export function DynamicDropdownMenu({ categoryType, categoryId, categoryName, children }: DynamicDropdownMenuProps) {
     const [subcategories, setSubcategories] = useState<Category[]>([]);
     const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -106,7 +107,9 @@ export function DynamicDropdownMenu({ categoryType, categoryId, children }: Dyna
                                     className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-teal-600 rounded-md transition-colors"
                                 >
                                     <div className="flex items-center justify-between">
-                                        <span>{subcategory.name}</span>
+                                        <span>
+                                            {subcategory.name}
+                                        </span>
                                         {subcategory.productsCount !== undefined && subcategory.productsCount > 0 && (
                                             <span className="text-xs text-gray-400">
                                                 ({subcategory.productsCount})

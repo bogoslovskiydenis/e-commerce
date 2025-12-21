@@ -216,3 +216,4 @@ async function seedReviews() {
 
 // Запускаем скрипт
 seedReviews();
+

@@ -51,8 +51,10 @@ export class CategoriesController {
   @Delete(':id')
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @RequirePermissions('categories.delete')
-  async deleteCategory(@Param('id') id: string) {
-    return this.categoriesService.deleteCategory(id);
+  async deleteCategory(@Param('id') id: string, @Query('force') force?: string) {
+    const forceDelete = force === 'true';
+    return this.categoriesService.deleteCategory(id, forceDelete);
   }
 }
+
 

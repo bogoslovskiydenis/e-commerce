@@ -275,3 +275,4 @@ async function seedCustomers() {
 
 // Запускаем скрипт
 seedCustomers();
+
