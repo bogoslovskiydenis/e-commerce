@@ -223,6 +223,33 @@ const dataProvider: DataProvider = {
                 }));
             }
 
+            // Трансформируем данные для ресурса 'navigation'
+            if (resource === 'navigation') {
+                data = data.map((item: any) => ({
+                    ...item,
+                    id: item.id,
+                    name: item.name,
+                    title: item.name, // для совместимости
+                    url: item.url,
+                    type: item.type?.toLowerCase() || item.type,
+                    categoryId: item.categoryId,
+                    parentId: item.parentId,
+                    sortOrder: item.sortOrder,
+                    order: item.sortOrder, // для совместимости
+                    isActive: item.isActive,
+                    active: item.isActive, // для совместимости
+                    openInNew: item.openInNew,
+                    icon: item.icon,
+                    category: item.category ? {
+                        ...item.category,
+                        parentId: item.category.parentId
+                    } : null,
+                    parent: item.parent,
+                    children: item.children || [],
+                    childrenCount: item.childrenCount || 0
+                }));
+            }
+
             console.log('✅ getList результат:', { data, total });
 
             return {
@@ -265,6 +292,33 @@ const dataProvider: DataProvider = {
                     ...data,
                     active: data.isActive !== undefined ? data.isActive : true,
                     order: data.sortOrder || 0
+                };
+            }
+
+            // Трансформируем данные для ресурса 'navigation'
+            if (resource === 'navigation') {
+                data = {
+                    ...data,
+                    id: data.id,
+                    name: data.name,
+                    title: data.name, // для совместимости
+                    url: data.url,
+                    type: data.type?.toLowerCase() || data.type,
+                    categoryId: data.categoryId,
+                    parentId: data.parentId,
+                    sortOrder: data.sortOrder,
+                    order: data.sortOrder, // для совместимости
+                    isActive: data.isActive,
+                    active: data.isActive, // для совместимости
+                    openInNew: data.openInNew,
+                    icon: data.icon,
+                    category: data.category ? {
+                        ...data.category,
+                        parentId: data.category.parentId
+                    } : null,
+                    parent: data.parent,
+                    children: data.children || [],
+                    childrenCount: data.childrenCount || 0
                 };
             }
 
@@ -349,6 +403,21 @@ const dataProvider: DataProvider = {
                 delete createData.order;
             }
 
+            // Трансформируем данные для ресурса 'navigation' (react-admin -> API)
+            if (resource === 'navigation') {
+                createData = {
+                    name: params.data.name || params.data.title,
+                    url: params.data.url,
+                    type: params.data.type?.toUpperCase() || params.data.type || 'LINK',
+                    categoryId: params.data.categoryId || null,
+                    parentId: params.data.parentId || null,
+                    sortOrder: params.data.sortOrder !== undefined ? params.data.sortOrder : params.data.order || 0,
+                    isActive: params.data.isActive !== undefined ? params.data.isActive : params.data.active !== undefined ? params.data.active : true,
+                    openInNew: params.data.openInNew || false,
+                    icon: params.data.icon || null
+                };
+            }
+
             const { json } = await httpClient(`${API_BASE_URL}${endpoint}`, {
                 method: 'POST',
                 body: JSON.stringify(createData),
@@ -356,11 +425,40 @@ const dataProvider: DataProvider = {
 
             console.log('✅ create результат:', json);
 
+            let resultData = json.data || { ...params.data, id: json.id || json.data?.id };
+
+            // Трансформируем ответ для ресурса 'navigation'
+            if (resource === 'navigation') {
+                resultData = {
+                    ...resultData,
+                    id: resultData.id,
+                    name: resultData.name,
+                    title: resultData.name, // для совместимости
+                    url: resultData.url,
+                    type: resultData.type?.toLowerCase() || resultData.type,
+                    categoryId: resultData.categoryId,
+                    parentId: resultData.parentId,
+                    sortOrder: resultData.sortOrder,
+                    order: resultData.sortOrder, // для совместимости
+                    isActive: resultData.isActive,
+                    active: resultData.isActive, // для совместимости
+                    openInNew: resultData.openInNew,
+                    icon: resultData.icon,
+                    category: resultData.category ? {
+                        ...resultData.category,
+                        parentId: resultData.category.parentId
+                    } : null,
+                    parent: resultData.parent,
+                    children: resultData.children || [],
+                    childrenCount: resultData.childrenCount || 0
+                };
+            }
+
             // ИСПРАВЛЕНИЕ: правильный формат возврата
             return {
                 data: {
-                    ...json.data,
-                    id: json.data?.id || json.id
+                    ...resultData,
+                    id: resultData.id || json.id
                 }
             };
         } catch (error) {
@@ -428,6 +526,21 @@ const dataProvider: DataProvider = {
                 delete updateData.order;
             }
 
+            // Трансформируем данные обратно для ресурса 'navigation' (react-admin -> API)
+            if (resource === 'navigation') {
+                updateData = {
+                    name: params.data.name || params.data.title,
+                    url: params.data.url,
+                    type: params.data.type?.toUpperCase() || params.data.type,
+                    categoryId: params.data.categoryId || null,
+                    parentId: params.data.parentId || null,
+                    sortOrder: params.data.sortOrder !== undefined ? params.data.sortOrder : params.data.order,
+                    isActive: params.data.isActive !== undefined ? params.data.isActive : params.data.active,
+                    openInNew: params.data.openInNew || false,
+                    icon: params.data.icon || null
+                };
+            }
+
             const { json } = await httpClient(`${API_BASE_URL}${endpoint}/${params.id}`, {
                 method: 'PUT',
                 body: JSON.stringify(updateData),
@@ -453,6 +566,33 @@ const dataProvider: DataProvider = {
                     ...resultData,
                     active: resultData.isActive !== undefined ? resultData.isActive : true,
                     order: resultData.sortOrder || 0
+                };
+            }
+
+            // Трансформируем ответ для ресурса 'navigation'
+            if (resource === 'navigation') {
+                resultData = {
+                    ...resultData,
+                    id: resultData.id,
+                    name: resultData.name,
+                    title: resultData.name, // для совместимости
+                    url: resultData.url,
+                    type: resultData.type?.toLowerCase() || resultData.type,
+                    categoryId: resultData.categoryId,
+                    parentId: resultData.parentId,
+                    sortOrder: resultData.sortOrder,
+                    order: resultData.sortOrder, // для совместимости
+                    isActive: resultData.isActive,
+                    active: resultData.isActive, // для совместимости
+                    openInNew: resultData.openInNew,
+                    icon: resultData.icon,
+                    category: resultData.category ? {
+                        ...resultData.category,
+                        parentId: resultData.category.parentId
+                    } : null,
+                    parent: resultData.parent,
+                    children: resultData.children || [],
+                    childrenCount: resultData.childrenCount || 0
                 };
             }
 

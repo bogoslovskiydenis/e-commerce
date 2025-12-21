@@ -12,6 +12,10 @@ import {
     Chip,
     CircularProgress
 } from '@mui/material';
+import {
+    Category,
+    SubdirectoryArrowRight
+} from '@mui/icons-material';
 import { adminApiService } from '../../services/api';
 
 // Интерфейс для элемента навигации
@@ -25,6 +29,12 @@ interface NavigationItem {
     productsCount: number;
     isVisible: boolean;
     hasDropdown: boolean;
+    parentId?: string | null;
+    parent?: {
+        id: string;
+        name: string;
+    } | null;
+    children?: NavigationItem[];
 }
 
 export default function NavigationManager() {
@@ -46,19 +56,68 @@ export default function NavigationManager() {
             const data = await adminApiService.getNavigationCategories();
 
             // Преобразуем данные для NavigationItem
-            const items: NavigationItem[] = data.map((category, index) => ({
-                id: category.id,
-                name: category.name,
-                type: category.type,
-                showInNavigation: category.showInNavigation,
-                order: category.order || index,
-                active: category.active,
-                productsCount: category.productsCount || 0,
-                isVisible: category.showInNavigation,
-                hasDropdown: (category.productsCount || 0) > 0
-            }));
+            const itemsMap = new Map<string, NavigationItem>();
+            const allItems: NavigationItem[] = [];
+            
+            // Сначала создаем все элементы
+            data.forEach((category: any) => {
+                const item: NavigationItem = {
+                    id: category.id,
+                    name: category.name,
+                    type: category.type,
+                    showInNavigation: category.showInNavigation,
+                    order: category.order || 0,
+                    active: category.active,
+                    productsCount: category.productsCount || 0,
+                    isVisible: category.showInNavigation,
+                    hasDropdown: false,
+                    parentId: category.parentId || null,
+                    parent: category.parent || null,
+                    children: []
+                };
+                itemsMap.set(category.id, item);
+            });
+            
+            // Теперь группируем: находим родительские и дочерние
+            const parentItems: NavigationItem[] = [];
+            const childItems: NavigationItem[] = [];
+            
+            itemsMap.forEach((item) => {
+                if (!item.parentId) {
+                    // Родительская категория
+                    // Проверяем, есть ли у неё дети
+                    const children = Array.from(itemsMap.values()).filter(child => child.parentId === item.id);
+                    item.children = children;
+                    item.hasDropdown = children.length > 0 || item.productsCount > 0;
+                    parentItems.push(item);
+                } else {
+                    // Дочерняя категория
+                    const parent = itemsMap.get(item.parentId);
+                    if (parent) {
+                        item.parent = {
+                            id: parent.id,
+                            name: parent.name
+                        };
+                    }
+                    item.hasDropdown = item.productsCount > 0;
+                    childItems.push(item);
+                }
+            });
+            
+            // Сортируем родительские по order
+            parentItems.sort((a, b) => a.order - b.order);
+            
+            // Создаем итоговый список: родительская категория, затем её дети
+            parentItems.forEach((parent) => {
+                allItems.push(parent);
+                // Добавляем детей этой категории, отсортированных по order
+                const children = childItems
+                    .filter(child => child.parentId === parent.id)
+                    .sort((a, b) => a.order - b.order);
+                allItems.push(...children);
+            });
 
-            setCategories(items.sort((a, b) => a.order - b.order));
+            setCategories(allItems);
         } catch (error) {
             console.error('Error loading categories:', error);
             setError('Ошибка загрузки категорий');
@@ -258,6 +317,9 @@ export default function NavigationManager() {
                                                         {...provided.draggableProps}
                                                         sx={{
                                                             mb: 1,
+                                                            ml: item.parentId ? 4 : 0,
+                                                            borderLeft: item.parentId ? '3px solid' : 'none',
+                                                            borderColor: item.parentId ? 'secondary.main' : 'transparent',
                                                             backgroundColor: snapshot.isDragging ? 'action.hover' : 'background.paper',
                                                             cursor: 'default'
                                                         }}
@@ -278,13 +340,47 @@ export default function NavigationManager() {
 
                                                                 {/* Category info */}
                                                                 <Box flex={1} display="flex" alignItems="center" gap={2}>
-                                                                    <Typography variant="h6">
-                                                                        {getTypeIcon(item.type)}
-                                                                    </Typography>
-                                                                    <Box>
-                                                                        <Typography variant="subtitle1">
-                                                                            {item.name}
+                                                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                                        {item.parentId ? (
+                                                                            <SubdirectoryArrowRight sx={{ fontSize: 20, color: 'text.secondary' }} />
+                                                                        ) : (
+                                                                            <Category sx={{ fontSize: 20, color: 'primary.main' }} />
+                                                                        )}
+                                                                        <Typography variant="h6">
+                                                                            {getTypeIcon(item.type)}
                                                                         </Typography>
+                                                                    </Box>
+                                                                    <Box sx={{ flex: 1 }}>
+                                                                        <Box display="flex" alignItems="center" gap={1} mb={0.5}>
+                                                                            <Typography variant="subtitle1">
+                                                                                {item.name}
+                                                                            </Typography>
+                                                                            {item.parentId && item.parent && (
+                                                                                <Chip
+                                                                                    label={`→ ${item.parent.name}`}
+                                                                                    size="small"
+                                                                                    color="secondary"
+                                                                                    sx={{ height: 20, fontSize: '0.7rem' }}
+                                                                                />
+                                                                            )}
+                                                                            {!item.parentId && (
+                                                                                <Chip
+                                                                                    label="Категория"
+                                                                                    size="small"
+                                                                                    color="primary"
+                                                                                    sx={{ height: 20, fontSize: '0.7rem' }}
+                                                                                />
+                                                                            )}
+                                                                            {item.parentId && (
+                                                                                <Chip
+                                                                                    label="Подкатегория"
+                                                                                    size="small"
+                                                                                    color="secondary"
+                                                                                    variant="outlined"
+                                                                                    sx={{ height: 20, fontSize: '0.7rem' }}
+                                                                                />
+                                                                            )}
+                                                                        </Box>
                                                                         <Box display="flex" gap={1} alignItems="center">
                                                                             <Chip
                                                                                 label={getTypeLabel(item.type)}

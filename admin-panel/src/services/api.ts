@@ -9,6 +9,11 @@ export interface Category {
     active: boolean;
     productsCount?: number;
     parentId?: string;
+    parent?: {
+        id: string;
+        name: string;
+    } | null;
+    children?: Category[];
 }
 
 class AdminApiService {
@@ -39,7 +44,7 @@ class AdminApiService {
 
     async getNavigationCategories(): Promise<Category[]> {
         try {
-            // Получаем все категории для управления навигацией
+            // Получаем все категории для управления навигацией (включая подкатегории)
             const data = await this.request('/categories?limit=100&sortBy=sortOrder&sortOrder=asc');
             const categories = data.data || [];
             
@@ -52,8 +57,13 @@ class AdminApiService {
                 showInNavigation: cat.showInNavigation !== undefined ? cat.showInNavigation : true,
                 order: cat.sortOrder || 0,
                 active: cat.isActive !== undefined ? cat.isActive : true,
-                productsCount: cat.products?.length || 0,
-                parentId: cat.parentId
+                productsCount: cat.products?.length || cat._count?.products || 0,
+                parentId: cat.parentId,
+                parent: cat.parent ? {
+                    id: cat.parent.id,
+                    name: cat.parent.name
+                } : null,
+                children: cat.children || []
             }));
         } catch (error) {
             console.error('Error fetching categories:', error);

@@ -14,11 +14,11 @@ export class NavigationService {
     const items = await this.prisma.navigationItem.findMany({
       where,
       include: {
-        category: { select: { id: true, name: true, slug: true } },
+        category: { select: { id: true, name: true, slug: true, parentId: true } },
         children: {
           where: { isActive: true },
           orderBy: { sortOrder: 'asc' },
-          include: { category: { select: { id: true, name: true, slug: true } } },
+          include: { category: { select: { id: true, name: true, slug: true, parentId: true } } },
         },
         _count: { select: { children: true } },
       },
@@ -55,7 +55,11 @@ export class NavigationService {
   async getNavigationItemById(id: string) {
     const item = await this.prisma.navigationItem.findUnique({
       where: { id },
-      include: { category: true, parent: true, children: { orderBy: { sortOrder: 'asc' } } },
+      include: { 
+        category: { select: { id: true, name: true, slug: true, parentId: true } }, 
+        parent: true, 
+        children: { orderBy: { sortOrder: 'asc' } } 
+      },
     });
 
     if (!item) {

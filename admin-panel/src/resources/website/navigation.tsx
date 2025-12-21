@@ -31,7 +31,9 @@ import {
 import {
     DragIndicator,
     Visibility,
-    VisibilityOff
+    VisibilityOff,
+    Category,
+    SubdirectoryArrowRight
 } from '@mui/icons-material';
 
 // Действия в списке
@@ -46,7 +48,7 @@ const NavigationListActions = () => (
 export const NavigationList = () => (
     <List
         title="Навигация сайта"
-        sort={{ field: 'order', order: 'ASC' }}
+        sort={{ field: 'sortOrder', order: 'ASC' }}
         perPage={50}
         actions={<NavigationListActions />}
     >
@@ -54,18 +56,62 @@ export const NavigationList = () => (
             {/* Иерархия с drag handle */}
             <FunctionField
                 label="Название"
-                render={(record: any) => (
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <DragIndicator sx={{ mr: 1, color: 'action.disabled' }} />
-                        <Box sx={{ pl: record.parentId ? 3 : 0 }}>
-                            {record.parentId && '└ '}
-                            {record.title}
+                render={(record: any) => {
+                    const isSubcategory = !!record.parentId;
+                    const isCategory = record.type === 'category' || record.type === 'CATEGORY';
+                    const categoryIsParent = record.category?.parentId === null || record.category?.parentId === undefined;
+                    const categoryIsChild = record.category?.parentId !== null && record.category?.parentId !== undefined;
+                    
+                    return (
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <DragIndicator sx={{ color: 'action.disabled' }} />
+                            <Box sx={{ 
+                                display: 'flex', 
+                                alignItems: 'center', 
+                                gap: 1,
+                                pl: isSubcategory ? 3 : 0,
+                                flex: 1
+                            }}>
+                                {isSubcategory && (
+                                    <SubdirectoryArrowRight sx={{ fontSize: 18, color: 'text.secondary' }} />
+                                )}
+                                {!isSubcategory && isCategory && (
+                                    <Category sx={{ fontSize: 18, color: 'primary.main' }} />
+                                )}
+                                <Typography variant="body2" component="span">
+                                    {record.name || record.title}
+                                </Typography>
+                                {isCategory && (
+                                    <Chip
+                                        label={categoryIsParent ? 'Категория' : 'Подкатегория'}
+                                        size="small"
+                                        color={categoryIsParent ? 'primary' : 'secondary'}
+                                        sx={{ height: 20, fontSize: '0.7rem' }}
+                                    />
+                                )}
+                                {isSubcategory && (
+                                    <Chip
+                                        label="Подменю"
+                                        size="small"
+                                        color="default"
+                                        variant="outlined"
+                                        sx={{ height: 20, fontSize: '0.7rem' }}
+                                    />
+                                )}
+                            </Box>
                         </Box>
-                    </Box>
-                )}
+                    );
+                }}
             />
 
-            <TextField source="url" label="URL" />
+            <FunctionField
+                label="URL"
+                render={(record: any) => (
+                    <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                        {record.url || '-'}
+                    </Typography>
+                )}
+            />
 
             {/* Тип пункта меню */}
             <FunctionField
@@ -73,9 +119,12 @@ export const NavigationList = () => (
                 render={(record: any) => {
                     const typeLabels = {
                         'category': 'Категория',
+                        'CATEGORY': 'Категория',
                         'page': 'Страница',
                         'external': 'Внешняя ссылка',
-                        'custom': 'Произвольная'
+                        'EXTERNAL': 'Внешняя ссылка',
+                        'custom': 'Произвольная',
+                        'LINK': 'Ссылка'
                     };
                     return (
                         <Typography variant="body2">
@@ -85,17 +134,36 @@ export const NavigationList = () => (
                 }}
             />
 
-            <NumberField source="order" label="Порядок" />
+            {/* Связанная категория */}
+            <FunctionField
+                label="Связанная категория"
+                render={(record: any) => {
+                    if (!record.category) return <Typography variant="body2" sx={{ color: 'text.secondary' }}>-</Typography>;
+                    const isParentCategory = !record.category.parentId;
+                    return (
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                            <Typography variant="body2">{record.category.name}</Typography>
+                            {isParentCategory ? (
+                                <Chip label="Родительская" size="small" color="primary" sx={{ height: 18, fontSize: '0.65rem' }} />
+                            ) : (
+                                <Chip label="Дочерняя" size="small" color="secondary" sx={{ height: 18, fontSize: '0.65rem' }} />
+                            )}
+                        </Box>
+                    );
+                }}
+            />
+
+            <NumberField source="sortOrder" label="Порядок" />
 
             {/* Статус активности */}
             <FunctionField
                 label="Статус"
                 render={(record: any) => (
                     <Chip
-                        label={record.active ? 'Активен' : 'Скрыт'}
-                        color={record.active ? 'success' : 'default'}
+                        label={record.isActive ? 'Активен' : 'Скрыт'}
+                        color={record.isActive ? 'success' : 'default'}
                         size="small"
-                        icon={record.active ? <Visibility /> : <VisibilityOff />}
+                        icon={record.isActive ? <Visibility /> : <VisibilityOff />}
                     />
                 )}
             />
@@ -116,7 +184,7 @@ export const NavigationEdit = () => (
                         </Typography>
 
                         <TextInput
-                            source="title"
+                            source="name"
                             label="Название пункта"
                             fullWidth
                             validate={[required()]}
@@ -149,7 +217,12 @@ export const NavigationEdit = () => (
                             reference="categories"
                             label="Связанная категория"
                         >
-                            <SelectInput optionText="name" />
+                            <SelectInput 
+                                optionText={(record: any) => {
+                                    const isParent = !record.parentId;
+                                    return `${record.name} ${isParent ? '(Категория)' : '(Подкатегория)'}`;
+                                }}
+                            />
                         </ReferenceInput>
                     </Box>
 
@@ -165,20 +238,20 @@ export const NavigationEdit = () => (
                             label="Родительский пункт"
                         >
                             <SelectInput
-                                optionText="title"
+                                optionText="name"
                                 emptyText="Корневой уровень"
                             />
                         </ReferenceInput>
 
                         <NumberInput
-                            source="order"
+                            source="sortOrder"
                             label="Порядок сортировки"
                             fullWidth
-                            defaultValue={1}
+                            defaultValue={0}
                         />
 
                         <BooleanInput
-                            source="active"
+                            source="isActive"
                             label="Показывать в навигации"
                             defaultValue={true}
                         />
@@ -253,7 +326,7 @@ export const NavigationCreate = () => (
                         </Typography>
 
                         <TextInput
-                            source="title"
+                            source="name"
                             label="Название пункта"
                             fullWidth
                             validate={[required()]}
@@ -285,7 +358,12 @@ export const NavigationCreate = () => (
                             reference="categories"
                             label="Связанная категория"
                         >
-                            <SelectInput optionText="name" />
+                            <SelectInput 
+                                optionText={(record: any) => {
+                                    const isParent = !record.parentId;
+                                    return `${record.name} ${isParent ? '(Категория)' : '(Подкатегория)'}`;
+                                }}
+                            />
                         </ReferenceInput>
                     </Box>
 
@@ -295,14 +373,14 @@ export const NavigationCreate = () => (
                         </Typography>
 
                         <NumberInput
-                            source="order"
+                            source="sortOrder"
                             label="Порядок"
-                            defaultValue={1}
+                            defaultValue={0}
                             fullWidth
                         />
 
                         <BooleanInput
-                            source="active"
+                            source="isActive"
                             label="Активен"
                             defaultValue={true}
                         />

@@ -209,10 +209,11 @@ export default function Navigation() {
                                                         <Link
                                                             key={index}
                                                             href={subItem.href}
-                                                            className="flex items-center justify-between py-2 px-3 rounded-lg hover:bg-gray-50 transition-colors group"
+                                                            className="flex items-center justify-between py-2 px-3 pl-6 rounded-lg hover:bg-gray-50 transition-colors group relative"
                                                         >
-                                                            <span className="text-sm text-gray-700 group-hover:text-teal-600">
-                                                                {subItem.name}
+                                                            <span className="text-sm text-gray-700 group-hover:text-teal-600 flex items-center gap-1.5">
+                                                                <span className="text-gray-400 text-xs absolute left-3">/</span>
+                                                                <span>{subItem.name}</span>
                                                             </span>
                                                             {subItem.count > 0 && (
                                                                 <span className="text-xs text-gray-400">

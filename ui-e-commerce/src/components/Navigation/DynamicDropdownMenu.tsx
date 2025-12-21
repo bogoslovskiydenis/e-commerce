@@ -107,9 +107,7 @@ export function DynamicDropdownMenu({ categoryType, categoryId, categoryName, ch
                                     className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-teal-600 rounded-md transition-colors"
                                 >
                                     <div className="flex items-center justify-between">
-                                        <span>
-                                            {subcategory.name}
-                                        </span>
+                                        <span>{subcategory.name}</span>
                                         {subcategory.productsCount !== undefined && subcategory.productsCount > 0 && (
                                             <span className="text-xs text-gray-400">
                                                 ({subcategory.productsCount})
@@ -117,7 +115,7 @@ export function DynamicDropdownMenu({ categoryType, categoryId, categoryName, ch
                                         )}
                                     </div>
                                     {subcategory.description && (
-                                        <p className="text-xs text-gray-500 mt-1 line-clamp-1">
+                                        <p className="text-xs text-gray-500 mt-1 line-clamp-1 pl-3">
                                             {subcategory.description}
                                         </p>
                                     )}
