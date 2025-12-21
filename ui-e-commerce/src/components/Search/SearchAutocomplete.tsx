@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react'
 import { Search, X, Clock, TrendingUp } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { apiService, Product } from '@/services/api'
 
 interface SearchHistory {
     id: string
@@ -25,42 +26,7 @@ interface SearchAutocompleteProps {
     className?: string
 }
 
-// Моковые данные для истории поиска
-const MOCK_SEARCH_HISTORY: SearchHistory[] = [
-    { id: '1', query: 'фольгированные сердца', timestamp: Date.now() - 1000 * 60 * 30 },
-    { id: '2', query: 'букет день рождения', timestamp: Date.now() - 1000 * 60 * 60 * 2 },
-    { id: '3', query: 'шары с гелием', timestamp: Date.now() - 1000 * 60 * 60 * 24 },
-]
-
-// Моковые данные для недавно просмотренных товаров
-const MOCK_RECENT_PRODUCTS: RecentProduct[] = [
-    {
-        id: '1',
-        name: 'Сердце фольгированное красное',
-        price: 150,
-        image: '/images/hard.jpg',
-        category: 'hearts',
-        href: '/balloons/hearts/1'
-    },
-    {
-        id: '2',
-        name: 'Букет "С днем рождения"',
-        price: 450,
-        image: '/api/placeholder/300/300',
-        category: 'bouquets',
-        href: '/products/bouquets/2'
-    },
-    {
-        id: '3',
-        name: 'Звезда золотая',
-        price: 120,
-        image: '/images/hard.jpg',
-        category: 'stars',
-        href: '/products/stars/2'
-    }
-]
-
-// Популярные поисковые запросы
+// Популярные поисковые запросы (можно загружать из API в будущем)
 const POPULAR_SEARCHES = [
     'фольгированные шары',
     'букеты из шаров',
@@ -77,6 +43,9 @@ export default function SearchAutocomplete({
     const [query, setQuery] = useState('')
     const [isOpen, setIsOpen] = useState(false)
     const [searchHistory, setSearchHistory] = useState<SearchHistory[]>([])
+    const [recentProducts, setRecentProducts] = useState<RecentProduct[]>([])
+    const [searchResults, setSearchResults] = useState<Product[]>([])
+    const [isLoading, setIsLoading] = useState(false)
 
     // Загрузка истории поиска из localStorage при инициализации
     useEffect(() => {
@@ -87,13 +56,45 @@ export default function SearchAutocomplete({
                 setSearchHistory(parsed)
             } catch (error) {
                 console.error('Error parsing search history:', error)
-                setSearchHistory(MOCK_SEARCH_HISTORY)
+                setSearchHistory([])
             }
-        } else {
-            setSearchHistory(MOCK_SEARCH_HISTORY)
         }
     }, [])
-    const [recentProducts] = useState<RecentProduct[]>(MOCK_RECENT_PRODUCTS)
+
+    // Загрузка недавно просмотренных товаров из localStorage
+    useEffect(() => {
+        const savedRecent = localStorage.getItem('recent_products')
+        if (savedRecent) {
+            try {
+                const parsed = JSON.parse(savedRecent)
+                setRecentProducts(parsed.slice(0, 3)) // Берем последние 3
+            } catch (error) {
+                console.error('Error parsing recent products:', error)
+            }
+        }
+    }, [])
+
+    // Загрузка результатов поиска из API при вводе запроса
+    useEffect(() => {
+        if (query.trim().length >= 2) {
+            const searchTimeout = setTimeout(async () => {
+                try {
+                    setIsLoading(true)
+                    const results = await apiService.searchProducts(query, 5)
+                    setSearchResults(results)
+                } catch (error) {
+                    console.error('Error searching products:', error)
+                    setSearchResults([])
+                } finally {
+                    setIsLoading(false)
+                }
+            }, 300) // Debounce 300ms
+
+            return () => clearTimeout(searchTimeout)
+        } else {
+            setSearchResults([])
+        }
+    }, [query])
     const searchRef = useRef<HTMLDivElement>(null)
     const inputRef = useRef<HTMLInputElement>(null)
 
@@ -124,13 +125,38 @@ export default function SearchAutocomplete({
                 query: searchQuery.trim(),
                 timestamp: Date.now()
             }
-            setSearchHistory(prev => [newHistoryItem, ...prev.slice(0, 9)]) // Ограничиваем 10 элементами
+            setSearchHistory(prev => [newHistoryItem, ...prev.filter(item => item.query !== searchQuery.trim()).slice(0, 9)]) // Ограничиваем 10 элементами, убираем дубликаты
 
-            // Выполняем поиск (здесь можно добавить логику перехода на страницу результатов)
-            console.log('Searching for:', searchQuery)
-            setQuery('')
-            setIsOpen(false)
+            // Переход на страницу результатов поиска
+            window.location.href = `/search?q=${encodeURIComponent(searchQuery.trim())}`
         }
+    }
+
+    // Сохранение товара в недавно просмотренные
+    const addToRecentProducts = (product: Product) => {
+        const recentProduct: RecentProduct = {
+            id: product.id,
+            name: product.title || product.name || '',
+            price: Number(product.price) || 0,
+            image: product.images?.[0] || product.image || '/api/placeholder/300/300',
+            category: product.category || product.categoryId || '',
+            href: `/product/${product.id}`
+        }
+        
+        const saved = localStorage.getItem('recent_products')
+        let recent: RecentProduct[] = []
+        if (saved) {
+            try {
+                recent = JSON.parse(saved)
+            } catch (error) {
+                console.error('Error parsing recent products:', error)
+            }
+        }
+        
+        // Убираем дубликаты и добавляем новый товар в начало
+        recent = [recentProduct, ...recent.filter(p => p.id !== product.id)].slice(0, 10)
+        localStorage.setItem('recent_products', JSON.stringify(recent))
+        setRecentProducts(recent.slice(0, 3))
     }
 
     // Обработка нажатия Enter
@@ -247,6 +273,46 @@ export default function SearchAutocomplete({
                         </div>
                     )}
 
+                    {/* Результаты поиска */}
+                    {query && searchResults.length > 0 && (
+                        <div className="p-4 border-b">
+                            <h3 className="text-sm font-medium text-gray-900 mb-3">
+                                Результати пошуку
+                            </h3>
+                            <div className="space-y-2">
+                                {searchResults.map((product) => (
+                                    <Link
+                                        key={product.id}
+                                        href={`/product/${product.id}`}
+                                        className="flex items-center gap-3 hover:bg-gray-50 p-2 rounded group"
+                                        onClick={() => {
+                                            setIsOpen(false)
+                                            addToRecentProducts(product)
+                                        }}
+                                    >
+                                        <div className="w-12 h-12 bg-gray-100 rounded overflow-hidden flex-shrink-0">
+                                            <Image
+                                                src={product.images?.[0] || product.image || '/api/placeholder/300/300'}
+                                                alt={product.title || product.name || 'Product'}
+                                                width={48}
+                                                height={48}
+                                                className="w-full h-full object-cover"
+                                            />
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <p className="text-sm font-medium text-gray-900 truncate group-hover:text-teal-600">
+                                                {product.title || product.name}
+                                            </p>
+                                            <p className="text-sm text-teal-600 font-medium">
+                                                {Number(product.price) || 0} грн
+                                            </p>
+                                        </div>
+                                    </Link>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
                     {/* Недавно просмотренные товары */}
                     {!query && recentProducts.length > 0 && (
                         <div className="p-4 border-b">
@@ -254,7 +320,7 @@ export default function SearchAutocomplete({
                                 Нещодавно переглянуті
                             </h3>
                             <div className="space-y-2">
-                                {recentProducts.slice(0, 3).map((product) => (
+                                {recentProducts.map((product) => (
                                     <Link
                                         key={product.id}
                                         href={product.href}
@@ -284,6 +350,13 @@ export default function SearchAutocomplete({
                         </div>
                     )}
 
+                    {/* Индикатор загрузки */}
+                    {query && isLoading && (
+                        <div className="p-4 text-center text-gray-500">
+                            <p className="text-sm">Пошук...</p>
+                        </div>
+                    )}
+
                     {/* Популярные запросы */}
                     {filteredPopular.length > 0 && (
                         <div className="p-4">
@@ -306,7 +379,7 @@ export default function SearchAutocomplete({
                     )}
 
                     {/* Пустое состояние */}
-                    {query && filteredHistory.length === 0 && filteredPopular.length === 0 && (
+                    {query && !isLoading && searchResults.length === 0 && filteredHistory.length === 0 && filteredPopular.length === 0 && (
                         <div className="p-4 text-center text-gray-500">
                             <p className="text-sm">Нічого не знайдено</p>
                         </div>

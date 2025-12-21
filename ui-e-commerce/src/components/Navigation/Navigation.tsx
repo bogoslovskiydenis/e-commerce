@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useNavigation } from '@/hooks/useNavigation'
-import { BalloonsDropdownMenu } from './BalloonsDropdownMenu'
+import { CategoryDropdownMenu } from './CategoryDropdownMenu'
 
 interface NavigationItem {
     id: string;
@@ -190,12 +190,10 @@ export default function Navigation() {
 
                                 {/* Дропдаун с поддержкой специального меню для шариков */}
                                 {item.hasDropdown && hoveredItem === item.id && (
-                                    <div className="absolute top-full left-0 z-50">
-                                        {/* Специальный dropdown для категории "Шарики" */}
-                                        {(item.title.toLowerCase().includes('шарик') || 
-                                          item.slug === 'balloons' || 
-                                          item.slug === 'шарики') ? (
-                                            <BalloonsDropdownMenu
+                                    <div className="absolute top-full left-0 z-50" style={{ width: 'max-content', minWidth: '900px' }}>
+                                        {/* Динамический dropdown меню для категорий с подкатегориями */}
+                                        {(item.children && item.children.length > 0) ? (
+                                            <CategoryDropdownMenu
                                                 categoryId={item.id}
                                                 categoryName={item.title}
                                                 children={item.children}

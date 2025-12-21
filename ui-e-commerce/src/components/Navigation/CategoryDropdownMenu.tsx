@@ -5,7 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Category, apiService } from '@/services/api'
 
-interface BalloonsDropdownMenuProps {
+interface CategoryDropdownMenuProps {
     categoryId: string;
     categoryName: string;
     children?: Category[];
@@ -16,7 +16,7 @@ interface SubcategoryGroup {
     items: Category[];
 }
 
-export function BalloonsDropdownMenu({ categoryId, categoryName, children }: BalloonsDropdownMenuProps) {
+export function CategoryDropdownMenu({ categoryId, categoryName, children }: CategoryDropdownMenuProps) {
     const [subcategoryGroups, setSubcategoryGroups] = useState<SubcategoryGroup[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -34,13 +34,11 @@ export function BalloonsDropdownMenu({ categoryId, categoryName, children }: Bal
             if (children && children.length > 0) {
                 allSubcategories = children;
             } else {
-                // Загружаем все подкатегории для категории "Шарики"
+                // Загружаем все подкатегории для текущей категории
                 const categories = await apiService.getNavigationCategories();
-                const balloonsCategory = categories.find(cat => 
-                    cat.slug === 'balloons' || cat.name.toLowerCase().includes('шарик')
-                );
-                if (balloonsCategory?.children) {
-                    allSubcategories = balloonsCategory.children;
+                const currentCategory = categories.find(cat => cat.id === categoryId);
+                if (currentCategory?.children) {
+                    allSubcategories = currentCategory.children;
                 }
             }
 
@@ -55,106 +53,101 @@ export function BalloonsDropdownMenu({ categoryId, categoryName, children }: Bal
         }
     };
 
-    // Организуем подкатегории в группы (колонки)
+    // Организуем подкатегории в группы (колонки) на основе sortOrder из админки
     const organizeSubcategories = (subcategories: Category[]): SubcategoryGroup[] => {
+        if (subcategories.length === 0) {
+            return [];
+        }
+
+        // Сортируем подкатегории по sortOrder (из админки)
+        const sorted = [...subcategories].sort((a, b) => {
+            const orderA = (a as any).sortOrder || a.order || 0;
+            const orderB = (b as any).sortOrder || b.order || 0;
+            return orderA - orderB;
+        });
+
+        // Группируем по диапазонам sortOrder для создания колонок
+        // Используем поле description или filters для указания названия группы, если есть
+        // Иначе группируем равномерно по 3-4 колонки
         const groups: SubcategoryGroup[] = [];
+        const itemsPerColumn = Math.ceil(sorted.length / 3); // Максимум 3 колонки
 
-        // Группа 1: Популярные типы шаров
-        const popularTypes = subcategories.filter(sub => {
-            const name = sub.name.toLowerCase();
-            return name.includes('фольг') || 
-                   name.includes('латекс') || 
-                   name.includes('гелиев') ||
-                   name.includes('обычн');
+        // Пытаемся определить группы по описанию или другим полям
+        const groupMap = new Map<string, Category[]>();
+        
+        sorted.forEach((sub, index) => {
+            // Используем description для указания группы, если оно содержит название группы
+            const desc = sub.description || '';
+            let groupTitle = '';
+            
+            // Проверяем, есть ли в description указание на группу (например, "Группа: Популярні")
+            if (desc.includes('Группа:') || desc.includes('Група:')) {
+                const match = desc.match(/(?:Группа|Група):\s*([^\n,]+)/i);
+                if (match) {
+                    groupTitle = match[1].trim();
+                }
+            }
+            
+            // Если группа не указана, используем автоматическую группировку по sortOrder
+            if (!groupTitle) {
+                // Определяем номер колонки на основе индекса
+                const columnIndex = Math.floor(index / itemsPerColumn);
+                groupTitle = `Колонка ${columnIndex + 1}`;
+            }
+            
+            if (!groupMap.has(groupTitle)) {
+                groupMap.set(groupTitle, []);
+            }
+            groupMap.get(groupTitle)!.push(sub);
         });
-        if (popularTypes.length > 0) {
-            groups.push({
-                title: 'Популярні типи',
-                items: popularTypes
-            });
-        }
 
-        // Группа 2: По размерам
-        const bySize = subcategories.filter(sub => {
-            const name = sub.name.toLowerCase();
-            return name.includes('размер') || 
-                   name.includes('размір') ||
-                   name.includes('см') ||
-                   name.includes('дюйм');
+        // Преобразуем Map в массив групп
+        groupMap.forEach((items, title) => {
+            // Сортируем элементы внутри группы по sortOrder
+            items.sort((a, b) => {
+                const orderA = (a as any).sortOrder || a.order || 0;
+                const orderB = (b as any).sortOrder || b.order || 0;
+                return orderA - orderB;
+            });
+            
+            groups.push({
+                title: title,
+                items: items
+            });
         });
-        if (bySize.length > 0) {
-            groups.push({
-                title: 'За розміром',
-                items: bySize
-            });
-        }
 
-        // Группа 3: По форме
-        const byShape = subcategories.filter(sub => {
-            const name = sub.name.toLowerCase();
-            return name.includes('сердц') || 
-                   name.includes('серце') ||
-                   name.includes('кругл') ||
-                   name.includes('зірк') ||
-                   name.includes('звезд');
-        });
-        if (byShape.length > 0) {
-            groups.push({
-                title: 'За формою',
-                items: byShape
-            });
-        }
-
-        // Группа 4: По поводу/событию
-        const byOccasion = subcategories.filter(sub => {
-            const name = sub.name.toLowerCase();
-            return name.includes('день рожд') || 
-                   name.includes('свадьб') ||
-                   name.includes('ювілей') ||
-                   name.includes('юбилей') ||
-                   name.includes('новый год') ||
-                   name.includes('новий рік');
-        });
-        if (byOccasion.length > 0) {
-            groups.push({
-                title: 'За подією',
-                items: byOccasion
-            });
-        }
-
-        // Если не удалось сгруппировать, создаем общую группу
-        if (groups.length === 0 && subcategories.length > 0) {
-            // Разделяем на 2-3 колонки равномерно
-            const chunkSize = Math.ceil(subcategories.length / 3);
-            for (let i = 0; i < subcategories.length; i += chunkSize) {
-                groups.push({
-                    title: i === 0 ? 'Популярні' : i === chunkSize ? 'Преміум' : 'Інші',
-                    items: subcategories.slice(i, i + chunkSize)
-                });
+        // Если групп нет или слишком много, группируем равномерно
+        if (groups.length === 0 || groups.length > 4) {
+            groups.length = 0; // Очищаем
+            const chunkSize = Math.ceil(sorted.length / 3);
+            for (let i = 0; i < sorted.length; i += chunkSize) {
+                const chunk = sorted.slice(i, i + chunkSize);
+                if (chunk.length > 0) {
+                    groups.push({
+                        title: i === 0 ? 'Популярні' : i === chunkSize ? 'Преміум' : 'Інші',
+                        items: chunk
+                    });
+                }
             }
         }
 
-        // Если все еще нет групп, просто разделяем на колонки
-        if (groups.length === 0) {
-            const chunkSize = Math.ceil(subcategories.length / 3);
-            for (let i = 0; i < subcategories.length; i += chunkSize) {
-                groups.push({
-                    title: `Колонка ${Math.floor(i / chunkSize) + 1}`,
-                    items: subcategories.slice(i, i + chunkSize)
-                });
-            }
-        }
+        // Сортируем группы по порядку появления первой категории в группе
+        groups.sort((a, b) => {
+            const orderA = (a.items[0] as any)?.sortOrder || a.items[0]?.order || 0;
+            const orderB = (b.items[0] as any)?.sortOrder || b.items[0]?.order || 0;
+            return orderA - orderB;
+        });
 
         return groups;
     };
 
     if (isLoading) {
         return (
-            <div className="bg-white border border-gray-200 rounded-lg shadow-lg p-6 w-full max-w-6xl">
+            <div className="bg-white border border-gray-200 rounded-lg shadow-lg p-6 w-full" style={{ minWidth: '900px', maxWidth: '1200px' }}>
                 <div className="animate-pulse space-y-4">
                     <div className="h-6 bg-gray-200 rounded w-1/4"></div>
-                    <div className="grid grid-cols-4 gap-4">
-                        {[1, 2, 3, 4].map(i => (
+                    <div className="grid grid-cols-5 gap-4">
+                        {[1, 2, 3, 4, 5].map(i => (
                             <div key={i} className="space-y-2">
                                 <div className="h-4 bg-gray-200 rounded"></div>
                                 <div className="h-4 bg-gray-200 rounded"></div>
@@ -172,12 +165,12 @@ export function BalloonsDropdownMenu({ categoryId, categoryName, children }: Bal
     }
 
     return (
-        <div className="bg-white border border-gray-200 rounded-lg shadow-xl p-6 w-full max-w-6xl">
+        <div className="bg-white border border-gray-200 rounded-lg shadow-xl p-6 w-full" style={{ minWidth: '900px', maxWidth: '1200px' }}>
             <div className="mb-4">
                 <h2 className="text-lg font-bold text-gray-900">{categoryName}</h2>
             </div>
 
-            <div className="grid grid-cols-4 gap-6">
+            <div className="grid grid-cols-5 gap-6">
                 {/* Колонки с подкатегориями */}
                 {subcategoryGroups.map((group, groupIndex) => (
                     <div 
@@ -206,7 +199,7 @@ export function BalloonsDropdownMenu({ categoryId, categoryName, children }: Bal
                                 </li>
                             ))}
                         </ul>
-                        {groupIndex === 0 && (
+                        {groupIndex === 0 && group.items.length > 0 && (
                             <Link
                                 href={`/${categoryId === 'balloons' ? 'balloons' : categoryId}`}
                                 className="block mt-4 text-sm text-gray-600 hover:text-teal-600 font-medium"
@@ -217,8 +210,8 @@ export function BalloonsDropdownMenu({ categoryId, categoryName, children }: Bal
                     </div>
                 ))}
 
-                {/* Промо-карточки справа (если есть место) */}
-                {subcategoryGroups.length < 4 && (
+                {/* Промо-карточки справа (если есть место) - можно настроить через админку */}
+                {subcategoryGroups.length < 5 && (
                     <div className="space-y-4">
                         {/* Промо-карточка 1 */}
                         <div className="bg-gradient-to-br from-teal-50 to-teal-100 rounded-lg p-4 border border-teal-200">
@@ -232,7 +225,7 @@ export function BalloonsDropdownMenu({ categoryId, categoryName, children }: Bal
                                 Унікальні композиції
                             </p>
                             <Link
-                                href="/balloons/special"
+                                href={`/${categoryId === 'balloons' ? 'balloons' : categoryId}/special`}
                                 className="text-xs font-medium text-teal-600 hover:text-teal-700"
                             >
                                 Переглянути товари →
@@ -251,7 +244,7 @@ export function BalloonsDropdownMenu({ categoryId, categoryName, children }: Bal
                                 Готові композиції
                             </p>
                             <Link
-                                href="/balloons/gift-sets"
+                                href={`/${categoryId === 'balloons' ? 'balloons' : categoryId}/gift-sets`}
                                 className="text-xs font-medium text-pink-600 hover:text-pink-700"
                             >
                                 Переглянути товари →
@@ -261,13 +254,13 @@ export function BalloonsDropdownMenu({ categoryId, categoryName, children }: Bal
                 )}
             </div>
 
-            {/* Ссылка "Смотреть все шарики" внизу */}
+            {/* Ссылка "Смотреть все" внизу */}
             <div className="mt-6 pt-4 border-t border-gray-200">
                 <Link
-                    href="/balloons"
+                    href={`/${categoryId === 'balloons' ? 'balloons' : categoryId}`}
                     className="flex items-center justify-center text-sm font-medium text-teal-600 hover:text-teal-700 transition-colors"
                 >
-                    Смотреть все шарики →
+                    Смотреть все {categoryName.toLowerCase()} →
                 </Link>
             </div>
         </div>
