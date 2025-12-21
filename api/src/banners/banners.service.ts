@@ -19,6 +19,18 @@ export class BannersService {
     return { success: true, data: banners };
   }
 
+  async getBanner(id: string) {
+    const banner = await this.prisma.banner.findUnique({
+      where: { id },
+    });
+
+    if (!banner) {
+      throw new NotFoundException(`Banner with ID ${id} not found`);
+    }
+
+    return { success: true, data: banner };
+  }
+
   async createBanner(data: any) {
     const banner = await this.prisma.banner.create({
       data: {
@@ -49,5 +61,14 @@ export class BannersService {
   async deleteBanner(id: string) {
     await this.prisma.banner.delete({ where: { id } });
     return { success: true, message: 'Banner deleted successfully' };
+  }
+
+  async uploadImage(file: Express.Multer.File) {
+    if (!file) {
+      throw new NotFoundException('File not provided');
+    }
+
+    const imageUrl = `/uploads/banners/${file.filename}`;
+    return { success: true, data: { url: imageUrl, path: imageUrl } };
   }
 }

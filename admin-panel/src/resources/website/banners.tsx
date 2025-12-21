@@ -14,8 +14,11 @@ import {
     required,
     BooleanInput,
     NumberInput,
+    ImageField,
+    ImageInput,
     useRecordContext,
     TopToolbar,
+    CreateButton,
     EditButton,
     DeleteButton,
     useNotify,
@@ -131,8 +134,7 @@ const BannerPreview = () => {
 // Действия в списке
 const BannerListActions = () => (
     <TopToolbar>
-        <EditButton />
-        <DeleteButton />
+        <CreateButton />
     </TopToolbar>
 );
 
@@ -186,12 +188,17 @@ export const BannerEdit = () => {
     const refresh = useRefresh();
 
     const handleSuccess = () => {
-        notify('Баннер успешно обновлен');
+        notify('Баннер успешно обновлен', { type: 'success' });
         refresh();
     };
 
+    const handleError = (error: any) => {
+        const message = error?.message || 'Ошибка при обновлении баннера';
+        notify(message, { type: 'error' });
+    };
+
     return (
-        <Edit title="Редактировать баннер" mutationOptions={{ onSuccess: handleSuccess }}>
+        <Edit title="Редактировать баннер" mutationOptions={{ onSuccess: handleSuccess, onError: handleError }}>
             <SimpleForm>
                 <Box display="flex" gap={3} width="100%">
                     {/* Левая колонка - основная информация */}
@@ -239,20 +246,35 @@ export const BannerEdit = () => {
                             Изображения
                         </Typography>
 
-                        <TextInput
+                        <ImageInput
                             source="image"
-                            label="URL основного изображения"
-                            fullWidth
-                            validate={[required()]}
-                            helperText="Введите полный URL изображения (например: /images/banner.png или http://example.com/image.jpg)"
-                        />
+                            label="Основное изображение"
+                            accept="image/*"
+                            format={(value: any) => {
+                                if (!value) return undefined;
+                                if (typeof value === 'string') {
+                                    return { src: value, title: 'Banner image' };
+                                }
+                                return value;
+                            }}
+                        >
+                            <ImageField source="src" title="title" />
+                        </ImageInput>
 
-                        <TextInput
+                        <ImageInput
                             source="mobileImage"
-                            label="URL изображения для мобильных"
-                            fullWidth
-                            helperText="Введите полный URL изображения для мобильных устройств"
-                        />
+                            label="Изображение для мобильных"
+                            accept="image/*"
+                            format={(value: any) => {
+                                if (!value) return undefined;
+                                if (typeof value === 'string') {
+                                    return { src: value, title: 'Banner mobile image' };
+                                }
+                                return value;
+                            }}
+                        >
+                            <ImageField source="src" title="title" />
+                        </ImageInput>
                     </Box>
 
                     {/* Правая колонка - настройки */}
@@ -373,20 +395,22 @@ export const BannerCreate = () => {
                             Изображения
                         </Typography>
 
-                        <TextInput
+                        <ImageInput
                             source="image"
-                            label="URL основного изображения"
-                            fullWidth
+                            label="Основное изображение"
+                            accept="image/*"
                             validate={[required()]}
-                            helperText="Введите полный URL изображения (например: /images/banner.png или http://example.com/image.jpg)"
-                        />
+                        >
+                            <ImageField source="src" title="title" />
+                        </ImageInput>
 
-                        <TextInput
+                        <ImageInput
                             source="mobileImage"
-                            label="URL изображения для мобильных"
-                            fullWidth
-                            helperText="Введите полный URL изображения для мобильных устройств"
-                        />
+                            label="Изображение для мобильных"
+                            accept="image/*"
+                        >
+                            <ImageField source="src" title="title" />
+                        </ImageInput>
                     </Box>
 
                     {/* Правая колонка */}

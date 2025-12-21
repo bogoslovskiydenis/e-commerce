@@ -128,12 +128,49 @@ const transformReviewToComment = (review: any) => {
     };
 };
 
+// Функция для загрузки изображения на сервер
+const uploadImage = async (file: File): Promise<string> => {
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    const token = getAuthToken();
+    const response = await fetch(`${API_BASE_URL}/banners/upload`, {
+        method: 'POST',
+        headers: {
+            ...(token && { 'Authorization': `Bearer ${token}` }),
+        },
+        body: formData,
+    });
+    
+    if (!response.ok) {
+        throw new Error('Failed to upload image');
+    }
+    
+    const result = await response.json();
+    return result.data?.url || result.data?.path || '';
+};
+
 // Функция для извлечения URL из данных изображения
-const extractImageUrl = (imageData: any): string | null => {
+const extractImageUrl = async (imageData: any): Promise<string | null> => {
     if (!imageData) return null;
     if (typeof imageData === 'string') return imageData;
-    // Если это объект (старый формат ImageInput), извлекаем src
-    if (imageData.src) return imageData.src;
+    // Если это объект с rawFile (новый файл), загружаем его
+    if (imageData.rawFile && imageData.rawFile instanceof File) {
+        try {
+            return await uploadImage(imageData.rawFile);
+        } catch (error) {
+            console.error('Ошибка загрузки изображения:', error);
+            throw error; // Пробрасываем ошибку, чтобы форма не закрывалась молча
+        }
+    }
+    // Если это объект со src (уже загруженный или blob URL), используем src
+    if (imageData.src) {
+        // Если это blob URL, возвращаем null (изображение не было загружено на сервер)
+        if (typeof imageData.src === 'string' && imageData.src.startsWith('blob:')) {
+            return null;
+        }
+        return imageData.src;
+    }
     return null;
 };
 
@@ -261,15 +298,18 @@ const dataProvider: DataProvider = {
 
             // Трансформируем данные для ресурса 'banners' (API -> react-admin)
             if (resource === 'banners') {
-                data = data.map((banner: any) => ({
-                    ...banner,
-                    image: banner.imageUrl,
-                    mobileImage: banner.mobileImageUrl,
-                    buttonUrl: banner.link,
-                    active: banner.isActive !== undefined ? banner.isActive : true,
-                    order: banner.sortOrder || 0,
-                    position: banner.position?.toLowerCase() || 'main'
-                }));
+                data = data.map((banner: any) => {
+                    // Для списка не нужно преобразовывать в объект, только для формы редактирования
+                    return {
+                        ...banner,
+                        image: banner.imageUrl, // В списке оставляем строку
+                        mobileImage: banner.mobileImageUrl, // В списке оставляем строку
+                        buttonUrl: banner.link,
+                        active: banner.isActive !== undefined ? banner.isActive : true,
+                        order: banner.sortOrder || 0,
+                        position: banner.position?.toLowerCase() || 'main'
+                    };
+                });
             }
 
             console.log('✅ getList результат:', { data, total });
@@ -346,10 +386,15 @@ const dataProvider: DataProvider = {
 
             // Трансформируем данные для ресурса 'banners' (API -> react-admin)
             if (resource === 'banners') {
+                // Для ImageInput нужно передать объект с src, если изображение уже есть
+                // ImageInput ожидает объект или undefined, но не строку
+                const imageObj = data.imageUrl ? { src: data.imageUrl, title: data.title || 'Banner image' } : undefined;
+                const mobileImageObj = data.mobileImageUrl ? { src: data.mobileImageUrl, title: data.title || 'Banner mobile image' } : undefined;
+                
                 data = {
                     ...data,
-                    image: data.imageUrl,
-                    mobileImage: data.mobileImageUrl,
+                    image: imageObj,
+                    mobileImage: mobileImageObj,
                     buttonUrl: data.link,
                     active: data.isActive !== undefined ? data.isActive : true,
                     order: data.sortOrder || 0,
@@ -463,12 +508,17 @@ const dataProvider: DataProvider = {
                     'popup': 'POPUP',
                     'promo': 'CATEGORY' // promo -> CATEGORY для совместимости
                 };
+                
+                // Загружаем изображения, если они есть
+                const imageUrl = await extractImageUrl(params.data.image) || params.data.imageUrl || '';
+                const mobileImageUrl = await extractImageUrl(params.data.mobileImage) || params.data.mobileImageUrl || null;
+                
                 createData = {
                     title: params.data.title,
                     subtitle: params.data.subtitle,
                     description: params.data.description,
-                    imageUrl: extractImageUrl(params.data.image) || params.data.imageUrl || '',
-                    mobileImageUrl: extractImageUrl(params.data.mobileImage) || params.data.mobileImageUrl || null,
+                    imageUrl,
+                    mobileImageUrl,
                     link: params.data.buttonUrl || params.data.link || null,
                     buttonText: params.data.buttonText || null,
                     position: positionMap[params.data.position?.toLowerCase()] || params.data.position?.toUpperCase() || 'MAIN',
@@ -517,10 +567,14 @@ const dataProvider: DataProvider = {
 
             // Трансформируем ответ для ресурса 'banners'
             if (resource === 'banners') {
+                // Для ImageInput нужно передать объект с src
+                const imageObj = resultData.imageUrl ? { src: resultData.imageUrl, title: resultData.title || 'Banner image' } : undefined;
+                const mobileImageObj = resultData.mobileImageUrl ? { src: resultData.mobileImageUrl, title: resultData.title || 'Banner mobile image' } : undefined;
+                
                 resultData = {
                     ...resultData,
-                    image: resultData.imageUrl,
-                    mobileImage: resultData.mobileImageUrl,
+                    image: imageObj,
+                    mobileImage: mobileImageObj,
                     buttonUrl: resultData.link,
                     active: resultData.isActive !== undefined ? resultData.isActive : true,
                     order: resultData.sortOrder || 0,
@@ -626,15 +680,37 @@ const dataProvider: DataProvider = {
                     'promo': 'CATEGORY' // promo -> CATEGORY для совместимости
                 };
                 // Для update сохраняем существующие значения, если новое изображение не загружено
-                const existingImageUrl = params.previousData?.imageUrl;
-                const existingMobileImageUrl = params.previousData?.mobileImageUrl;
+                const existingImageUrl = params.previousData?.imageUrl || params.previousData?.image;
+                const existingMobileImageUrl = params.previousData?.mobileImageUrl || params.previousData?.mobileImage;
+                
+                // Загружаем изображения, если они есть (только если это новый файл)
+                let imageUrl = existingImageUrl || '';
+                let mobileImageUrl = existingMobileImageUrl || null;
+                
+                if (params.data.image) {
+                    const uploadedUrl = await extractImageUrl(params.data.image);
+                    if (uploadedUrl) {
+                        imageUrl = uploadedUrl;
+                    } else if (typeof params.data.image === 'string') {
+                        imageUrl = params.data.image;
+                    }
+                }
+                
+                if (params.data.mobileImage) {
+                    const uploadedUrl = await extractImageUrl(params.data.mobileImage);
+                    if (uploadedUrl) {
+                        mobileImageUrl = uploadedUrl;
+                    } else if (typeof params.data.mobileImage === 'string') {
+                        mobileImageUrl = params.data.mobileImage;
+                    }
+                }
                 
                 updateData = {
                     title: params.data.title,
                     subtitle: params.data.subtitle,
                     description: params.data.description,
-                    imageUrl: extractImageUrl(params.data.image) || params.data.imageUrl || existingImageUrl || '',
-                    mobileImageUrl: extractImageUrl(params.data.mobileImage) || params.data.mobileImageUrl || existingMobileImageUrl || null,
+                    imageUrl,
+                    mobileImageUrl,
                     link: params.data.buttonUrl || params.data.link || null,
                     buttonText: params.data.buttonText || null,
                     position: positionMap[params.data.position?.toLowerCase()] || params.data.position?.toUpperCase() || 'MAIN',
@@ -702,10 +778,14 @@ const dataProvider: DataProvider = {
 
             // Трансформируем ответ для ресурса 'banners'
             if (resource === 'banners') {
+                // Для ImageInput нужно передать объект с src
+                const imageObj = resultData.imageUrl ? { src: resultData.imageUrl, title: resultData.title || 'Banner image' } : undefined;
+                const mobileImageObj = resultData.mobileImageUrl ? { src: resultData.mobileImageUrl, title: resultData.title || 'Banner mobile image' } : undefined;
+                
                 resultData = {
                     ...resultData,
-                    image: resultData.imageUrl,
-                    mobileImage: resultData.mobileImageUrl,
+                    image: imageObj,
+                    mobileImage: mobileImageObj,
                     buttonUrl: resultData.link,
                     active: resultData.isActive !== undefined ? resultData.isActive : true,
                     order: resultData.sortOrder || 0,
