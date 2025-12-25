@@ -5,6 +5,38 @@ import { PrismaService } from '../prisma/prisma.service';
 export class BannersService {
   constructor(private prisma: PrismaService) {}
 
+  async getPublicBanners(position?: string) {
+    const now = new Date();
+    const where: any = {
+      isActive: true,
+      AND: [
+        {
+          OR: [
+            { startDate: null },
+            { startDate: { lte: now } }
+          ]
+        },
+        {
+          OR: [
+            { endDate: null },
+            { endDate: { gte: now } }
+          ]
+        }
+      ]
+    };
+
+    if (position) {
+      where.position = position;
+    }
+
+    const banners = await this.prisma.banner.findMany({
+      where,
+      orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }],
+    });
+
+    return { success: true, data: banners };
+  }
+
   async getBanners(query: any) {
     const { position, active } = query;
     const where: any = {};

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import Link from 'next/link'
 import ProductGrid from '@/components/ProductGrid/ProductGrid'
 import ProductList from '@/components/ProductList/ProductList'
@@ -11,6 +11,8 @@ import ActiveFilters from './components/ActiveFilters'
 import MobileFiltersModal from './components/MobileFiltersModal'
 import PaginationSection from './components/PaginationSection'
 import SEOSection from './components/SEOSection'
+import BannersList from '@/components/Banner/BannersList'
+import { apiService, Banner } from '@/services/api'
 
 interface UniversalCategoryPageProps {
     categoryKey: string;
@@ -29,6 +31,7 @@ export default function UniversalCategoryPage({
     const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
     const [showMobileFilters, setShowMobileFilters] = useState(false)
     const [currentPage, setCurrentPage] = useState(1)
+    const [categoryBanners, setCategoryBanners] = useState<Banner[]>([])
     const productsPerPage = 20
     const [filters, setFilters] = useState<FilterState>({
         priceRange: { from: '', to: '' },
@@ -39,6 +42,15 @@ export default function UniversalCategoryPage({
         volume: [],
         giftTypes: []
     })
+
+    // Загрузка баннеров для категорий
+    useEffect(() => {
+        const loadBanners = async () => {
+            const banners = await apiService.getBanners('CATEGORY')
+            setCategoryBanners(banners)
+        }
+        loadBanners()
+    }, [])
 
     // Автоматически генерируем breadcrumbs если не переданы
     const breadcrumbs = customBreadcrumbs || [
@@ -333,6 +345,16 @@ export default function UniversalCategoryPage({
                 <h1 className="text-3xl font-bold mb-2">{config.title}</h1>
                 <p className="text-gray-600">{config.description}</p>
             </div>
+
+            {/* Баннеры для категорий */}
+            {categoryBanners.length > 0 && (
+                <div className="mb-8">
+                    <BannersList 
+                        banners={categoryBanners} 
+                        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+                    />
+                </div>
+            )}
 
             <div className="flex gap-8">
                 {/* Боковая панель - скрыта на мобильных */}

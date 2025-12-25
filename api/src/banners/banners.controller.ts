@@ -12,6 +12,11 @@ import { RequirePermissions } from '../common/decorators/permissions.decorator';
 export class BannersController {
   constructor(private bannersService: BannersService) {}
 
+  @Get('public')
+  async getPublicBanners(@Query('position') position?: string) {
+    return this.bannersService.getPublicBanners(position);
+  }
+
   @Get()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @RequirePermissions('website.banners')

@@ -108,6 +108,24 @@ export interface OrderItem {
     };
 }
 
+export interface Banner {
+    id: string;
+    title: string;
+    subtitle?: string;
+    description?: string;
+    imageUrl: string;
+    mobileImageUrl?: string;
+    link?: string;
+    buttonText?: string;
+    position: 'MAIN' | 'CATEGORY' | 'SIDEBAR' | 'FOOTER' | 'POPUP';
+    isActive: boolean;
+    sortOrder: number;
+    startDate?: string;
+    endDate?: string;
+    createdAt: string;
+    updatedAt: string;
+}
+
 class ApiService {
     private baseUrl: string;
 
@@ -578,6 +596,44 @@ class ApiService {
     async getFavoriteIds(): Promise<string[]> {
         const response = await this.request<ApiResponse<string[]>>('/favorites/ids');
         return response.data || [];
+    }
+
+    // ==================== БАННЕРЫ ====================
+
+    /**
+     * Получить баннеры по позиции (публичный endpoint)
+     */
+    async getBanners(position?: 'MAIN' | 'CATEGORY' | 'SIDEBAR' | 'FOOTER' | 'POPUP'): Promise<Banner[]> {
+        try {
+            const queryParams = position ? `?position=${position}` : '';
+            const response = await this.request<ApiResponse<Banner[]>>(
+                `/banners/public${queryParams}`
+            );
+            return response.data || [];
+        } catch (error) {
+            console.error('Error fetching banners:', error);
+            return [];
+        }
+    }
+
+    // ==================== НАСТРОЙКИ ====================
+
+    /**
+     * Получить публичные настройки (контакты)
+     */
+    async getPublicSettings(): Promise<{
+        contact_phone?: string;
+        contact_phone_2?: string;
+        contact_email?: string;
+        working_hours?: string;
+    }> {
+        try {
+            const response = await this.request<ApiResponse<any>>('/settings/public');
+            return response.data || {};
+        } catch (error) {
+            console.error('Error fetching public settings:', error);
+            return {};
+        }
     }
 }
 

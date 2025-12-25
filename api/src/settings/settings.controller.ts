@@ -8,6 +8,11 @@ import { RequirePermissions } from '../common/decorators/permissions.decorator';
 export class SettingsController {
   constructor(private settingsService: SettingsService) {}
 
+  @Get('public')
+  async getPublicSettings() {
+    return this.settingsService.getPublicSettings();
+  }
+
   @Get()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @RequirePermissions('website.settings')

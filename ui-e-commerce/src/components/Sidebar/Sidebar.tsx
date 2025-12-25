@@ -1,3 +1,9 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+import BannersList from '@/components/Banner/BannersList'
+import { apiService, Banner } from '@/services/api'
+
 interface Category {
     name: string
     count: number
@@ -24,8 +30,26 @@ const BALLOON_CATEGORIES: Category[] = [
 ]
 
 export default function Sidebar({ categories = BALLOON_CATEGORIES }: SidebarProps) {
+    const [sidebarBanners, setSidebarBanners] = useState<Banner[]>([])
+
+    useEffect(() => {
+        const loadBanners = async () => {
+            const banners = await apiService.getBanners('SIDEBAR')
+            setSidebarBanners(banners)
+        }
+        loadBanners()
+    }, [])
+
     return (
-        <aside className="w-96 flex-shrink-0">
+        <aside className="w-96 flex-shrink-0 space-y-4">
+            {/* Баннеры в сайдбаре */}
+            {sidebarBanners.length > 0 && (
+                <BannersList 
+                    banners={sidebarBanners} 
+                    itemClassName="mb-4"
+                />
+            )}
+
             <div className="bg-white rounded-lg border">
                 <div className="p-4 border-b">
                     <h2 className="font-semibold text-lg">Категории</h2>

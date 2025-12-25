@@ -5,6 +5,19 @@ import { PrismaService } from '../prisma/prisma.service';
 export class SettingsService {
   constructor(private prisma: PrismaService) {}
 
+  async getPublicSettings() {
+    const publicKeys = ['contact_phone', 'contact_email', 'contact_phone_2', 'working_hours'];
+    const settings = await this.prisma.setting.findMany({
+      where: { key: { in: publicKeys } }
+    });
+    const settingsObject = settings.reduce((acc, setting) => {
+      acc[setting.key] = setting.value;
+      return acc;
+    }, {} as any);
+
+    return { success: true, data: settingsObject };
+  }
+
   async getSettings() {
     const settings = await this.prisma.setting.findMany();
     const settingsObject = settings.reduce((acc, setting) => {

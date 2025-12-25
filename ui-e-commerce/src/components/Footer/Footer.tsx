@@ -1,9 +1,33 @@
+'use client'
+
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import BannersList from '@/components/Banner/BannersList'
+import { apiService, Banner } from '@/services/api'
 
 export default function Footer() {
+    const [footerBanners, setFooterBanners] = useState<Banner[]>([])
+
+    useEffect(() => {
+        const loadBanners = async () => {
+            const banners = await apiService.getBanners('FOOTER')
+            setFooterBanners(banners)
+        }
+        loadBanners()
+    }, [])
+
     return (
         <footer className="bg-gray-100 pt-16 pb-8">
+            {/* Баннеры в футере */}
+            {footerBanners.length > 0 && (
+                <div className="container mx-auto px-4 mb-12">
+                    <BannersList 
+                        banners={footerBanners} 
+                        className="grid grid-cols-1 md:grid-cols-3 gap-4"
+                    />
+                </div>
+            )}
             {/* Преимущества */}
             {/*<div className="container mx-auto px-4 mb-16">*/}
             {/*    <div className="grid grid-cols-1 md:grid-cols-4 gap-8">*/}

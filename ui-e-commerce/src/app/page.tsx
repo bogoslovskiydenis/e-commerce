@@ -1,44 +1,14 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Link from 'next/link'
-import Image from 'next/image'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
 import FeaturedProductsSection from '@/components/HomePageComponent/FeaturedProductsSection/FeaturedProductsSection'
 import CategorySection from '@/components/HomePageComponent/CategorySection/CategorySection'
 import FeaturesSection from '@/components/HomePageComponent/FeaturesSection/FeaturesSection'
 import TestimonialsSection from '@/components/HomePageComponent/TestimonialsSection/TestimonialsSection'
 import CTASection from '@/components/HomePageComponent/CTASection/CTASection'
 import QuickOrderSection from '@/components/HomePageComponent/QuickOrderSection/QuickOrderSection'
-import { apiService, Product, Category } from '@/services/api'
-
-// Данные для слайдера баннеров
-const BANNER_SLIDES = [
-    {
-        id: 1,
-        image: '/images/banner.png',
-        title: 'Шарики на дом в Киеве',
-        subtitle: 'Фольгированные и латексные шарики с доставкой по Киеву за 2 часа. Букеты, подарки и украшения для любого праздника.',
-        primaryButton: { text: 'Выбрать шарики', href: '/balloons' },
-        secondaryButton: { text: 'Букеты из шаров', href: '/bouquets' }
-    },
-    {
-        id: 2,
-        image: '/images/banner1.png',
-        title: 'Акции до -70%',
-        subtitle: 'Супер скидки на все виды шариков! Спешите воспользоваться уникальными предложениями.',
-        primaryButton: { text: 'Смотреть акции', href: '/sale' },
-        secondaryButton: { text: 'Каталог', href: '/balloons' }
-    },
-    {
-        id: 3,
-        image: '/images/banner.png',
-        title: 'Букеты из шаров',
-        subtitle: 'Готовые композиции для любого праздника. Быстрая доставка по Киеву за 2 часа.',
-        primaryButton: { text: 'Заказать букет', href: '/bouquets' },
-        secondaryButton: { text: 'Контакты', href: '/contacts' }
-    }
-]
+import BannerSlider from '@/components/Banner/BannerSlider'
+import { apiService, Product, Category, Banner } from '@/services/api'
 
 // Данные для быстрого заказа
 const QUICK_ORDER_STEPS = [
@@ -98,9 +68,9 @@ const CTA_BUTTONS = [
 ]
 
 export default function HomePage() {
-    const [currentSlide, setCurrentSlide] = useState(0)
     const [featuredProducts, setFeaturedProducts] = useState<Product[]>([])
     const [mainCategories, setMainCategories] = useState<Category[]>([])
+    const [banners, setBanners] = useState<Banner[]>([])
     const [loading, setLoading] = useState(true)
 
     // Загрузка данных из API
@@ -108,6 +78,10 @@ export default function HomePage() {
         const loadData = async () => {
             try {
                 setLoading(true)
+                // Загружаем баннеры для главной страницы
+                const mainBanners = await apiService.getBanners('MAIN')
+                setBanners(mainBanners)
+
                 // Загружаем рекомендуемые товары
                 const products = await apiService.getFeaturedProducts(8)
                 setFeaturedProducts(products)
@@ -134,106 +108,10 @@ export default function HomePage() {
         loadData()
     }, [])
 
-    // Автоматическое переключение слайдов
-    useEffect(() => {
-        const timer = setInterval(() => {
-            setCurrentSlide((prev) => (prev + 1) % BANNER_SLIDES.length)
-        }, 5000) // Переключение каждые 5 секунд
-
-        return () => clearInterval(timer)
-    }, [])
-
-    const goToSlide = (index: number) => {
-        setCurrentSlide(index)
-    }
-
-    const goToPrevSlide = () => {
-        setCurrentSlide((prev) => (prev - 1 + BANNER_SLIDES.length) % BANNER_SLIDES.length)
-    }
-
-    const goToNextSlide = () => {
-        setCurrentSlide((prev) => (prev + 1) % BANNER_SLIDES.length)
-    }
-
     return (
         <div>
             {/* Слайдер баннеров */}
-            <div className="relative aspect-[3/2] sm:aspect-[5/2] md:aspect-[3/1] lg:aspect-[7/2] overflow-hidden">
-                {BANNER_SLIDES.map((slide, index) => (
-                    <div
-                        key={slide.id}
-                        className={`absolute inset-0 transition-opacity duration-500 ${
-                            index === currentSlide ? 'opacity-100' : 'opacity-0'
-                        }`}
-                    >
-                        <Image
-                            src={slide.image}
-                            alt={slide.title}
-                            fill
-                            sizes="100vw"
-                            className="object-cover"
-                            priority={index === 0}
-                        />
-                        <div className="absolute inset-0 bg-black bg-opacity-30" />
-                        <div className="absolute inset-0 flex items-center">
-                            <div className="container mx-auto px-4">
-                                <div className="max-w-xl lg:max-w-2xl text-white">
-                                    <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-3 sm:mb-4 leading-tight">
-                                        {slide.title}
-                                    </h1>
-                                    <p className="text-sm sm:text-base md:text-lg lg:text-xl mb-6 sm:mb-8 leading-relaxed">
-                                        {slide.subtitle}
-                                    </p>
-                                    <div className="flex flex-col xs:flex-row gap-2 sm:gap-3">
-                                        <Link
-                                            href={slide.primaryButton.href}
-                                            className="inline-block w-44 px-4 sm:px-6 py-2 sm:py-2.5 bg-teal-600 text-white rounded-lg hover:bg-teal-700 text-center font-medium text-xs sm:text-sm transition-colors"
-                                        >
-                                            {slide.primaryButton.text}
-                                        </Link>
-                                        <Link
-                                            href={slide.secondaryButton.href}
-                                            className="inline-block w-44 px-4 sm:px-6 py-2 sm:py-2.5 bg-white text-teal-600 rounded-lg hover:bg-gray-100 text-center font-medium text-xs sm:text-sm transition-colors"
-                                        >
-                                            {slide.secondaryButton.text}
-                                        </Link>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                ))}
-
-                {/* Кнопки навигации */}
-                <button
-                    onClick={goToPrevSlide}
-                    className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 p-2 sm:p-3 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-colors"
-                    aria-label="Предыдущий слайд"
-                >
-                    <ChevronLeft size={20} className="text-white" />
-                </button>
-                <button
-                    onClick={goToNextSlide}
-                    className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 p-2 sm:p-3 bg-white/20 backdrop-blur-sm rounded-full hover:bg-white/30 transition-colors"
-                    aria-label="Следующий слайд"
-                >
-                    <ChevronRight size={20} className="text-white" />
-                </button>
-
-                {/* Индикаторы слайдов */}
-                <div className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
-                    {BANNER_SLIDES.map((_, index) => (
-                        <button
-                            key={index}
-                            onClick={() => goToSlide(index)}
-                            className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full transition-colors ${
-                                index === currentSlide ? 'bg-white' : 'bg-white/50'
-                            }`}
-                            aria-label={`Перейти к слайду ${index + 1}`}
-                        />
-                    ))}
-                </div>
-            </div>
+            <BannerSlider banners={banners} />
 
             {/* Быстрый заказ */}
             <QuickOrderSection
