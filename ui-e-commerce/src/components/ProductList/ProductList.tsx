@@ -3,7 +3,8 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useState } from 'react'
-import { Heart, ShoppingBag, Check } from 'lucide-react'
+import { ShoppingBag, Check } from 'lucide-react'
+import FavoriteButton from '@/components/FavoriteButton/FavoriteButton'
 import { cartUtils } from '@/utils/cart'
 
 interface BalloonProduct {
@@ -157,12 +158,7 @@ export default function ProductList({
 
                                 {/* Кнопки действий */}
                                 <div className="flex gap-2 ml-4">
-                                    <button
-                                        className="p-2 rounded-full border hover:bg-gray-50"
-                                        aria-label="Добавить в избранное"
-                                    >
-                                        <Heart size={18} />
-                                    </button>
+                                    <FavoriteButton productId={product.id} />
                                     {product.inStock && (
                                         <button
                                             onClick={(e) => handleAddToCart(e, product)}

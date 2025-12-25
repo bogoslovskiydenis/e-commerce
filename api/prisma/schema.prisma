@@ -153,9 +153,10 @@ model Customer {
   updatedAt    DateTime  @updatedAt @map("updated_at")
 
   // Связи
-  orders    Order[]
-  reviews   Review[]
-  callbacks Callback[]
+  orders     Order[]
+  reviews    Review[]
+  callbacks  Callback[]
+  favorites  Favorite[]
 
   @@map("customers")
 }
@@ -226,6 +227,7 @@ model Product {
   orderItems        OrderItem[]
   reviews           Review[]
   promotionProducts PromotionProduct[]
+  favorites         Favorite[]
 
   @@map("products")
 }
@@ -531,4 +533,20 @@ enum NavigationType {
   CATEGORY
   DROPDOWN
   EXTERNAL
+}
+
+model Favorite {
+  id         String   @id @default(uuid())
+  customerId String   @map("customer_id")
+  productId  String   @map("product_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  // Связи
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  product  Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([customerId, productId])
+  @@index([customerId])
+  @@index([productId])
+  @@map("favorites")
 }

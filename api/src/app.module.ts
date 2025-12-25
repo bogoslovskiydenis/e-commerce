@@ -15,6 +15,7 @@ import { SettingsModule } from './settings/settings.module';
 import { AdminLogsModule } from './admin-logs/admin-logs.module';
 import { CallbacksModule } from './callbacks/callbacks.module';
 import { ReviewsModule } from './reviews/reviews.module';
+import { FavoritesModule } from './favorites/favorites.module';
 import { AppController } from './app.controller';
 
 @Module({
@@ -47,6 +48,7 @@ import { AppController } from './app.controller';
     AdminLogsModule,
     CallbacksModule,
     ReviewsModule,
+    FavoritesModule,
   ],
   controllers: [AppController],
 })

@@ -7,7 +7,7 @@ export class ProductsService {
   constructor(private prisma: PrismaService) {}
 
   async getProducts(query: ProductQueryDto) {
-    const { page = 1, limit = 25, sortBy = 'createdAt', sortOrder = 'desc', search, categoryId } = query;
+    const { page = 1, limit = 25, sortBy = 'createdAt', sortOrder = 'desc', search, categoryId, featured } = query;
     // Убеждаемся, что limit - это число
     const limitNum = Number(limit) || 25;
     const pageNum = Number(page) || 1;
@@ -31,6 +31,10 @@ export class ProductsService {
 
     if (categoryId) {
       where.categoryId = categoryId;
+    }
+
+    if (featured !== undefined) {
+      where.featured = featured;
     }
 
     const orderBy: any = {};

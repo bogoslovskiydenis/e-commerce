@@ -2,9 +2,11 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Heart, ShoppingBag, Check } from 'lucide-react'
 import { cartUtils } from '@/utils/cart'
+import { apiService } from '@/services/api'
+import { useAuth } from '@/contexts/AuthContext'
 
 interface ProductCardProps {
     id: string
@@ -22,6 +24,7 @@ interface ProductCardProps {
     inStock: boolean
     className?: string
     basePath?: string // Добавляем возможность указать базовый путь
+    showFavoriteButton?: boolean // Показывать ли кнопку избранного
 }
 
 export default function ProductCard({
@@ -39,9 +42,54 @@ export default function ProductCard({
                                         material,
                                         inStock = true,
                                         className = "",
-                                        basePath = "/balloons" // По умолчанию используем balloons
+                                        basePath = "/balloons", // По умолчанию используем balloons
+                                        showFavoriteButton = true // По умолчанию показываем
                                     }: ProductCardProps) {
+    const { isAuthenticated } = useAuth()
     const [isAdded, setIsAdded] = useState(false)
+    const [isFavorite, setIsFavorite] = useState(false)
+    const [isLoadingFavorite, setIsLoadingFavorite] = useState(false)
+    const showFavorite = showFavoriteButton !== false // По умолчанию показываем
+
+    useEffect(() => {
+        if (isAuthenticated && showFavorite) {
+            checkFavorite()
+        }
+    }, [isAuthenticated, id, showFavorite])
+
+    const checkFavorite = async () => {
+        try {
+            const favorite = await apiService.isFavorite(id)
+            setIsFavorite(favorite)
+        } catch (error) {
+            console.error('Error checking favorite:', error)
+        }
+    }
+
+    const handleToggleFavorite = async (e: React.MouseEvent) => {
+        e.preventDefault()
+        e.stopPropagation()
+
+        if (!isAuthenticated) {
+            window.location.href = '/login'
+            return
+        }
+
+        setIsLoadingFavorite(true)
+        try {
+            if (isFavorite) {
+                await apiService.removeFromFavorites(id)
+                setIsFavorite(false)
+            } else {
+                await apiService.addToFavorites(id)
+                setIsFavorite(true)
+            }
+        } catch (error) {
+            console.error('Error toggling favorite:', error)
+        } finally {
+            setIsLoadingFavorite(false)
+        }
+    }
 
     const handleAddToCart = (e: React.MouseEvent) => {
         e.preventDefault()
@@ -128,13 +176,20 @@ export default function ProductCard({
                 )}
 
                 {/* Кнопки действий */}
-                <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button
-                        className="p-2 rounded-full bg-white shadow-md hover:bg-gray-50"
-                        aria-label="Добавить в избранное"
-                    >
-                        <Heart size={20} />
-                    </button>
+                {showFavorite && (
+                    <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button
+                            onClick={handleToggleFavorite}
+                            disabled={isLoadingFavorite}
+                            className={`p-2 rounded-full shadow-md transition-colors ${
+                                isFavorite
+                                    ? 'bg-red-500 text-white hover:bg-red-600'
+                                    : 'bg-white hover:bg-gray-50'
+                            }`}
+                            aria-label={isFavorite ? 'Удалить из избранного' : 'Добавить в избранное'}
+                        >
+                            <Heart size={20} fill={isFavorite ? 'currentColor' : 'none'} />
+                        </button>
                     {inStock && (
                         <button
                             onClick={handleAddToCart}
@@ -149,7 +204,8 @@ export default function ProductCard({
                             {isAdded ? <Check size={20} /> : <ShoppingBag size={20} />}
                         </button>
                     )}
-                </div>
+                    </div>
+                )}
 
                 {/* Бейдж материала в левом нижнем углу */}
                 {material && (

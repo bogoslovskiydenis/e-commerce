@@ -1,5 +1,5 @@
-import { IsOptional, IsString, IsInt, IsEnum, Min } from 'class-validator';
-import { Type } from 'class-transformer';
+import { IsOptional, IsString, IsInt, IsEnum, Min, IsBoolean } from 'class-validator';
+import { Type, Transform } from 'class-transformer';
 
 export enum SortOrder {
   ASC = 'asc',
@@ -34,6 +34,15 @@ export class ProductQueryDto {
   @IsOptional()
   @IsString()
   categoryId?: string;
+
+  @IsOptional()
+  @Transform(({ value }) => {
+    if (value === 'true') return true;
+    if (value === 'false') return false;
+    return value;
+  })
+  @IsBoolean()
+  featured?: boolean;
 }
 
 

@@ -1,53 +1,355 @@
+'use client'
+
 import Link from 'next/link'
 import Image from 'next/image'
-import { ChevronRight } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { ChevronRight, Heart, ShoppingBag, Grid3x3, List, ArrowUpDown } from 'lucide-react'
+import { useAuth } from '@/contexts/AuthContext'
+import { apiService, Product } from '@/services/api'
+import ProductCard from '@/components/ProductCard/ProductCard'
+import { cartUtils } from '@/utils/cart'
 
-export default function FavoritesPage() {
-    // Пустая страница избранного
-    const isEmpty = true
+// Компонент карточки товара в избранном с кнопкой сердца
+function FavoriteProductCard({ 
+    product, 
+    onRemove, 
+    isRemoving 
+}: { 
+    product: Product
+    onRemove: () => void
+    isRemoving: boolean
+}) {
+    const handleHeartClick = (e: React.MouseEvent) => {
+        e.preventDefault()
+        e.stopPropagation()
+        onRemove()
+    }
 
     return (
-        <div className="container mx-auto px-4 py-8">
-            {/* Хлебные крошки */}
-            <div className="mb-6 flex items-center text-sm">
-                <Link href="/" className="text-gray-600 hover:text-amber-500">Головна сторінка</Link>
-                <ChevronRight size={16} className="mx-2 text-gray-400" />
-                <span className="font-medium">Улюблене</span>
-            </div>
+        <div className="relative group">
+            <ProductCard
+                id={product.id}
+                name={product.title || product.name || ''}
+                type="foil"
+                price={Number(product.price) || 0}
+                oldPrice={product.oldPrice ? Number(product.oldPrice) : undefined}
+                discount={product.discount ? Number(product.discount) : undefined}
+                image={product.images?.[0] || product.image || '/api/placeholder/300/300'}
+                category={product.category || product.categoryId || ''}
+                inStock={product.inStock}
+                basePath="/product"
+                showFavoriteButton={false}
+            />
+            <button
+                onClick={handleHeartClick}
+                disabled={isRemoving}
+                className="absolute top-2 right-2 z-10 p-2 bg-white rounded-full shadow-md hover:bg-red-50 transition-colors"
+                aria-label="Видалити з улюблених"
+            >
+                {isRemoving ? (
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-red-500"></div>
+                ) : (
+                    <Heart size={18} className="text-red-500" fill="currentColor" />
+                )}
+            </button>
+        </div>
+    )
+}
 
-            <h1 className="text-2xl sm:text-3xl font-bold mb-6">Улюблене</h1>
+type ViewMode = 'grid' | 'list'
+type SortOption = 'newest' | 'oldest' | 'price-asc' | 'price-desc' | 'name-asc' | 'name-desc'
 
-            {isEmpty ? (
-                <div className="flex flex-col items-center justify-center py-12 text-center">
-                    <div className="w-36 h-36 mb-6">
-                        <Image
-                            src="/api/placeholder/150/150"
-                            alt="Пустая страница избранного"
-                            width={150}
-                            height={150}
-                            className="mx-auto"
-                        />
+export default function FavoritesPage() {
+    const { isAuthenticated } = useAuth()
+    const [favorites, setFavorites] = useState<Product[]>([])
+    const [loading, setLoading] = useState(true)
+    const [viewMode, setViewMode] = useState<ViewMode>('grid')
+    const [sortBy, setSortBy] = useState<SortOption>('newest')
+    const [removingId, setRemovingId] = useState<string | null>(null)
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            loadFavorites()
+        } else {
+            setLoading(false)
+        }
+    }, [isAuthenticated])
+
+    const loadFavorites = async () => {
+        try {
+            setLoading(true)
+            const data = await apiService.getFavorites()
+            setFavorites(data)
+        } catch (error) {
+            console.error('Error loading favorites:', error)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const handleRemoveFavorite = async (productId: string) => {
+        if (!isAuthenticated) return
+        
+        setRemovingId(productId)
+        try {
+            await apiService.removeFromFavorites(productId)
+            setFavorites(favorites.filter(p => p.id !== productId))
+        } catch (error) {
+            console.error('Error removing favorite:', error)
+        } finally {
+            setRemovingId(null)
+        }
+    }
+
+    const handleAddToCart = (product: Product) => {
+        cartUtils.addToCart({
+            id: product.id,
+            name: product.title || product.name || '',
+            price: Number(product.price) || 0,
+            quantity: 1,
+            image: product.images?.[0] || product.image || '/api/placeholder/300/300',
+            productId: product.id,
+        })
+        window.dispatchEvent(new Event('cartUpdated'))
+    }
+
+    const sortedFavorites = [...favorites].sort((a, b) => {
+        switch (sortBy) {
+            case 'newest':
+                return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()
+            case 'oldest':
+                return new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime()
+            case 'price-asc':
+                return (Number(a.price) || 0) - (Number(b.price) || 0)
+            case 'price-desc':
+                return (Number(b.price) || 0) - (Number(a.price) || 0)
+            case 'name-asc':
+                return (a.title || a.name || '').localeCompare(b.title || b.name || '')
+            case 'name-desc':
+                return (b.title || b.name || '').localeCompare(a.title || a.name || '')
+            default:
+                return 0
+        }
+    })
+
+    const isEmpty = !loading && favorites.length === 0
+
+    return (
+        <div className="min-h-screen bg-gray-50">
+            <div className="container mx-auto px-4 py-8">
+                {/* Хлебные крошки */}
+                <div className="mb-6 flex items-center text-sm">
+                    <Link href="/" className="text-gray-600 hover:text-amber-500 transition-colors">
+                        Головна сторінка
+                    </Link>
+                    <ChevronRight size={16} className="mx-2 text-gray-400" />
+                    <span className="font-medium text-gray-900">Улюблене</span>
+                </div>
+
+                {/* Заголовок и статистика */}
+                <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div>
+                        <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">
+                            Улюблене
+                        </h1>
+                        {!isEmpty && (
+                            <p className="text-gray-600">
+                                {favorites.length} {favorites.length === 1 ? 'товар' : 'товарів'}
+                            </p>
+                        )}
                     </div>
 
-                    <h2 className="text-2xl font-bold mb-3">Чогось тут не вистачає?</h2>
-                    <p className="text-gray-600 mb-6 max-w-md mx-auto">
-                        Увійди і перейди до раніше збережених товарів.
-                    </p>
+                    {!isEmpty && (
+                        <div className="flex items-center gap-3">
+                            {/* Сортировка */}
+                            <div className="relative">
+                                <select
+                                    value={sortBy}
+                                    onChange={(e) => setSortBy(e.target.value as SortOption)}
+                                    className="appearance-none bg-white border border-gray-300 rounded-md px-4 py-2 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                                >
+                                    <option value="newest">Спочатку нові</option>
+                                    <option value="oldest">Спочатку старі</option>
+                                    <option value="price-asc">Ціна: від низької</option>
+                                    <option value="price-desc">Ціна: від високої</option>
+                                    <option value="name-asc">Назва: А-Я</option>
+                                    <option value="name-desc">Назва: Я-А</option>
+                                </select>
+                                <ArrowUpDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                            </div>
 
-                    <div className="flex flex-col sm:flex-row gap-3">
-                        <Link href="/login" className="px-8 py-3 bg-amber-500 text-white font-medium rounded-md hover:bg-amber-600 text-center">
-                            Ввійти
+                            {/* Переключение вида */}
+                            <div className="flex items-center bg-white border border-gray-300 rounded-md overflow-hidden">
+                                <button
+                                    onClick={() => setViewMode('grid')}
+                                    className={`p-2 transition-colors ${
+                                        viewMode === 'grid'
+                                            ? 'bg-amber-500 text-white'
+                                            : 'text-gray-600 hover:bg-gray-50'
+                                    }`}
+                                    aria-label="Сітка"
+                                >
+                                    <Grid3x3 size={18} />
+                                </button>
+                                <button
+                                    onClick={() => setViewMode('list')}
+                                    className={`p-2 transition-colors ${
+                                        viewMode === 'list'
+                                            ? 'bg-amber-500 text-white'
+                                            : 'text-gray-600 hover:bg-gray-50'
+                                    }`}
+                                    aria-label="Список"
+                                >
+                                    <List size={18} />
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+
+                {/* Пустое состояние */}
+                {isEmpty && !isAuthenticated ? (
+                    <div className="flex flex-col items-center justify-center py-20 text-center bg-white rounded-lg shadow-sm">
+                        <div className="w-32 h-32 mb-6 flex items-center justify-center rounded-full bg-gray-100">
+                            <Heart size={48} className="text-gray-400" />
+                        </div>
+                        <h2 className="text-2xl font-bold mb-3 text-gray-900">Ваші улюблені товари</h2>
+                        <p className="text-gray-600 mb-8 max-w-md mx-auto">
+                            Увійдіть, щоб зберігати товари, які вам сподобалися, і повертатися до них пізніше.
+                        </p>
+                        <div className="flex flex-col sm:flex-row gap-3">
+                            <Link
+                                href="/login"
+                                className="px-8 py-3 bg-amber-500 text-white font-medium rounded-md hover:bg-amber-600 transition-colors text-center"
+                            >
+                                Ввійти
+                            </Link>
+                            <Link
+                                href="/"
+                                className="px-8 py-3 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors text-center"
+                            >
+                                Переглянути товари
+                            </Link>
+                        </div>
+                    </div>
+                ) : isEmpty && isAuthenticated ? (
+                    <div className="flex flex-col items-center justify-center py-20 text-center bg-white rounded-lg shadow-sm">
+                        <div className="w-32 h-32 mb-6 flex items-center justify-center rounded-full bg-gray-100">
+                            <Heart size={48} className="text-gray-400" />
+                        </div>
+                        <h2 className="text-2xl font-bold mb-3 text-gray-900">Список порожній</h2>
+                        <p className="text-gray-600 mb-8 max-w-md mx-auto">
+                            Поки що у вас немає збережених товарів. Почніть додавати товари до улюблених!
+                        </p>
+                        <Link
+                            href="/"
+                            className="px-8 py-3 bg-amber-500 text-white font-medium rounded-md hover:bg-amber-600 transition-colors"
+                        >
+                            Переглянути товари
                         </Link>
-                        <button className="px-8 py-3 border border-gray-300 rounded-md hover:bg-gray-50">
-                            Переглянути новинки
-                        </button>
                     </div>
-                </div>
-            ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {/* Здесь будут товары в избранном, когда они появятся */}
-                </div>
-            )}
+                ) : loading ? (
+                    <div className="text-center py-20">
+                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-500 mx-auto"></div>
+                        <p className="mt-4 text-gray-600">Завантаження...</p>
+                    </div>
+                ) : viewMode === 'grid' ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        {sortedFavorites.map((product) => (
+                            <FavoriteProductCard
+                                key={product.id}
+                                product={product}
+                                onRemove={() => handleRemoveFavorite(product.id)}
+                                isRemoving={removingId === product.id}
+                            />
+                        ))}
+                    </div>
+                ) : (
+                    <div className="space-y-4">
+                        {sortedFavorites.map((product) => (
+                            <div
+                                key={product.id}
+                                className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow group"
+                            >
+                                <div className="flex gap-4">
+                                    <Link
+                                        href={`/product/${product.id}`}
+                                        className="relative w-24 h-24 sm:w-32 sm:h-32 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100"
+                                    >
+                                        <Image
+                                            src={product.images?.[0] || product.image || '/api/placeholder/300/300'}
+                                            alt={product.title || product.name || ''}
+                                            fill
+                                            className="object-cover"
+                                        />
+                                    </Link>
+
+                                    <div className="flex-1 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                                        <div className="flex-1">
+                                            <Link
+                                                href={`/product/${product.id}`}
+                                                className="block mb-2"
+                                            >
+                                                <h3 className="text-lg font-semibold text-gray-900 hover:text-amber-500 transition-colors">
+                                                    {product.title || product.name}
+                                                </h3>
+                                            </Link>
+                                            <div className="flex items-center gap-4">
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-xl font-bold text-gray-900">
+                                                        {Number(product.price).toFixed(2)} ₴
+                                                    </span>
+                                                    {product.oldPrice && (
+                                                        <span className="text-sm text-gray-500 line-through">
+                                                            {Number(product.oldPrice).toFixed(2)} ₴
+                                                        </span>
+                                                    )}
+                                                </div>
+                                                {product.discount && (
+                                                    <span className="px-2 py-1 bg-red-100 text-red-700 text-xs font-medium rounded">
+                                                        -{Number(product.discount)}%
+                                                    </span>
+                                                )}
+                                            </div>
+                                            <div className="mt-2 flex items-center gap-2">
+                                                {product.inStock ? (
+                                                    <span className="text-sm text-green-600 font-medium">В наявності</span>
+                                                ) : (
+                                                    <span className="text-sm text-red-600 font-medium">Немає в наявності</span>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        <div className="flex items-center gap-2">
+                                            {product.inStock && (
+                                                <button
+                                                    onClick={() => handleAddToCart(product)}
+                                                    className="flex items-center gap-2 px-4 py-2 bg-amber-500 text-white rounded-md hover:bg-amber-600 transition-colors"
+                                                >
+                                                    <ShoppingBag size={18} />
+                                                    <span className="hidden sm:inline">В кошик</span>
+                                                </button>
+                                            )}
+                                            <button
+                                                onClick={() => handleRemoveFavorite(product.id)}
+                                                disabled={removingId === product.id}
+                                                className="p-2 border border-gray-300 rounded-md hover:bg-red-50 hover:border-red-300 transition-colors"
+                                                aria-label="Видалити з улюблених"
+                                            >
+                                                {removingId === product.id ? (
+                                                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-red-500"></div>
+                                                ) : (
+                                                    <Heart size={18} className="text-red-500" fill="currentColor" />
+                                                )}
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
         </div>
     )
 }

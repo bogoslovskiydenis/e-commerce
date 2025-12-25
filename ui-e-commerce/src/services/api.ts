@@ -533,6 +533,52 @@ class ApiService {
         );
         return response.data!;
     }
+
+    // ==================== ИЗБРАННОЕ ====================
+
+    /**
+     * Получить список избранных товаров
+     */
+    async getFavorites(): Promise<Product[]> {
+        const response = await this.request<ApiResponse<Product[]>>('/favorites');
+        return response.data || [];
+    }
+
+    /**
+     * Добавить товар в избранное
+     */
+    async addToFavorites(productId: string): Promise<void> {
+        await this.request<ApiResponse<void>>(`/favorites/${productId}`, {
+            method: 'POST',
+        });
+    }
+
+    /**
+     * Удалить товар из избранного
+     */
+    async removeFromFavorites(productId: string): Promise<void> {
+        await this.request<ApiResponse<void>>(`/favorites/${productId}`, {
+            method: 'DELETE',
+        });
+    }
+
+    /**
+     * Проверить, находится ли товар в избранном
+     */
+    async isFavorite(productId: string): Promise<boolean> {
+        const response = await this.request<ApiResponse<{ isFavorite: boolean }>>(
+            `/favorites/check/${productId}`
+        );
+        return response.data?.isFavorite || false;
+    }
+
+    /**
+     * Получить список ID избранных товаров
+     */
+    async getFavoriteIds(): Promise<string[]> {
+        const response = await this.request<ApiResponse<string[]>>('/favorites/ids');
+        return response.data || [];
+    }
 }
 
 // Экспортируем единственный экземпляр сервиса

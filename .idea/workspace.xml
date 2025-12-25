@@ -4,66 +4,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="cc69a437-414e-4395-a1be-55730bb45aca" name="Changes" comment="добавил пагинацию">
+    <list default="true" id="cc69a437-414e-4395-a1be-55730bb45aca" name="Changes" comment="добавил регистрацию с фронта">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin-panel/src/components/CustomPagination.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/admin-panel/src/components/CustomPagination.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/api/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/scripts/seedAll.mjs" beforeDir="false" afterPath="$PROJECT_DIR$/api/scripts/seedAll.mjs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/scripts/seedCallbacks.mjs" beforeDir="false" afterPath="$PROJECT_DIR$/api/scripts/seedCallbacks.mjs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/scripts/seedCustomers.mjs" beforeDir="false" afterPath="$PROJECT_DIR$/api/scripts/seedCustomers.mjs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/scripts/seedOrders.mjs" beforeDir="false" afterPath="$PROJECT_DIR$/api/scripts/seedOrders.mjs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/scripts/seedProducts.mjs" beforeDir="false" afterPath="$PROJECT_DIR$/api/scripts/seedProducts.mjs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/scripts/seedReviews.mjs" beforeDir="false" afterPath="$PROJECT_DIR$/api/scripts/seedReviews.mjs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/scripts/seedStructuredData.mjs" beforeDir="false" afterPath="$PROJECT_DIR$/api/scripts/seedStructuredData.mjs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/scripts/seedUsers.mjs" beforeDir="false" afterPath="$PROJECT_DIR$/api/scripts/seedUsers.mjs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/admin-logs/admin-logs.module.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/admin-logs/admin-logs.module.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/auth/auth.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/auth/auth.controller.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/auth/auth.module.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/auth/auth.module.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/auth/auth.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/auth/auth.service.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/auth/dto/login.dto.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/auth/dto/login.dto.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/auth/dto/refresh-token.dto.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/auth/dto/refresh-token.dto.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/auth/guards/jwt-auth.guard.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/auth/guards/jwt-auth.guard.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/auth/strategies/jwt.strategy.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/auth/strategies/jwt.strategy.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/banners/banners.module.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/banners/banners.module.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/callbacks/callbacks.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/callbacks/callbacks.controller.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/callbacks/callbacks.module.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/callbacks/callbacks.module.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/callbacks/callbacks.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/callbacks/callbacks.service.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/categories/categories.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/categories/categories.controller.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/categories/categories.module.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/categories/categories.module.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/categories/categories.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/categories/categories.service.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/categories/dto/create-category.dto.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/categories/dto/create-category.dto.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/categories/dto/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/categories/dto/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/categories/dto/update-category.dto.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/categories/dto/update-category.dto.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/common/decorators/permissions.decorator.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/common/decorators/permissions.decorator.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/common/filters/http-exception.filter.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/common/filters/http-exception.filter.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/common/guards/permissions.guard.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/common/guards/permissions.guard.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/common/interceptors/logging.interceptor.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/common/interceptors/logging.interceptor.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/customers/customers.module.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/customers/customers.module.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/navigation/navigation.module.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/navigation/navigation.module.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/pages/pages.module.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/pages/pages.module.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/prisma/prisma.module.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/prisma/prisma.module.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/prisma/prisma.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/prisma/prisma.service.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/products/dto/create-product.dto.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/products/dto/create-product.dto.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/products/dto/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/products/dto/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/.env" beforeDir="false" afterPath="$PROJECT_DIR$/api/.env" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/prisma/schema.prisma" beforeDir="false" afterPath="$PROJECT_DIR$/api/prisma/schema.prisma" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/app.module.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/app.module.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/api/src/products/dto/product-query.dto.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/products/dto/product-query.dto.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/products/dto/update-product.dto.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/products/dto/update-product.dto.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/products/products.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/products/products.controller.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/products/products.module.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/products/products.module.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/api/src/products/products.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/products/products.service.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/reviews/reviews.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/reviews/reviews.controller.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/reviews/reviews.module.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/reviews/reviews.module.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/settings/settings.module.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/settings/settings.module.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/users/users.module.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/users/users.module.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/app/api/placeholder/[...params]/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/app/api/placeholder/[...params]/route.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/app/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/app/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/app/product/[id]/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/app/product/[id]/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/components/Navigation/DynamicDropdownMenu.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/components/Navigation/DynamicDropdownMenu.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/components/Navigation/DynamicNavigation.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/components/Navigation/DynamicNavigation.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/components/Navigation/Navigation.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/components/Navigation/Navigation.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/app/favorites/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/app/favorites/page.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/components/ProductCard/ProductCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/components/ProductCard/ProductCard.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/components/ProductGrid/ProductGrid.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/components/ProductGrid/ProductGrid.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/components/ProductList/ProductList.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/components/ProductList/ProductList.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/hooks/useNavigation.ts" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/hooks/useNavigation.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/services/api.ts" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/services/api.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -89,26 +40,29 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/denisbogoslovskiy/WebstormProjects/e-commerce/ui-e-commerce/src&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;npm.build.executor&quot;: &quot;Run&quot;,
-    &quot;npm.db:generate.executor&quot;: &quot;Run&quot;,
-    &quot;npm.dev.executor&quot;: &quot;Run&quot;,
-    &quot;npm.seed:all.executor&quot;: &quot;Run&quot;,
-    &quot;npm.seed:categories.executor&quot;: &quot;Run&quot;,
-    &quot;npm.start.executor&quot;: &quot;Run&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;/Users/denisbogoslovskiy/WebstormProjects/e-commerce/ui-e-commerce/node_modules/typescript/lib&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "/Users/denisbogoslovskiy/WebstormProjects/e-commerce/ui-e-commerce/src",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "npm.build.executor": "Run",
+    "npm.db:generate.executor": "Run",
+    "npm.dev.executor": "Run",
+    "npm.seed:all.executor": "Run",
+    "npm.seed:categories.executor": "Run",
+    "npm.seed:disable-old-nav.executor": "Run",
+    "npm.seed:structured.executor": "Run",
+    "npm.seed:users.executor": "Run",
+    "npm.start.executor": "Run",
+    "ts.external.directory.path": "/Users/denis/WebstormProjects/e-commerce/api/node_modules/typescript/lib",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/ui-e-commerce/src" />
@@ -120,17 +74,7 @@
       <recent name="$PROJECT_DIR$/api/src" />
     </key>
   </component>
-  <component name="RunManager" selected="npm.dev">
-    <configuration name="build" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
-      <package-json value="$PROJECT_DIR$/ui-e-commerce/package.json" />
-      <command value="run" />
-      <scripts>
-        <script value="build" />
-      </scripts>
-      <node-interpreter value="project" />
-      <envs />
-      <method v="2" />
-    </configuration>
+  <component name="RunManager" selected="npm.seed:disable-old-nav">
     <configuration name="dev" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
       <package-json value="$PROJECT_DIR$/ui-e-commerce/package.json" />
       <command value="run" />
@@ -151,21 +95,31 @@
       <envs />
       <method v="2" />
     </configuration>
-    <configuration name="seed:categories" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+    <configuration name="seed:disable-old-nav" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
       <package-json value="$PROJECT_DIR$/api/package.json" />
       <command value="run" />
       <scripts>
-        <script value="seed:categories" />
+        <script value="seed:disable-old-nav" />
       </scripts>
       <node-interpreter value="project" />
       <envs />
       <method v="2" />
     </configuration>
-    <configuration name="start" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
-      <package-json value="$PROJECT_DIR$/ui-e-commerce/package.json" />
+    <configuration name="seed:structured" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/api/package.json" />
       <command value="run" />
       <scripts>
-        <script value="start" />
+        <script value="seed:structured" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <configuration name="seed:users" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/api/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="seed:users" />
       </scripts>
       <node-interpreter value="project" />
       <envs />
@@ -173,11 +127,11 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="npm.dev" />
-        <item itemvalue="npm.build" />
-        <item itemvalue="npm.start" />
+        <item itemvalue="npm.seed:disable-old-nav" />
+        <item itemvalue="npm.seed:structured" />
         <item itemvalue="npm.seed:all" />
-        <item itemvalue="npm.seed:categories" />
+        <item itemvalue="npm.seed:users" />
+        <item itemvalue="npm.dev" />
       </list>
     </recent_temporary>
   </component>
@@ -215,6 +169,7 @@
       <workItem from="1766148050924" duration="9211000" />
       <workItem from="1766223971474" duration="9016000" />
       <workItem from="1766317453769" duration="3294000" />
+      <workItem from="1766650219316" duration="6252000" />
     </task>
     <task id="LOCAL-00001" summary="добавил аунтификацию по ролям">
       <option name="closed" value="true" />
@@ -408,7 +363,15 @@
       <option name="project" value="LOCAL" />
       <updated>1766233808971</updated>
     </task>
-    <option name="localTasksCounter" value="25" />
+    <task id="LOCAL-00025" summary="добавил регистрацию с фронта">
+      <option name="closed" value="true" />
+      <created>1766675586537</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1766675586537</updated>
+    </task>
+    <option name="localTasksCounter" value="26" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -462,6 +425,7 @@
     <MESSAGE value="изменил навигацию для фронтенда" />
     <MESSAGE value="сидд для создании 5 категории 5 подкатегориий и товары" />
     <MESSAGE value="добавил пагинацию" />
-    <option name="LAST_COMMIT_MESSAGE" value="добавил пагинацию" />
+    <MESSAGE value="добавил регистрацию с фронта" />
+    <option name="LAST_COMMIT_MESSAGE" value="добавил регистрацию с фронта" />
   </component>
 </project>
