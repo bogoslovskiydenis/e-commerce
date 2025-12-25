@@ -81,4 +81,43 @@ export class CustomersService {
     await this.prisma.customer.delete({ where: { id } });
     return { success: true, message: 'Customer deleted successfully' };
   }
+
+  async getCustomerOrders(customerId: string, params: { page?: number; limit?: number }) {
+    const { page = 1, limit = 10 } = params;
+    const skip = (Number(page) - 1) * Number(limit);
+
+    const [orders, total] = await Promise.all([
+      this.prisma.order.findMany({
+        where: { customerId },
+        skip,
+        take: Number(limit),
+        orderBy: { createdAt: 'desc' },
+        include: {
+          items: {
+            include: {
+              product: {
+                select: {
+                  id: true,
+                  title: true,
+                  images: true,
+                  price: true,
+                },
+              },
+            },
+          },
+        },
+      }),
+      this.prisma.order.count({ where: { customerId } }),
+    ]);
+
+    return {
+      orders,
+      pagination: {
+        page: Number(page),
+        limit: Number(limit),
+        total,
+        pages: Math.ceil(total / Number(limit)),
+      },
+    };
+  }
 }

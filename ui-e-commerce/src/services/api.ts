@@ -65,6 +65,49 @@ export interface ApiResponse<T> {
     };
 }
 
+export interface Customer {
+    id: string;
+    name: string;
+    email?: string;
+    phone: string;
+    address?: string;
+    isActive: boolean;
+    createdAt: string;
+    updatedAt: string;
+}
+
+export interface CustomerAuthResponse {
+    customer: Customer;
+    token: string;
+    refreshToken: string;
+}
+
+export interface Order {
+    id: string;
+    orderNumber: string;
+    status: string;
+    paymentStatus: string;
+    totalAmount: number;
+    discountAmount: number;
+    shippingAmount: number;
+    items: OrderItem[];
+    createdAt: string;
+    updatedAt: string;
+}
+
+export interface OrderItem {
+    id: string;
+    quantity: number;
+    price: number;
+    total: number;
+    product: {
+        id: string;
+        title: string;
+        images: string[];
+        price: number;
+    };
+}
+
 class ApiService {
     private baseUrl: string;
 
@@ -78,19 +121,25 @@ class ApiService {
         options: RequestInit = {}
     ): Promise<T> {
         const url = `${this.baseUrl}${endpoint}`;
+        const token = typeof window !== 'undefined' ? localStorage.getItem('customer_token') : null;
 
         try {
             const response = await fetch(url, {
                 ...options,
                 headers: {
                     'Content-Type': 'application/json',
+                    ...(token && { Authorization: `Bearer ${token}` }),
                     ...options.headers,
                 },
             });
 
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({}));
-                throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+                const errorMessage = errorData.message || errorData.error || `HTTP error! status: ${response.status}`;
+                const error = new Error(typeof errorMessage === 'string' ? errorMessage : JSON.stringify(errorMessage));
+                (error as any).status = response.status;
+                (error as any).data = errorData;
+                throw error;
             }
 
             const data = await response.json();
@@ -370,6 +419,119 @@ class ApiService {
                 'свадебные шары',
             ];
         }
+    }
+
+    // ==================== КЛИЕНТСКАЯ АВТОРИЗАЦИЯ ====================
+
+    /**
+     * Регистрация нового клиента
+     */
+    async registerCustomer(data: {
+        name: string;
+        email?: string;
+        phone: string;
+        password: string;
+        address?: string;
+    }): Promise<CustomerAuthResponse> {
+        const response = await this.request<ApiResponse<CustomerAuthResponse>>(
+            '/customers/auth/register',
+            {
+                method: 'POST',
+                body: JSON.stringify(data),
+            }
+        );
+        
+        // API может вернуть данные напрямую или в поле data
+        if (response.data) {
+            return response.data;
+        }
+        
+        // Если данные пришли напрямую (без обертки)
+        if (response.customer && response.token) {
+            return response as CustomerAuthResponse;
+        }
+        
+        throw new Error('Invalid response format from server');
+    }
+
+    /**
+     * Вход клиента
+     */
+    async loginCustomer(phoneOrEmail: string, password: string): Promise<CustomerAuthResponse> {
+        const response = await this.request<ApiResponse<CustomerAuthResponse>>(
+            '/customers/auth/login',
+            {
+                method: 'POST',
+                body: JSON.stringify({ phoneOrEmail, password }),
+            }
+        );
+        
+        // API может вернуть данные напрямую или в поле data
+        if (response.data) {
+            return response.data;
+        }
+        
+        // Если данные пришли напрямую (без обертки)
+        if (response.customer && response.token) {
+            return response as CustomerAuthResponse;
+        }
+        
+        throw new Error('Invalid response format from server');
+    }
+
+    /**
+     * Обновление токена
+     */
+    async refreshCustomerToken(refreshToken: string): Promise<CustomerAuthResponse> {
+        const response = await this.request<ApiResponse<CustomerAuthResponse>>(
+            '/customers/auth/refresh',
+            {
+                method: 'POST',
+                body: JSON.stringify({ refreshToken }),
+            }
+        );
+        return response.data!;
+    }
+
+    /**
+     * Получение профиля текущего клиента
+     */
+    async getCustomerProfile(): Promise<Customer> {
+        const response = await this.request<ApiResponse<Customer>>(
+            '/customers/auth/me'
+        );
+        return response.data!;
+    }
+
+    /**
+     * Обновление профиля клиента
+     */
+    async updateCustomerProfile(data: Partial<Customer>): Promise<Customer> {
+        const response = await this.request<ApiResponse<Customer>>(
+            '/customers/auth/profile',
+            {
+                method: 'PUT',
+                body: JSON.stringify(data),
+            }
+        );
+        return response.data!;
+    }
+
+    /**
+     * Получение заказов клиента
+     */
+    async getCustomerOrders(params?: {
+        page?: number;
+        limit?: number;
+    }): Promise<{ orders: Order[]; pagination: any }> {
+        const queryParams = new URLSearchParams();
+        if (params?.page) queryParams.append('page', params.page.toString());
+        if (params?.limit) queryParams.append('limit', params.limit.toString());
+
+        const response = await this.request<ApiResponse<{ orders: Order[]; pagination: any }>>(
+            `/customers/auth/orders?${queryParams.toString()}`
+        );
+        return response.data!;
     }
 }
 

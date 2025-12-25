@@ -2,13 +2,58 @@
 
 import { useState } from 'react'
 import { Eye, EyeOff } from 'lucide-react'
-import Link from "next/link";
+import { useRouter } from 'next/navigation'
+import Link from "next/link"
+import { useAuth } from '@/contexts/AuthContext'
 
 export default function LoginPage() {
+    const router = useRouter()
+    const { login, register, isAuthenticated } = useAuth()
     const [passwordVisible, setPasswordVisible] = useState(false)
     const [email, setEmail] = useState('')
+    const [phone, setPhone] = useState('')
+    const [name, setName] = useState('')
     const [password, setPassword] = useState('')
     const [activeTab, setActiveTab] = useState<'login' | 'register'>('login')
+    const [error, setError] = useState('')
+    const [loading, setLoading] = useState(false)
+
+    if (isAuthenticated) {
+        router.push('/account')
+        return null
+    }
+
+    const handleLogin = async (e: React.FormEvent) => {
+        e.preventDefault()
+        setError('')
+        setLoading(true)
+        try {
+            await login(email || phone, password)
+            router.push('/account')
+        } catch (err: any) {
+            setError(err.message || 'Помилка входу')
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const handleRegister = async (e: React.FormEvent) => {
+        e.preventDefault()
+        setError('')
+        if (!name || !phone || !password) {
+            setError('Заповніть всі обов\'язкові поля')
+            return
+        }
+        setLoading(true)
+        try {
+            await register({ name, email: email || undefined, phone, password })
+            router.push('/account')
+        } catch (err: any) {
+            setError(err.message || 'Помилка реєстрації')
+        } finally {
+            setLoading(false)
+        }
+    }
 
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -62,17 +107,64 @@ export default function LoginPage() {
                         </button>
                     </div>
 
+                    {/* Ошибка */}
+                    {error && (
+                        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md text-red-700 text-sm">
+                            {error}
+                        </div>
+                    )}
+
                     {/* Форма */}
-                    <form className="space-y-4">
+                    <form onSubmit={activeTab === 'login' ? handleLogin : handleRegister} className="space-y-4">
+                        {activeTab === 'register' && (
+                            <div>
+                                <input
+                                    type="text"
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-amber-500"
+                                    placeholder="Ім'я"
+                                    required
+                                />
+                            </div>
+                        )}
+
                         <div>
                             <input
-                                type="email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
+                                type={activeTab === 'login' ? 'text' : 'email'}
+                                value={activeTab === 'login' ? (email || phone) : email}
+                                onChange={(e) => {
+                                    if (activeTab === 'login') {
+                                        const value = e.target.value
+                                        if (/^\d/.test(value) || value.startsWith('+')) {
+                                            setPhone(value)
+                                            setEmail('')
+                                        } else {
+                                            setEmail(value)
+                                            setPhone('')
+                                        }
+                                    } else {
+                                        setEmail(e.target.value)
+                                    }
+                                }}
                                 className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-amber-500"
-                                placeholder="Адреса e-mail"
+                                placeholder={activeTab === 'login' ? 'Телефон або e-mail' : 'Адреса e-mail (необов\'язково)'}
+                                required={activeTab === 'login'}
                             />
                         </div>
+
+                        {activeTab === 'register' && (
+                            <div>
+                                <input
+                                    type="tel"
+                                    value={phone}
+                                    onChange={(e) => setPhone(e.target.value)}
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-amber-500"
+                                    placeholder="Телефон"
+                                    required
+                                />
+                            </div>
+                        )}
 
                         <div className="relative">
                             <input
@@ -81,6 +173,8 @@ export default function LoginPage() {
                                 onChange={(e) => setPassword(e.target.value)}
                                 className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-amber-500"
                                 placeholder="Пароль"
+                                required
+                                minLength={8}
                             />
                             <button
                                 type="button"
@@ -92,10 +186,11 @@ export default function LoginPage() {
                         </div>
 
                         <button
-                            type="button"
-                            className="w-full py-3 bg-amber-500 text-white font-medium rounded-md hover:bg-amber-600 transition-colors"
+                            type="submit"
+                            disabled={loading}
+                            className="w-full py-3 bg-amber-500 text-white font-medium rounded-md hover:bg-amber-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            {activeTab === 'login' ? 'Ввійти' : 'Створити акаунт'}
+                            {loading ? 'Завантаження...' : (activeTab === 'login' ? 'Ввійти' : 'Створити акаунт')}
                         </button>
 
                         {activeTab === 'login' && (

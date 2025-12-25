@@ -9,8 +9,10 @@ import { AuthPrompt } from "@/components/AuthModal/AuthPrompt"
 import {AuthModal} from "@/components/AuthModal/AuthModal"
 import SearchAutocomplete from '@/components/Search/SearchAutocomplete'
 import { cartUtils } from '@/utils/cart'
+import { useAuth } from '@/contexts/AuthContext'
 
 export default function Header() {
+    const { isAuthenticated, customer } = useAuth()
     const [showPrompt, setShowPrompt] = useState(false)
     const [showAuth, setShowAuth] = useState(false)
     const [authType, setAuthType] = useState<'login' | 'register'>('login')
@@ -72,9 +74,15 @@ export default function Header() {
                             </Link>
 
                             <div className="flex items-center gap-5">
-                                <Link href="/login">
-                                    <User size={24} />
-                                </Link>
+                                {isAuthenticated ? (
+                                    <Link href="/account">
+                                        <User size={24} />
+                                    </Link>
+                                ) : (
+                                    <Link href="/login">
+                                        <User size={24} />
+                                    </Link>
+                                )}
                                 <Link href="/favorites">
                                     <Heart size={24} />
                                 </Link>
@@ -115,36 +123,46 @@ export default function Header() {
                             </div>
 
                             <nav className="flex items-center gap-6">
-                                <div className="relative">
+                                {isAuthenticated ? (
                                     <Link
-                                        href="/login"
+                                        href="/account"
                                         className="flex items-center gap-2 text-sm"
-                                        onMouseEnter={() => setShowPrompt(true)}
                                     >
                                         <User size={20} />
-                                        <span>Увійти</span>
+                                        <span>{customer?.name || 'Кабінет'}</span>
                                     </Link>
-
-                                    {showPrompt && (
-                                        <div
-                                            className="absolute right-0 z-[100]"
-                                            onMouseLeave={() => setShowPrompt(false)}
+                                ) : (
+                                    <div className="relative">
+                                        <Link
+                                            href="/login"
+                                            className="flex items-center gap-2 text-sm"
+                                            onMouseEnter={() => setShowPrompt(true)}
                                         >
-                                            <AuthPrompt
-                                                onLogin={() => {
-                                                    setAuthType('login')
-                                                    setShowAuth(true)
-                                                    setShowPrompt(false)
-                                                }}
-                                                onRegister={() => {
-                                                    setAuthType('register')
-                                                    setShowAuth(true)
-                                                    setShowPrompt(false)
-                                                }}
-                                            />
-                                        </div>
-                                    )}
-                                </div>
+                                            <User size={20} />
+                                            <span>Увійти</span>
+                                        </Link>
+
+                                        {showPrompt && (
+                                            <div
+                                                className="absolute right-0 z-[100]"
+                                                onMouseLeave={() => setShowPrompt(false)}
+                                            >
+                                                <AuthPrompt
+                                                    onLogin={() => {
+                                                        setAuthType('login')
+                                                        setShowAuth(true)
+                                                        setShowPrompt(false)
+                                                    }}
+                                                    onRegister={() => {
+                                                        setAuthType('register')
+                                                        setShowAuth(true)
+                                                        setShowPrompt(false)
+                                                    }}
+                                                />
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
 
                                 <Link href="/favorites" className="flex items-center gap-2 text-sm">
                                     <Heart size={20} />
