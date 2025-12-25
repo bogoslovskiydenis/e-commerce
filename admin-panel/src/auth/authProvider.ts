@@ -112,7 +112,7 @@ class ApiAuthProvider implements AuthProvider {
         twoFactorCode?: string;
     }) {
         try {
-            console.log('🔐 Попытка входа через API:', { username });
+            console.log('🔐 Попытка входа через API:', { username, twoFactorCode: !!twoFactorCode });
 
             const response = await fetch(`${API_BASE_URL}/auth/login`, {
                 method: 'POST',
@@ -126,10 +126,19 @@ class ApiAuthProvider implements AuthProvider {
                 }),
             });
 
-            const data = await response.json();
+            let data;
+            try {
+                data = await response.json();
+                console.log('📥 Ответ сервера:', { status: response.status, ok: response.ok, data });
+            } catch (e) {
+                console.error('❌ Ошибка парсинга JSON:', e);
+                throw new Error('Ошибка при обработке ответа сервера');
+            }
 
             if (!response.ok) {
-                throw new Error(data.message || data.error || 'Ошибка авторизации');
+                const errorMessage = data?.message || data?.error?.message || data?.error || 'Ошибка авторизации';
+                console.error('❌ Ошибка входа:', { status: response.status, message: errorMessage, data });
+                throw new Error(errorMessage);
             }
 
             if (!data.success) {

@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
@@ -18,6 +18,8 @@ export interface AuthResult {
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
+
   constructor(
     private prisma: PrismaService,
     private jwtService: JwtService,
@@ -26,6 +28,12 @@ export class AuthService {
 
   async login(loginData: LoginDto): Promise<AuthResult> {
     const { username, password, twoFactorCode } = loginData;
+    this.logger.log(`Attempting login for username: ${username}`);
+
+    if (!password || password.trim().length === 0) {
+      this.logger.warn(`Empty password provided for username: ${username}`);
+      throw new UnauthorizedException('Invalid credentials');
+    }
 
     const user = await this.prisma.user.findFirst({
       where: {
@@ -34,15 +42,28 @@ export class AuthService {
     });
 
     if (!user) {
+      this.logger.warn(`User not found: ${username}`);
       throw new UnauthorizedException('Invalid credentials');
     }
 
+    this.logger.log(`User found: ${user.username} (${user.id}), isActive: ${user.isActive}`);
+
     if (!user.isActive) {
+      this.logger.warn(`Account is deactivated: ${username}`);
       throw new UnauthorizedException('Account is deactivated');
     }
 
+    if (!user.passwordHash) {
+      this.logger.error(`User ${user.username} has no password hash!`);
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    this.logger.debug(`Comparing password for user: ${user.username}`);
     const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
+    this.logger.debug(`Password comparison result: ${isPasswordValid}`);
+    
     if (!isPasswordValid) {
+      this.logger.warn(`Invalid password for user: ${username}`);
       throw new UnauthorizedException('Invalid credentials');
     }
 
