@@ -4,16 +4,22 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="cc69a437-414e-4395-a1be-55730bb45aca" name="Changes" comment="добавил регистрацию с фронта">
+    <list default="true" id="cc69a437-414e-4395-a1be-55730bb45aca" name="Changes" comment="исправил ошибку с логином">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DOCUMENTATION.md" beforeDir="false" afterPath="$PROJECT_DIR$/DOCUMENTATION.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin-panel/src/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/admin-panel/src/index.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin-panel/src/resources/categories.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/admin-panel/src/resources/categories.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin-panel/src/resources/products.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/admin-panel/src/resources/products.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin-panel/src/utils/dataProvider.ts" beforeDir="false" afterPath="$PROJECT_DIR$/admin-panel/src/utils/dataProvider.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/api/.env" beforeDir="false" afterPath="$PROJECT_DIR$/api/.env" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/api/prisma/schema.prisma" beforeDir="false" afterPath="$PROJECT_DIR$/api/prisma/schema.prisma" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/app.module.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/app.module.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/categories/categories.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/categories/categories.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/categories/categories.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/categories/categories.service.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/categories/dto/create-category.dto.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/categories/dto/create-category.dto.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/products/dto/create-product.dto.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/products/dto/create-product.dto.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/api/src/products/dto/product-query.dto.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/products/dto/product-query.dto.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/api/src/products/products.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/products/products.service.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/app/favorites/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/app/favorites/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/components/ProductCard/ProductCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/components/ProductCard/ProductCard.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/components/ProductList/ProductList.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/components/ProductList/ProductList.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/app/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/app/page.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/services/api.ts" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/services/api.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -74,7 +80,7 @@
       <recent name="$PROJECT_DIR$/api/src" />
     </key>
   </component>
-  <component name="RunManager" selected="npm.seed:disable-old-nav">
+  <component name="RunManager" selected="npm.seed:users">
     <configuration name="dev" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
       <package-json value="$PROJECT_DIR$/ui-e-commerce/package.json" />
       <command value="run" />
@@ -127,10 +133,10 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="npm.seed:users" />
         <item itemvalue="npm.seed:disable-old-nav" />
         <item itemvalue="npm.seed:structured" />
         <item itemvalue="npm.seed:all" />
-        <item itemvalue="npm.seed:users" />
         <item itemvalue="npm.dev" />
       </list>
     </recent_temporary>
@@ -169,7 +175,7 @@
       <workItem from="1766148050924" duration="9211000" />
       <workItem from="1766223971474" duration="9016000" />
       <workItem from="1766317453769" duration="3294000" />
-      <workItem from="1766650219316" duration="6252000" />
+      <workItem from="1766650219316" duration="10897000" />
     </task>
     <task id="LOCAL-00001" summary="добавил аунтификацию по ролям">
       <option name="closed" value="true" />
@@ -371,7 +377,23 @@
       <option name="project" value="LOCAL" />
       <updated>1766675586537</updated>
     </task>
-    <option name="localTasksCounter" value="26" />
+    <task id="LOCAL-00026" summary="1. Личный кабинет клиента&#10;Регистрация и авторизация клиентов&#10;JWT-аутентификация с refresh-токенами&#10;Страница личного кабинета (/account) с профилем и историей заказов&#10;Обновление профиля клиента&#10;2. Избранное (Favorites)&#10;Backend:&#10;Модель Favorite в Prisma&#10;API endpoints: добавление/удаление, получение списка, проверка статуса&#10;Автоматическое создание таблицы при первом использовании&#10;Frontend:&#10;Кнопка избранного (сердце) на карточках товаров&#10;Страница избранного (/favorites) с двумя режимами отображения (сетка/список)&#10;Сортировка товаров (по дате, цене, названию)&#10;Удаление из избранного по клику на красное сердце&#10;3. Улучшения UI&#10;Обновленный дизайн страницы избранного&#10;Адаптивная верстка&#10;Индикаторы загрузки и состояния&#10;4. Исправления&#10;Поддержка параметра featured в API для рекомендуемых товаров&#10;Исправлена ошибка с showFavoriteButton в ProductCard">
+      <option name="closed" value="true" />
+      <created>1766678342828</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1766678342828</updated>
+    </task>
+    <task id="LOCAL-00027" summary="исправил ошибку с логином">
+      <option name="closed" value="true" />
+      <created>1766679834370</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1766679834370</updated>
+    </task>
+    <option name="localTasksCounter" value="28" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -401,8 +423,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="добавил аунтификацию по ролям" />
-    <MESSAGE value="добавил аунтификацию по ролям включил PgAdmin" />
     <MESSAGE value="просмотр зарегенистрированных пользователей в админ панели" />
     <MESSAGE value="изменил на более дружелюбный интерфейс , удалил ненужное" />
     <MESSAGE value="добавил , добавление пользователя по ролям , добавил добавление Товара (не добавляется фотографии!!!)" />
@@ -426,6 +446,8 @@
     <MESSAGE value="сидд для создании 5 категории 5 подкатегориий и товары" />
     <MESSAGE value="добавил пагинацию" />
     <MESSAGE value="добавил регистрацию с фронта" />
-    <option name="LAST_COMMIT_MESSAGE" value="добавил регистрацию с фронта" />
+    <MESSAGE value="1. Личный кабинет клиента&#10;Регистрация и авторизация клиентов&#10;JWT-аутентификация с refresh-токенами&#10;Страница личного кабинета (/account) с профилем и историей заказов&#10;Обновление профиля клиента&#10;2. Избранное (Favorites)&#10;Backend:&#10;Модель Favorite в Prisma&#10;API endpoints: добавление/удаление, получение списка, проверка статуса&#10;Автоматическое создание таблицы при первом использовании&#10;Frontend:&#10;Кнопка избранного (сердце) на карточках товаров&#10;Страница избранного (/favorites) с двумя режимами отображения (сетка/список)&#10;Сортировка товаров (по дате, цене, названию)&#10;Удаление из избранного по клику на красное сердце&#10;3. Улучшения UI&#10;Обновленный дизайн страницы избранного&#10;Адаптивная верстка&#10;Индикаторы загрузки и состояния&#10;4. Исправления&#10;Поддержка параметра featured в API для рекомендуемых товаров&#10;Исправлена ошибка с showFavoriteButton в ProductCard" />
+    <MESSAGE value="исправил ошибку с логином" />
+    <option name="LAST_COMMIT_MESSAGE" value="исправил ошибку с логином" />
   </component>
 </project>

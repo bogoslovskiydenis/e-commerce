@@ -7,7 +7,7 @@ export class ProductsService {
   constructor(private prisma: PrismaService) {}
 
   async getProducts(query: ProductQueryDto) {
-    const { page = 1, limit = 25, sortBy = 'createdAt', sortOrder = 'desc', search, categoryId, featured } = query;
+    const { page = 1, limit = 25, sortBy = 'createdAt', sortOrder = 'desc', search, categoryId, featured, popular } = query;
     // Убеждаемся, что limit - это число
     const limitNum = Number(limit) || 25;
     const pageNum = Number(page) || 1;
@@ -35,6 +35,10 @@ export class ProductsService {
 
     if (featured !== undefined) {
       where.featured = featured;
+    }
+
+    if (popular !== undefined) {
+      where.popular = popular;
     }
 
     const orderBy: any = {};
@@ -150,9 +154,44 @@ export class ProductsService {
       }
     }
 
+    // Очищаем данные от null, undefined, пустых строк и 0 для опциональных полей
+    const updateData: any = {};
+    
+    // Копируем только определенные поля
+    if (data.title !== undefined) updateData.title = data.title;
+    if (data.slug !== undefined && data.slug !== '') updateData.slug = data.slug;
+    if (data.description !== undefined) updateData.description = data.description;
+    if (data.shortDescription !== undefined) updateData.shortDescription = data.shortDescription;
+    if (data.price !== undefined) updateData.price = data.price;
+    if (data.brand !== undefined) updateData.brand = data.brand;
+    if (data.sku !== undefined && data.sku !== null) updateData.sku = data.sku;
+    if (data.images !== undefined) updateData.images = data.images;
+    if (data.attributes !== undefined) updateData.attributes = data.attributes;
+    if (data.tags !== undefined) updateData.tags = data.tags;
+    if (data.isActive !== undefined) updateData.isActive = data.isActive;
+    if (data.inStock !== undefined) updateData.inStock = data.inStock;
+    if (data.stockQuantity !== undefined) updateData.stockQuantity = data.stockQuantity;
+    if (data.featured !== undefined) updateData.featured = data.featured;
+    if (data.popular !== undefined) updateData.popular = data.popular;
+    if (data.categoryId !== undefined) updateData.categoryId = data.categoryId;
+    
+    // Обрабатываем опциональные числовые поля
+    if (data.oldPrice !== undefined) {
+      updateData.oldPrice = (data.oldPrice === 0 || data.oldPrice === null) ? null : data.oldPrice;
+    }
+    if (data.discount !== undefined) {
+      updateData.discount = (data.discount === 0 || data.discount === null) ? null : data.discount;
+    }
+    if (data.weight !== undefined) {
+      updateData.weight = (data.weight === 0 || data.weight === null) ? null : data.weight;
+    }
+    if (data.dimensions !== undefined) {
+      updateData.dimensions = data.dimensions;
+    }
+
     const product = await this.prisma.product.update({
       where: { id },
-      data,
+      data: updateData,
       include: {
         category: {
           select: { id: true, name: true, slug: true },
@@ -206,6 +245,7 @@ export class ProductsService {
       inStock: product.inStock,
       stockQuantity: product.stockQuantity,
       featured: product.featured,
+      popular: product.popular,
       weight: product.weight ? Number(product.weight) : null,
       dimensions: product.dimensions,
       createdAt: product.createdAt,

@@ -173,6 +173,7 @@ model Category {
   bannerUrl        String?      @map("banner_url") // НОВОЕ ПОЛЕ
   isActive         Boolean      @default(true) @map("is_active")
   showInNavigation Boolean      @default(true) @map("show_in_navigation") // НОВОЕ ПОЛЕ
+  showOnHomepage   Boolean      @default(false) @map("show_on_homepage") // НОВОЕ ПОЛЕ - показывать на главной
   sortOrder        Int          @default(0) @map("sort_order")
   metaTitle        String?      @map("meta_title")
   metaDescription  String?      @map("meta_description")
@@ -191,6 +192,7 @@ model Category {
   @@index([type])
   @@index([isActive])
   @@index([showInNavigation])
+  @@index([showOnHomepage])
   @@index([parentId])
   @@index([sortOrder])
   @@map("categories")
@@ -215,6 +217,7 @@ model Product {
   inStock          Boolean  @default(true) @map("in_stock")
   stockQuantity    Int      @default(0) @map("stock_quantity")
   featured         Boolean  @default(false)
+  popular          Boolean  @default(false)
   weight           Decimal? @db.Decimal(8, 3)
   dimensions       Json? // {length, width, height}
   metaTitle        String?  @map("meta_title")

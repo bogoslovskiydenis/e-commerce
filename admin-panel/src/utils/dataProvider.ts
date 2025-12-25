@@ -384,6 +384,19 @@ const dataProvider: DataProvider = {
                 };
             }
 
+            // Трансформируем данные для ресурса 'products' (API -> react-admin)
+            if (resource === 'products') {
+                // Для ImageInput нужно передать объект с src из первого элемента массива images
+                const imageObj = data.images && data.images.length > 0 && data.images[0]
+                    ? { src: data.images[0], title: data.title || 'Product image' }
+                    : undefined;
+                
+                data = {
+                    ...data,
+                    image: imageObj, // ImageInput ожидает объект с src
+                };
+            }
+
             // Трансформируем данные для ресурса 'banners' (API -> react-admin)
             if (resource === 'banners') {
                 // Для ImageInput нужно передать объект с src, если изображение уже есть
@@ -496,6 +509,60 @@ const dataProvider: DataProvider = {
                     openInNew: params.data.openInNew || false,
                     icon: params.data.icon || null
                 };
+            }
+
+            // Трансформируем данные для ресурса 'products' (react-admin -> API)
+            if (resource === 'products') {
+                // Обрабатываем изображение - ImageInput отправляет объект, API ожидает массив строк
+                let imagesArray: string[] = [];
+                
+                if (params.data.image) {
+                    const imageUrl = await extractImageUrl(params.data.image);
+                    if (imageUrl) {
+                        imagesArray = [imageUrl];
+                    } else if (typeof params.data.image === 'string') {
+                        imagesArray = [params.data.image];
+                    } else if (params.data.image.src && !params.data.image.src.startsWith('blob:')) {
+                        imagesArray = [params.data.image.src];
+                    }
+                }
+                
+                // Извлекаем categoryId из объекта category, если он есть
+                let categoryId = params.data.categoryId;
+                if (!categoryId && params.data.category?.id) {
+                    categoryId = params.data.category.id;
+                }
+                
+                // Формируем объект с только нужными полями для API
+                createData = {
+                    title: params.data.title,
+                    slug: params.data.slug,
+                    description: params.data.description,
+                    shortDescription: params.data.shortDescription,
+                    price: Number(params.data.price),
+                    oldPrice: params.data.oldPrice !== undefined ? Number(params.data.oldPrice) : undefined,
+                    discount: params.data.discount !== undefined ? Number(params.data.discount) : undefined,
+                    categoryId: categoryId,
+                    brand: params.data.brand,
+                    sku: params.data.sku,
+                    images: imagesArray,
+                    attributes: params.data.attributes,
+                    tags: params.data.tags,
+                    isActive: params.data.isActive,
+                    inStock: params.data.inStock,
+                    stockQuantity: params.data.stockQuantity !== undefined ? Number(params.data.stockQuantity) : undefined,
+                    featured: params.data.featured,
+                    popular: params.data.popular,
+                    weight: params.data.weight !== undefined ? Number(params.data.weight) : undefined,
+                    dimensions: params.data.dimensions,
+                };
+                
+                // Удаляем undefined значения
+                Object.keys(createData).forEach(key => {
+                    if (createData[key] === undefined) {
+                        delete createData[key];
+                    }
+                });
             }
 
             // Трансформируем данные для ресурса 'banners' (react-admin -> API)
@@ -669,6 +736,64 @@ const dataProvider: DataProvider = {
                 };
             }
 
+            // Трансформируем данные обратно для ресурса 'products' (react-admin -> API)
+            if (resource === 'products') {
+                // Обрабатываем изображение - ImageInput отправляет объект, API ожидает массив строк
+                let imagesArray: string[] = params.previousData?.images || [];
+                
+                if (params.data.image) {
+                    const imageUrl = await extractImageUrl(params.data.image);
+                    if (imageUrl) {
+                        // Если есть новое изображение, добавляем его в массив
+                        imagesArray = [imageUrl, ...imagesArray.filter(img => img !== imageUrl)].slice(0, 10);
+                    } else if (typeof params.data.image === 'string') {
+                        imagesArray = [params.data.image];
+                    } else if (params.data.image.src && !params.data.image.src.startsWith('blob:')) {
+                        imagesArray = [params.data.image.src];
+                    }
+                } else if (params.previousData?.images) {
+                    // Если изображение не изменено, сохраняем существующие
+                    imagesArray = params.previousData.images;
+                }
+                
+                // Извлекаем categoryId из объекта category, если он есть
+                let categoryId = params.data.categoryId;
+                if (!categoryId && params.data.category?.id) {
+                    categoryId = params.data.category.id;
+                }
+                
+                // Формируем объект с только нужными полями для API
+                updateData = {
+                    title: params.data.title,
+                    slug: params.data.slug,
+                    description: params.data.description,
+                    shortDescription: params.data.shortDescription,
+                    price: params.data.price !== undefined ? Number(params.data.price) : undefined,
+                    oldPrice: params.data.oldPrice !== undefined ? Number(params.data.oldPrice) : undefined,
+                    discount: params.data.discount !== undefined ? Number(params.data.discount) : undefined,
+                    categoryId: categoryId,
+                    brand: params.data.brand,
+                    sku: params.data.sku,
+                    images: imagesArray,
+                    attributes: params.data.attributes,
+                    tags: params.data.tags,
+                    isActive: params.data.isActive,
+                    inStock: params.data.inStock,
+                    stockQuantity: params.data.stockQuantity !== undefined ? Number(params.data.stockQuantity) : undefined,
+                    featured: params.data.featured,
+                    popular: params.data.popular,
+                    weight: params.data.weight !== undefined ? Number(params.data.weight) : undefined,
+                    dimensions: params.data.dimensions,
+                };
+                
+                // Удаляем undefined значения
+                Object.keys(updateData).forEach(key => {
+                    if (updateData[key] === undefined) {
+                        delete updateData[key];
+                    }
+                });
+            }
+
             // Трансформируем данные обратно для ресурса 'banners' (react-admin -> API)
             if (resource === 'banners') {
                 const positionMap: Record<string, string> = {
@@ -738,6 +863,19 @@ const dataProvider: DataProvider = {
             // Трансформируем ответ для ресурса 'orders'
             if (resource === 'orders') {
                 resultData = transformOrder(resultData);
+            }
+
+            // Трансформируем ответ для ресурса 'products'
+            if (resource === 'products') {
+                // Для ImageInput нужно передать объект с src из первого элемента массива images
+                const imageObj = resultData.images && resultData.images.length > 0 && resultData.images[0]
+                    ? { src: resultData.images[0], title: resultData.title || 'Product image' }
+                    : undefined;
+                
+                resultData = {
+                    ...resultData,
+                    image: imageObj, // ImageInput ожидает объект с src
+                };
             }
 
             // Трансформируем ответ для ресурса 'categories'

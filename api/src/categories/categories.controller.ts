@@ -24,6 +24,12 @@ export class CategoriesController {
     return this.categoriesService.getNavigationCategories();
   }
 
+  @Get('popular')
+  async getPopularCategories(@Query('limit') limit?: string) {
+    const limitNum = limit ? parseInt(limit, 10) : 5;
+    return this.categoriesService.getPopularCategories(limitNum);
+  }
+
   @Get('slug/:slug')
   async getCategoryBySlug(@Param('slug') slug: string) {
     return this.categoriesService.getCategoryBySlug(slug);

@@ -225,6 +225,18 @@ export const CategoryList = () => (
                 )}
             />
 
+            <FunctionField
+                label="На главной"
+                render={(record: any) => (
+                    <Chip
+                        label={record?.showOnHomepage ? 'Да' : 'Нет'}
+                        color={record?.showOnHomepage ? 'primary' : 'default'}
+                        size="small"
+                        variant="outlined"
+                    />
+                )}
+            />
+
             {/* ИСПРАВЛЕНО: Действия в FunctionField с stopPropagation */}
             <FunctionField
                 label="Действия"
@@ -347,6 +359,13 @@ const CategoryForm = () => {
                     defaultValue={true}
                     helperText="Отображать эту категорию в главном меню сайта"
                 />
+
+                <BooleanInput
+                    source="showOnHomepage"
+                    label="Показывать на главной"
+                    defaultValue={false}
+                    helperText="Отображать эту категорию в разделе 'Популярные категории' на главной странице"
+                />
             </Box>
         </Box>
 
@@ -464,6 +483,7 @@ export const CategoryShow = () => (
             <NumberField source="sortOrder" label="Порядок сортировки" />
             <BooleanField source="active" label="Активна" />
             <BooleanField source="showInNavigation" label="Показывать в навигации" />
+            <BooleanField source="showOnHomepage" label="Показывать на главной" />
 
             <TextField source="metaTitle" label="Meta Title" />
             <TextField source="metaDescription" label="Meta Description" />

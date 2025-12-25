@@ -69,6 +69,7 @@ const CTA_BUTTONS = [
 
 export default function HomePage() {
     const [featuredProducts, setFeaturedProducts] = useState<Product[]>([])
+    const [popularProducts, setPopularProducts] = useState<Product[]>([])
     const [mainCategories, setMainCategories] = useState<Category[]>([])
     const [banners, setBanners] = useState<Banner[]>([])
     const [loading, setLoading] = useState(true)
@@ -82,22 +83,23 @@ export default function HomePage() {
                 const mainBanners = await apiService.getBanners('MAIN')
                 setBanners(mainBanners)
 
-                // Загружаем рекомендуемые товары
+                // Загружаем рекомендуемые товары (хиты продаж)
                 const products = await apiService.getFeaturedProducts(8)
                 setFeaturedProducts(products)
 
-                // Загружаем категории для главной страницы (только родительские)
-                const categories = await apiService.getNavigationCategories()
+                // Загружаем популярные товары
+                const popular = await apiService.getPopularProducts(8)
+                setPopularProducts(popular)
+
+                // Загружаем популярные категории для главной страницы
+                const categories = await apiService.getPopularCategories(5)
                 // Преобразуем категории в формат для CategorySection
-                const formattedCategories = categories
-                    .filter(cat => !cat.parentId) // Только родительские категории
-                    .slice(0, 5) // Берем первые 5
-                    .map(cat => ({
-                        name: cat.name,
-                        image: cat.imageUrl || cat.bannerUrl || '/api/placeholder/400/400',
-                        href: `/${cat.slug}`,
-                        count: cat.productsCount ? `${cat.productsCount}+` : '0+'
-                    }))
+                const formattedCategories = categories.map(cat => ({
+                    name: cat.name,
+                    image: cat.imageUrl || cat.bannerUrl || '/api/placeholder/400/400',
+                    href: `/${cat.slug}`,
+                    count: cat.productsCount ? `${cat.productsCount}+` : '0+'
+                }))
                 setMainCategories(formattedCategories as any)
             } catch (error) {
                 console.error('Error loading homepage data:', error)
@@ -142,9 +144,30 @@ export default function HomePage() {
                         category: product.category || product.categoryId || '',
                         link: `/product/${product.id}`
                     }))}
-                    viewAllLink="/products"
+                    viewAllLink="/products?featured=true"
                     viewAllText="Посмотреть все"
                     bgColor="bg-gray-50"
+                    slidesToShow={4}
+                />
+            )}
+
+            {/* Популярные товары */}
+            {!loading && popularProducts.length > 0 && (
+                <FeaturedProductsSection
+                    title="Популярные товары"
+                    products={popularProducts.map(product => ({
+                        id: product.id,
+                        name: product.title || product.name || '',
+                        price: Number(product.price) || 0,
+                        oldPrice: product.oldPrice ? Number(product.oldPrice) : undefined,
+                        discount: product.discount ? Number(product.discount) : undefined,
+                        image: product.images?.[0] || product.image || '/api/placeholder/300/300',
+                        category: product.category || product.categoryId || '',
+                        link: `/product/${product.id}`
+                    }))}
+                    viewAllLink="/products"
+                    viewAllText="Посмотреть все"
+                    bgColor="bg-white"
                     slidesToShow={4}
                 />
             )}

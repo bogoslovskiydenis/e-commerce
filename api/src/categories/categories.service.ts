@@ -163,6 +163,35 @@ export class CategoriesService {
     };
   }
 
+  async getPopularCategories(limit: number = 5) {
+    // Получаем только родительские категории с showOnHomepage: true
+    const categories = await this.prisma.category.findMany({
+      where: {
+        isActive: true,
+        showOnHomepage: true,
+        parentId: null, // Только родительские категории
+      },
+      include: {
+        _count: {
+          select: { products: { where: { isActive: true } } }
+        }
+      },
+      orderBy: { sortOrder: 'asc' },
+      take: limit,
+    });
+
+    // Форматируем категории с количеством товаров
+    const formattedCategories = categories.map(category => ({
+      ...category,
+      productsCount: category._count.products,
+    }));
+
+    return {
+      success: true,
+      data: formattedCategories,
+    };
+  }
+
   async getCategoryBySlug(slug: string) {
     const category = await this.prisma.category.findUnique({
       where: { slug },

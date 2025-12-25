@@ -38,6 +38,10 @@ export class CreateCategoryDto {
   @IsOptional()
   showInNavigation?: boolean;
 
+  @IsBoolean()
+  @IsOptional()
+  showOnHomepage?: boolean;
+
   @IsInt()
   @IsOptional()
   @Min(0)

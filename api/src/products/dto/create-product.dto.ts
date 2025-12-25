@@ -77,6 +77,10 @@ export class CreateProductDto {
   @IsOptional()
   featured?: boolean;
 
+  @IsBoolean()
+  @IsOptional()
+  popular?: boolean;
+
   @IsNumber()
   @Type(() => Number)
   @IsOptional()

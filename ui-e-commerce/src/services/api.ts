@@ -294,6 +294,21 @@ class ApiService {
         }
     }
 
+    /**
+     * Получить популярные категории для главной страницы
+     */
+    async getPopularCategories(limit: number = 5): Promise<Category[]> {
+        try {
+            const response = await this.request<ApiResponse<Category[]>>(
+                `/categories/popular?limit=${limit}`
+            );
+            return response.data || [];
+        } catch (error) {
+            console.error('Error fetching popular categories:', error);
+            return [];
+        }
+    }
+
     // ==================== ТОВАРЫ ====================
 
     /**
@@ -367,6 +382,21 @@ class ApiService {
             return response.data || [];
         } catch (error) {
             console.error('Error fetching featured products:', error);
+            return [];
+        }
+    }
+
+    /**
+     * Получить популярные товары
+     */
+    async getPopularProducts(limit: number = 8): Promise<Product[]> {
+        try {
+            const response = await this.request<ApiResponse<Product[]>>(
+                `/products?popular=true&limit=${limit}&sortBy=createdAt&sortOrder=desc`
+            );
+            return response.data || [];
+        } catch (error) {
+            console.error('Error fetching popular products:', error);
             return [];
         }
     }
