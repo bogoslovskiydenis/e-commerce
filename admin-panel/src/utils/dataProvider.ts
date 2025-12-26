@@ -187,12 +187,21 @@ const transformOrder = (order: any) => {
         'REFUNDED': 'cancelled'
     };
 
+    const paymentStatusMap: Record<string, string> = {
+        'PENDING': 'pending',
+        'PAID': 'paid',
+        'FAILED': 'failed',
+        'REFUNDED': 'refunded',
+        'PARTIALLY_REFUNDED': 'refunded'
+    };
+
     return {
         ...order,
         id: order.id,
         orderNumber: order.orderNumber,
         date: order.createdAt, // Маппинг createdAt -> date для react-admin
         status: statusMap[order.status] || 'new',
+        paymentStatus: paymentStatusMap[order.paymentStatus] || 'pending',
         total: Number(order.totalAmount),
         currency: 'грн',
         customer: order.customer ? {
@@ -203,9 +212,26 @@ const transformOrder = (order: any) => {
         paymentMethod: order.paymentMethod || '',
         deliveryMethod: order.shippingAddress ? 'Доставка' : 'Самовывоз',
         deliveryAddress: order.shippingAddress ? JSON.stringify(order.shippingAddress) : '',
-        items: order.items || [],
+        items: (order.items || []).map((item: any) => ({
+            id: item.id,
+            productId: item.productId,
+            product: item.product ? {
+                id: item.product.id,
+                title: item.product.title || item.product.name || '',
+                name: item.product.title || item.product.name || '',
+                images: item.product.images || []
+            } : null,
+            quantity: item.quantity || 0,
+            price: Number(item.price) || 0,
+            total: Number(item.total || item.price * item.quantity) || 0
+        })),
         processing: order.status === 'PROCESSING' || order.status === 'CONFIRMED',
-        notes: order.notes || ''
+        notes: order.notes || '',
+        manager: order.manager || null,
+        discountAmount: Number(order.discountAmount) || 0,
+        shippingAmount: Number(order.shippingAmount) || 0,
+        source: order.source || 'website',
+        totalAmount: Number(order.totalAmount) || 0
     };
 };
 

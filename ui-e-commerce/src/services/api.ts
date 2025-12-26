@@ -582,6 +582,36 @@ class ApiService {
         return response.data!;
     }
 
+    /**
+     * Создать заказ
+     */
+    async createOrder(data: {
+        customer: {
+            name: string;
+            phone: string;
+            email?: string;
+        };
+        items: Array<{
+            productId: string;
+            quantity: number;
+            price: number;
+        }>;
+        shippingAddress?: {
+            city?: string;
+            street?: string;
+            building?: string;
+            apartment?: string;
+            postalCode?: string;
+        };
+        notes?: string;
+    }): Promise<Order> {
+        const response = await this.request<ApiResponse<Order>>('/orders', {
+            method: 'POST',
+            body: JSON.stringify(data),
+        });
+        return response.data!;
+    }
+
     // ==================== ИЗБРАННОЕ ====================
 
     /**

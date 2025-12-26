@@ -1,4 +1,4 @@
-import { Controller, Get, Patch, Param, Query, Body, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Param, Query, Body, UseGuards, Request } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { PermissionsGuard } from '../common/guards/permissions.guard';
@@ -7,6 +7,11 @@ import { RequirePermissions } from '../common/decorators/permissions.decorator';
 @Controller('orders')
 export class OrdersController {
   constructor(private ordersService: OrdersService) {}
+
+  @Post()
+  async createOrder(@Body() body: any) {
+    return this.ordersService.createOrder(body);
+  }
 
   @Get()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
