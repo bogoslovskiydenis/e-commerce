@@ -67,14 +67,14 @@ const StatusField = ({ record }: any) => {
     const endDate = record?.endDate ? new Date(record.endDate) : null;
     
     let status = 'Неактивна';
-    let color: 'default' | 'success' | 'error' | 'warning' = 'default';
+    let color: 'default' | 'success' | 'error' | 'warning' | 'info' = 'default';
     
     if (!isActive) {
         status = 'Неактивна';
         color = 'default';
     } else if (startDate && startDate > now) {
         status = 'Запланирована';
-        color = 'info' as any;
+        color = 'info';
     } else if (endDate && endDate < now) {
         status = 'Истекла';
         color = 'error';
@@ -179,14 +179,29 @@ export const PromotionList = () => (
         <Datagrid rowClick="edit" sx={{ '& .RaDatagrid-headerCell': { fontWeight: 'bold' } }}>
             <TextField source="name" label="Название" />
             <TextField source="code" label="Код" />
-            <TypeField label="Тип" />
+            <FunctionField
+                label="Тип"
+                render={(record: any) => <TypeField record={record} />}
+            />
             <FunctionField
                 label="Значение"
                 render={(record: any) => <ValueField record={record} />}
             />
-            <NumberField source="minOrderAmount" label="Мин. сумма заказа" options={{ style: 'currency', currency: 'UAH' }} />
-            <StatusField label="Статус" />
-            <UsageField label="Использовано" />
+            <FunctionField
+                label="Мин. сумма заказа"
+                render={(record: any) => {
+                    const amount = record?.minOrderAmount;
+                    return amount ? `${Number(amount).toLocaleString('uk-UA', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} грн.` : '-';
+                }}
+            />
+            <FunctionField
+                label="Статус"
+                render={(record: any) => <StatusField record={record} />}
+            />
+            <FunctionField
+                label="Использовано"
+                render={(record: any) => <UsageField record={record} />}
+            />
             <DateField source="startDate" label="Начало" />
             <DateField source="endDate" label="Окончание" />
             <DateField source="createdAt" label="Создано" showTime />

@@ -71,6 +71,13 @@ export class OrdersService {
 
   async createOrder(data: any) {
     const { customer, items, shippingAddress, notes, discountAmount, promotionCode } = data;
+    
+    console.log('Creating order with data:', {
+      customer: customer?.name,
+      itemsCount: items?.length,
+      discountAmount,
+      promotionCode,
+    });
 
     if (!customer || !customer.name || !customer.phone) {
       throw new BadRequestException('Customer name and phone are required');
@@ -173,13 +180,21 @@ export class OrdersService {
     const finalTotalAmount = totalAmount - finalDiscountAmount;
 
     // Если указан промокод, увеличить счетчик использования
-    if (promotionCode) {
+    console.log('Checking promotion code:', { promotionCode, hasCode: !!promotionCode, trimmed: promotionCode?.trim() });
+    
+    if (promotionCode && promotionCode.trim()) {
+      const normalizedCode = promotionCode.trim().toUpperCase();
+      console.log(`Looking for promotion with code: ${normalizedCode}`);
+      
       try {
         const promotion = await this.prisma.promotion.findUnique({
-          where: { code: promotionCode },
+          where: { code: normalizedCode },
         });
+        
+        console.log('Promotion found:', { found: !!promotion, id: promotion?.id, currentCount: promotion?.usedCount });
+        
         if (promotion) {
-          await this.prisma.promotion.update({
+          const updatedPromotion = await this.prisma.promotion.update({
             where: { id: promotion.id },
             data: {
               usedCount: {
@@ -187,10 +202,15 @@ export class OrdersService {
               },
             },
           });
+          console.log(`✅ Promotion ${normalizedCode} usage incremented. Old count: ${promotion.usedCount}, New count: ${updatedPromotion.usedCount}`);
+        } else {
+          console.warn(`❌ Promotion with code ${normalizedCode} not found in database`);
         }
       } catch (error) {
-        console.error('Error updating promotion usage:', error);
+        console.error('❌ Error updating promotion usage:', error);
       }
+    } else {
+      console.log('⚠️ No promotion code provided or code is empty');
     }
 
     // Генерировать номер заказа

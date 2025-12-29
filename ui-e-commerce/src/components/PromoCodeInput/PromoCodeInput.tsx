@@ -14,9 +14,7 @@ export default function PromoCodeInput({ onPromotionApplied, className = '' }: P
     const [code, setCode] = useState('')
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
-    const [appliedPromotion, setAppliedPromotion] = useState<AppliedPromotion | null>(
-        cartUtils.getAppliedPromotion()
-    )
+    const [appliedPromotion, setAppliedPromotion] = useState<AppliedPromotion | null>(null)
 
     const handleApply = async () => {
         if (!code.trim()) {
@@ -37,13 +35,12 @@ export default function PromoCodeInput({ onPromotionApplied, className = '' }: P
 
             const appliedPromo: AppliedPromotion = {
                 id: promotion.id,
-                code: promotion.code || '',
+                code: promotion.code ? promotion.code.trim().toUpperCase() : '',
                 type: promotion.type,
                 value: Number(promotion.value),
                 productIds: promotion.products?.map(p => p.product.id)
             }
 
-            cartUtils.applyPromotion(appliedPromo)
             setAppliedPromotion(appliedPromo)
             setCode('')
             onPromotionApplied?.(appliedPromo)
@@ -55,7 +52,6 @@ export default function PromoCodeInput({ onPromotionApplied, className = '' }: P
     }
 
     const handleRemove = () => {
-        cartUtils.removePromotion()
         setAppliedPromotion(null)
         setCode('')
         setError(null)

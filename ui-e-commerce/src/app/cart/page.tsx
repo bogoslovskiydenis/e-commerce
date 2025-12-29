@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ChevronRight, ShoppingBag, Trash2, Plus, Minus } from 'lucide-react'
@@ -8,6 +9,7 @@ import { cartUtils, CartItem, AppliedPromotion } from '@/utils/cart'
 import PromoCodeInput from '@/components/PromoCodeInput/PromoCodeInput'
 
 export default function CartPage() {
+    const router = useRouter()
     const [cartItems, setCartItems] = useState<CartItem[]>([])
     const [isLoading, setIsLoading] = useState(true)
     const [appliedPromotion, setAppliedPromotion] = useState<AppliedPromotion | null>(null)
@@ -18,7 +20,6 @@ export default function CartPage() {
             try {
                 const items = cartUtils.getCart()
                 setCartItems(items)
-                setAppliedPromotion(cartUtils.getAppliedPromotion())
             } catch (error) {
                 console.error('Error loading cart:', error)
             } finally {
@@ -27,19 +28,14 @@ export default function CartPage() {
         }
         loadCart()
 
-        // Слушаем события обновления корзины и промокода
+        // Слушаем события обновления корзины
         const handleCartUpdate = () => {
             loadCart()
         }
-        const handlePromotionUpdate = () => {
-            setAppliedPromotion(cartUtils.getAppliedPromotion())
-        }
         window.addEventListener('cartUpdated', handleCartUpdate)
-        window.addEventListener('promotionUpdated', handlePromotionUpdate)
 
         return () => {
             window.removeEventListener('cartUpdated', handleCartUpdate)
-            window.removeEventListener('promotionUpdated', handlePromotionUpdate)
         }
     }, [])
 
@@ -207,12 +203,18 @@ export default function CartPage() {
                                 </div>
                             </div>
 
-                            <Link
-                                href="/checkout"
+                            <button
+                                onClick={() => {
+                                    const params = new URLSearchParams()
+                                    if (appliedPromotion?.code) {
+                                        params.set('promo', appliedPromotion.code)
+                                    }
+                                    router.push(`/checkout${params.toString() ? '?' + params.toString() : ''}`)
+                                }}
                                 className="block w-full bg-teal-600 text-white text-center py-3 rounded-lg font-medium hover:bg-teal-700 transition-colors mb-3"
                             >
                                 Оформити замовлення
-                            </Link>
+                            </button>
 
                             <Link
                                 href="/"

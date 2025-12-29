@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ChevronRight, ShoppingBag, CheckCircle2 } from 'lucide-react'
@@ -11,6 +11,7 @@ import PromoCodeInput from '@/components/PromoCodeInput/PromoCodeInput'
 
 export default function CheckoutPage() {
     const router = useRouter()
+    const searchParams = useSearchParams()
     const [cartItems, setCartItems] = useState<CartItem[]>([])
     const [isLoading, setIsLoading] = useState(true)
     const [isSubmitting, setIsSubmitting] = useState(false)
@@ -36,18 +37,33 @@ export default function CheckoutPage() {
             return
         }
         setCartItems(items)
-        setAppliedPromotion(cartUtils.getAppliedPromotion())
+        
+        // Загружаем промокод из URL параметров
+        const promoCode = searchParams.get('promo')
+        if (promoCode) {
+            loadPromotionFromCode(promoCode)
+        }
+        
         setIsLoading(false)
-
-        const handlePromotionUpdate = () => {
-            setAppliedPromotion(cartUtils.getAppliedPromotion())
+    }, [router, searchParams])
+    
+    const loadPromotionFromCode = async (code: string) => {
+        try {
+            const promotion = await apiService.getPromotionByCode(code.trim().toUpperCase())
+            if (promotion) {
+                const appliedPromo: AppliedPromotion = {
+                    id: promotion.id,
+                    code: promotion.code ? promotion.code.trim().toUpperCase() : '',
+                    type: promotion.type,
+                    value: Number(promotion.value),
+                    productIds: promotion.products?.map(p => p.product.id)
+                }
+                setAppliedPromotion(appliedPromo)
+            }
+        } catch (error) {
+            console.error('Error loading promotion:', error)
         }
-        window.addEventListener('promotionUpdated', handlePromotionUpdate)
-
-        return () => {
-            window.removeEventListener('promotionUpdated', handlePromotionUpdate)
-        }
-    }, [router])
+    }
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target
@@ -86,8 +102,9 @@ export default function CheckoutPage() {
                 } : undefined,
                 notes: formData.notes.trim() || undefined,
                 discountAmount: discount > 0 ? discount : undefined,
-                promotionCode: appliedPromotion?.code || undefined,
+                promotionCode: appliedPromotion?.code ? appliedPromotion.code.trim().toUpperCase() : undefined,
             }
+            
 
             const order = await apiService.createOrder(orderData)
 

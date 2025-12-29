@@ -21,7 +21,6 @@ export interface AppliedPromotion {
 }
 
 const CART_KEY = 'cart'
-const PROMO_KEY = 'applied_promotion'
 
 export const cartUtils = {
     // Получить все товары из корзины
@@ -130,32 +129,6 @@ export const cartUtils = {
     getCartTotal(): number {
         const cart = this.getCart()
         return cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
-    },
-
-    // Применить промокод
-    applyPromotion(promotion: AppliedPromotion): void {
-        if (typeof window === 'undefined') return
-        localStorage.setItem(PROMO_KEY, JSON.stringify(promotion))
-        window.dispatchEvent(new Event('promotionUpdated'))
-    },
-
-    // Получить примененный промокод
-    getAppliedPromotion(): AppliedPromotion | null {
-        if (typeof window === 'undefined') return null
-        try {
-            const promo = localStorage.getItem(PROMO_KEY)
-            return promo ? JSON.parse(promo) : null
-        } catch (error) {
-            console.error('Error loading promotion:', error)
-            return null
-        }
-    },
-
-    // Удалить промокод
-    removePromotion(): void {
-        if (typeof window === 'undefined') return
-        localStorage.removeItem(PROMO_KEY)
-        window.dispatchEvent(new Event('promotionUpdated'))
     },
 
     // Рассчитать скидку
