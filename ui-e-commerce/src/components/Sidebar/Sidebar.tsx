@@ -14,22 +14,7 @@ interface SidebarProps {
     categories?: Category[]
 }
 
-// Категории для магазина шариков
-const BALLOON_CATEGORIES: Category[] = [
-    { name: 'Фольгированные шары', count: 245, href: '/balloons/foil' },
-    { name: 'Латексные шары', count: 187, href: '/balloons/latex' },
-    { name: 'Букеты из шаров', count: 156, href: '/bouquets' },
-    { name: 'Цифры из шаров', count: 45, href: '/balloons/numbers' },
-    { name: 'Сердца', count: 89, href: '/balloons/hearts' },
-    { name: 'Звезды', count: 67, href: '/balloons/stars' },
-    { name: 'Шары с рисунком', count: 134, href: '/balloons/printed' },
-    { name: 'Светящиеся шары', count: 78, href: '/balloons/led' },
-    { name: 'Стаканчики', count: 95, href: '/cups' },
-    { name: 'Подарки', count: 203, href: '/gifts' },
-    { name: 'Готовые наборы', count: 112, href: '/sets' }
-]
-
-export default function Sidebar({ categories = BALLOON_CATEGORIES }: SidebarProps) {
+export default function Sidebar({ categories = [] }: SidebarProps) {
     const [sidebarBanners, setSidebarBanners] = useState<Banner[]>([])
 
     useEffect(() => {

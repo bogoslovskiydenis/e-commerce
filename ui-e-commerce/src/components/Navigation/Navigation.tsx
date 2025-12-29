@@ -109,31 +109,8 @@ export default function Navigation() {
             }));
         }
 
-        // Статические подкатегории для резервной навигации
-        const staticDropdowns: Record<string, any[]> = {
-            'Шарики': [
-                { name: 'Фольгированные шары', href: '/balloons/foil', count: 120 },
-                { name: 'Латексные шары', href: '/balloons/latex', count: 87 }
-            ],
-            'Букеты из шаров': [
-                { name: 'Букеты для детей', href: '/bouquets/kids', count: 45 },
-                { name: 'Романтические букеты', href: '/bouquets/romantic', count: 67 }
-            ],
-            'Стаканчики': [
-                { name: 'Бумажные стаканчики', href: '/cups/paper', count: 45 },
-                { name: 'Пластиковые стаканчики', href: '/cups/plastic', count: 30 }
-            ],
-            'Подарки': [
-                { name: 'Мягкие игрушки', href: '/gifts/plush', count: 89 },
-                { name: 'Сувениры', href: '/gifts/souvenirs', count: 67 }
-            ],
-            'Наборы': [
-                { name: 'Готовые праздничные наборы', href: '/sets/party', count: 34 },
-                { name: 'Наборы для дня рождения', href: '/sets/birthday', count: 45 }
-            ]
-        };
-
-        return staticDropdowns[item.title] || [];
+        // Минимальный fallback - возвращаем пустой массив, т.к. данные должны приходить с API
+        return [];
     };
 
     // Не показываем индикатор загрузки - навигация загружается из кеша мгновенно

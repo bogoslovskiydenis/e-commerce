@@ -1,9 +1,9 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import type { CompatibleProduct } from '@/types/BalloonShop_types'
+import type { Product } from '@/services/api'
 
 interface ProductSectionProps {
-    products: CompatibleProduct[]
+    products: Product[]
 }
 
 export default function ProductSection({ products }: ProductSectionProps) {
@@ -12,12 +12,12 @@ export default function ProductSection({ products }: ProductSectionProps) {
             {products.map((product) => (
                 <Link
                     key={product.id}
-                    href={product.link || `/products/${product.category}/${product.id}`}
+                    href={`/product/${product.id}`}
                     className="group relative flex flex-col h-full"
                 >
                     <div className="aspect-square overflow-hidden rounded-lg bg-gray-100 relative">
                         <Image
-                            src={product.image}
+                            src={product.images?.[0] || product.image || '/api/placeholder/300/300'}
                             alt={product.title || product.name || 'Product'}
                             width={300}
                             height={300}
