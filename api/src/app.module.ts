@@ -16,6 +16,7 @@ import { AdminLogsModule } from './admin-logs/admin-logs.module';
 import { CallbacksModule } from './callbacks/callbacks.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { FavoritesModule } from './favorites/favorites.module';
+import { PromotionsModule } from './promotions/promotions.module';
 import { AppController } from './app.controller';
 
 @Module({
@@ -49,6 +50,7 @@ import { AppController } from './app.controller';
     CallbacksModule,
     ReviewsModule,
     FavoritesModule,
+    PromotionsModule,
   ],
   controllers: [AppController],
 })

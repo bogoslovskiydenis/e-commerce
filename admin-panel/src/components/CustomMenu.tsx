@@ -15,7 +15,8 @@ import {
     AdminPanelSettings,
     History,
     Key,
-    Analytics
+    Analytics,
+    LocalOffer
 } from '@mui/icons-material';
 
 export const CustomMenu: React.FC = () => {
@@ -78,6 +79,12 @@ export const CustomMenu: React.FC = () => {
             name: 'banners',
             icon: <Image />,
             label: 'Баннеры'
+        }] : []),
+
+        ...(hasPermission('promotions.view') ? [{
+            name: 'promotions',
+            icon: <LocalOffer />,
+            label: 'Акции и промокоды'
         }] : []),
 
         ...(hasPermission('website.pages') ? [{

@@ -82,6 +82,10 @@ const convertRAParamsToAPI = (params: any, resource?: string) => {
                 else if (resource === 'categories' && key === 'active') {
                     apiParams.isActive = filter[key];
                 }
+                // Для промокодов q -> search
+                else if (resource === 'promotions' && key === 'q') {
+                    apiParams.search = filter[key];
+                }
                 else {
                     apiParams[key] = filter[key];
                 }
@@ -338,6 +342,14 @@ const dataProvider: DataProvider = {
                 });
             }
 
+            // Трансформируем данные для ресурса 'promotions' (API -> react-admin)
+            if (resource === 'promotions') {
+                data = data.map((promotion: any) => ({
+                    ...promotion,
+                    productIds: promotion.products?.map((pp: any) => pp.productId) || []
+                }));
+            }
+
             console.log('✅ getList результат:', { data, total });
 
             return {
@@ -438,6 +450,14 @@ const dataProvider: DataProvider = {
                     active: data.isActive !== undefined ? data.isActive : true,
                     order: data.sortOrder || 0,
                     position: data.position?.toLowerCase() || 'main'
+                };
+            }
+
+            // Трансформируем данные для ресурса 'promotions' (API -> react-admin)
+            if (resource === 'promotions') {
+                data = {
+                    ...data,
+                    productIds: data.products?.map((pp: any) => pp.productId) || []
                 };
             }
 
@@ -622,6 +642,23 @@ const dataProvider: DataProvider = {
                 };
             }
 
+            // Трансформируем данные для ресурса 'promotions' (react-admin -> API)
+            if (resource === 'promotions') {
+                createData = {
+                    name: params.data.name,
+                    description: params.data.description,
+                    code: params.data.code || null,
+                    type: params.data.type,
+                    value: Number(params.data.value),
+                    minOrderAmount: params.data.minOrderAmount ? Number(params.data.minOrderAmount) : null,
+                    maxUsage: params.data.maxUsage ? Number(params.data.maxUsage) : null,
+                    isActive: params.data.isActive !== undefined ? params.data.isActive : true,
+                    startDate: params.data.startDate || null,
+                    endDate: params.data.endDate || null,
+                    productIds: params.data.productIds && params.data.productIds.length > 0 ? params.data.productIds : undefined
+                };
+            }
+
             const { json } = await httpClient(`${API_BASE_URL}${endpoint}`, {
                 method: 'POST',
                 body: JSON.stringify(createData),
@@ -672,6 +709,14 @@ const dataProvider: DataProvider = {
                     active: resultData.isActive !== undefined ? resultData.isActive : true,
                     order: resultData.sortOrder || 0,
                     position: resultData.position?.toLowerCase() || 'main'
+                };
+            }
+
+            // Трансформируем ответ для ресурса 'promotions'
+            if (resource === 'promotions') {
+                resultData = {
+                    ...resultData,
+                    productIds: resultData.products?.map((pp: any) => pp.productId) || []
                 };
             }
 
@@ -884,6 +929,23 @@ const dataProvider: DataProvider = {
                 };
             }
 
+            // Трансформируем данные обратно для ресурса 'promotions' (react-admin -> API)
+            if (resource === 'promotions') {
+                updateData = {
+                    name: params.data.name,
+                    description: params.data.description,
+                    code: params.data.code || null,
+                    type: params.data.type,
+                    value: params.data.value !== undefined ? Number(params.data.value) : undefined,
+                    minOrderAmount: params.data.minOrderAmount !== undefined ? (params.data.minOrderAmount ? Number(params.data.minOrderAmount) : null) : undefined,
+                    maxUsage: params.data.maxUsage !== undefined ? (params.data.maxUsage ? Number(params.data.maxUsage) : null) : undefined,
+                    isActive: params.data.isActive !== undefined ? params.data.isActive : undefined,
+                    startDate: params.data.startDate !== undefined ? params.data.startDate : undefined,
+                    endDate: params.data.endDate !== undefined ? params.data.endDate : undefined,
+                    productIds: params.data.productIds !== undefined ? (params.data.productIds && params.data.productIds.length > 0 ? params.data.productIds : []) : undefined
+                };
+            }
+
             const { json } = await httpClient(`${API_BASE_URL}${endpoint}/${params.id}`, {
                 method: 'PUT',
                 body: JSON.stringify(updateData),
@@ -966,6 +1028,14 @@ const dataProvider: DataProvider = {
                     active: resultData.isActive !== undefined ? resultData.isActive : true,
                     order: resultData.sortOrder || 0,
                     position: resultData.position?.toLowerCase() || 'main'
+                };
+            }
+
+            // Трансформируем ответ для ресурса 'promotions'
+            if (resource === 'promotions') {
+                resultData = {
+                    ...resultData,
+                    productIds: resultData.products?.map((pp: any) => pp.productId) || []
                 };
             }
 

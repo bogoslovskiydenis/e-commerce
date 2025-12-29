@@ -76,6 +76,14 @@ import {
     BannerCreate
 } from './resources/website/banners';
 
+// Ресурсы - Промокоды
+import {
+    PromotionList,
+    PromotionEdit,
+    PromotionCreate,
+    PromotionShow
+} from './resources/promotions';
+
 // Кастомные страницы (существующие)
 import ProfilePage from './pages/ProfilePage';
 import AnalyticsPage from './pages/AnalyticsPage';
@@ -130,6 +138,11 @@ const SecureApiKeyCreate = withPermissions(ApiKeyCreate, 'api_keys.manage');
 const SecureBannerList = withPermissions(BannerList, 'website.banners');
 const SecureBannerEdit = withPermissions(BannerEdit, 'website.banners');
 const SecureBannerCreate = withPermissions(BannerCreate, 'website.banners');
+
+const SecurePromotionList = withPermissions(PromotionList, 'promotions.view');
+const SecurePromotionEdit = withPermissions(PromotionEdit, 'promotions.edit');
+const SecurePromotionCreate = withPermissions(PromotionCreate, 'promotions.create');
+const SecurePromotionShow = withPermissions(PromotionShow, 'promotions.view');
 
 const SecureAnalyticsPage = withPermissions(AnalyticsPage, 'analytics.view');
 const SecureSystemInfoPage = withPermissions(SystemInfoPage, 'admin.full_access');
@@ -216,6 +229,17 @@ const App: React.FC = () => (
             create={SecureBannerCreate}
             options={{
                 label: 'Баннеры'
+            }}
+        />
+
+        <Resource
+            name="promotions"
+            list={SecurePromotionList}
+            edit={SecurePromotionEdit}
+            create={SecurePromotionCreate}
+            show={SecurePromotionShow}
+            options={{
+                label: 'Акции и промокоды'
             }}
         />
 

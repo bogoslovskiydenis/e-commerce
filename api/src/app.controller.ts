@@ -29,6 +29,7 @@ export class AppController {
         adminLogs: '/api/admin/logs/*',
         callbacks: '/api/callbacks/*',
         reviews: '/api/reviews/*',
+        promotions: '/api/promotions/*',
       },
     };
   }

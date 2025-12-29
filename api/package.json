@@ -18,6 +18,7 @@
     "seed:callbacks": "tsx scripts/seedCallbacks.mjs",
     "seed:customers": "tsx scripts/seedCustomers.mjs",
     "seed:orders": "tsx scripts/seedOrders.mjs",
+    "seed:promotions": "tsx scripts/seedPromotions.mjs",
     "seed:structured": "tsx scripts/seedStructuredData.mjs",
     "seed:disable-old-nav": "tsx scripts/disableOldCategoriesNavigation.mjs",
     "seed:disable-empty": "tsx scripts/disableEmptyCategoriesNavigation.mjs",
