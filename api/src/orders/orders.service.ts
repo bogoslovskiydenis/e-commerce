@@ -70,7 +70,7 @@ export class OrdersService {
   }
 
   async createOrder(data: any) {
-    const { customer, items, shippingAddress, notes } = data;
+    const { customer, items, shippingAddress, notes, discountAmount, promotionCode } = data;
 
     if (!customer || !customer.name || !customer.phone) {
       throw new BadRequestException('Customer name and phone are required');
@@ -168,6 +168,31 @@ export class OrdersService {
       });
     }
 
+    // Применить скидку, если указана
+    const finalDiscountAmount = discountAmount ? Number(discountAmount) : 0;
+    const finalTotalAmount = totalAmount - finalDiscountAmount;
+
+    // Если указан промокод, увеличить счетчик использования
+    if (promotionCode) {
+      try {
+        const promotion = await this.prisma.promotion.findUnique({
+          where: { code: promotionCode },
+        });
+        if (promotion) {
+          await this.prisma.promotion.update({
+            where: { id: promotion.id },
+            data: {
+              usedCount: {
+                increment: 1,
+              },
+            },
+          });
+        }
+      } catch (error) {
+        console.error('Error updating promotion usage:', error);
+      }
+    }
+
     // Генерировать номер заказа
     const orderNumber = `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 5).toUpperCase()}`;
 
@@ -179,8 +204,8 @@ export class OrdersService {
         status: 'NEW',
         paymentStatus: 'PENDING',
         paymentMethod: 'CASH',
-        totalAmount,
-        discountAmount: 0,
+        totalAmount: finalTotalAmount,
+        discountAmount: finalDiscountAmount,
         shippingAmount: 0,
         shippingAddress: shippingAddress ? shippingAddress : null,
         notes: notes || null,

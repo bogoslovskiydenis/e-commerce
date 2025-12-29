@@ -4,11 +4,13 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ChevronRight, ShoppingBag, Trash2, Plus, Minus } from 'lucide-react'
-import { cartUtils, CartItem } from '@/utils/cart'
+import { cartUtils, CartItem, AppliedPromotion } from '@/utils/cart'
+import PromoCodeInput from '@/components/PromoCodeInput/PromoCodeInput'
 
 export default function CartPage() {
     const [cartItems, setCartItems] = useState<CartItem[]>([])
     const [isLoading, setIsLoading] = useState(true)
+    const [appliedPromotion, setAppliedPromotion] = useState<AppliedPromotion | null>(null)
 
     useEffect(() => {
         // Загружаем товары из корзины
@@ -16,6 +18,7 @@ export default function CartPage() {
             try {
                 const items = cartUtils.getCart()
                 setCartItems(items)
+                setAppliedPromotion(cartUtils.getAppliedPromotion())
             } catch (error) {
                 console.error('Error loading cart:', error)
             } finally {
@@ -24,14 +27,19 @@ export default function CartPage() {
         }
         loadCart()
 
-        // Слушаем события обновления корзины
+        // Слушаем события обновления корзины и промокода
         const handleCartUpdate = () => {
             loadCart()
         }
+        const handlePromotionUpdate = () => {
+            setAppliedPromotion(cartUtils.getAppliedPromotion())
+        }
         window.addEventListener('cartUpdated', handleCartUpdate)
+        window.addEventListener('promotionUpdated', handlePromotionUpdate)
 
         return () => {
             window.removeEventListener('cartUpdated', handleCartUpdate)
+            window.removeEventListener('promotionUpdated', handlePromotionUpdate)
         }
     }, [])
 
@@ -52,7 +60,9 @@ export default function CartPage() {
         setCartItems([])
     }
 
-    const total = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
+    const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
+    const discount = cartUtils.calculateDiscount(subtotal, appliedPromotion, cartItems)
+    const total = subtotal - discount
 
     if (isLoading) {
         return (
@@ -167,6 +177,11 @@ export default function CartPage() {
                         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 sticky top-4">
                             <h2 className="text-lg font-semibold mb-4">Підсумок замовлення</h2>
 
+                            <PromoCodeInput
+                                onPromotionApplied={(promo) => setAppliedPromotion(promo)}
+                                className="mb-4"
+                            />
+
                             <div className="space-y-3 mb-4">
                                 <div className="flex justify-between text-gray-600">
                                     <span>Товарів:</span>
@@ -174,8 +189,14 @@ export default function CartPage() {
                                 </div>
                                 <div className="flex justify-between text-gray-600">
                                     <span>Сума:</span>
-                                    <span>{total} грн</span>
+                                    <span>{subtotal} грн</span>
                                 </div>
+                                {discount > 0 && (
+                                    <div className="flex justify-between text-green-600">
+                                        <span>Знижка:</span>
+                                        <span>-{discount} грн</span>
+                                    </div>
+                                )}
                                 <div className="flex justify-between text-gray-600">
                                     <span>Доставка:</span>
                                     <span>За тарифами перевізника</span>

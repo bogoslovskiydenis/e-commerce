@@ -5,8 +5,9 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ChevronRight, ShoppingBag, CheckCircle2 } from 'lucide-react'
-import { cartUtils, CartItem } from '@/utils/cart'
+import { cartUtils, CartItem, AppliedPromotion } from '@/utils/cart'
 import { apiService } from '@/services/api'
+import PromoCodeInput from '@/components/PromoCodeInput/PromoCodeInput'
 
 export default function CheckoutPage() {
     const router = useRouter()
@@ -14,6 +15,7 @@ export default function CheckoutPage() {
     const [isLoading, setIsLoading] = useState(true)
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [error, setError] = useState<string | null>(null)
+    const [appliedPromotion, setAppliedPromotion] = useState<AppliedPromotion | null>(null)
 
     const [formData, setFormData] = useState({
         name: '',
@@ -34,7 +36,17 @@ export default function CheckoutPage() {
             return
         }
         setCartItems(items)
+        setAppliedPromotion(cartUtils.getAppliedPromotion())
         setIsLoading(false)
+
+        const handlePromotionUpdate = () => {
+            setAppliedPromotion(cartUtils.getAppliedPromotion())
+        }
+        window.addEventListener('promotionUpdated', handlePromotionUpdate)
+
+        return () => {
+            window.removeEventListener('promotionUpdated', handlePromotionUpdate)
+        }
     }, [router])
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -73,6 +85,8 @@ export default function CheckoutPage() {
                     postalCode: formData.postalCode || undefined,
                 } : undefined,
                 notes: formData.notes.trim() || undefined,
+                discountAmount: discount > 0 ? discount : undefined,
+                promotionCode: appliedPromotion?.code || undefined,
             }
 
             const order = await apiService.createOrder(orderData)
@@ -90,7 +104,9 @@ export default function CheckoutPage() {
         }
     }
 
-    const total = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
+    const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
+    const discount = cartUtils.calculateDiscount(subtotal, appliedPromotion, cartItems)
+    const total = subtotal - discount
 
     if (isLoading) {
         return (
@@ -271,6 +287,11 @@ export default function CheckoutPage() {
                     <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 sticky top-4">
                         <h2 className="text-lg font-semibold mb-4">Ваш заказ</h2>
 
+                        <PromoCodeInput
+                            onPromotionApplied={(promo) => setAppliedPromotion(promo)}
+                            className="mb-4"
+                        />
+
                         <div className="space-y-3 mb-4">
                             {cartItems.map((item) => (
                                 <div key={item.id} className="flex gap-3 pb-3 border-b border-gray-200 last:border-0">
@@ -303,8 +324,14 @@ export default function CheckoutPage() {
                             </div>
                             <div className="flex justify-between text-gray-600">
                                 <span>Сумма:</span>
-                                <span>{total} грн</span>
+                                <span>{subtotal} грн</span>
                             </div>
+                            {discount > 0 && (
+                                <div className="flex justify-between text-green-600">
+                                    <span>Знижка:</span>
+                                    <span>-{discount} грн</span>
+                                </div>
+                            )}
                             <div className="flex justify-between text-gray-600">
                                 <span>Доставка:</span>
                                 <span>По договоренности</span>

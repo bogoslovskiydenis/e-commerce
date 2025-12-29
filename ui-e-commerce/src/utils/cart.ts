@@ -12,7 +12,16 @@ export interface CartItem {
     }
 }
 
+export interface AppliedPromotion {
+    id: string
+    code: string
+    type: 'PERCENTAGE' | 'FIXED_AMOUNT' | 'FREE_SHIPPING' | 'BUY_ONE_GET_ONE'
+    value: number
+    productIds?: string[]
+}
+
 const CART_KEY = 'cart'
+const PROMO_KEY = 'applied_promotion'
 
 export const cartUtils = {
     // Получить все товары из корзины
@@ -121,5 +130,64 @@ export const cartUtils = {
     getCartTotal(): number {
         const cart = this.getCart()
         return cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
+    },
+
+    // Применить промокод
+    applyPromotion(promotion: AppliedPromotion): void {
+        if (typeof window === 'undefined') return
+        localStorage.setItem(PROMO_KEY, JSON.stringify(promotion))
+        window.dispatchEvent(new Event('promotionUpdated'))
+    },
+
+    // Получить примененный промокод
+    getAppliedPromotion(): AppliedPromotion | null {
+        if (typeof window === 'undefined') return null
+        try {
+            const promo = localStorage.getItem(PROMO_KEY)
+            return promo ? JSON.parse(promo) : null
+        } catch (error) {
+            console.error('Error loading promotion:', error)
+            return null
+        }
+    },
+
+    // Удалить промокод
+    removePromotion(): void {
+        if (typeof window === 'undefined') return
+        localStorage.removeItem(PROMO_KEY)
+        window.dispatchEvent(new Event('promotionUpdated'))
+    },
+
+    // Рассчитать скидку
+    calculateDiscount(subtotal: number, promotion: AppliedPromotion | null, cartItems: CartItem[]): number {
+        if (!promotion) return 0
+
+        let discount = 0
+        const applicableItems = promotion.productIds && promotion.productIds.length > 0
+            ? cartItems.filter(item => promotion.productIds!.includes(item.productId || item.id))
+            : cartItems
+
+        const applicableSubtotal = applicableItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
+
+        if (promotion.minOrderAmount && subtotal < promotion.minOrderAmount) {
+            return 0
+        }
+
+        switch (promotion.type) {
+            case 'PERCENTAGE':
+                discount = (applicableSubtotal * promotion.value) / 100
+                break
+            case 'FIXED_AMOUNT':
+                discount = Math.min(promotion.value, applicableSubtotal)
+                break
+            case 'FREE_SHIPPING':
+                discount = 0
+                break
+            case 'BUY_ONE_GET_ONE':
+                discount = 0
+                break
+        }
+
+        return Math.round(discount * 100) / 100
     }
 }

@@ -614,6 +614,8 @@ class ApiService {
             postalCode?: string;
         };
         notes?: string;
+        discountAmount?: number;
+        promotionCode?: string;
     }): Promise<Order> {
         const response = await this.request<ApiResponse<Order>>('/orders', {
             method: 'POST',
@@ -761,6 +763,25 @@ class ApiService {
         });
         return response.data!;
     }
+
+    // ==================== ПРОМОКОДЫ ====================
+
+    /**
+     * Получить промокод по коду (публичный endpoint)
+     */
+    async getPromotionByCode(code: string): Promise<Promotion | null> {
+        try {
+            const response = await this.request<ApiResponse<Promotion>>(
+                `/promotions/public/${code}`,
+                {},
+                true // Публичный запрос без авторизации
+            );
+            return response.data || null;
+        } catch (error: any) {
+            console.error(`Error fetching promotion by code ${code}:`, error);
+            throw error;
+        }
+    }
 }
 
 export interface Review {
@@ -778,6 +799,28 @@ export interface Review {
         id: string;
         title: string;
     };
+}
+
+export interface Promotion {
+    id: string;
+    name: string;
+    description?: string;
+    code?: string;
+    type: 'PERCENTAGE' | 'FIXED_AMOUNT' | 'FREE_SHIPPING' | 'BUY_ONE_GET_ONE';
+    value: number;
+    minOrderAmount?: number;
+    maxUsage?: number;
+    usedCount: number;
+    isActive: boolean;
+    startDate?: string;
+    endDate?: string;
+    products?: Array<{
+        product: {
+            id: string;
+            title: string;
+            slug: string;
+        };
+    }>;
 }
 
 // Экспортируем единственный экземпляр сервиса
