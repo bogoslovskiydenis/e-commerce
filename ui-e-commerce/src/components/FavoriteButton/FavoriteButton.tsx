@@ -72,3 +72,4 @@ export default function FavoriteButton({ productId, size = 18, className = '' }:
     )
 }
 
+

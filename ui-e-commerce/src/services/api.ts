@@ -136,17 +136,27 @@ class ApiService {
     // Базовый метод для запросов
     private async request<T>(
         endpoint: string,
-        options: RequestInit = {}
+        options: RequestInit = {},
+        skipAuth: boolean = false
     ): Promise<T> {
         const url = `${this.baseUrl}${endpoint}`;
-        const token = typeof window !== 'undefined' ? localStorage.getItem('customer_token') : null;
+        const token = !skipAuth && typeof window !== 'undefined' ? localStorage.getItem('customer_token') : null;
+
+        const headers: Record<string, string> = {
+            'Content-Type': 'application/json',
+            ...(token && !skipAuth ? { Authorization: `Bearer ${token}` } : {}),
+        };
+
+        // Убеждаемся, что для публичных запросов Authorization не отправляется
+        if (skipAuth && headers.Authorization) {
+            delete headers.Authorization;
+        }
 
         try {
             const response = await fetch(url, {
                 ...options,
                 headers: {
-                    'Content-Type': 'application/json',
-                    ...(token && { Authorization: `Bearer ${token}` }),
+                    ...headers,
                     ...options.headers,
                 },
             });
@@ -667,7 +677,9 @@ class ApiService {
         try {
             const queryParams = position ? `?position=${position}` : '';
             const response = await this.request<ApiResponse<Banner[]>>(
-                `/banners/public${queryParams}`
+                `/banners/public${queryParams}`,
+                {},
+                true // Публичный запрос без авторизации
             );
             return response.data || [];
         } catch (error) {
@@ -688,13 +700,84 @@ class ApiService {
         working_hours?: string;
     }> {
         try {
-            const response = await this.request<ApiResponse<any>>('/settings/public');
+            const response = await this.request<ApiResponse<any>>(
+                '/settings/public',
+                {},
+                true // Публичный запрос без авторизации
+            );
             return response.data || {};
         } catch (error) {
             console.error('Error fetching public settings:', error);
             return {};
         }
     }
+
+    // ==================== ОТЗЫВЫ ====================
+
+    /**
+     * Получить отзывы для товара (публичный endpoint)
+     */
+    async getProductReviews(productId: string, params?: {
+        page?: number;
+        limit?: number;
+        rating?: number;
+    }): Promise<{ reviews: Review[]; pagination: any }> {
+        try {
+            const queryParams = new URLSearchParams();
+            queryParams.append('productId', productId);
+            if (params?.page) queryParams.append('page', params.page.toString());
+            if (params?.limit) queryParams.append('limit', params.limit.toString());
+            if (params?.rating) queryParams.append('rating', params.rating.toString());
+
+            const response = await this.request<ApiResponse<Review[]>>(
+                `/reviews/public?${queryParams.toString()}`,
+                {},
+                true // Публичный запрос без авторизации
+            );
+            return {
+                reviews: response.data || [],
+                pagination: response.pagination || { page: 1, limit: 25, total: 0, pages: 0 }
+            };
+        } catch (error) {
+            console.error('Error fetching product reviews:', error);
+            return { reviews: [], pagination: { page: 1, limit: 25, total: 0, pages: 0 } };
+        }
+    }
+
+    /**
+     * Создать отзыв
+     */
+    async createReview(data: {
+        productId: string;
+        customerId?: string;
+        name: string;
+        email?: string;
+        rating: number;
+        comment?: string;
+    }): Promise<Review> {
+        const response = await this.request<ApiResponse<Review>>('/reviews', {
+            method: 'POST',
+            body: JSON.stringify(data),
+        });
+        return response.data!;
+    }
+}
+
+export interface Review {
+    id: string;
+    productId: string;
+    customerId?: string;
+    name: string;
+    email?: string;
+    rating: number;
+    comment?: string;
+    status?: string;
+    createdAt: string;
+    updatedAt?: string;
+    product?: {
+        id: string;
+        title: string;
+    };
 }
 
 // Экспортируем единственный экземпляр сервиса

@@ -703,13 +703,25 @@ const dataProvider: DataProvider = {
             if (resource === 'comments') {
                 const statusMap: Record<string, string> = {
                     'new': 'PENDING',
+                    'pending': 'PENDING',
                     'approved': 'APPROVED',
                     'rejected': 'REJECTED',
                     'spam': 'REJECTED'
                 };
                 
+                // Если изменяется isVisible, обновляем статус соответственно
+                let status = params.data.status;
+                if (params.data.isVisible !== undefined) {
+                    // Если isVisible = true, статус должен быть approved
+                    // Если isVisible = false, статус должен быть pending
+                    status = params.data.isVisible ? 'approved' : 'pending';
+                }
+                
+                // Маппим статус в формат API (APPROVED, PENDING, REJECTED)
+                const apiStatus = status ? (statusMap[status] || status.toUpperCase()) : undefined;
+                
                 updateData = {
-                    status: statusMap[params.data.status] || params.data.status,
+                    ...(apiStatus && { status: apiStatus }),
                     name: params.data.author?.name || params.data.name,
                     email: params.data.author?.email || params.data.email,
                     comment: params.data.content || params.data.comment,

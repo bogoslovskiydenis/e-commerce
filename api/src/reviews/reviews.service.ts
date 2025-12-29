@@ -6,6 +6,42 @@ import { ReviewStatus } from '@prisma/client';
 export class ReviewsService {
   constructor(private prisma: PrismaService) {}
 
+  async getPublicReviews(query: any) {
+    const { page = 1, limit = 25, productId, rating, sortBy = 'createdAt', sortOrder = 'desc' } = query;
+    const skip = (Number(page) - 1) * Number(limit);
+
+    const where: any = {
+      status: ReviewStatus.APPROVED,
+    };
+
+    if (productId) where.productId = productId;
+    if (rating) where.rating = Number(rating);
+
+    const [reviews, total] = await Promise.all([
+      this.prisma.review.findMany({
+        where,
+        skip,
+        take: Number(limit),
+        orderBy: { [sortBy]: sortOrder },
+        select: {
+          id: true,
+          name: true,
+          rating: true,
+          comment: true,
+          createdAt: true,
+          product: { select: { id: true, title: true } },
+        },
+      }),
+      this.prisma.review.count({ where }),
+    ]);
+
+    return {
+      success: true,
+      data: reviews,
+      pagination: { page: Number(page), limit: Number(limit), total, pages: Math.ceil(total / Number(limit)) },
+    };
+  }
+
   async getReviews(query: any) {
     const { page = 1, limit = 25, search, status, productId, customerId, rating, sortBy = 'createdAt', sortOrder = 'desc' } = query;
     const skip = (Number(page) - 1) * Number(limit);
@@ -101,7 +137,15 @@ export class ReviewsService {
     }
 
     const updateData: any = {};
-    if (data.status !== undefined) updateData.status = data.status;
+    
+    // Обработка статуса - поддерживаем как строки, так и enum значения
+    if (data.status !== undefined) {
+      const statusValue = typeof data.status === 'string' 
+        ? data.status.toUpperCase() 
+        : data.status;
+      updateData.status = statusValue;
+    }
+    
     if (data.rating !== undefined) {
       if (data.rating < 1 || data.rating > 5) {
         throw new BadRequestException('Rating must be between 1 and 5');
@@ -109,9 +153,14 @@ export class ReviewsService {
       updateData.rating = Number(data.rating);
     }
     if (data.comment !== undefined) updateData.comment = data.comment;
+    if (data.name !== undefined) updateData.name = data.name;
+    if (data.email !== undefined) updateData.email = data.email;
+    
+    // Устанавливаем moderatorId и moderatedAt при изменении статуса
     if (data.moderatorId !== undefined) {
       updateData.moderatorId = data.moderatorId || null;
-      if (data.status === ReviewStatus.APPROVED || data.status === ReviewStatus.REJECTED) {
+      const finalStatus = updateData.status || review.status;
+      if (finalStatus === ReviewStatus.APPROVED || finalStatus === ReviewStatus.REJECTED) {
         updateData.moderatedAt = new Date();
       }
     }

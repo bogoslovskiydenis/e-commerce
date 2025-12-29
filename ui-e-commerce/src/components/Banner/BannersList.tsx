@@ -22,3 +22,4 @@ export default function BannersList({ banners, className = '', itemClassName = '
         </div>
     )
 }
+

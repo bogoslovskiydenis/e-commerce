@@ -4,22 +4,25 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="cc69a437-414e-4395-a1be-55730bb45aca" name="Changes" comment="исправил ошибку с логином">
+    <list default="true" id="cc69a437-414e-4395-a1be-55730bb45aca" name="Changes" comment="добавил добавление товара в популярное и в хиты продаж">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/DOCUMENTATION.md" beforeDir="false" afterPath="$PROJECT_DIR$/DOCUMENTATION.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin-panel/src/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/admin-panel/src/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin-panel/src/resources/categories.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/admin-panel/src/resources/categories.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin-panel/src/resources/products.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/admin-panel/src/resources/products.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin-panel/src/components/CustomLayout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/admin-panel/src/components/CustomLayout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin-panel/src/components/ErrorBoundary.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/admin-panel/src/components/ErrorBoundary.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/admin-panel/src/utils/dataProvider.ts" beforeDir="false" afterPath="$PROJECT_DIR$/admin-panel/src/utils/dataProvider.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/api/.env" beforeDir="false" afterPath="$PROJECT_DIR$/api/.env" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/prisma/schema.prisma" beforeDir="false" afterPath="$PROJECT_DIR$/api/prisma/schema.prisma" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/categories/categories.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/categories/categories.controller.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/categories/categories.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/categories/categories.service.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/categories/dto/create-category.dto.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/categories/dto/create-category.dto.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/products/dto/create-product.dto.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/products/dto/create-product.dto.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/products/dto/product-query.dto.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/products/dto/product-query.dto.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/products/products.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/products/products.service.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/app/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/app/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/prisma/migrations/20250125180000_add_show_on_homepage_to_categories/migration.sql" beforeDir="false" afterPath="$PROJECT_DIR$/api/prisma/migrations/20250125180000_add_show_on_homepage_to_categories/migration.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/prisma/migrations/20250126120000_add_popular_to_products/migration.sql" beforeDir="false" afterPath="$PROJECT_DIR$/api/prisma/migrations/20250126120000_add_popular_to_products/migration.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/prisma/migrations/20251225193000_add_show_on_homepage_to_categories/migration.sql" beforeDir="false" afterPath="$PROJECT_DIR$/api/prisma/migrations/20251225193000_add_show_on_homepage_to_categories/migration.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/prisma/migrations/add_customer_password_hash/migration.sql" beforeDir="false" afterPath="$PROJECT_DIR$/api/prisma/migrations/add_customer_password_hash/migration.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/prisma/migrations/add_favorites/migration.sql" beforeDir="false" afterPath="$PROJECT_DIR$/api/prisma/migrations/add_favorites/migration.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/reviews/reviews.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/reviews/reviews.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/reviews/reviews.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/reviews/reviews.service.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/app/account/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/app/account/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/app/checkout/success/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/app/checkout/success/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/app/product/[id]/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/app/product/[id]/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/components/Banner/BannersList.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/components/Banner/BannersList.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/components/FavoriteButton/FavoriteButton.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/components/FavoriteButton/FavoriteButton.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/services/api.ts" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/services/api.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -46,29 +49,29 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "main",
-    "last_opened_file_path": "/Users/denisbogoslovskiy/WebstormProjects/e-commerce/ui-e-commerce/src",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "npm.build.executor": "Run",
-    "npm.db:generate.executor": "Run",
-    "npm.dev.executor": "Run",
-    "npm.seed:all.executor": "Run",
-    "npm.seed:categories.executor": "Run",
-    "npm.seed:disable-old-nav.executor": "Run",
-    "npm.seed:structured.executor": "Run",
-    "npm.seed:users.executor": "Run",
-    "npm.start.executor": "Run",
-    "ts.external.directory.path": "/Users/denis/WebstormProjects/e-commerce/api/node_modules/typescript/lib",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/denisbogoslovskiy/WebstormProjects/e-commerce/ui-e-commerce/src&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;npm.build.executor&quot;: &quot;Run&quot;,
+    &quot;npm.db:generate.executor&quot;: &quot;Run&quot;,
+    &quot;npm.dev.executor&quot;: &quot;Run&quot;,
+    &quot;npm.seed:all.executor&quot;: &quot;Run&quot;,
+    &quot;npm.seed:categories.executor&quot;: &quot;Run&quot;,
+    &quot;npm.seed:disable-old-nav.executor&quot;: &quot;Run&quot;,
+    &quot;npm.seed:structured.executor&quot;: &quot;Run&quot;,
+    &quot;npm.seed:users.executor&quot;: &quot;Run&quot;,
+    &quot;npm.start.executor&quot;: &quot;Run&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;/Users/denis/WebstormProjects/e-commerce/api/node_modules/typescript/lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/ui-e-commerce/src" />
@@ -175,7 +178,9 @@
       <workItem from="1766148050924" duration="9211000" />
       <workItem from="1766223971474" duration="9016000" />
       <workItem from="1766317453769" duration="3294000" />
-      <workItem from="1766650219316" duration="10897000" />
+      <workItem from="1766650219316" duration="13345000" />
+      <workItem from="1767009986762" duration="253000" />
+      <workItem from="1767023373182" duration="1679000" />
     </task>
     <task id="LOCAL-00001" summary="добавил аунтификацию по ролям">
       <option name="closed" value="true" />
@@ -393,7 +398,15 @@
       <option name="project" value="LOCAL" />
       <updated>1766679834370</updated>
     </task>
-    <option name="localTasksCounter" value="28" />
+    <task id="LOCAL-00028" summary="добавил добавление товара в популярное и в хиты продаж">
+      <option name="closed" value="true" />
+      <created>1766686896806</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1766686896806</updated>
+    </task>
+    <option name="localTasksCounter" value="29" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -423,7 +436,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="просмотр зарегенистрированных пользователей в админ панели" />
     <MESSAGE value="изменил на более дружелюбный интерфейс , удалил ненужное" />
     <MESSAGE value="добавил , добавление пользователя по ролям , добавил добавление Товара (не добавляется фотографии!!!)" />
     <MESSAGE value="добавляется фото к товару , нужно добавить скидку !!" />
@@ -448,6 +460,7 @@
     <MESSAGE value="добавил регистрацию с фронта" />
     <MESSAGE value="1. Личный кабинет клиента&#10;Регистрация и авторизация клиентов&#10;JWT-аутентификация с refresh-токенами&#10;Страница личного кабинета (/account) с профилем и историей заказов&#10;Обновление профиля клиента&#10;2. Избранное (Favorites)&#10;Backend:&#10;Модель Favorite в Prisma&#10;API endpoints: добавление/удаление, получение списка, проверка статуса&#10;Автоматическое создание таблицы при первом использовании&#10;Frontend:&#10;Кнопка избранного (сердце) на карточках товаров&#10;Страница избранного (/favorites) с двумя режимами отображения (сетка/список)&#10;Сортировка товаров (по дате, цене, названию)&#10;Удаление из избранного по клику на красное сердце&#10;3. Улучшения UI&#10;Обновленный дизайн страницы избранного&#10;Адаптивная верстка&#10;Индикаторы загрузки и состояния&#10;4. Исправления&#10;Поддержка параметра featured в API для рекомендуемых товаров&#10;Исправлена ошибка с showFavoriteButton в ProductCard" />
     <MESSAGE value="исправил ошибку с логином" />
-    <option name="LAST_COMMIT_MESSAGE" value="исправил ошибку с логином" />
+    <MESSAGE value="добавил добавление товара в популярное и в хиты продаж" />
+    <option name="LAST_COMMIT_MESSAGE" value="добавил добавление товара в популярное и в хиты продаж" />
   </component>
 </project>

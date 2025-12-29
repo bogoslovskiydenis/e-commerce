@@ -8,6 +8,7 @@ import Link from 'next/link'
 import { Heart, ShoppingBag, Share2, Minus, Plus, Truck, Award, RefreshCw, Check } from 'lucide-react'
 import { apiService } from '@/services/api'
 import { cartUtils } from '@/utils/cart'
+import ProductReviews from '@/components/ProductReviews/ProductReviews'
 
 interface ProductPageProps {
     params: Promise<{ id: string }>
@@ -493,6 +494,11 @@ export default function ProductPage({ params }: ProductPageProps) {
                         </div>
                     </div>
                 </div>
+            </div>
+
+            {/* Отзывы */}
+            <div className="container mx-auto px-4 py-8">
+                <ProductReviews productId={id} />
             </div>
         </div>
     )

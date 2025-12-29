@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, Query, UseGuards, Request } from '@nestjs/common';
 import { ReviewsService } from './reviews.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { PermissionsGuard } from '../common/guards/permissions.guard';
@@ -7,6 +7,14 @@ import { RequirePermissions } from '../common/decorators/permissions.decorator';
 @Controller('reviews')
 export class ReviewsController {
   constructor(private reviewsService: ReviewsService) {}
+
+  @Get('public')
+  async getPublicReviews(@Query() query: any) {
+    // Публичный endpoint - не требует авторизации
+    // Возвращает только одобренные отзывы (status: APPROVED)
+    const result = await this.reviewsService.getPublicReviews(query);
+    return result;
+  }
 
   @Get()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
@@ -30,7 +38,11 @@ export class ReviewsController {
   @Put(':id')
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @RequirePermissions('reviews.edit')
-  async updateReview(@Param('id') id: string, @Body() body: any) {
+  async updateReview(@Param('id') id: string, @Body() body: any, @Request() req: any) {
+    // Автоматически устанавливаем moderatorId при обновлении статуса
+    if (body.status && req.user) {
+      body.moderatorId = req.user.id;
+    }
     return this.reviewsService.updateReview(id, body);
   }
 
