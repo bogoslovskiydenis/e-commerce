@@ -15,7 +15,6 @@ interface AuthModalProps {
 export function AuthModal({ isOpen, onClose, type: initialType }: AuthModalProps) {
     const [type, setType] = useState(initialType)
     const [passwordVisible, setPasswordVisible] = useState(false)
-    const [selectedGender, setSelectedGender] = useState<string>('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [name, setName] = useState('')
@@ -49,8 +48,6 @@ export function AuthModal({ isOpen, onClose, type: initialType }: AuthModalProps
                         setPassword={setPassword}
                         name={name}
                         setName={setName}
-                        selectedGender={selectedGender}
-                        setSelectedGender={setSelectedGender}
                         passwordVisible={passwordVisible}
                         setPasswordVisible={setPasswordVisible}
                     />

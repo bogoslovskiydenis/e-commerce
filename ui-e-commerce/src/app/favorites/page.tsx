@@ -139,7 +139,7 @@ export default function FavoritesPage() {
             <div className="container mx-auto px-4 py-8">
                 {/* Хлебные крошки */}
                 <div className="mb-6 flex items-center text-sm">
-                    <Link href="/" className="text-gray-600 hover:text-amber-500 transition-colors">
+                    <Link href="/" className="text-gray-600 hover:text-teal-600 transition-colors">
                         Головна сторінка
                     </Link>
                     <ChevronRight size={16} className="mx-2 text-gray-400" />
@@ -166,7 +166,7 @@ export default function FavoritesPage() {
                                 <select
                                     value={sortBy}
                                     onChange={(e) => setSortBy(e.target.value as SortOption)}
-                                    className="appearance-none bg-white border border-gray-300 rounded-md px-4 py-2 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
+                                    className="appearance-none bg-white border border-gray-300 rounded-md px-4 py-2 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                                 >
                                     <option value="newest">Спочатку нові</option>
                                     <option value="oldest">Спочатку старі</option>
@@ -184,7 +184,7 @@ export default function FavoritesPage() {
                                     onClick={() => setViewMode('grid')}
                                     className={`p-2 transition-colors ${
                                         viewMode === 'grid'
-                                            ? 'bg-amber-500 text-white'
+                                            ? 'bg-teal-600 text-white'
                                             : 'text-gray-600 hover:bg-gray-50'
                                     }`}
                                     aria-label="Сітка"
@@ -195,7 +195,7 @@ export default function FavoritesPage() {
                                     onClick={() => setViewMode('list')}
                                     className={`p-2 transition-colors ${
                                         viewMode === 'list'
-                                            ? 'bg-amber-500 text-white'
+                                            ? 'bg-teal-600 text-white'
                                             : 'text-gray-600 hover:bg-gray-50'
                                     }`}
                                     aria-label="Список"
@@ -220,7 +220,7 @@ export default function FavoritesPage() {
                         <div className="flex flex-col sm:flex-row gap-3">
                             <Link
                                 href="/login"
-                                className="px-8 py-3 bg-amber-500 text-white font-medium rounded-md hover:bg-amber-600 transition-colors text-center"
+                                className="px-8 py-3 bg-teal-600 text-white font-medium rounded-md hover:bg-teal-700 transition-colors text-center"
                             >
                                 Ввійти
                             </Link>
@@ -243,14 +243,14 @@ export default function FavoritesPage() {
                         </p>
                         <Link
                             href="/"
-                            className="px-8 py-3 bg-amber-500 text-white font-medium rounded-md hover:bg-amber-600 transition-colors"
+                            className="px-8 py-3 bg-teal-600 text-white font-medium rounded-md hover:bg-teal-700 transition-colors"
                         >
                             Переглянути товари
                         </Link>
                     </div>
                 ) : loading ? (
                     <div className="text-center py-20">
-                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-500 mx-auto"></div>
+                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto"></div>
                         <p className="mt-4 text-gray-600">Завантаження...</p>
                     </div>
                 ) : viewMode === 'grid' ? (
@@ -290,7 +290,7 @@ export default function FavoritesPage() {
                                                 href={`/product/${product.id}`}
                                                 className="block mb-2"
                                             >
-                                                <h3 className="text-lg font-semibold text-gray-900 hover:text-amber-500 transition-colors">
+                                                <h3 className="text-lg font-semibold text-gray-900 hover:text-teal-600 transition-colors">
                                                     {product.title || product.name}
                                                 </h3>
                                             </Link>
@@ -324,7 +324,7 @@ export default function FavoritesPage() {
                                             {product.inStock && (
                                                 <button
                                                     onClick={() => handleAddToCart(product)}
-                                                    className="flex items-center gap-2 px-4 py-2 bg-amber-500 text-white rounded-md hover:bg-amber-600 transition-colors"
+                                                    className="flex items-center gap-2 px-4 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-700 transition-colors"
                                                 >
                                                     <ShoppingBag size={18} />
                                                     <span className="hidden sm:inline">В кошик</span>

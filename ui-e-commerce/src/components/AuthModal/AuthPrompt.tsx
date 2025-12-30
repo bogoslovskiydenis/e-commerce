@@ -18,10 +18,10 @@ export function AuthPrompt({ onLogin, onRegister }: AuthPromptProps) {
                 Увійди та переглянь свої покупки, улюблені товари та сповіщення.
             </p>
             <div className="flex gap-4">
-                <button onClick={onLogin} className="flex-1 py-2 bg-black text-white rounded">
+                <button onClick={onLogin} className="flex-1 py-2 bg-teal-600 text-white rounded hover:bg-teal-700 transition-colors">
                     Увійти
                 </button>
-                <button onClick={onRegister} className="flex-1 py-2 border rounded">
+                <button onClick={onRegister} className="flex-1 py-2 border border-teal-600 text-teal-600 rounded hover:bg-teal-50 transition-colors">
                     Створити акаунт
                 </button>
             </div>

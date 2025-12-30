@@ -7,8 +7,6 @@ interface RegisterFormProps {
     setPassword: (password: string) => void
     name: string
     setName: (name: string) => void
-    selectedGender: string
-    setSelectedGender: (gender: string) => void
     passwordVisible: boolean
     setPasswordVisible: (visible: boolean) => void
 }
@@ -20,8 +18,6 @@ export function RegisterForm({
                                  setPassword,
                                  name,
                                  setName,
-                                 selectedGender,
-                                 setSelectedGender,
                                  passwordVisible,
                                  setPasswordVisible
                              }: RegisterFormProps) {
@@ -81,32 +77,6 @@ export function RegisterForm({
                 </p>
             </div>
 
-            <div>
-                <label className="block text-sm font-medium mb-2">
-                    Стать
-                </label>
-                <div className="grid grid-cols-2 gap-4">
-                    <button
-                        type="button"
-                        onClick={() => setSelectedGender('female')}
-                        className={`px-4 py-2 border rounded-lg ${
-                            selectedGender === 'female' ? 'border-black' : ''
-                        }`}
-                    >
-                        Жіноча
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => setSelectedGender('male')}
-                        className={`px-4 py-2 border rounded-lg ${
-                            selectedGender === 'male' ? 'border-black' : ''
-                        }`}
-                    >
-                        Чоловіча
-                    </button>
-                </div>
-            </div>
-
             <div className="space-y-2">
                 <label className="flex items-start gap-2">
                     <input type="checkbox" className="mt-1" />
@@ -116,7 +86,7 @@ export function RegisterForm({
                 </label>
             </div>
 
-            <button className="w-full bg-black text-white py-3 rounded-lg hover:bg-gray-800">
+            <button className="w-full bg-teal-600 text-white py-3 rounded-lg hover:bg-teal-700 transition-colors">
                 Створити акаунт
             </button>
         </div>

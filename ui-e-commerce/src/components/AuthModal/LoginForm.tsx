@@ -57,7 +57,7 @@ export function LoginForm({
                 </div>
             </div>
 
-            <button className="w-full bg-black text-white py-3 rounded-lg hover:bg-gray-800">
+            <button className="w-full bg-teal-600 text-white py-3 rounded-lg hover:bg-teal-700 transition-colors">
                 Увійти
             </button>
 

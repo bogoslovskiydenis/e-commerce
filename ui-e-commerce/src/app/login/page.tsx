@@ -69,7 +69,7 @@ export default function LoginPage() {
                             onClick={() => setActiveTab('login')}
                             className={`py-3 rounded-md flex items-center justify-center gap-2 transition-colors ${
                                 activeTab === 'login'
-                                    ? 'bg-amber-500 text-white font-medium'
+                                    ? 'bg-teal-600 text-white font-medium'
                                     : 'border border-gray-300 text-gray-700 hover:bg-gray-50'
                             }`}
                         >
@@ -89,7 +89,7 @@ export default function LoginPage() {
                             onClick={() => setActiveTab('register')}
                             className={`py-3 rounded-md flex items-center justify-center gap-2 transition-colors ${
                                 activeTab === 'register'
-                                    ? 'bg-amber-500 text-white font-medium'
+                                    ? 'bg-teal-600 text-white font-medium'
                                     : 'border border-gray-300 text-gray-700 hover:bg-gray-50'
                             }`}
                         >
@@ -122,7 +122,7 @@ export default function LoginPage() {
                                     type="text"
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-amber-500"
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-teal-500"
                                     placeholder="Ім'я"
                                     required
                                 />
@@ -147,7 +147,7 @@ export default function LoginPage() {
                                         setEmail(e.target.value)
                                     }
                                 }}
-                                className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-amber-500"
+                                className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-teal-500"
                                 placeholder={activeTab === 'login' ? 'Телефон або e-mail' : 'Адреса e-mail (необов\'язково)'}
                                 required={activeTab === 'login'}
                             />
@@ -159,7 +159,7 @@ export default function LoginPage() {
                                     type="tel"
                                     value={phone}
                                     onChange={(e) => setPhone(e.target.value)}
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-amber-500"
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-teal-500"
                                     placeholder="Телефон"
                                     required
                                 />
@@ -171,7 +171,7 @@ export default function LoginPage() {
                                 type={passwordVisible ? "text" : "password"}
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-amber-500"
+                                className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-teal-500"
                                 placeholder="Пароль"
                                 required
                                 minLength={8}
@@ -188,7 +188,7 @@ export default function LoginPage() {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full py-3 bg-amber-500 text-white font-medium rounded-md hover:bg-amber-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="w-full py-3 bg-teal-600 text-white font-medium rounded-md hover:bg-teal-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {loading ? 'Завантаження...' : (activeTab === 'login' ? 'Ввійти' : 'Створити акаунт')}
                         </button>
@@ -196,7 +196,7 @@ export default function LoginPage() {
                         {activeTab === 'login' && (
                             <button
                                 type="button"
-                                className="w-full text-sm text-gray-600 hover:text-amber-500 text-center underline transition-colors"
+                                className="w-full text-sm text-gray-600 hover:text-teal-600 text-center underline transition-colors"
                             >
                                 Я не пам'ятаю свій пароль
                             </button>
