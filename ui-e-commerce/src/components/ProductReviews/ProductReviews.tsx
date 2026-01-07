@@ -121,7 +121,12 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
 
     const formatDate = (dateString: string) => {
         const date = new Date(dateString)
-        const locale = t('languages.uk') === 'Українська' ? 'uk-UA' : t('languages.ru') === 'Русский' ? 'ru-RU' : 'en-US'
+        const localeMap: Record<string, string> = {
+            'uk': 'uk-UA',
+            'ru': 'ru-RU',
+            'en': 'en-US'
+        }
+        const locale = localeMap[language] || 'uk-UA'
         return date.toLocaleDateString(locale, {
             year: 'numeric',
             month: 'long',
@@ -323,17 +328,17 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
                                 disabled={page === 1}
                                 className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                                Попередня
+                                {t('reviews.previous')}
                             </button>
                             <span className="px-4 py-2 text-gray-700">
-                                Сторінка {page} з {totalPages}
+                                {t('reviews.page')} {page} {t('reviews.of')} {totalPages}
                             </span>
                             <button
                                 onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                                 disabled={page === totalPages}
                                 className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                                Наступна
+                                {t('reviews.next')}
                             </button>
                         </div>
                     )}
