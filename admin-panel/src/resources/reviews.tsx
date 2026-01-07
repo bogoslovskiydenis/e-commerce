@@ -166,6 +166,16 @@ export const ReviewEdit = () => (
                         fullWidth
                     />
                 </Grid>
+                <Grid item xs={12}>
+                    <TextInput
+                        source="adminMessage"
+                        label="Сообщение администратора"
+                        multiline
+                        rows={4}
+                        fullWidth
+                        helperText="Сообщение администратора к отзыву (видно только в админке)"
+                    />
+                </Grid>
             </Grid>
         </SimpleForm>
     </Edit>
@@ -293,6 +303,22 @@ export const ReviewShow = () => {
                                     </Typography>
                                 </Card>
                             </Box>
+
+                            {record?.adminMessage && (
+                                <>
+                                    <Divider sx={{ my: 2 }} />
+                                    <Box sx={{ mb: 3 }}>
+                                        <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold' }}>
+                                            Сообщение администратора
+                                        </Typography>
+                                        <Card variant="outlined" sx={{ p: 2, backgroundColor: '#e3f2fd' }}>
+                                            <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>
+                                                {record.adminMessage}
+                                            </Typography>
+                                        </Card>
+                                    </Box>
+                                </>
+                            )}
                         </Grid>
 
                         <Grid item xs={12} md={4}>

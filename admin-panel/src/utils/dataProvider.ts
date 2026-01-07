@@ -125,6 +125,7 @@ const transformReviewToComment = (review: any) => {
         template: `Рейтинг: ${review.rating}/5`,
         isVisible: review.status === 'APPROVED',
         moderatorNote: review.moderator ? `Модератор: ${review.moderator.fullName || review.moderator.username}` : '',
+        adminMessage: review.adminMessage || '',
         createdAt: review.createdAt,
         // Дополнительные поля из Review для совместимости
         rating: review.rating,
@@ -770,8 +771,41 @@ const dataProvider: DataProvider = {
                     name: params.data.author?.name || params.data.name,
                     email: params.data.author?.email || params.data.email,
                     comment: params.data.content || params.data.comment,
-                    rating: params.data.rating
+                    rating: params.data.rating,
+                    adminMessage: params.data.adminMessage !== undefined ? params.data.adminMessage : (params.data.moderatorNote !== undefined ? params.data.moderatorNote : undefined)
                 };
+                
+                // Удаляем undefined значения
+                Object.keys(updateData).forEach(key => {
+                    if (updateData[key] === undefined) {
+                        delete updateData[key];
+                    }
+                });
+            }
+
+            // Трансформируем данные для ресурса 'reviews'
+            if (resource === 'reviews') {
+                const statusMap: Record<string, string> = {
+                    'PENDING': 'PENDING',
+                    'APPROVED': 'APPROVED',
+                    'REJECTED': 'REJECTED'
+                };
+                
+                updateData = {
+                    ...(params.data.status && { status: statusMap[params.data.status] || params.data.status }),
+                    name: params.data.name,
+                    email: params.data.email,
+                    comment: params.data.comment,
+                    rating: params.data.rating,
+                    adminMessage: params.data.adminMessage
+                };
+                
+                // Удаляем undefined значения
+                Object.keys(updateData).forEach(key => {
+                    if (updateData[key] === undefined) {
+                        delete updateData[key];
+                    }
+                });
             }
 
             // Трансформируем данные обратно для ресурса 'orders' (react-admin -> API)

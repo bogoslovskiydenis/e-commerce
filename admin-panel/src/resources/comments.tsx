@@ -266,7 +266,14 @@ export const CommentEdit = () => (
                     ]}
                     fullWidth
                 />
-                <TextInput source="moderatorNote" label="Заметка модератора" fullWidth multiline />
+                <TextInput 
+                    source="adminMessage" 
+                    label="Сообщение администратора" 
+                    fullWidth 
+                    multiline 
+                    rows={4}
+                    helperText="Сообщение администратора к отзыву (видно только в админке)"
+                />
             </Box>
         </SimpleForm>
     </Edit>
@@ -314,6 +321,18 @@ export const CommentShow = () => (
             <TextField source="author.email" label="Email автора" />
             <DateField source="createdAt" label="Дата создания" showTime />
             <BooleanField source="isVisible" label="Отображается" />
+            <FunctionField
+                label="Сообщение администратора"
+                render={(record: any) => record.adminMessage ? (
+                    <Box sx={{ p: 2, backgroundColor: '#e3f2fd', borderRadius: 1 }}>
+                        <Typography variant="body2" sx={{ whiteSpace: 'pre-wrap' }}>
+                            {record.adminMessage}
+                        </Typography>
+                    </Box>
+                ) : (
+                    <Typography variant="body2" color="text.secondary">Нет сообщения</Typography>
+                )}
+            />
         </SimpleShowLayout>
     </Show>
 );

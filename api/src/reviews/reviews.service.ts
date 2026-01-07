@@ -182,6 +182,7 @@ export class ReviewsService {
     if (data.comment !== undefined) updateData.comment = data.comment;
     if (data.name !== undefined) updateData.name = data.name;
     if (data.email !== undefined) updateData.email = data.email;
+    if (data.adminMessage !== undefined) updateData.adminMessage = data.adminMessage || null;
     
     // Устанавливаем moderatorId и moderatedAt при изменении статуса
     if (data.moderatorId !== undefined) {
