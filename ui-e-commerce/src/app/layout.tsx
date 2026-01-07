@@ -1,7 +1,5 @@
 import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
-import Header from '@/components/Header/Header'
-import Footer from '@/components/Footer/Footer'
 import LayoutWrapper from '@/components/LayoutWrapper/LayoutWrapper'
 import './globals.css'
 
