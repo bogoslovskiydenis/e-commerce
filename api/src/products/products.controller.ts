@@ -37,8 +37,8 @@ export class ProductsController {
   }
 
   @Get(':id')
-  async getProduct(@Param('id') id: string) {
-    return this.productsService.getProductById(id);
+  async getProduct(@Param('id') id: string, @Query('lang') lang?: string) {
+    return this.productsService.getProductById(id, lang);
   }
 
   @Post()

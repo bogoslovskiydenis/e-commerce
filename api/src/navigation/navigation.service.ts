@@ -5,43 +5,105 @@ import { PrismaService } from '../prisma/prisma.service';
 export class NavigationService {
   constructor(private prisma: PrismaService) {}
 
+  // Вспомогательная функция для локализации категории в навигации
+  private localizeCategory(category: any, lang: string = 'uk') {
+    if (!category) return category;
+    const localizedName = category[`name${lang.charAt(0).toUpperCase() + lang.slice(1)}`] || category.name;
+    return {
+      ...category,
+      name: localizedName,
+    };
+  }
+
   async getNavigationItems(filters: any = {}) {
+    const { lang = 'uk', ...restFilters } = filters;
     const where: any = {};
-    if (filters.parentId !== undefined) where.parentId = filters.parentId === 'null' ? null : filters.parentId;
-    if (filters.type) where.type = filters.type;
-    if (filters.isActive !== undefined) where.isActive = filters.isActive;
+    if (restFilters.parentId !== undefined) where.parentId = restFilters.parentId === 'null' ? null : restFilters.parentId;
+    if (restFilters.type) where.type = restFilters.type;
+    if (restFilters.isActive !== undefined) where.isActive = restFilters.isActive;
 
     const items = await this.prisma.navigationItem.findMany({
       where,
       include: {
-        category: { select: { id: true, name: true, slug: true, parentId: true } },
+        category: { 
+          select: { 
+            id: true, 
+            name: true, 
+            nameUk: true,
+            nameRu: true,
+            nameEn: true,
+            slug: true, 
+            parentId: true 
+          } 
+        },
         children: {
           where: { isActive: true },
           orderBy: { sortOrder: 'asc' },
-          include: { category: { select: { id: true, name: true, slug: true, parentId: true } } },
+          include: { 
+            category: { 
+              select: { 
+                id: true, 
+                name: true, 
+                nameUk: true,
+                nameRu: true,
+                nameEn: true,
+                slug: true, 
+                parentId: true 
+              } 
+            } 
+          },
         },
         _count: { select: { children: true } },
       },
       orderBy: { sortOrder: 'asc' },
     });
 
-    return items.map(this.formatNavigationItem);
+    return items.map(item => this.formatNavigationItem(item, lang));
   }
 
-  async getNavigationTree() {
+  async getNavigationTree(lang: string = 'uk') {
     const items = await this.prisma.navigationItem.findMany({
       where: { parentId: null, isActive: true },
       include: {
-        category: { select: { id: true, name: true, slug: true } },
+        category: { 
+          select: { 
+            id: true, 
+            name: true, 
+            nameUk: true,
+            nameRu: true,
+            nameEn: true,
+            slug: true 
+          } 
+        },
         children: {
           where: { isActive: true },
           orderBy: { sortOrder: 'asc' },
           include: {
-            category: { select: { id: true, name: true, slug: true } },
+            category: { 
+              select: { 
+                id: true, 
+                name: true, 
+                nameUk: true,
+                nameRu: true,
+                nameEn: true,
+                slug: true 
+              } 
+            },
             children: {
               where: { isActive: true },
               orderBy: { sortOrder: 'asc' },
-              include: { category: { select: { id: true, name: true, slug: true } } },
+              include: { 
+                category: { 
+                  select: { 
+                    id: true, 
+                    name: true, 
+                    nameUk: true,
+                    nameRu: true,
+                    nameEn: true,
+                    slug: true 
+                  } 
+                } 
+              },
             },
           },
         },
@@ -49,7 +111,7 @@ export class NavigationService {
       orderBy: { sortOrder: 'asc' },
     });
 
-    return items.map(this.formatNavigationItem);
+    return items.map(item => this.formatNavigationItem(item, lang));
   }
 
   async getNavigationItemById(id: string) {
@@ -151,7 +213,8 @@ export class NavigationService {
     return { success: true, message: 'Navigation item deleted' };
   }
 
-  private formatNavigationItem = (item: any) => {
+  private formatNavigationItem = (item: any, lang: string = 'uk') => {
+    const localizedCategory = item.category ? this.localizeCategory(item.category, lang) : null;
     return {
       id: item.id,
       name: item.name,
@@ -165,9 +228,9 @@ export class NavigationService {
       icon: item.icon,
       createdAt: item.createdAt,
       updatedAt: item.updatedAt,
-      category: item.category,
+      category: localizedCategory,
       parent: item.parent,
-      children: item.children?.map((child: any) => this.formatNavigationItem(child)),
+      children: item.children?.map((child: any) => this.formatNavigationItem(child, lang)),
       childrenCount: item._count?.children || 0,
     };
   };

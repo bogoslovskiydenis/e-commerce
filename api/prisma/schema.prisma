@@ -164,9 +164,15 @@ model Customer {
 // ОБНОВЛЕННАЯ модель Category с новыми полями
 model Category {
   id               String       @id @default(uuid())
-  name             String
+  name             String       // Основное название (fallback, обычно uk)
+  nameUk           String?      @map("name_uk")
+  nameRu           String?      @map("name_ru")
+  nameEn           String?      @map("name_en")
   slug             String       @unique
-  description      String?
+  description      String?      // Основное описание (fallback)
+  descriptionUk    String?      @map("description_uk")
+  descriptionRu    String?      @map("description_ru")
+  descriptionEn    String?      @map("description_en")
   type             CategoryType @default(PRODUCTS) // НОВОЕ ПОЛЕ
   parentId         String?      @map("parent_id")
   imageUrl         String?      @map("image_url")
@@ -176,7 +182,13 @@ model Category {
   showOnHomepage   Boolean      @default(false) @map("show_on_homepage") // НОВОЕ ПОЛЕ - показывать на главной
   sortOrder        Int          @default(0) @map("sort_order")
   metaTitle        String?      @map("meta_title")
+  metaTitleUk      String?      @map("meta_title_uk")
+  metaTitleRu      String?      @map("meta_title_ru")
+  metaTitleEn      String?      @map("meta_title_en")
   metaDescription  String?      @map("meta_description")
+  metaDescriptionUk String?     @map("meta_description_uk")
+  metaDescriptionRu String?     @map("meta_description_ru")
+  metaDescriptionEn String?     @map("meta_description_en")
   metaKeywords     String?      @map("meta_keywords") // НОВОЕ ПОЛЕ
   filters          Json? // НОВОЕ ПОЛЕ - для настроек UI
   createdAt        DateTime     @default(now()) @map("created_at")
@@ -200,10 +212,19 @@ model Category {
 
 model Product {
   id               String   @id @default(uuid())
-  title            String
+  title            String   // Основное название (fallback, обычно uk)
+  titleUk          String?  @map("title_uk")
+  titleRu          String?  @map("title_ru")
+  titleEn          String?  @map("title_en")
   slug             String   @unique
-  description      String?
+  description      String?  // Основное описание (fallback)
+  descriptionUk    String?  @map("description_uk")
+  descriptionRu    String?  @map("description_ru")
+  descriptionEn    String?  @map("description_en")
   shortDescription String?  @map("short_description")
+  shortDescriptionUk String? @map("short_description_uk")
+  shortDescriptionRu String? @map("short_description_ru")
+  shortDescriptionEn String? @map("short_description_en")
   price            Decimal  @db.Decimal(10, 2)
   oldPrice         Decimal? @map("old_price") @db.Decimal(10, 2)
   discount         Decimal? @db.Decimal(5, 2)
@@ -221,7 +242,13 @@ model Product {
   weight           Decimal? @db.Decimal(8, 3)
   dimensions       Json? // {length, width, height}
   metaTitle        String?  @map("meta_title")
+  metaTitleUk      String?  @map("meta_title_uk")
+  metaTitleRu      String?  @map("meta_title_ru")
+  metaTitleEn      String?  @map("meta_title_en")
   metaDescription  String?  @map("meta_description")
+  metaDescriptionUk String? @map("meta_description_uk")
+  metaDescriptionRu String? @map("meta_description_ru")
+  metaDescriptionEn String? @map("meta_description_en")
   createdAt        DateTime @default(now()) @map("created_at")
   updatedAt        DateTime @updatedAt @map("updated_at")
 

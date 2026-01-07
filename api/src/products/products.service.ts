@@ -6,8 +6,29 @@ import { CreateProductDto, UpdateProductDto, ProductQueryDto } from './dto';
 export class ProductsService {
   constructor(private prisma: PrismaService) {}
 
+  // Вспомогательная функция для локализации продукта
+  private localizeProduct(product: any, lang: string = 'uk') {
+    const localizedTitle = product[`title${lang.charAt(0).toUpperCase() + lang.slice(1)}`] || product.title;
+    const localizedDescription = product[`description${lang.charAt(0).toUpperCase() + lang.slice(1)}`] || product.description;
+    const localizedShortDescription = product[`shortDescription${lang.charAt(0).toUpperCase() + lang.slice(1)}`] || product.shortDescription;
+    const localizedMetaTitle = product[`metaTitle${lang.charAt(0).toUpperCase() + lang.slice(1)}`] || product.metaTitle;
+    const localizedMetaDescription = product[`metaDescription${lang.charAt(0).toUpperCase() + lang.slice(1)}`] || product.metaDescription;
+
+    return {
+      ...product,
+      title: localizedTitle,
+      description: localizedDescription,
+      shortDescription: localizedShortDescription,
+      metaTitle: localizedMetaTitle,
+      metaDescription: localizedMetaDescription,
+      ...(product.category && {
+        category: product.category
+      })
+    };
+  }
+
   async getProducts(query: ProductQueryDto) {
-    const { page = 1, limit = 25, sortBy = 'createdAt', sortOrder = 'desc', search, categoryId, featured, popular } = query;
+    const { page = 1, limit = 25, sortBy = 'createdAt', sortOrder = 'desc', search, categoryId, featured, popular, lang = 'uk' } = query;
     // Убеждаемся, что limit - это число
     const limitNum = Number(limit) || 25;
     const pageNum = Number(page) || 1;
@@ -21,8 +42,17 @@ export class ProductsService {
       const searchLower = search.toLowerCase();
       where.OR = [
         { title: { contains: search, mode: 'insensitive' } },
+        { titleUk: { contains: search, mode: 'insensitive' } },
+        { titleRu: { contains: search, mode: 'insensitive' } },
+        { titleEn: { contains: search, mode: 'insensitive' } },
         { description: { contains: search, mode: 'insensitive' } },
+        { descriptionUk: { contains: search, mode: 'insensitive' } },
+        { descriptionRu: { contains: search, mode: 'insensitive' } },
+        { descriptionEn: { contains: search, mode: 'insensitive' } },
         { shortDescription: { contains: search, mode: 'insensitive' } },
+        { shortDescriptionUk: { contains: search, mode: 'insensitive' } },
+        { shortDescriptionRu: { contains: search, mode: 'insensitive' } },
+        { shortDescriptionEn: { contains: search, mode: 'insensitive' } },
         { sku: { contains: search, mode: 'insensitive' } },
         { brand: { contains: search, mode: 'insensitive' } },
         { tags: { hasSome: [search, searchLower] } }, // Поиск по тегам
@@ -76,9 +106,14 @@ export class ProductsService {
       page: pageNum 
     });
 
+    const localizedProducts = products.map(product => {
+      const localized = this.localizeProduct(product, lang);
+      return this.formatProduct(localized);
+    });
+
     return {
       success: true,
-      data: products.map(this.formatProduct),
+      data: localizedProducts,
       pagination: {
         page: pageNum,
         limit: limitNum,
@@ -88,7 +123,7 @@ export class ProductsService {
     };
   }
 
-  async getProductById(id: string) {
+  async getProductById(id: string, lang: string = 'uk') {
     const product = await this.prisma.product.findUnique({
       where: { id },
       include: {
@@ -102,9 +137,10 @@ export class ProductsService {
       throw new NotFoundException('Product not found');
     }
 
+    const localized = this.localizeProduct(product, lang);
     return {
       success: true,
-      data: this.formatProduct(product),
+      data: this.formatProduct(localized),
     };
   }
 

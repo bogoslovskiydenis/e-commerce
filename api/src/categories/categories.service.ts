@@ -6,8 +6,27 @@ import { CreateCategoryDto, UpdateCategoryDto } from './dto';
 export class CategoriesService {
   constructor(private prisma: PrismaService) {}
 
+  // Вспомогательная функция для локализации категории
+  private localizeCategory(category: any, lang: string = 'uk') {
+    const localizedName = category[`name${lang.charAt(0).toUpperCase() + lang.slice(1)}`] || category.name;
+    const localizedDescription = category[`description${lang.charAt(0).toUpperCase() + lang.slice(1)}`] || category.description;
+    const localizedMetaTitle = category[`metaTitle${lang.charAt(0).toUpperCase() + lang.slice(1)}`] || category.metaTitle;
+    const localizedMetaDescription = category[`metaDescription${lang.charAt(0).toUpperCase() + lang.slice(1)}`] || category.metaDescription;
+
+    return {
+      ...category,
+      name: localizedName,
+      description: localizedDescription,
+      metaTitle: localizedMetaTitle,
+      metaDescription: localizedMetaDescription,
+      ...(category.children && {
+        children: category.children.map((child: any) => this.localizeCategory(child, lang))
+      })
+    };
+  }
+
   async getCategories(query: any) {
-    const { page = 1, limit = 50, parentId, active, search, type, sortBy = 'sortOrder', sortOrder = 'asc' } = query;
+    const { page = 1, limit = 50, parentId, active, search, type, sortBy = 'sortOrder', sortOrder = 'asc', lang = 'uk' } = query;
     // Преобразуем строковые значения в числа для Prisma
     const pageNum = parseInt(String(page), 10) || 1;
     const limitNum = parseInt(String(limit), 10) || 50;
@@ -26,7 +45,13 @@ export class CategoriesService {
     if (search) {
       where.OR = [
         { name: { contains: search, mode: 'insensitive' } },
+        { nameUk: { contains: search, mode: 'insensitive' } },
+        { nameRu: { contains: search, mode: 'insensitive' } },
+        { nameEn: { contains: search, mode: 'insensitive' } },
         { description: { contains: search, mode: 'insensitive' } },
+        { descriptionUk: { contains: search, mode: 'insensitive' } },
+        { descriptionRu: { contains: search, mode: 'insensitive' } },
+        { descriptionEn: { contains: search, mode: 'insensitive' } },
       ];
     }
 
@@ -61,9 +86,11 @@ export class CategoriesService {
       this.prisma.category.count({ where }),
     ]);
 
+    const localizedCategories = categories.map(cat => this.localizeCategory(cat, lang));
+
     return {
       success: true,
-      data: categories,
+      data: localizedCategories,
       pagination: {
         page: Number(page),
         limit: Number(limit),
@@ -73,7 +100,8 @@ export class CategoriesService {
     };
   }
 
-  async getCategoriesTree() {
+  async getCategoriesTree(query: any = {}) {
+    const { lang = 'uk' } = query;
     const categories = await this.prisma.category.findMany({
       where: { isActive: true },
       include: {
@@ -86,14 +114,16 @@ export class CategoriesService {
     });
 
     const tree = categories.filter((cat) => !cat.parentId);
+    const localizedTree = tree.map(cat => this.localizeCategory(cat, lang));
 
     return {
       success: true,
-      data: tree,
+      data: localizedTree,
     };
   }
 
-  async getNavigationCategories() {
+  async getNavigationCategories(query: any = {}) {
+    const { lang = 'uk' } = query;
     // Получаем только родительские категории с showInNavigation: true
     const categories = await this.prisma.category.findMany({
       where: {
@@ -157,13 +187,15 @@ export class CategoriesService {
       })
     );
 
+    const localizedCategories = categoriesWithChildrenInfo.map(cat => this.localizeCategory(cat, lang));
+
     return {
       success: true,
-      data: categoriesWithChildrenInfo,
+      data: localizedCategories,
     };
   }
 
-  async getPopularCategories(limit: number = 5) {
+  async getPopularCategories(limit: number = 5, lang: string = 'uk') {
     // Получаем только родительские категории с showOnHomepage: true
     const categories = await this.prisma.category.findMany({
       where: {
@@ -180,11 +212,14 @@ export class CategoriesService {
       take: limit,
     });
 
-    // Форматируем категории с количеством товаров
-    const formattedCategories = categories.map(category => ({
-      ...category,
-      productsCount: category._count.products,
-    }));
+    // Форматируем категории с количеством товаров и локализацией
+    const formattedCategories = categories.map(category => {
+      const localized = this.localizeCategory(category, lang);
+      return {
+        ...localized,
+        productsCount: category._count.products,
+      };
+    });
 
     return {
       success: true,
@@ -192,7 +227,7 @@ export class CategoriesService {
     };
   }
 
-  async getCategoryBySlug(slug: string) {
+  async getCategoryBySlug(slug: string, lang: string = 'uk') {
     const category = await this.prisma.category.findUnique({
       where: { slug },
       include: {
@@ -205,13 +240,15 @@ export class CategoriesService {
       throw new NotFoundException('Category not found');
     }
 
+    const localized = this.localizeCategory(category, lang);
+
     return {
       success: true,
-      data: category,
+      data: localized,
     };
   }
 
-  async getCategoryById(id: string) {
+  async getCategoryById(id: string, lang: string = 'uk') {
     const category = await this.prisma.category.findUnique({
       where: { id },
       include: {
@@ -224,9 +261,11 @@ export class CategoriesService {
       throw new NotFoundException('Category not found');
     }
 
+    const localized = this.localizeCategory(category, lang);
+
     return {
       success: true,
-      data: category,
+      data: localized,
     };
   }
 

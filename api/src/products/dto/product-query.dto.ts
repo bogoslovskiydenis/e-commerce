@@ -52,6 +52,10 @@ export class ProductQueryDto {
   })
   @IsBoolean()
   popular?: boolean;
+
+  @IsOptional()
+  @IsString()
+  lang?: string;
 }
 
 

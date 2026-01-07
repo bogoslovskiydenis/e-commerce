@@ -133,14 +133,28 @@ class ApiService {
         this.baseUrl = API_BASE_URL;
     }
 
+    // Получение текущего языка
+    private getCurrentLanguage(): string {
+        if (typeof window === 'undefined') return 'uk';
+        return localStorage.getItem('language') || 'uk';
+    }
+
     // Базовый метод для запросов
     private async request<T>(
         endpoint: string,
         options: RequestInit = {},
-        skipAuth: boolean = false
+        skipAuth: boolean = false,
+        addLang: boolean = true
     ): Promise<T> {
-        const url = `${this.baseUrl}${endpoint}`;
+        let url = `${this.baseUrl}${endpoint}`;
         const token = !skipAuth && typeof window !== 'undefined' ? localStorage.getItem('customer_token') : null;
+        
+        // Добавляем параметр языка к URL если требуется
+        if (addLang) {
+            const lang = this.getCurrentLanguage();
+            const separator = endpoint.includes('?') ? '&' : '?';
+            url = `${url}${separator}lang=${lang}`;
+        }
 
         const headers: Record<string, string> = {
             'Content-Type': 'application/json',
@@ -183,10 +197,14 @@ class ApiService {
     /**
      * Получить все категории для навигации
      */
-    async getNavigationCategories(): Promise<Category[]> {
+    async getNavigationCategories(lang?: string): Promise<Category[]> {
         try {
+            const endpoint = lang ? `/categories/navigation?lang=${lang}` : '/categories/navigation';
             const response = await this.request<ApiResponse<Category[]>>(
-                '/categories/navigation'
+                endpoint,
+                {},
+                true,
+                !lang // Не добавляем lang автоматически если он передан вручную
             );
             return response.data || [];
         } catch (error) {
@@ -198,10 +216,14 @@ class ApiService {
     /**
      * Получить категории по типу
      */
-    async getCategoriesByType(type: string): Promise<Category[]> {
+    async getCategoriesByType(type: string, lang?: string): Promise<Category[]> {
         try {
+            const langParam = lang || this.getCurrentLanguage();
             const response = await this.request<ApiResponse<Category[]>>(
-                `/categories?type=${type}&active=true&limit=100`
+                `/categories?type=${type}&active=true&limit=100&lang=${langParam}`,
+                {},
+                true,
+                false
             );
             return response.data || [];
         } catch (error) {
@@ -220,6 +242,7 @@ class ApiService {
         active?: boolean;
         search?: string;
         type?: string;
+        lang?: string;
     }): Promise<{ categories: Category[]; total: number; page: number; limit: number }> {
         try {
             const queryParams = new URLSearchParams();
@@ -230,9 +253,13 @@ class ApiService {
             if (params?.active !== undefined) queryParams.append('active', params.active.toString());
             if (params?.search) queryParams.append('search', params.search);
             if (params?.type) queryParams.append('type', params.type);
+            if (params?.lang) queryParams.append('lang', params.lang);
 
             const response = await this.request<ApiResponse<Category[]>>(
-                `/categories?${queryParams.toString()}`
+                `/categories?${queryParams.toString()}`,
+                {},
+                true,
+                !params?.lang // Не добавляем lang автоматически если он передан в params
             );
 
             return {
@@ -253,6 +280,7 @@ class ApiService {
     async getCategoriesTree(params?: {
         includeInactive?: boolean;
         type?: string;
+        lang?: string;
     }): Promise<Category[]> {
         try {
             const queryParams = new URLSearchParams();
@@ -263,9 +291,15 @@ class ApiService {
             if (params?.type) {
                 queryParams.append('type', params.type);
             }
+            if (params?.lang) {
+                queryParams.append('lang', params.lang);
+            }
 
             const response = await this.request<ApiResponse<Category[]>>(
-                `/categories/tree?${queryParams.toString()}`
+                `/categories/tree?${queryParams.toString()}`,
+                {},
+                true,
+                !params?.lang
             );
             return response.data || [];
         } catch (error) {
@@ -277,10 +311,14 @@ class ApiService {
     /**
      * Получить категорию по ID
      */
-    async getCategoryById(id: string): Promise<Category | null> {
+    async getCategoryById(id: string, lang?: string): Promise<Category | null> {
         try {
+            const endpoint = lang ? `/categories/${id}?lang=${lang}` : `/categories/${id}`;
             const response = await this.request<ApiResponse<Category>>(
-                `/categories/${id}`
+                endpoint,
+                {},
+                true,
+                !lang
             );
             return response.data || null;
         } catch (error) {
@@ -292,10 +330,14 @@ class ApiService {
     /**
      * Получить категорию по slug
      */
-    async getCategoryBySlug(slug: string): Promise<Category | null> {
+    async getCategoryBySlug(slug: string, lang?: string): Promise<Category | null> {
         try {
+            const endpoint = lang ? `/categories/slug/${slug}?lang=${lang}` : `/categories/slug/${slug}`;
             const response = await this.request<ApiResponse<Category>>(
-                `/categories/slug/${slug}`
+                endpoint,
+                {},
+                true,
+                !lang
             );
             return response.data || null;
         } catch (error) {
@@ -307,10 +349,14 @@ class ApiService {
     /**
      * Получить популярные категории для главной страницы
      */
-    async getPopularCategories(limit: number = 5): Promise<Category[]> {
+    async getPopularCategories(limit: number = 5, lang?: string): Promise<Category[]> {
         try {
+            const langParam = lang || this.getCurrentLanguage();
             const response = await this.request<ApiResponse<Category[]>>(
-                `/categories/popular?limit=${limit}`
+                `/categories/popular?limit=${limit}&lang=${langParam}`,
+                {},
+                true,
+                false
             );
             return response.data || [];
         } catch (error) {
@@ -335,6 +381,7 @@ class ApiService {
         maxPrice?: number;
         sortBy?: string;
         sortOrder?: 'asc' | 'desc';
+        lang?: string;
     }): Promise<{ products: Product[]; total: number; page: number; limit: number }> {
         try {
             const queryParams = new URLSearchParams();
@@ -349,9 +396,13 @@ class ApiService {
             if (params?.maxPrice) queryParams.append('maxPrice', params.maxPrice.toString());
             if (params?.sortBy) queryParams.append('sortBy', params.sortBy);
             if (params?.sortOrder) queryParams.append('sortOrder', params.sortOrder);
+            if (params?.lang) queryParams.append('lang', params.lang);
 
             const response = await this.request<ApiResponse<Product[]>>(
-                `/products?${queryParams.toString()}`
+                `/products?${queryParams.toString()}`,
+                {},
+                true,
+                !params?.lang
             );
 
             return {
@@ -369,10 +420,14 @@ class ApiService {
     /**
      * Получить товар по ID
      */
-    async getProductById(id: string): Promise<Product | null> {
+    async getProductById(id: string, lang?: string): Promise<Product | null> {
         try {
+            const endpoint = lang ? `/products/${id}?lang=${lang}` : `/products/${id}`;
             const response = await this.request<ApiResponse<Product>>(
-                `/products/${id}`
+                endpoint,
+                {},
+                true,
+                !lang
             );
             return response.data || null;
         } catch (error) {

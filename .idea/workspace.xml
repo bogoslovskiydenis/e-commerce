@@ -4,22 +4,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="cc69a437-414e-4395-a1be-55730bb45aca" name="Changes" comment="удалил ненужное">
-      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/app/cart/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/app/cart/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/app/favorites/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/app/favorites/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/app/login/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/app/login/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/app/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/app/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/components/AuthModal/AuthModal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/components/AuthModal/AuthModal.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/components/AuthModal/AuthPrompt.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/components/AuthModal/AuthPrompt.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/components/AuthModal/AuthTabs.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/components/AuthModal/AuthTabs.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/components/AuthModal/LoginForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/components/AuthModal/LoginForm.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/components/AuthModal/RegisterForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/components/AuthModal/RegisterForm.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/components/Footer/Footer.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/components/Footer/Footer.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/components/Header/Header.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/components/Header/Header.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/components/Header/MobileMenu.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/components/Header/MobileMenu.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/components/Header/SimpleHeader.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/components/Header/SimpleHeader.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/components/LayoutWrapper/LayoutWrapper.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/components/LayoutWrapper/LayoutWrapper.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/components/Navigation/Navigation.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/components/Navigation/Navigation.tsx" afterDir="false" />
+    <list default="true" id="cc69a437-414e-4395-a1be-55730bb45aca" name="Changes" comment="убрал ненужные импорты">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/prisma/schema.prisma" beforeDir="false" afterPath="$PROJECT_DIR$/api/prisma/schema.prisma" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/categories/categories.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/categories/categories.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/categories/categories.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/categories/categories.service.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/navigation/navigation.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/navigation/navigation.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/navigation/navigation.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/navigation/navigation.service.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/products/dto/product-query.dto.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/products/dto/product-query.dto.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/products/products.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/products/products.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/products/products.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/products/products.service.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/services/api.ts" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/services/api.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -178,7 +173,7 @@
       <workItem from="1767009986762" duration="253000" />
       <workItem from="1767023373182" duration="2888000" />
       <workItem from="1767449742017" duration="10000" />
-      <workItem from="1767792668797" duration="6944000" />
+      <workItem from="1767792668797" duration="11234000" />
     </task>
     <task id="LOCAL-00001" summary="добавил аунтификацию по ролям">
       <option name="closed" value="true" />
@@ -444,7 +439,39 @@
       <option name="project" value="LOCAL" />
       <updated>1767798097051</updated>
     </task>
-    <option name="localTasksCounter" value="34" />
+    <task id="LOCAL-00034" summary="добавил мультиязычность">
+      <option name="closed" value="true" />
+      <created>1767800714644</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1767800714644</updated>
+    </task>
+    <task id="LOCAL-00035" summary="добавил мультиязычность на другие страницы">
+      <option name="closed" value="true" />
+      <created>1767802763921</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1767802763921</updated>
+    </task>
+    <task id="LOCAL-00036" summary="добавил мультиязычность">
+      <option name="closed" value="true" />
+      <created>1767802821568</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1767802821568</updated>
+    </task>
+    <task id="LOCAL-00037" summary="убрал ненужные импорты">
+      <option name="closed" value="true" />
+      <created>1767803058110</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1767803058110</updated>
+    </task>
+    <option name="localTasksCounter" value="38" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -474,9 +501,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="добавление категории под категории" />
-    <MESSAGE value="Бд призмы" />
-    <MESSAGE value="изменил проблему с аунтификацие и отображением секций для менеджера , немного изменил секции для продукции &#10;Нужно добавить фильтр!!!!" />
     <MESSAGE value="исправил с удалением категории" />
     <MESSAGE value="добавление товаров и категорий из админки в наш сайт" />
     <MESSAGE value="исправил деплой в версел" />
@@ -499,6 +523,9 @@
     <MESSAGE value="добавил добавление комментариев к товару" />
     <MESSAGE value="оставление комментария в админке" />
     <MESSAGE value="удалил ненужное" />
-    <option name="LAST_COMMIT_MESSAGE" value="удалил ненужное" />
+    <MESSAGE value="добавил мультиязычность на другие страницы" />
+    <MESSAGE value="добавил мультиязычность" />
+    <MESSAGE value="убрал ненужные импорты" />
+    <option name="LAST_COMMIT_MESSAGE" value="убрал ненужные импорты" />
   </component>
 </project>

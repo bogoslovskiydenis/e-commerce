@@ -15,29 +15,29 @@ export class CategoriesController {
   }
 
   @Get('tree')
-  async getCategoriesTree() {
-    return this.categoriesService.getCategoriesTree();
+  async getCategoriesTree(@Query() query: any) {
+    return this.categoriesService.getCategoriesTree(query);
   }
 
   @Get('navigation')
-  async getNavigationCategories() {
-    return this.categoriesService.getNavigationCategories();
+  async getNavigationCategories(@Query() query: any) {
+    return this.categoriesService.getNavigationCategories(query);
   }
 
   @Get('popular')
-  async getPopularCategories(@Query('limit') limit?: string) {
+  async getPopularCategories(@Query('limit') limit?: string, @Query('lang') lang?: string) {
     const limitNum = limit ? parseInt(limit, 10) : 5;
-    return this.categoriesService.getPopularCategories(limitNum);
+    return this.categoriesService.getPopularCategories(limitNum, lang);
   }
 
   @Get('slug/:slug')
-  async getCategoryBySlug(@Param('slug') slug: string) {
-    return this.categoriesService.getCategoryBySlug(slug);
+  async getCategoryBySlug(@Param('slug') slug: string, @Query('lang') lang?: string) {
+    return this.categoriesService.getCategoryBySlug(slug, lang);
   }
 
   @Get(':id')
-  async getCategory(@Param('id') id: string) {
-    return this.categoriesService.getCategoryById(id);
+  async getCategory(@Param('id') id: string, @Query('lang') lang?: string) {
+    return this.categoriesService.getCategoryById(id, lang);
   }
 
   @Post()

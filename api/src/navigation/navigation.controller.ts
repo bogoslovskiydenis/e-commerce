@@ -19,8 +19,8 @@ export class NavigationController {
   @Get('tree')
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @RequirePermissions('website.navigation')
-  async getNavigationTree() {
-    const tree = await this.navigationService.getNavigationTree();
+  async getNavigationTree(@Query('lang') lang?: string) {
+    const tree = await this.navigationService.getNavigationTree(lang);
     return { success: true, data: tree };
   }
 
