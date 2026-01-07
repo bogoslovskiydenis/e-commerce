@@ -4,16 +4,22 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="cc69a437-414e-4395-a1be-55730bb45aca" name="Changes" comment="оставление комментария в админке">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin-panel/logins.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin-panel/src/db.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/api/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/balloonshop_backup_20251006.sql" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/logs/combined.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/logs/error.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/logs/exceptions.log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/logs/rejections.log" beforeDir="false" />
+    <list default="true" id="cc69a437-414e-4395-a1be-55730bb45aca" name="Changes" comment="удалил ненужное">
+      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/app/cart/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/app/cart/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/app/favorites/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/app/favorites/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/app/login/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/app/login/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/app/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/app/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/components/AuthModal/AuthModal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/components/AuthModal/AuthModal.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/components/AuthModal/AuthPrompt.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/components/AuthModal/AuthPrompt.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/components/AuthModal/AuthTabs.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/components/AuthModal/AuthTabs.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/components/AuthModal/LoginForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/components/AuthModal/LoginForm.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/components/AuthModal/RegisterForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/components/AuthModal/RegisterForm.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/components/Footer/Footer.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/components/Footer/Footer.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/components/Header/Header.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/components/Header/Header.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/components/Header/MobileMenu.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/components/Header/MobileMenu.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/components/Header/SimpleHeader.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/components/Header/SimpleHeader.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/components/LayoutWrapper/LayoutWrapper.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/components/LayoutWrapper/LayoutWrapper.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/components/Navigation/Navigation.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/components/Navigation/Navigation.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -172,7 +178,7 @@
       <workItem from="1767009986762" duration="253000" />
       <workItem from="1767023373182" duration="2888000" />
       <workItem from="1767449742017" duration="10000" />
-      <workItem from="1767792668797" duration="4454000" />
+      <workItem from="1767792668797" duration="6944000" />
     </task>
     <task id="LOCAL-00001" summary="добавил аунтификацию по ролям">
       <option name="closed" value="true" />
@@ -430,7 +436,15 @@
       <option name="project" value="LOCAL" />
       <updated>1767797701049</updated>
     </task>
-    <option name="localTasksCounter" value="33" />
+    <task id="LOCAL-00033" summary="удалил ненужное">
+      <option name="closed" value="true" />
+      <created>1767798097051</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1767798097051</updated>
+    </task>
+    <option name="localTasksCounter" value="34" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -460,7 +474,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="добавил скидку" />
     <MESSAGE value="добавление категории под категории" />
     <MESSAGE value="Бд призмы" />
     <MESSAGE value="изменил проблему с аунтификацие и отображением секций для менеджера , немного изменил секции для продукции &#10;Нужно добавить фильтр!!!!" />
@@ -485,6 +498,7 @@
     <MESSAGE value="изменил UШ" />
     <MESSAGE value="добавил добавление комментариев к товару" />
     <MESSAGE value="оставление комментария в админке" />
-    <option name="LAST_COMMIT_MESSAGE" value="оставление комментария в админке" />
+    <MESSAGE value="удалил ненужное" />
+    <option name="LAST_COMMIT_MESSAGE" value="удалил ненужное" />
   </component>
 </project>

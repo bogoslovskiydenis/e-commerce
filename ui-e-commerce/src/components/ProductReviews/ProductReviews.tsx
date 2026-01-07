@@ -4,12 +4,14 @@ import { useState, useEffect } from 'react'
 import { Star, Send, User } from 'lucide-react'
 import { apiService, Review } from '@/services/api'
 import { useAuth } from '@/contexts/AuthContext'
+import { useTranslation } from '@/contexts/LanguageContext'
 
 interface ProductReviewsProps {
     productId: string
 }
 
 export default function ProductReviews({ productId }: ProductReviewsProps) {
+    const { t } = useTranslation()
     const { customer, isAuthenticated } = useAuth()
     const [reviews, setReviews] = useState<Review[]>([])
     const [loading, setLoading] = useState(true)
@@ -97,7 +99,7 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
             await loadReviews()
         } catch (error: any) {
             console.error('Error creating review:', error)
-            alert(error.message || 'Помилка при додаванні відгуку')
+            alert(error.message || t('reviews.error'))
         } finally {
             setSubmitting(false)
         }
@@ -119,7 +121,8 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
 
     const formatDate = (dateString: string) => {
         const date = new Date(dateString)
-        return date.toLocaleDateString('uk-UA', {
+        const locale = t('languages.uk') === 'Українська' ? 'uk-UA' : t('languages.ru') === 'Русский' ? 'ru-RU' : 'en-US'
+        return date.toLocaleDateString(locale, {
             year: 'numeric',
             month: 'long',
             day: 'numeric',
@@ -129,13 +132,13 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
     return (
         <div className="mt-12 border-t pt-8">
             <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold">Відгуки</h2>
+                <h2 className="text-2xl font-bold">{t('reviews.title')}</h2>
                 {!showForm && (
                     <button
                         onClick={() => setShowForm(true)}
                         className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors"
                     >
-                        Написати відгук
+                        {t('reviews.writeReview')}
                     </button>
                 )}
             </div>
@@ -148,7 +151,7 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
                             <div className="text-4xl font-bold text-gray-900">{averageRating.toFixed(1)}</div>
                             <div className="mt-1">{renderStars(Math.round(averageRating), 20)}</div>
                             <div className="text-sm text-gray-600 mt-1">
-                                {reviews.length} {reviews.length === 1 ? 'відгук' : 'відгуків'}
+                                {reviews.length} {reviews.length === 1 ? t('reviews.review') : t('reviews.reviews')}
                             </div>
                         </div>
                         <div className="flex-1">
@@ -179,11 +182,11 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
             {/* Форма добавления отзыва */}
             {showForm && (
                 <div className="mb-8 p-6 bg-gray-50 rounded-lg">
-                    <h3 className="text-lg font-semibold mb-4">Залишити відгук</h3>
+                    <h3 className="text-lg font-semibold mb-4">{t('reviews.leaveReview')}</h3>
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Оцінка <span className="text-red-500">*</span>
+                                {t('reviews.rating')} <span className="text-red-500">*</span>
                             </label>
                             <div className="flex gap-2">
                                 {[1, 2, 3, 4, 5].map((rating) => (
@@ -209,7 +212,7 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    Ім'я <span className="text-red-500">*</span>
+                                    {t('reviews.name')} <span className="text-red-500">*</span>
                                 </label>
                                 <input
                                     type="text"
@@ -221,7 +224,7 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
                             </div>
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    Email
+                                    {t('reviews.email')}
                                 </label>
                                 <input
                                     type="email"
@@ -234,14 +237,14 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
 
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Коментар
+                                {t('reviews.comment')}
                             </label>
                             <textarea
                                 value={formData.comment}
                                 onChange={(e) => setFormData({ ...formData, comment: e.target.value })}
                                 rows={4}
                                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
-                                placeholder="Залиште свій відгук про товар..."
+                                placeholder={t('reviews.commentPlaceholder')}
                             />
                         </div>
 
@@ -252,7 +255,7 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
                                 className="px-6 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center gap-2"
                             >
                                 <Send size={18} />
-                                {submitting ? 'Відправка...' : 'Відправити відгук'}
+                                {submitting ? t('reviews.submitting') : t('reviews.submit')}
                             </button>
                             <button
                                 type="button"
@@ -267,7 +270,7 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
                                 }}
                                 className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
                             >
-                                Скасувати
+                                {t('reviews.cancel')}
                             </button>
                         </div>
                     </form>
@@ -278,13 +281,13 @@ export default function ProductReviews({ productId }: ProductReviewsProps) {
             {loading ? (
                 <div className="text-center py-8">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-600 mx-auto"></div>
-                    <p className="mt-4 text-gray-600">Завантаження відгуків...</p>
+                    <p className="mt-4 text-gray-600">{t('reviews.loading')}</p>
                 </div>
             ) : reviews.length === 0 ? (
                 <div className="text-center py-12 bg-gray-50 rounded-lg">
                     <User size={48} className="mx-auto text-gray-400 mb-4" />
-                    <p className="text-gray-600 mb-4">Поки що немає відгуків</p>
-                    <p className="text-sm text-gray-500">Станьте першим, хто залишить відгук про цей товар!</p>
+                    <p className="text-gray-600 mb-4">{t('reviews.noReviews')}</p>
+                    <p className="text-sm text-gray-500">{t('reviews.beFirst')}</p>
                 </div>
             ) : (
                 <div className="space-y-6">

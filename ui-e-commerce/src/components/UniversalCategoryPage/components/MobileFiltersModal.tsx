@@ -3,6 +3,7 @@
 import { X } from 'lucide-react'
 import SidebarFilters, { FilterState } from './SidebarFilters'
 import { CategoryConfig } from '@/config/categoryConfig'
+import { useTranslation } from '@/contexts/LanguageContext'
 
 interface MobileFiltersModalProps {
     isOpen: boolean;
@@ -19,6 +20,7 @@ export default function MobileFiltersModal({
                                                config,
                                                onFiltersChange
                                            }: MobileFiltersModalProps) {
+    const { t } = useTranslation()
     if (!isOpen) return null;
 
     return (
@@ -34,11 +36,11 @@ export default function MobileFiltersModal({
                 <div className="flex flex-col h-full">
                     {/* Заголовок модального окна */}
                     <div className="flex items-center justify-between p-4 border-b">
-                        <h2 className="text-lg font-semibold">Фильтры</h2>
+                        <h2 className="text-lg font-semibold">{t('category.filters')}</h2>
                         <button
                             onClick={onClose}
                             className="p-2 text-gray-500 hover:text-gray-700"
-                            aria-label="Закрыть фильтры"
+                            aria-label={t('category.resetAll')}
                         >
                             <X size={20} />
                         </button>
@@ -60,13 +62,13 @@ export default function MobileFiltersModal({
                             className="w-full py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700 font-medium"
                             onClick={onClose}
                         >
-                            Применить фильтры
+                            {t('category.applyFilters')}
                         </button>
                         <button
                             className="w-full py-2 text-gray-600 hover:text-gray-800 text-sm"
                             onClick={onClose}
                         >
-                            Закрыть
+                            {t('category.close')}
                         </button>
                     </div>
                 </div>

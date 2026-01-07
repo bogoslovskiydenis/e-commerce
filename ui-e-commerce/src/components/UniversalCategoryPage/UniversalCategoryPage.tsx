@@ -13,6 +13,7 @@ import PaginationSection from './components/PaginationSection'
 import SEOSection from './components/SEOSection'
 import BannersList from '@/components/Banner/BannersList'
 import { apiService, Banner } from '@/services/api'
+import { useTranslation } from '@/contexts/LanguageContext'
 
 interface UniversalCategoryPageProps {
     categoryKey: string;
@@ -27,6 +28,7 @@ export default function UniversalCategoryPage({
                                                   products,
                                                   customBreadcrumbs
                                               }: UniversalCategoryPageProps) {
+    const { t } = useTranslation()
     const [sortBy, setSortBy] = useState('popular')
     const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
     const [showMobileFilters, setShowMobileFilters] = useState(false)
@@ -53,13 +55,23 @@ export default function UniversalCategoryPage({
     }, [])
 
     // Автоматически генерируем breadcrumbs если не переданы
-    const breadcrumbs = customBreadcrumbs || [
-        { name: 'Главная', href: '/' },
+    const breadcrumbs = (customBreadcrumbs || [
+        { name: 'Home', href: '/' },
         { name: config.title, href: config.basePath, current: true }
-    ]
+    ]).map(breadcrumb => ({
+        ...breadcrumb,
+        name: breadcrumb.name === 'Home' ? t('category.homePage') : breadcrumb.name
+    }))
 
-    // Используем кастомные опции сортировки если есть, иначе дефолтные
-    const sortOptions = config.sortOptions || DEFAULT_SORT_OPTIONS
+    // Используем кастомные опции сортировки если есть, иначе дефолтные с переводами
+    const sortOptions = config.sortOptions || [
+        { value: 'popular', label: t('category.sortPopular') },
+        { value: 'price-asc', label: t('category.sortPriceAsc') },
+        { value: 'price-desc', label: t('category.sortPriceDesc') },
+        { value: 'name-asc', label: t('category.sortNameAsc') },
+        { value: 'name-desc', label: t('category.sortNameDesc') },
+        { value: 'new', label: t('category.sortNew') }
+    ]
 
     // Фильтрация товаров
     const filteredProducts = useMemo(() => {
@@ -202,17 +214,17 @@ export default function UniversalCategoryPage({
         if (filters.priceRange.from || filters.priceRange.to) {
             const from = filters.priceRange.from || '0'
             const to = filters.priceRange.to || '∞'
-            active.push(`Цена: ${from} - ${to} грн`)
+            active.push(`${t('category.price')}: ${from} - ${to} ${t('cart.currency')}`)
         }
 
         if (filters.colors.length > 0) {
             const colorNames: Record<string, string> = {
-                'red': 'Красный',
-                'blue': 'Синий',
-                'pink': 'Розовый',
-                'gold': 'Золотой',
-                'silver': 'Серебряный',
-                'green': 'Зеленый'
+                'red': t('category.red'),
+                'blue': t('category.blue'),
+                'pink': t('category.pink'),
+                'gold': t('category.gold'),
+                'silver': t('category.silver'),
+                'green': t('category.green')
             }
             filters.colors.forEach(color => {
                 active.push(colorNames[color] || color)
@@ -224,11 +236,11 @@ export default function UniversalCategoryPage({
         }
 
         if (filters.withHelium) {
-            active.push('С гелием')
+            active.push(t('category.withHelium'))
         }
 
         if (filters.inStock) {
-            active.push('В наличии')
+            active.push(t('category.inStock'))
         }
 
         if (filters.volume && filters.volume.length > 0) {
@@ -247,18 +259,18 @@ export default function UniversalCategoryPage({
         const newFilters = { ...filters }
 
         // Удаление фильтра по цене
-        if (filterName.startsWith('Цена:')) {
+        if (filterName.startsWith(t('category.price') + ':')) {
             newFilters.priceRange = { from: '', to: '' }
         }
 
         // Удаление цветового фильтра
         const colorNames: Record<string, string> = {
-            'Красный': 'red',
-            'Синий': 'blue',
-            'Розовый': 'pink',
-            'Золотой': 'gold',
-            'Серебряный': 'silver',
-            'Зеленый': 'green'
+            [t('category.red')]: 'red',
+            [t('category.blue')]: 'blue',
+            [t('category.pink')]: 'pink',
+            [t('category.gold')]: 'gold',
+            [t('category.silver')]: 'silver',
+            [t('category.green')]: 'green'
         }
         if (colorNames[filterName]) {
             newFilters.colors = newFilters.colors.filter(c => c !== colorNames[filterName])
@@ -270,10 +282,10 @@ export default function UniversalCategoryPage({
         }
 
         // Удаление других фильтров
-        if (filterName === 'С гелием') {
+        if (filterName === t('category.withHelium')) {
             newFilters.withHelium = false
         }
-        if (filterName === 'В наличии') {
+        if (filterName === t('category.inStock')) {
             newFilters.inStock = false
         }
 
@@ -306,15 +318,15 @@ export default function UniversalCategoryPage({
 
     // Определение цвета для фильтра
     const getFilterColor = (filterName: string) => {
-        if (filterName.startsWith('Цена:')) return 'bg-amber-100 text-amber-800'
-        if (['Красный', 'Синий', 'Розовый', 'Золотой', 'Серебряный', 'Зеленый'].includes(filterName)) {
+        if (filterName.startsWith(t('category.price') + ':')) return 'bg-amber-100 text-amber-800'
+        if ([t('category.red'), t('category.blue'), t('category.pink'), t('category.gold'), t('category.silver'), t('category.green')].includes(filterName)) {
             return 'bg-blue-100 text-blue-800'
         }
-        if (['Фольга', 'Латекс', 'Бумажные', 'Пластиковые', 'Экологические'].includes(filterName)) {
+        if ([t('category.foil'), t('category.latex'), t('category.paper'), t('category.plastic'), t('category.eco')].includes(filterName)) {
             return 'bg-purple-100 text-purple-800'
         }
-        if (filterName === 'С гелием') return 'bg-teal-100 text-teal-800'
-        if (filterName === 'В наличии') return 'bg-green-100 text-green-800'
+        if (filterName === t('category.withHelium')) return 'bg-teal-100 text-teal-800'
+        if (filterName === t('category.inStock')) return 'bg-green-100 text-green-800'
         return 'bg-gray-100 text-gray-800'
     }
 
@@ -404,13 +416,13 @@ export default function UniversalCategoryPage({
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.291-1.002-5.824-2.709" />
                                 </svg>
                             </div>
-                            <h3 className="text-lg font-medium text-gray-900 mb-2">Товары не найдены</h3>
-                            <p className="text-gray-500 mb-4">Попробуйте изменить параметры фильтрации</p>
+                            <h3 className="text-lg font-medium text-gray-900 mb-2">{t('category.noProducts')}</h3>
+                            <p className="text-gray-500 mb-4">{t('category.tryChangeFilters')}</p>
                             <button
                                 onClick={clearAllFilters}
                                 className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors"
                             >
-                                Сбросить фильтры
+                                {t('category.resetFilters')}
                             </button>
                         </div>
                     )}

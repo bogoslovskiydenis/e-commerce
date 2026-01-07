@@ -39,11 +39,11 @@ export async function generateMetadata({ params }: { params: Promise<{ category:
     const { category: categorySlug } = await params
     const category = await getCategory(categorySlug)
     if (!category) {
-        return { title: 'Категория не найдена', description: 'Запрашиваемая категория не существует' }
+        return { title: 'Category not found', description: 'The requested category does not exist' }
     }
     return {
         title: category.metaTitle || category.name,
-        description: category.metaDescription || category.description || `Купить ${category.name}`,
+        description: category.metaDescription || category.description || `Buy ${category.name}`,
         keywords: category.metaKeywords || category.name
     }
 }
@@ -71,18 +71,11 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
         },
         seoTitle: category.metaTitle || category.name,
         seoDescription: category.metaDescription || category.description || '',
-        sortOptions: [
-            { value: 'popular', label: 'По популярности' },
-            { value: 'price-asc', label: 'Сначала дешевые' },
-            { value: 'price-desc', label: 'Сначала дорогие' },
-            { value: 'name-asc', label: 'По названию А-Я' },
-            { value: 'name-desc', label: 'По названию Я-А' },
-            { value: 'new', label: 'Новинки' }
-        ]
+        sortOptions: undefined
     }
 
     const breadcrumbs = [
-        { name: 'Главная', href: '/' },
+        { name: 'Home', href: '/' },
         { name: category.name, href: `/${category.slug}`, current: true }
     ]
 

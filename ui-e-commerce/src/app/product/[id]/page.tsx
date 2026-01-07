@@ -9,12 +9,14 @@ import { Heart, ShoppingBag, Share2, Minus, Plus, Truck, Award, RefreshCw, Check
 import { apiService } from '@/services/api'
 import { cartUtils } from '@/utils/cart'
 import ProductReviews from '@/components/ProductReviews/ProductReviews'
+import { useTranslation } from '@/contexts/LanguageContext'
 
 interface ProductPageProps {
     params: Promise<{ id: string }>
 }
 
 export default function ProductPage({ params }: ProductPageProps) {
+    const { t } = useTranslation()
     const { id } = use(params)
     const router = useRouter()
     const [product, setProduct] = useState<any>(null)
@@ -59,7 +61,7 @@ export default function ProductPage({ params }: ProductPageProps) {
             <div className="min-h-screen flex items-center justify-center">
                 <div className="text-center">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto mb-4"></div>
-                    <p className="text-gray-600">Загрузка товара...</p>
+                    <p className="text-gray-600">{t('product.loading')}</p>
                 </div>
             </div>
         )
@@ -69,9 +71,9 @@ export default function ProductPage({ params }: ProductPageProps) {
         return (
             <div className="min-h-screen flex items-center justify-center">
                 <div className="text-center">
-                    <h1 className="text-2xl font-bold mb-4">Товар не найден</h1>
+                    <h1 className="text-2xl font-bold mb-4">{t('product.notFound')}</h1>
                     <Link href="/" className="text-teal-600 hover:text-teal-700">
-                        Вернуться на главную
+                        {t('product.backToHome')}
                     </Link>
                 </div>
             </div>
@@ -127,11 +129,11 @@ export default function ProductPage({ params }: ProductPageProps) {
                 <div className="container mx-auto px-4 py-3">
                     <nav className="text-sm">
                         <ol className="flex items-center space-x-2">
-                            <li><Link href="/" className="text-gray-500 hover:text-teal-600">Главная</Link></li>
+                            <li><Link href="/" className="text-gray-500 hover:text-teal-600">{t('product.homePage')}</Link></li>
                             {product.category && (
                                 <>
                                     <li className="text-gray-400">/</li>
-                                    <li><Link href={`/${product.category.slug || product.categoryId}`} className="text-gray-500 hover:text-teal-600">{product.category.name || 'Категория'}</Link></li>
+                                    <li><Link href={`/${product.category.slug || product.categoryId}`} className="text-gray-500 hover:text-teal-600">{product.category.name || t('product.category')}</Link></li>
                                 </>
                             )}
                             <li className="text-gray-400">/</li>
@@ -161,7 +163,7 @@ export default function ProductPage({ params }: ProductPageProps) {
                                 )}
                                 {!inStock && (
                                     <div className="absolute top-4 right-4 bg-gray-500 text-white px-3 py-1 rounded-full text-sm font-medium">
-                                        Нет в наличии
+                                        {t('product.outOfStock')}
                                     </div>
                                 )}
                             </div>
@@ -193,14 +195,14 @@ export default function ProductPage({ params }: ProductPageProps) {
                         {/* Информация о товаре */}
                         <div className="space-y-6">
                             <div>
-                                {product.sku && <p className="text-sm text-gray-500 mb-2">Артикул: {product.sku}</p>}
+                                {product.sku && <p className="text-sm text-gray-500 mb-2">{t('product.sku')} {product.sku}</p>}
                                 <h1 className="text-2xl lg:text-3xl font-bold mb-4">{product.title || product.name}</h1>
 
                                 {/* Цена */}
                                 <div className="flex items-center gap-4 mb-4">
-                                    <span className="text-3xl font-bold">{currentPrice} ГРН</span>
+                                    <span className="text-3xl font-bold">{currentPrice} {t('product.currency')}</span>
                                     {product.oldPrice && (
-                                        <span className="text-xl text-gray-500 line-through">{Number(product.oldPrice)} ГРН</span>
+                                        <span className="text-xl text-gray-500 line-through">{Number(product.oldPrice)} {t('product.currency')}</span>
                                     )}
                                     {product.discount && (
                                         <span className="text-lg text-red-600">-{product.discount}%</span>
@@ -221,7 +223,7 @@ export default function ProductPage({ params }: ProductPageProps) {
                                                 ? 'bg-green-100 text-green-800'
                                                 : 'bg-red-100 text-red-800'
                                         }`}>
-                                            {inStock ? 'В наличии' : 'Нет в наличии'}
+                                            {inStock ? t('product.inStock') : t('product.outOfStock')}
                                         </span>
                                     </div>
                                 </div>
@@ -230,7 +232,7 @@ export default function ProductPage({ params }: ProductPageProps) {
                             {/* Выбор цвета */}
                             {colors.length > 0 && (
                                 <div>
-                                    <h3 className="text-lg font-medium mb-3">Цвет:</h3>
+                                    <h3 className="text-lg font-medium mb-3">{t('product.color')}</h3>
                                     <div className="flex gap-3 flex-wrap">
                                         {colors.map((color: any, index: number) => {
                                             const colorValue = typeof color === 'string' ? color : color.value || color.name
@@ -256,7 +258,7 @@ export default function ProductPage({ params }: ProductPageProps) {
                             {/* Выбор размера */}
                             {sizes.length > 0 && (
                                 <div>
-                                    <h3 className="text-lg font-medium mb-3">Размер:</h3>
+                                    <h3 className="text-lg font-medium mb-3">{t('product.size')}</h3>
                                     <div className="flex gap-3 flex-wrap">
                                         {sizes.map((size: string, index: number) => (
                                             <button
@@ -285,15 +287,15 @@ export default function ProductPage({ params }: ProductPageProps) {
                                             onChange={(e) => setWithHelium(e.target.checked)}
                                             className="w-5 h-5 text-teal-600 rounded focus:ring-teal-500"
                                         />
-                                        <span className="text-lg">С гелием (+30 ГРН)</span>
+                                        <span className="text-lg">{t('product.withHelium')}</span>
                                     </label>
-                                    <p className="text-sm text-gray-500 mt-1">Шар будет летать 5-7 дней</p>
+                                    <p className="text-sm text-gray-500 mt-1">{t('product.withHeliumDesc')}</p>
                                 </div>
                             )}
 
                             {/* Количество */}
                             <div>
-                                <h3 className="text-lg font-medium mb-3">Количество:</h3>
+                                <h3 className="text-lg font-medium mb-3">{t('product.quantity')}</h3>
                                 <div className="flex items-center gap-4">
                                     <div className="flex items-center border rounded-lg">
                                         <button
@@ -311,7 +313,7 @@ export default function ProductPage({ params }: ProductPageProps) {
                                             <Plus size={20} />
                                         </button>
                                     </div>
-                                    <span className="text-lg font-medium">Итого: {totalPrice} ГРН</span>
+                                    <span className="text-lg font-medium">{t('product.total')}: {totalPrice} {t('product.currency')}</span>
                                 </div>
                             </div>
 
@@ -330,12 +332,12 @@ export default function ProductPage({ params }: ProductPageProps) {
                                             {isAdded ? (
                                                 <>
                                                     <Check size={20} />
-                                                    ДОДАНО В КОШИК
+                                                    {t('product.addedToCart')}
                                                 </>
                                             ) : (
                                                 <>
                                                     <ShoppingBag size={20} />
-                                                    КУПИТИ
+                                                    {t('product.addToCart')}
                                                 </>
                                             )}
                                         </button>
@@ -343,16 +345,16 @@ export default function ProductPage({ params }: ProductPageProps) {
                                             onClick={handleQuickOrder}
                                             className="w-full border-2 border-teal-600 text-teal-600 py-4 rounded-lg hover:bg-teal-50 font-medium text-lg transition-colors"
                                         >
-                                            ШВИДКЕ ЗАМОВЛЕННЯ
+                                            {t('product.quickOrder')}
                                         </button>
                                     </>
                                 ) : (
                                     <div className="space-y-3">
                                         <div className="w-full bg-gray-300 text-gray-600 py-4 rounded-lg font-medium text-lg text-center">
-                                            НЕМАЄ В НАЯВНОСТІ
+                                            {t('product.outOfStock')}
                                         </div>
                                         <button className="w-full border-2 border-gray-300 text-gray-600 py-4 rounded-lg font-medium text-lg transition-colors hover:border-gray-400">
-                                            ПОВІДОМИТИ ПРО НАДХОДЖЕННЯ
+                                            {t('product.notifyArrival')}
                                         </button>
                                     </div>
                                 )}
@@ -363,22 +365,22 @@ export default function ProductPage({ params }: ProductPageProps) {
                                 <div className="flex items-start gap-3">
                                     <Truck className="text-teal-600 mt-1" size={20} />
                                     <div>
-                                        <h4 className="font-medium">БЫСТРАЯ ДОСТАВКА</h4>
-                                        <p className="text-sm text-gray-600">Доставка по Киеву за 2 часа. Новая почта, Укрпочта, Meest Express</p>
+                                        <h4 className="font-medium">{t('product.fastDelivery')}</h4>
+                                        <p className="text-sm text-gray-600">{t('product.fastDeliveryDesc')}</p>
                                     </div>
                                 </div>
                                 <div className="flex items-start gap-3">
                                     <Award className="text-teal-600 mt-1" size={20} />
                                     <div>
-                                        <h4 className="font-medium">ГАРАНТИЯ КАЧЕСТВА</h4>
-                                        <p className="text-sm text-gray-600">Качественные материалы и фурнитура, мастерская и обслуживание</p>
+                                        <h4 className="font-medium">{t('product.qualityGuarantee')}</h4>
+                                        <p className="text-sm text-gray-600">{t('product.qualityGuaranteeDesc')}</p>
                                     </div>
                                 </div>
                                 <div className="flex items-start gap-3">
                                     <RefreshCw className="text-teal-600 mt-1" size={20} />
                                     <div>
-                                        <h4 className="font-medium">ПРОСТОЙ ВОЗВРАТ И ОБМЕН</h4>
-                                        <p className="text-sm text-gray-600">В течение 14 календарных дней</p>
+                                        <h4 className="font-medium">{t('product.easyReturn')}</h4>
+                                        <p className="text-sm text-gray-600">{t('product.easyReturnDesc')}</p>
                                     </div>
                                 </div>
                             </div>
@@ -390,9 +392,9 @@ export default function ProductPage({ params }: ProductPageProps) {
                         <div className="container mx-auto px-6">
                             <div className="flex border-b">
                                 {[
-                                    { key: 'description', label: 'ОПИСАНИЕ' },
-                                    { key: 'characteristics', label: 'ХАРАКТЕРИСТИКИ' },
-                                    { key: 'delivery', label: 'ДОСТАВКА' }
+                                    { key: 'description', label: t('product.description') },
+                                    { key: 'characteristics', label: t('product.characteristics') },
+                                    { key: 'delivery', label: t('product.delivery') }
                                 ].map((tab) => (
                                     <button
                                         key={tab.key}
@@ -414,12 +416,12 @@ export default function ProductPage({ params }: ProductPageProps) {
                                         <div>
                                             <h3 className="text-xl font-bold mb-4">{product.title || product.name}</h3>
                                             <p className="text-gray-700 leading-relaxed mb-4">
-                                                {product.description || product.shortDescription || 'Описание товара отсутствует'}
+                                                {product.description || product.shortDescription || t('product.noDescription')}
                                             </p>
                                         </div>
                                         {product.attributes?.features && product.attributes.features.length > 0 && (
                                             <div>
-                                                <h4 className="font-bold mb-3">Особенности:</h4>
+                                                <h4 className="font-bold mb-3">{t('product.features')}</h4>
                                                 <ul className="list-disc list-inside space-y-2 text-gray-700">
                                                     {product.attributes.features.map((feature: string, index: number) => (
                                                         <li key={index}>{feature}</li>
@@ -433,36 +435,36 @@ export default function ProductPage({ params }: ProductPageProps) {
                                 {activeTab === 'characteristics' && (
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div>
-                                            <h4 className="font-bold mb-4">Основные характеристики</h4>
+                                            <h4 className="font-bold mb-4">{t('product.characteristics')}</h4>
                                             <dl className="space-y-2">
                                                 {product.attributes?.material && (
                                                     <div className="flex justify-between py-2 border-b">
-                                                        <dt className="text-gray-600">Материал:</dt>
+                                                        <dt className="text-gray-600">{t('product.material')}</dt>
                                                         <dd className="font-medium">{product.attributes.material}</dd>
                                                     </div>
                                                 )}
                                                 {product.category && (
                                                     <div className="flex justify-between py-2 border-b">
-                                                        <dt className="text-gray-600">Категория:</dt>
+                                                        <dt className="text-gray-600">{t('product.categoryLabel')}</dt>
                                                         <dd className="font-medium">{product.category.name || product.categoryId}</dd>
                                                     </div>
                                                 )}
                                                 {product.attributes?.withHelium !== undefined && (
                                                     <div className="flex justify-between py-2 border-b">
-                                                        <dt className="text-gray-600">С гелием:</dt>
-                                                        <dd className="font-medium">{product.attributes.withHelium ? 'Да' : 'Нет'}</dd>
+                                                        <dt className="text-gray-600">{t('product.withHeliumLabel')}</dt>
+                                                        <dd className="font-medium">{product.attributes.withHelium ? t('product.yes') : t('product.no')}</dd>
                                                     </div>
                                                 )}
                                                 {sizes.length > 0 && (
                                                     <div className="flex justify-between py-2 border-b">
-                                                        <dt className="text-gray-600">Доступные размеры:</dt>
+                                                        <dt className="text-gray-600">{t('product.availableSizes')}</dt>
                                                         <dd className="font-medium">{sizes.join(', ')}</dd>
                                                     </div>
                                                 )}
                                                 <div className="flex justify-between py-2 border-b">
-                                                    <dt className="text-gray-600">Наличие:</dt>
+                                                    <dt className="text-gray-600">{t('product.availability')}</dt>
                                                     <dd className={`font-medium ${inStock ? 'text-green-600' : 'text-red-600'}`}>
-                                                        {inStock ? 'В наличии' : 'Нет в наличии'}
+                                                        {inStock ? t('product.inStock') : t('product.outOfStock')}
                                                     </dd>
                                                 </div>
                                             </dl>
@@ -472,20 +474,20 @@ export default function ProductPage({ params }: ProductPageProps) {
 
                                 {activeTab === 'delivery' && (
                                     <div className="space-y-6">
-                                        <h4 className="font-bold">Доставка в интернет-магазине шариков</h4>
+                                        <h4 className="font-bold">{t('product.deliveryTitle')}</h4>
                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                             <div className="p-4 border rounded-lg">
-                                                <h5 className="font-medium mb-2">По Киеву</h5>
-                                                <p className="text-sm text-gray-600 mb-2">Бесплатно от 500 грн</p>
-                                                <p className="text-sm text-gray-600">От 50 грн</p>
+                                                <h5 className="font-medium mb-2">{t('product.deliveryKyiv')}</h5>
+                                                <p className="text-sm text-gray-600 mb-2">{t('product.deliveryKyivFree')}</p>
+                                                <p className="text-sm text-gray-600">{t('product.deliveryKyivPrice')}</p>
                                             </div>
                                             <div className="p-4 border rounded-lg">
-                                                <h5 className="font-medium mb-2">Экспресс доставка</h5>
-                                                <p className="text-sm text-gray-600">От 100 грн (2 часа)</p>
+                                                <h5 className="font-medium mb-2">{t('product.deliveryExpress')}</h5>
+                                                <p className="text-sm text-gray-600">{t('product.deliveryExpressPrice')}</p>
                                             </div>
                                             <div className="p-4 border rounded-lg">
-                                                <h5 className="font-medium mb-2">Новая почта</h5>
-                                                <p className="text-sm text-gray-600">По тарифам перевозчика</p>
+                                                <h5 className="font-medium mb-2">{t('product.deliveryNovaPoshta')}</h5>
+                                                <p className="text-sm text-gray-600">{t('product.deliveryNovaPoshtaPrice')}</p>
                                             </div>
                                         </div>
                                     </div>

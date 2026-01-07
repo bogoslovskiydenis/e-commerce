@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { CategoryConfig } from '@/config/categoryConfig'
+import { useTranslation } from '@/contexts/LanguageContext'
 
 interface SidebarFiltersProps {
     categoryKey: string;
@@ -27,6 +28,7 @@ export default function SidebarFilters({
                                            isMobile = false,
                                            onFiltersChange
                                        }: SidebarFiltersProps) {
+    const { t } = useTranslation()
     const [filters, setFilters] = useState<FilterState>({
         priceRange: { from: '', to: '' },
         colors: [],
@@ -119,15 +121,15 @@ export default function SidebarFilters({
 
             {/* Фильтры */}
             <div className="p-4 space-y-6">
-                <h3 className="font-semibold text-base">Фильтры</h3>
+                <h3 className="font-semibold text-base">{t('category.filters')}</h3>
 
                 {/* Цена */}
                 <div>
-                    <h4 className="text-sm font-medium mb-3">Цена</h4>
+                    <h4 className="text-sm font-medium mb-3">{t('category.price')}</h4>
                     <div className="flex gap-2">
                         <input
                             type="number"
-                            placeholder="От"
+                            placeholder={t('category.from')}
                             value={filters.priceRange.from}
                             onChange={(e) => updateFilters({
                                 priceRange: { ...filters.priceRange, from: e.target.value }
@@ -136,7 +138,7 @@ export default function SidebarFilters({
                         />
                         <input
                             type="number"
-                            placeholder="До"
+                            placeholder={t('category.to')}
                             value={filters.priceRange.to}
                             onChange={(e) => updateFilters({
                                 priceRange: { ...filters.priceRange, to: e.target.value }
@@ -148,15 +150,15 @@ export default function SidebarFilters({
 
                 {/* Цвет */}
                 <div>
-                    <h4 className="text-sm font-medium mb-3">Цвет</h4>
+                    <h4 className="text-sm font-medium mb-3">{t('category.color')}</h4>
                     <div className="space-y-2">
                         {[
-                            { name: 'Красный', value: 'red', color: 'bg-red-500' },
-                            { name: 'Синий', value: 'blue', color: 'bg-blue-500' },
-                            { name: 'Розовый', value: 'pink', color: 'bg-pink-500' },
-                            { name: 'Золотой', value: 'gold', color: 'bg-yellow-500' },
-                            { name: 'Серебряный', value: 'silver', color: 'bg-gray-400' },
-                            { name: 'Зеленый', value: 'green', color: 'bg-green-500' }
+                            { name: t('category.red'), value: 'red', color: 'bg-red-500' },
+                            { name: t('category.blue'), value: 'blue', color: 'bg-blue-500' },
+                            { name: t('category.pink'), value: 'pink', color: 'bg-pink-500' },
+                            { name: t('category.gold'), value: 'gold', color: 'bg-yellow-500' },
+                            { name: t('category.silver'), value: 'silver', color: 'bg-gray-400' },
+                            { name: t('category.green'), value: 'green', color: 'bg-green-500' }
                         ].map((color) => (
                             <label key={color.value} className="flex items-center gap-3 cursor-pointer">
                                 <input
@@ -175,9 +177,9 @@ export default function SidebarFilters({
                 {/* Материал для шариков */}
                 {categoryKey === 'balloons' && (
                     <div>
-                        <h4 className="text-sm font-medium mb-3">Материал</h4>
+                        <h4 className="text-sm font-medium mb-3">{t('category.material')}</h4>
                         <div className="space-y-2">
-                            {['Фольга', 'Латекс'].map((material) => (
+                            {[t('category.foil'), t('category.latex')].map((material) => (
                                 <label key={material} className="flex items-center gap-2 cursor-pointer">
                                     <input
                                         type="checkbox"
@@ -195,9 +197,9 @@ export default function SidebarFilters({
                 {/* Материал для стаканчиков */}
                 {categoryKey === 'cups' && (
                     <div>
-                        <h4 className="text-sm font-medium mb-3">Материал</h4>
+                        <h4 className="text-sm font-medium mb-3">{t('category.material')}</h4>
                         <div className="space-y-2">
-                            {['Бумажные', 'Пластиковые', 'Экологические'].map((material) => (
+                            {[t('category.paper'), t('category.plastic'), t('category.eco')].map((material) => (
                                 <label key={material} className="flex items-center gap-2 cursor-pointer">
                                     <input
                                         type="checkbox"
@@ -215,7 +217,7 @@ export default function SidebarFilters({
                 {/* Объем для стаканчиков */}
                 {categoryKey === 'cups' && (
                     <div>
-                        <h4 className="text-sm font-medium mb-3">Объем</h4>
+                        <h4 className="text-sm font-medium mb-3">{t('category.volume')}</h4>
                         <div className="space-y-2">
                             {['200мл', '250мл', '300мл'].map((volume) => (
                                 <label key={volume} className="flex items-center gap-2 cursor-pointer">
@@ -235,9 +237,9 @@ export default function SidebarFilters({
                 {/* Тип подарка для подарков */}
                 {categoryKey === 'gifts' && (
                     <div>
-                        <h4 className="text-sm font-medium mb-3">Тип подарка</h4>
+                        <h4 className="text-sm font-medium mb-3">{t('category.giftType')}</h4>
                         <div className="space-y-2">
-                            {['Мягкие игрушки', 'Сувениры', 'Украшения', 'Конфеты', 'Цветы'].map((type) => (
+                            {[t('category.plush'), t('category.souvenirs'), t('category.jewelry'), t('category.sweets'), t('category.flowers')].map((type) => (
                                 <label key={type} className="flex items-center gap-2 cursor-pointer">
                                     <input
                                         type="checkbox"
@@ -262,7 +264,7 @@ export default function SidebarFilters({
                                 onChange={(e) => updateFilters({ withHelium: e.target.checked })}
                                 className="w-4 h-4 text-teal-600 rounded focus:ring-teal-500"
                             />
-                            <span className="text-sm">С гелием</span>
+                            <span className="text-sm">{t('category.withHelium')}</span>
                         </label>
                     </div>
                 )}
@@ -276,7 +278,7 @@ export default function SidebarFilters({
                             onChange={(e) => updateFilters({ inStock: e.target.checked })}
                             className="w-4 h-4 text-teal-600 rounded focus:ring-teal-500"
                         />
-                        <span className="text-sm">В наличии</span>
+                        <span className="text-sm">{t('category.inStock')}</span>
                     </label>
                 </div>
 
@@ -286,13 +288,13 @@ export default function SidebarFilters({
                         onClick={applyFilters}
                         className="w-full bg-teal-600 text-white py-2 rounded-lg hover:bg-teal-700 text-sm font-medium transition-colors"
                     >
-                        Применить фильтры
+                        {t('category.applyFilters')}
                     </button>
                     <button
                         onClick={resetFilters}
                         className="w-full border border-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-50 text-sm transition-colors"
                     >
-                        Сбросить все
+                        {t('category.resetAll')}
                     </button>
                 </div>
             </div>
