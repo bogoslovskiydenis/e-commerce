@@ -8,6 +8,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { apiService, Product } from '@/services/api'
 import ProductCard from '@/components/ProductCard/ProductCard'
 import { cartUtils } from '@/utils/cart'
+import { useTranslation } from '@/contexts/LanguageContext'
 
 // Компонент карточки товара в избранном с кнопкой сердца
 function FavoriteProductCard({ 
@@ -44,7 +45,7 @@ function FavoriteProductCard({
                 onClick={handleHeartClick}
                 disabled={isRemoving}
                 className="absolute top-2 right-2 z-10 p-2 bg-white rounded-full shadow-md hover:bg-red-50 transition-colors"
-                aria-label="Видалити з улюблених"
+                aria-label={t('favorites.removeFromFavorites')}
             >
                 {isRemoving ? (
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-red-500"></div>
@@ -60,6 +61,7 @@ type ViewMode = 'grid' | 'list'
 type SortOption = 'newest' | 'oldest' | 'price-asc' | 'price-desc' | 'name-asc' | 'name-desc'
 
 export default function FavoritesPage() {
+    const { t } = useTranslation()
     const { isAuthenticated } = useAuth()
     const [favorites, setFavorites] = useState<Product[]>([])
     const [loading, setLoading] = useState(true)
@@ -140,21 +142,21 @@ export default function FavoritesPage() {
                 {/* Хлебные крошки */}
                 <div className="mb-6 flex items-center text-sm">
                     <Link href="/" className="text-gray-600 hover:text-teal-600 transition-colors">
-                        Головна сторінка
+                        {t('favorites.homePage')}
                     </Link>
                     <ChevronRight size={16} className="mx-2 text-gray-400" />
-                    <span className="font-medium text-gray-900">Улюблене</span>
+                    <span className="font-medium text-gray-900">{t('favorites.title')}</span>
                 </div>
 
                 {/* Заголовок и статистика */}
                 <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                     <div>
                         <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-2">
-                            Улюблене
+                            {t('favorites.title')}
                         </h1>
                         {!isEmpty && (
                             <p className="text-gray-600">
-                                {favorites.length} {favorites.length === 1 ? 'товар' : 'товарів'}
+                                {favorites.length} {favorites.length === 1 ? t('favorites.item') : t('favorites.items')}
                             </p>
                         )}
                     </div>
@@ -168,12 +170,12 @@ export default function FavoritesPage() {
                                     onChange={(e) => setSortBy(e.target.value as SortOption)}
                                     className="appearance-none bg-white border border-gray-300 rounded-md px-4 py-2 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                                 >
-                                    <option value="newest">Спочатку нові</option>
-                                    <option value="oldest">Спочатку старі</option>
-                                    <option value="price-asc">Ціна: від низької</option>
-                                    <option value="price-desc">Ціна: від високої</option>
-                                    <option value="name-asc">Назва: А-Я</option>
-                                    <option value="name-desc">Назва: Я-А</option>
+                                    <option value="newest">{t('favorites.sortNewest')}</option>
+                                    <option value="oldest">{t('favorites.sortOldest')}</option>
+                                    <option value="price-asc">{t('favorites.sortPriceAsc')}</option>
+                                    <option value="price-desc">{t('favorites.sortPriceDesc')}</option>
+                                    <option value="name-asc">{t('favorites.sortNameAsc')}</option>
+                                    <option value="name-desc">{t('favorites.sortNameDesc')}</option>
                                 </select>
                                 <ArrowUpDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
                             </div>
@@ -187,7 +189,7 @@ export default function FavoritesPage() {
                                             ? 'bg-teal-600 text-white'
                                             : 'text-gray-600 hover:bg-gray-50'
                                     }`}
-                                    aria-label="Сітка"
+                                    aria-label={t('favorites.gridView')}
                                 >
                                     <Grid3x3 size={18} />
                                 </button>
@@ -198,7 +200,7 @@ export default function FavoritesPage() {
                                             ? 'bg-teal-600 text-white'
                                             : 'text-gray-600 hover:bg-gray-50'
                                     }`}
-                                    aria-label="Список"
+                                    aria-label={t('favorites.listView')}
                                 >
                                     <List size={18} />
                                 </button>
@@ -213,22 +215,22 @@ export default function FavoritesPage() {
                         <div className="w-32 h-32 mb-6 flex items-center justify-center rounded-full bg-gray-100">
                             <Heart size={48} className="text-gray-400" />
                         </div>
-                        <h2 className="text-2xl font-bold mb-3 text-gray-900">Ваші улюблені товари</h2>
+                        <h2 className="text-2xl font-bold mb-3 text-gray-900">{t('favorites.emptyTitle')}</h2>
                         <p className="text-gray-600 mb-8 max-w-md mx-auto">
-                            Увійдіть, щоб зберігати товари, які вам сподобалися, і повертатися до них пізніше.
+                            {t('favorites.emptyText')}
                         </p>
                         <div className="flex flex-col sm:flex-row gap-3">
                             <Link
                                 href="/login"
                                 className="px-8 py-3 bg-teal-600 text-white font-medium rounded-md hover:bg-teal-700 transition-colors text-center"
                             >
-                                Ввійти
+                                {t('favorites.login')}
                             </Link>
                             <Link
                                 href="/"
                                 className="px-8 py-3 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors text-center"
                             >
-                                Переглянути товари
+                                {t('favorites.viewProducts')}
                             </Link>
                         </div>
                     </div>
@@ -237,21 +239,21 @@ export default function FavoritesPage() {
                         <div className="w-32 h-32 mb-6 flex items-center justify-center rounded-full bg-gray-100">
                             <Heart size={48} className="text-gray-400" />
                         </div>
-                        <h2 className="text-2xl font-bold mb-3 text-gray-900">Список порожній</h2>
+                        <h2 className="text-2xl font-bold mb-3 text-gray-900">{t('favorites.emptyAuthenticatedTitle')}</h2>
                         <p className="text-gray-600 mb-8 max-w-md mx-auto">
-                            Поки що у вас немає збережених товарів. Почніть додавати товари до улюблених!
+                            {t('favorites.emptyAuthenticatedText')}
                         </p>
                         <Link
                             href="/"
                             className="px-8 py-3 bg-teal-600 text-white font-medium rounded-md hover:bg-teal-700 transition-colors"
                         >
-                            Переглянути товари
+                            {t('favorites.viewProducts')}
                         </Link>
                     </div>
                 ) : loading ? (
                     <div className="text-center py-20">
                         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto"></div>
-                        <p className="mt-4 text-gray-600">Завантаження...</p>
+                        <p className="mt-4 text-gray-600">{t('favorites.loading')}</p>
                     </div>
                 ) : viewMode === 'grid' ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -313,9 +315,9 @@ export default function FavoritesPage() {
                                             </div>
                                             <div className="mt-2 flex items-center gap-2">
                                                 {product.inStock ? (
-                                                    <span className="text-sm text-green-600 font-medium">В наявності</span>
+                                                    <span className="text-sm text-green-600 font-medium">{t('favorites.inStock')}</span>
                                                 ) : (
-                                                    <span className="text-sm text-red-600 font-medium">Немає в наявності</span>
+                                                    <span className="text-sm text-red-600 font-medium">{t('favorites.outOfStock')}</span>
                                                 )}
                                             </div>
                                         </div>
@@ -327,14 +329,14 @@ export default function FavoritesPage() {
                                                     className="flex items-center gap-2 px-4 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-700 transition-colors"
                                                 >
                                                     <ShoppingBag size={18} />
-                                                    <span className="hidden sm:inline">В кошик</span>
+                                                    <span className="hidden sm:inline">{t('favorites.addToCart')}</span>
                                                 </button>
                                             )}
                                             <button
                                                 onClick={() => handleRemoveFavorite(product.id)}
                                                 disabled={removingId === product.id}
                                                 className="p-2 border border-gray-300 rounded-md hover:bg-red-50 hover:border-red-300 transition-colors"
-                                                aria-label="Видалити з улюблених"
+                                                aria-label={t('favorites.removeFromFavorites')}
                                             >
                                                 {removingId === product.id ? (
                                                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-red-500"></div>

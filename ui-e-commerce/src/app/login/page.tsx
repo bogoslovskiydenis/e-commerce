@@ -5,8 +5,10 @@ import { Eye, EyeOff } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import Link from "next/link"
 import { useAuth } from '@/contexts/AuthContext'
+import { useTranslation } from '@/contexts/LanguageContext'
 
 export default function LoginPage() {
+    const { t } = useTranslation()
     const router = useRouter()
     const { login, register, isAuthenticated } = useAuth()
     const [passwordVisible, setPasswordVisible] = useState(false)
@@ -31,7 +33,7 @@ export default function LoginPage() {
             await login(email || phone, password)
             router.push('/account')
         } catch (err: any) {
-            setError(err.message || 'Помилка входу')
+            setError(err.message || t('login.loginError'))
         } finally {
             setLoading(false)
         }
@@ -41,7 +43,7 @@ export default function LoginPage() {
         e.preventDefault()
         setError('')
         if (!name || !phone || !password) {
-            setError('Заповніть всі обов\'язкові поля')
+            setError(t('login.fillRequired'))
             return
         }
         setLoading(true)
@@ -49,7 +51,7 @@ export default function LoginPage() {
             await register({ name, email: email || undefined, phone, password })
             router.push('/account')
         } catch (err: any) {
-            setError(err.message || 'Помилка реєстрації')
+            setError(err.message || t('login.registerError'))
         } finally {
             setLoading(false)
         }
@@ -83,7 +85,7 @@ export default function LoginPage() {
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
                                 </svg>
                             )}
-                            У мене є акаунт
+                            {t('login.haveAccount')}
                         </button>
                         <button
                             onClick={() => setActiveTab('register')}
@@ -103,7 +105,7 @@ export default function LoginPage() {
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
                                 </svg>
                             )}
-                            У мене немає акаунта
+                            {t('login.noAccount')}
                         </button>
                     </div>
 
@@ -123,7 +125,7 @@ export default function LoginPage() {
                                     value={name}
                                     onChange={(e) => setName(e.target.value)}
                                     className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-teal-500"
-                                    placeholder="Ім'я"
+                                    placeholder={t('login.name')}
                                     required
                                 />
                             </div>
@@ -148,7 +150,7 @@ export default function LoginPage() {
                                     }
                                 }}
                                 className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-teal-500"
-                                placeholder={activeTab === 'login' ? 'Телефон або e-mail' : 'Адреса e-mail (необов\'язково)'}
+                                placeholder={activeTab === 'login' ? t('login.phoneOrEmail') : t('login.emailOptional')}
                                 required={activeTab === 'login'}
                             />
                         </div>
@@ -160,7 +162,7 @@ export default function LoginPage() {
                                     value={phone}
                                     onChange={(e) => setPhone(e.target.value)}
                                     className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-teal-500"
-                                    placeholder="Телефон"
+                                    placeholder={t('login.phone')}
                                     required
                                 />
                             </div>
@@ -172,7 +174,7 @@ export default function LoginPage() {
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-teal-500"
-                                placeholder="Пароль"
+                                placeholder={t('login.password')}
                                 required
                                 minLength={8}
                             />
@@ -190,7 +192,7 @@ export default function LoginPage() {
                             disabled={loading}
                             className="w-full py-3 bg-teal-600 text-white font-medium rounded-md hover:bg-teal-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            {loading ? 'Завантаження...' : (activeTab === 'login' ? 'Ввійти' : 'Створити акаунт')}
+                            {loading ? t('login.loading') : (activeTab === 'login' ? t('login.login') : t('login.createAccount'))}
                         </button>
 
                         {activeTab === 'login' && (
@@ -198,7 +200,7 @@ export default function LoginPage() {
                                 type="button"
                                 className="w-full text-sm text-gray-600 hover:text-teal-600 text-center underline transition-colors"
                             >
-                                Я не пам'ятаю свій пароль
+                                {t('login.forgotPassword')}
                             </button>
                         )}
                     </form>
@@ -209,7 +211,7 @@ export default function LoginPage() {
                             <div className="w-full border-t border-gray-300"></div>
                         </div>
                         <div className="relative flex justify-center">
-                            <span className="bg-white px-4 text-sm text-gray-500">або продовжити через</span>
+                            <span className="bg-white px-4 text-sm text-gray-500">{t('login.continueWith')}</span>
                         </div>
                     </div>
 
@@ -254,7 +256,7 @@ export default function LoginPage() {
 
             {/* Футер */}
             <div className="py-6 text-center text-sm text-gray-500">
-                <p>© 2025 Все права защищены.</p>
+                <p>{t('login.allRightsReserved')}</p>
             </div>
         </div>
     )

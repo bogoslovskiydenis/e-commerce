@@ -1,6 +1,10 @@
+'use client'
+
 import Link from 'next/link'
+import { useTranslation } from '@/contexts/LanguageContext'
 
 export default function SimpleHeader() {
+    const { t } = useTranslation()
     return (
         <header className="fixed top-0 left-0 right-0 bg-white z-50 shadow-sm border-b">
             <div className="container mx-auto px-4">
@@ -12,7 +16,7 @@ export default function SimpleHeader() {
                             </svg>
                         </Link>
                         <Link href="/" className="text-2xl font-bold text-teal-600">
-                            Логотип
+                            {t('header.logo')}
                         </Link>
                     </div>
 

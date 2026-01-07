@@ -9,70 +9,72 @@ import CTASection from '@/components/HomePageComponent/CTASection/CTASection'
 import QuickOrderSection from '@/components/HomePageComponent/QuickOrderSection/QuickOrderSection'
 import BannerSlider from '@/components/Banner/BannerSlider'
 import { apiService, Product, Category, Banner } from '@/services/api'
-
-// Данные для быстрого заказа
-const QUICK_ORDER_STEPS = [
-    {
-        icon: '🎈',
-        title: 'Выберите шарики',
-        description: 'Более 500 видов воздушных шаров'
-    },
-    {
-        icon: '🚚',
-        title: 'Быстрая доставка',
-        description: 'Доставим за 2 часа по Киеву'
-    },
-    {
-        icon: '💝',
-        title: 'Готовые наборы',
-        description: 'Подарочные комплекты на любой повод'
-    }
-]
-
-// Преимущества
-const FEATURES = [
-    {
-        icon: '⚡',
-        title: 'Быстрая доставка',
-        description: 'Доставим за 2 часа в любую точку Киева'
-    },
-    {
-        icon: '✨',
-        title: 'Качество гарантировано',
-        description: 'Только лучшие материалы и свежий гелий'
-    },
-    {
-        icon: '🎨',
-        title: 'Индивидуальный подход',
-        description: 'Создаем уникальные композиции под ваши пожелания'
-    },
-    {
-        icon: '💰',
-        title: 'Доступные цены',
-        description: 'Лучшие цены в Киеве без переплат'
-    }
-]
-
-// CTA Секция
-const CTA_BUTTONS = [
-    {
-        text: '📞 (067) 111-11-11',
-        href: 'tel:(067) 111-11-11',
-        primary: true
-    },
-    {
-        text: '💬 Написать в Telegram',
-        href: '/contacts',
-        primary: false
-    }
-]
+import { useTranslation } from '@/contexts/LanguageContext'
 
 export default function HomePage() {
+    const { t } = useTranslation()
     const [featuredProducts, setFeaturedProducts] = useState<Product[]>([])
     const [popularProducts, setPopularProducts] = useState<Product[]>([])
     const [mainCategories, setMainCategories] = useState<Category[]>([])
     const [banners, setBanners] = useState<Banner[]>([])
     const [loading, setLoading] = useState(true)
+
+    // Данные для быстрого заказа
+    const QUICK_ORDER_STEPS = [
+        {
+            icon: '🎈',
+            title: t('home.chooseBalloons'),
+            description: t('home.chooseBalloonsDesc')
+        },
+        {
+            icon: '🚚',
+            title: t('home.fastDelivery'),
+            description: t('home.fastDeliveryDesc')
+        },
+        {
+            icon: '💝',
+            title: t('home.readySets'),
+            description: t('home.readySetsDesc')
+        }
+    ]
+
+    // Преимущества
+    const FEATURES = [
+        {
+            icon: '⚡',
+            title: t('home.fastDeliveryTitle'),
+            description: t('home.fastDeliveryDesc')
+        },
+        {
+            icon: '✨',
+            title: t('home.qualityGuaranteed'),
+            description: t('home.qualityGuaranteedDesc')
+        },
+        {
+            icon: '🎨',
+            title: t('home.individualApproach'),
+            description: t('home.individualApproachDesc')
+        },
+        {
+            icon: '💰',
+            title: t('home.affordablePrices'),
+            description: t('home.affordablePricesDesc')
+        }
+    ]
+
+    // CTA Секция
+    const CTA_BUTTONS = [
+        {
+            text: '📞 (067) 111-11-11',
+            href: 'tel:(067) 111-11-11',
+            primary: true
+        },
+        {
+            text: t('home.writeToTelegram'),
+            href: '/contacts',
+            primary: false
+        }
+    ]
 
     // Загрузка данных из API
     useEffect(() => {
@@ -117,14 +119,14 @@ export default function HomePage() {
 
             {/* Быстрый заказ */}
             <QuickOrderSection
-                title="Быстрый заказ"
+                title={t('home.quickOrder')}
                 steps={QUICK_ORDER_STEPS}
             />
 
             {/* Популярные категории */}
             {!loading && mainCategories.length > 0 && (
                 <CategorySection
-                    title="Популярные категории"
+                    title={t('home.popularCategories')}
                     categories={mainCategories}
                     columns={5}
                 />
@@ -133,7 +135,7 @@ export default function HomePage() {
             {/* Хиты продаж */}
             {!loading && (
                 <FeaturedProductsSection
-                    title="Хиты продаж"
+                    title={t('home.featuredProducts')}
                     products={featuredProducts.map(product => ({
                         id: product.id,
                         name: product.title || product.name || '',
@@ -145,7 +147,7 @@ export default function HomePage() {
                         link: `/product/${product.id}`
                     }))}
                     viewAllLink="/products?featured=true"
-                    viewAllText="Посмотреть все"
+                    viewAllText={t('home.viewAll')}
                     bgColor="bg-gray-50"
                     slidesToShow={4}
                 />
@@ -154,7 +156,7 @@ export default function HomePage() {
             {/* Популярные товары */}
             {!loading && popularProducts.length > 0 && (
                 <FeaturedProductsSection
-                    title="Популярные товары"
+                    title={t('home.popularProducts')}
                     products={popularProducts.map(product => ({
                         id: product.id,
                         name: product.title || product.name || '',
@@ -166,7 +168,7 @@ export default function HomePage() {
                         link: `/product/${product.id}`
                     }))}
                     viewAllLink="/products"
-                    viewAllText="Посмотреть все"
+                    viewAllText={t('home.viewAll')}
                     bgColor="bg-white"
                     slidesToShow={4}
                 />
@@ -174,14 +176,14 @@ export default function HomePage() {
 
             {/* Преимущества */}
             <FeaturesSection
-                title="Почему выбирают нас"
+                title={t('home.whyChooseUs')}
                 features={FEATURES}
                 columns={4}
             />
 
             {/* Отзывы - пока оставляем статичные, так как нет API для отзывов */}
             <TestimonialsSection
-                title="Отзывы наших клиентов"
+                title={t('home.testimonials')}
                 testimonials={[
                     {
                         name: 'Анна',
@@ -205,8 +207,8 @@ export default function HomePage() {
 
             {/* CTA секция */}
             <CTASection
-                title="Готовы сделать заказ?"
-                subtitle="Свяжитесь с нами любым удобным способом"
+                title={t('home.readyToOrder')}
+                subtitle={t('home.readyToOrderSubtitle')}
                 buttons={CTA_BUTTONS}
                 bgColor="bg-teal-600"
                 textColor="text-white"

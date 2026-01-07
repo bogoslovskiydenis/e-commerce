@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useNavigation } from '@/hooks/useNavigation'
 import { CategoryDropdownMenu } from './CategoryDropdownMenu'
+import { useTranslation } from '@/contexts/LanguageContext'
 
 interface NavigationItem {
     id: string;
@@ -19,6 +20,7 @@ interface NavigationItem {
 }
 
 export default function Navigation() {
+    const { t } = useTranslation()
     const [navigationItems, setNavigationItems] = useState<NavigationItem[]>([]);
     const [hoveredItem, setHoveredItem] = useState<string | null>(null);
 
@@ -64,7 +66,7 @@ export default function Navigation() {
             const specialItems: NavigationItem[] = [
                 {
                     id: 'sale',
-                    title: 'Акции',
+                    title: t('navigation.sale'),
                     href: '/sale',
                     isSpecial: true,
                     sortOrder: 999
@@ -179,7 +181,7 @@ export default function Navigation() {
                                                             href={item.href}
                                                             className="text-sm text-teal-600 hover:text-teal-700 font-medium"
                                                         >
-                                                            Смотреть все {item.title.toLowerCase()} →
+                                                            {t('navigation.viewAll')} {item.title.toLowerCase()} →
                                                         </Link>
                                                     </div>
                                                 </div>

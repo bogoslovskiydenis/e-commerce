@@ -5,6 +5,7 @@ import { useState, useCallback } from 'react'
 import { AuthTabs } from './AuthTabs'
 import { LoginForm } from './LoginForm'
 import { RegisterForm } from './RegisterForm'
+import { useTranslation } from '@/contexts/LanguageContext'
 
 interface AuthModalProps {
     isOpen: boolean
@@ -13,6 +14,7 @@ interface AuthModalProps {
 }
 
 export function AuthModal({ isOpen, onClose, type: initialType }: AuthModalProps) {
+    const { t } = useTranslation()
     const [type, setType] = useState(initialType)
     const [passwordVisible, setPasswordVisible] = useState(false)
     const [email, setEmail] = useState('')
@@ -35,7 +37,7 @@ export function AuthModal({ isOpen, onClose, type: initialType }: AuthModalProps
                 </button>
 
                 <h2 className="text-2xl font-medium text-center mb-6">
-                    {type === 'login' ? 'Раді бачити Тебе знову!' : 'Приємно познайомитись!'}
+                    {type === 'login' ? t('authModal.welcomeBack') : t('authModal.niceToMeet')}
                 </h2>
 
                 <AuthTabs activeTab={type} onTabChange={setType} />

@@ -7,8 +7,10 @@ import Image from 'next/image'
 import { ChevronRight, ShoppingBag, Trash2, Plus, Minus } from 'lucide-react'
 import { cartUtils, CartItem, AppliedPromotion } from '@/utils/cart'
 import PromoCodeInput from '@/components/PromoCodeInput/PromoCodeInput'
+import { useTranslation } from '@/contexts/LanguageContext'
 
 export default function CartPage() {
+    const { t } = useTranslation()
     const router = useRouter()
     const [cartItems, setCartItems] = useState<CartItem[]>([])
     const [isLoading, setIsLoading] = useState(true)
@@ -64,7 +66,7 @@ export default function CartPage() {
         return (
             <div className="container mx-auto px-4 py-8">
                 <div className="text-center">
-                    <p className="text-gray-600">Завантаження...</p>
+                    <p className="text-gray-600">{t('cart.loading')}</p>
                 </div>
             </div>
         )
@@ -74,12 +76,12 @@ export default function CartPage() {
         <div className="container mx-auto px-4 py-8">
             {/* Хлебные крошки */}
             <div className="mb-6 flex items-center text-sm">
-                <Link href="/" className="text-gray-600 hover:text-teal-600">Головна сторінка</Link>
+                <Link href="/" className="text-gray-600 hover:text-teal-600">{t('cart.homePage')}</Link>
                 <ChevronRight size={16} className="mx-2 text-gray-400" />
-                <span className="font-medium">Кошик</span>
+                <span className="font-medium">{t('cart.title')}</span>
             </div>
 
-            <h1 className="text-2xl sm:text-3xl font-bold mb-6">Кошик</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold mb-6">{t('cart.title')}</h1>
 
             {cartItems.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12 text-center">
@@ -87,16 +89,16 @@ export default function CartPage() {
                         <ShoppingBag size={80} className="text-gray-300" />
                     </div>
 
-                    <h2 className="text-2xl font-bold mb-3">Ваш кошик порожній</h2>
+                    <h2 className="text-2xl font-bold mb-3">{t('cart.emptyTitle')}</h2>
                     <p className="text-gray-600 mb-6 max-w-md mx-auto">
-                        Додайте товари до кошика, щоб продовжити покупки.
+                        {t('cart.emptyText')}
                     </p>
 
                     <Link
                         href="/"
                         className="px-8 py-3 bg-teal-600 text-white font-medium rounded-md hover:bg-teal-700 text-center"
                     >
-                        Перейти до покупок
+                        {t('cart.continueShopping')}
                     </Link>
                 </div>
             ) : (
@@ -105,13 +107,13 @@ export default function CartPage() {
                     <div className="lg:col-span-2">
                         <div className="bg-white rounded-lg shadow-sm border border-gray-200">
                             <div className="p-4 border-b border-gray-200 flex items-center justify-between">
-                                <h2 className="text-lg font-semibold">Товари в кошику ({cartItems.length})</h2>
+                                <h2 className="text-lg font-semibold">{t('cart.itemsInCart')} ({cartItems.length})</h2>
                                 {cartItems.length > 0 && (
                                     <button
                                         onClick={clearCart}
                                         className="text-sm text-red-600 hover:text-red-700"
                                     >
-                                        Очистити кошик
+                                        {t('cart.clearCart')}
                                     </button>
                                 )}
                             </div>
@@ -132,7 +134,7 @@ export default function CartPage() {
                                         <div className="flex-1">
                                             <h3 className="font-medium text-gray-900 mb-1">{item.name}</h3>
                                             <p className="text-lg font-semibold text-teal-600 mb-3">
-                                                {item.price} грн
+                                                {item.price} {t('cart.currency')}
                                             </p>
 
                                             <div className="flex items-center gap-4">
@@ -171,7 +173,7 @@ export default function CartPage() {
                     {/* Итоговая информация */}
                     <div className="lg:col-span-1">
                         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 sticky top-4">
-                            <h2 className="text-lg font-semibold mb-4">Підсумок замовлення</h2>
+                            <h2 className="text-lg font-semibold mb-4">{t('cart.orderSummary')}</h2>
 
                             <PromoCodeInput
                                 onPromotionApplied={(promo) => setAppliedPromotion(promo)}
@@ -180,26 +182,26 @@ export default function CartPage() {
 
                             <div className="space-y-3 mb-4">
                                 <div className="flex justify-between text-gray-600">
-                                    <span>Товарів:</span>
-                                    <span>{cartItems.reduce((sum, item) => sum + item.quantity, 0)} шт.</span>
+                                    <span>{t('cart.items')}</span>
+                                    <span>{cartItems.reduce((sum, item) => sum + item.quantity, 0)} {t('cart.itemsCount')}</span>
                                 </div>
                                 <div className="flex justify-between text-gray-600">
-                                    <span>Сума:</span>
-                                    <span>{subtotal} грн</span>
+                                    <span>{t('cart.subtotal')}</span>
+                                    <span>{subtotal} {t('cart.currency')}</span>
                                 </div>
                                 {discount > 0 && (
                                     <div className="flex justify-between text-green-600">
-                                        <span>Знижка:</span>
-                                        <span>-{discount} грн</span>
+                                        <span>{t('cart.discount')}</span>
+                                        <span>-{discount} {t('cart.currency')}</span>
                                     </div>
                                 )}
                                 <div className="flex justify-between text-gray-600">
-                                    <span>Доставка:</span>
-                                    <span>За тарифами перевізника</span>
+                                    <span>{t('cart.delivery')}</span>
+                                    <span>{t('cart.deliveryInfo')}</span>
                                 </div>
                                 <div className="border-t border-gray-200 pt-3 flex justify-between text-lg font-bold">
-                                    <span>Всього:</span>
-                                    <span className="text-teal-600">{total} грн</span>
+                                    <span>{t('cart.total')}</span>
+                                    <span className="text-teal-600">{total} {t('cart.currency')}</span>
                                 </div>
                             </div>
 
@@ -213,14 +215,14 @@ export default function CartPage() {
                                 }}
                                 className="block w-full bg-teal-600 text-white text-center py-3 rounded-lg font-medium hover:bg-teal-700 transition-colors mb-3"
                             >
-                                Оформити замовлення
+                                {t('cart.checkout')}
                             </button>
 
                             <Link
                                 href="/"
                                 className="block w-full border border-gray-300 text-gray-700 text-center py-3 rounded-lg font-medium hover:bg-gray-50 transition-colors"
                             >
-                                Продовжити покупки
+                                {t('cart.continueShoppingBtn')}
                             </Link>
                         </div>
                     </div>

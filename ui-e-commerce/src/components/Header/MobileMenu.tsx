@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { X, ChevronRight, ChevronDown, Phone, Mail } from 'lucide-react'
 import { apiService, Category } from '@/services/api'
+import { useTranslation } from '@/contexts/LanguageContext'
 
 interface MobileMenuProps {
     isOpen: boolean;
@@ -20,6 +21,7 @@ interface MenuItem {
 }
 
 export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
+    const { t } = useTranslation()
     const [isVisible, setIsVisible] = useState(false)
     const [isAnimating, setIsAnimating] = useState(false)
     const [menuItems, setMenuItems] = useState<MenuItem[]>([])
@@ -47,7 +49,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
             const specialItems: MenuItem[] = [
                 {
                     id: 'sale',
-                    title: 'Акции',
+                    title: t('navigation.sale'),
                     href: '/sale',
                     isSpecial: true
                 }
@@ -55,9 +57,9 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
 
             // Добавляем информационные страницы
             const infoItems: MenuItem[] = [
-                { id: 'about', title: 'Про нас', href: '/about' },
-                { id: 'delivery', title: 'Доставка', href: '/delivery' },
-                { id: 'contacts', title: 'Контакты', href: '/contacts' }
+                { id: 'about', title: t('header.about'), href: '/about' },
+                { id: 'delivery', title: t('header.delivery'), href: '/delivery' },
+                { id: 'contacts', title: t('header.contacts'), href: '/contacts' }
             ]
 
             const allItems = [...mainCategories, ...specialItems, ...infoItems]
@@ -146,7 +148,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                 <div className="flex flex-col h-full">
                     {/* Header */}
                     <div className="flex items-center justify-between p-4 border-b bg-teal-600 text-white">
-                        <span className="text-xl font-bold">Логотип</span>
+                        <span className="text-xl font-bold">{t('header.logo')}</span>
                         <button onClick={handleClose}>
                             <X size={24} />
                         </button>

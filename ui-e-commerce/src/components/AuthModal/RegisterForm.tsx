@@ -1,4 +1,7 @@
+'use client'
+
 import { Eye, EyeOff } from 'lucide-react'
+import { useTranslation } from '@/contexts/LanguageContext'
 
 interface RegisterFormProps {
     email: string
@@ -21,11 +24,13 @@ export function RegisterForm({
                                  passwordVisible,
                                  setPasswordVisible
                              }: RegisterFormProps) {
+    const { t } = useTranslation()
+    
     return (
         <div className="space-y-4">
             <div>
                 <label htmlFor="name" className="block text-sm font-medium mb-2">
-                    Ім&apos;я
+                    {t('authModal.name')}
                 </label>
                 <input
                     type="text"
@@ -33,13 +38,13 @@ export function RegisterForm({
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     className="w-full px-3 py-2 border rounded-lg"
-                    placeholder="Введіть ім&apos;я"
+                    placeholder={t('authModal.enterName')}
                 />
             </div>
 
             <div>
                 <label htmlFor="register-email" className="block text-sm font-medium mb-2">
-                    Email
+                    {t('authModal.email')}
                 </label>
                 <input
                     type="email"
@@ -47,13 +52,13 @@ export function RegisterForm({
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="w-full px-3 py-2 border rounded-lg"
-                    placeholder="Введіть email"
+                    placeholder={t('authModal.enterEmail')}
                 />
             </div>
 
             <div>
                 <label htmlFor="register-password" className="block text-sm font-medium mb-2">
-                    Пароль
+                    {t('authModal.password')}
                 </label>
                 <div className="relative">
                     <input
@@ -62,7 +67,7 @@ export function RegisterForm({
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         className="w-full px-3 py-2 border rounded-lg"
-                        placeholder="Створіть пароль"
+                        placeholder={t('authModal.createPassword')}
                     />
                     <button
                         type="button"
@@ -73,7 +78,7 @@ export function RegisterForm({
                     </button>
                 </div>
                 <p className="mt-1 text-sm text-gray-500">
-                    Мінімум 8 символів
+                    {t('authModal.minimumChars')}
                 </p>
             </div>
 
@@ -81,13 +86,13 @@ export function RegisterForm({
                 <label className="flex items-start gap-2">
                     <input type="checkbox" className="mt-1" />
                     <span className="text-sm">
-                        Я погоджуюсь отримувати інформацію про новинки та акції
+                        {t('authModal.agreeNews')}
                     </span>
                 </label>
             </div>
 
             <button className="w-full bg-teal-600 text-white py-3 rounded-lg hover:bg-teal-700 transition-colors">
-                Створити акаунт
+                {t('authModal.createAccount')}
             </button>
         </div>
     )

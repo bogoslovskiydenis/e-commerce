@@ -10,9 +10,13 @@ import {AuthModal} from "@/components/AuthModal/AuthModal"
 import SearchAutocomplete from '@/components/Search/SearchAutocomplete'
 import { cartUtils } from '@/utils/cart'
 import { useAuth } from '@/contexts/AuthContext'
+import { useTranslation } from '@/contexts/LanguageContext'
+import LanguageSwitcher from './LanguageSwitcher'
+import LanguageSwitcherMobile from './LanguageSwitcherMobile'
 
 export default function Header() {
     const { isAuthenticated, customer } = useAuth()
+    const { t } = useTranslation()
     const [showPrompt, setShowPrompt] = useState(false)
     const [showAuth, setShowAuth] = useState(false)
     const [authType, setAuthType] = useState<'login' | 'register'>('login')
@@ -35,10 +39,10 @@ export default function Header() {
                 <div className="container mx-auto px-4">
                     <div className="flex justify-between items-center text-sm">
                         <nav className="flex gap-6">
-                            <Link href="/about" className="hover:text-teal-200">Про нас</Link>
-                            <Link href="/delivery" className="hover:text-teal-200">Доставка</Link>
-                            <Link href="/sale" className="hover:text-teal-200">Акції</Link>
-                            <Link href="/contacts" className="hover:text-teal-200">Контакти</Link>
+                            <Link href="/about" className="hover:text-teal-200">{t('header.about')}</Link>
+                            <Link href="/delivery" className="hover:text-teal-200">{t('header.delivery')}</Link>
+                            <Link href="/sale" className="hover:text-teal-200">{t('header.sale')}</Link>
+                            <Link href="/contacts" className="hover:text-teal-200">{t('header.contacts')}</Link>
                         </nav>
 
                         <div className="flex items-center gap-6">
@@ -55,6 +59,7 @@ export default function Header() {
                                 google@gmail.com
                             </a>
                             <a href="#" className="hover:text-teal-200">Instagram</a>
+                            <LanguageSwitcher />
                         </div>
                     </div>
                 </div>
@@ -70,10 +75,11 @@ export default function Header() {
                             </button>
 
                             <Link href="/" className="text-2xl font-bold text-teal-600">
-                                Логотип
+                                {t('header.logo')}
                             </Link>
 
-                            <div className="flex items-center gap-5">
+                            <div className="flex items-center gap-3">
+                                <LanguageSwitcherMobile />
                                 {isAuthenticated ? (
                                     <Link href="/account">
                                         <User size={24} />
@@ -99,7 +105,7 @@ export default function Header() {
 
                         <div className="py-3">
                             <SearchAutocomplete
-                                placeholder="Пошук шариків, подарків, стаканчиків..."
+                                placeholder={t('header.searchPlaceholder')}
                             />
                         </div>
                     </div>
@@ -112,12 +118,12 @@ export default function Header() {
                     <div className="container mx-auto px-4">
                         <div className="flex items-center gap-8">
                             <Link href="/" className="text-3xl font-bold text-teal-600">
-                                Логотип
+                                {t('header.logo')}
                             </Link>
 
                             <div className="flex-1">
                                 <SearchAutocomplete
-                                    placeholder="Пошук шариків, подарків, стаканчиків..."
+                                    placeholder={t('header.searchPlaceholder')}
                                     className="max-w-md"
                                 />
                             </div>
@@ -129,7 +135,7 @@ export default function Header() {
                                         className="flex items-center gap-2 text-sm"
                                     >
                                         <User size={20} />
-                                        <span>{customer?.name || 'Кабінет'}</span>
+                                        <span>{customer?.name || t('header.account')}</span>
                                     </Link>
                                 ) : (
                                     <div className="relative">
@@ -139,7 +145,7 @@ export default function Header() {
                                             onMouseEnter={() => setShowPrompt(true)}
                                         >
                                             <User size={20} />
-                                            <span>Увійти</span>
+                                            <span>{t('header.login')}</span>
                                         </Link>
 
                                         {showPrompt && (
@@ -166,11 +172,11 @@ export default function Header() {
 
                                 <Link href="/favorites" className="flex items-center gap-2 text-sm">
                                     <Heart size={20} />
-                                    <span>Улюблене</span>
+                                    <span>{t('header.favorites')}</span>
                                 </Link>
                                 <Link href="/cart" className="flex items-center gap-2 text-sm relative">
                                     <ShoppingBag size={20} />
-                                    <span>Кошик</span>
+                                    <span>{t('header.cart')}</span>
                                     {cartCount > 0 && (
                                         <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                                             {cartCount > 99 ? '99+' : cartCount}

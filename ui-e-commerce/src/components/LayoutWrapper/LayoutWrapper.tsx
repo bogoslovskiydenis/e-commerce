@@ -6,6 +6,7 @@ import Header from '@/components/Header/Header'
 import Footer from '@/components/Footer/Footer'
 import SimpleHeader from '@/components/Header/SimpleHeader'
 import { AuthProvider } from '@/contexts/AuthContext'
+import { LanguageProvider } from '@/contexts/LanguageContext'
 
 export default function LayoutWrapper({
                                           children
@@ -16,12 +17,14 @@ export default function LayoutWrapper({
     const isLoginPage = pathname === '/login';
 
     return (
-        <AuthProvider>
-            {isLoginPage ? <SimpleHeader /> : <Header />}
-            <main className="flex-1">
-                {children}
-            </main>
-            {!isLoginPage && <Footer />}
-        </AuthProvider>
+        <LanguageProvider>
+            <AuthProvider>
+                {isLoginPage ? <SimpleHeader /> : <Header />}
+                <main className="flex-1">
+                    {children}
+                </main>
+                {!isLoginPage && <Footer />}
+            </AuthProvider>
+        </LanguageProvider>
     )
 }

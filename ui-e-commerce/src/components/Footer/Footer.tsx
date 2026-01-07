@@ -5,8 +5,10 @@ import Link from 'next/link'
 import Image from 'next/image'
 import BannersList from '@/components/Banner/BannersList'
 import { apiService, Banner } from '@/services/api'
+import { useTranslation } from '@/contexts/LanguageContext'
 
 export default function Footer() {
+    const { t } = useTranslation()
     const [footerBanners, setFooterBanners] = useState<Banner[]>([])
 
     useEffect(() => {
@@ -62,38 +64,38 @@ export default function Footer() {
             <div className="container mx-auto px-4">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-16">
                     <div>
-                        <h4 className="font-bold mb-4">Допомога</h4>
+                        <h4 className="font-bold mb-4">{t('footer.help')}</h4>
                         <nav className="space-y-2">
-                            <Link href="/account" className="block text-gray-600 hover:text-black">Твій акаунт</Link>
-                            <Link href="/returns" className="block text-gray-600 hover:text-black">Повернення</Link>
-                            <Link href="/order-status" className="block text-gray-600 hover:text-black">Статус замовлення</Link>
-                            <Link href="/contact" className="block text-gray-600 hover:text-black">Контакт</Link>
-                            <Link href="/help-center" className="block text-gray-600 hover:text-black">Центр допомоги</Link>
+                            <Link href="/account" className="block text-gray-600 hover:text-black">{t('footer.yourAccount')}</Link>
+                            <Link href="/returns" className="block text-gray-600 hover:text-black">{t('footer.returns')}</Link>
+                            <Link href="/order-status" className="block text-gray-600 hover:text-black">{t('footer.orderStatus')}</Link>
+                            <Link href="/contact" className="block text-gray-600 hover:text-black">{t('footer.contact')}</Link>
+                            <Link href="/help-center" className="block text-gray-600 hover:text-black">{t('footer.helpCenter')}</Link>
                         </nav>
                     </div>
 
                     <div>
-                        <h4 className="font-bold mb-4">Інформація</h4>
+                        <h4 className="font-bold mb-4">{t('footer.information')}</h4>
                         <nav className="space-y-2">
                             <Link href="/club" className="block text-gray-600 hover:text-black">Ecommerce</Link>
-                            <Link href="/delivery" className="block text-gray-600 hover:text-black">Час і способи доставки</Link>
-                            <Link href="/payment" className="block text-gray-600 hover:text-black">Способи оплати</Link>
-                            <Link href="/size-guide" className="block text-gray-600 hover:text-black">Таблиці розмірів</Link>
+                            <Link href="/delivery" className="block text-gray-600 hover:text-black">{t('footer.deliveryTime')}</Link>
+                            <Link href="/payment" className="block text-gray-600 hover:text-black">{t('footer.paymentMethods')}</Link>
+                            <Link href="/size-guide" className="block text-gray-600 hover:text-black">{t('footer.sizeGuide')}</Link>
                         </nav>
                     </div>
 
                     <div>
                         <h4 className="font-bold mb-4">Ecommerce</h4>
                         <nav className="space-y-2">
-                            <Link href="/about" className="block text-gray-600 hover:text-black">Про нас</Link>
-                            <Link href="/company" className="block text-gray-600 hover:text-black">Дані компанії</Link>
-                            <Link href="/partnership" className="block text-gray-600 hover:text-black">Партнерська програма</Link>
-                            <Link href="/reviews" className="block text-gray-600 hover:text-black">Відгуки та нагороди</Link>
+                            <Link href="/about" className="block text-gray-600 hover:text-black">{t('footer.about')}</Link>
+                            <Link href="/company" className="block text-gray-600 hover:text-black">{t('footer.companyData')}</Link>
+                            <Link href="/partnership" className="block text-gray-600 hover:text-black">{t('footer.partnership')}</Link>
+                            <Link href="/reviews" className="block text-gray-600 hover:text-black">{t('footer.reviews')}</Link>
                         </nav>
                     </div>
 
                     <div>
-                        <h4 className="font-bold mb-4">Завантажити додаток</h4>
+                        <h4 className="font-bold mb-4">{t('footer.downloadApp')}</h4>
                         <div className="space-y-4">
                             <Image src="/images/qr-code.png" alt="QR код" width={120} height={120} />
                             <div className="flex flex-col gap-2">
@@ -128,13 +130,13 @@ export default function Footer() {
 
                         <div className="flex gap-4 text-sm text-gray-600">
                             <span>© Ecommerce 2025</span>
-                            <Link href="/privacy" className="hover:text-black">Політика конфіденційності</Link>
-                            <Link href="/terms" className="hover:text-black">Правила</Link>
+                            <Link href="/privacy" className="hover:text-black">{t('footer.privacyPolicy')}</Link>
+                            <Link href="/terms" className="hover:text-black">{t('footer.terms')}</Link>
                         </div>
 
                         <div className="flex items-center gap-2">
-                            <span className="text-sm text-gray-600">Змінити країну:</span>
-                            <button className="text-sm hover:text-black">Україна (UA)</button>
+                            <span className="text-sm text-gray-600">{t('footer.changeCountry')}:</span>
+                            <button className="text-sm hover:text-black">{t('footer.country')}</button>
                         </div>
                     </div>
                 </div>
