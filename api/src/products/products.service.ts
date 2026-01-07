@@ -137,10 +137,10 @@ export class ProductsService {
       throw new NotFoundException('Product not found');
     }
 
-    const localized = this.localizeProduct(product, lang);
+    // Для админ-панели возвращаем все поля напрямую без локализации
     return {
       success: true,
-      data: this.formatProduct(localized),
+      data: this.formatProduct(product),
     };
   }
 
@@ -195,9 +195,18 @@ export class ProductsService {
     
     // Копируем только определенные поля
     if (data.title !== undefined) updateData.title = data.title;
+    if (data.titleUk !== undefined) updateData.titleUk = data.titleUk;
+    if (data.titleRu !== undefined) updateData.titleRu = data.titleRu;
+    if (data.titleEn !== undefined) updateData.titleEn = data.titleEn;
     if (data.slug !== undefined && data.slug !== '') updateData.slug = data.slug;
     if (data.description !== undefined) updateData.description = data.description;
+    if (data.descriptionUk !== undefined) updateData.descriptionUk = data.descriptionUk;
+    if (data.descriptionRu !== undefined) updateData.descriptionRu = data.descriptionRu;
+    if (data.descriptionEn !== undefined) updateData.descriptionEn = data.descriptionEn;
     if (data.shortDescription !== undefined) updateData.shortDescription = data.shortDescription;
+    if (data.shortDescriptionUk !== undefined) updateData.shortDescriptionUk = data.shortDescriptionUk;
+    if (data.shortDescriptionRu !== undefined) updateData.shortDescriptionRu = data.shortDescriptionRu;
+    if (data.shortDescriptionEn !== undefined) updateData.shortDescriptionEn = data.shortDescriptionEn;
     if (data.price !== undefined) updateData.price = data.price;
     if (data.brand !== undefined) updateData.brand = data.brand;
     if (data.sku !== undefined && data.sku !== null) updateData.sku = data.sku;
@@ -264,9 +273,18 @@ export class ProductsService {
     return {
       id: product.id,
       title: product.title,
+      titleUk: product.titleUk,
+      titleRu: product.titleRu,
+      titleEn: product.titleEn,
       slug: product.slug,
       description: product.description,
+      descriptionUk: product.descriptionUk,
+      descriptionRu: product.descriptionRu,
+      descriptionEn: product.descriptionEn,
       shortDescription: product.shortDescription,
+      shortDescriptionUk: product.shortDescriptionUk,
+      shortDescriptionRu: product.shortDescriptionRu,
+      shortDescriptionEn: product.shortDescriptionEn,
       price: Number(product.price),
       oldPrice: product.oldPrice ? Number(product.oldPrice) : null,
       discount: product.discount ? Number(product.discount) : null,

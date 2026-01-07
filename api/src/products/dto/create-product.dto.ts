@@ -8,6 +8,18 @@ export class CreateProductDto {
 
   @IsString()
   @IsOptional()
+  titleUk?: string;
+
+  @IsString()
+  @IsOptional()
+  titleRu?: string;
+
+  @IsString()
+  @IsOptional()
+  titleEn?: string;
+
+  @IsString()
+  @IsOptional()
   slug?: string;
 
   @IsString()
@@ -16,7 +28,31 @@ export class CreateProductDto {
 
   @IsString()
   @IsOptional()
+  descriptionUk?: string;
+
+  @IsString()
+  @IsOptional()
+  descriptionRu?: string;
+
+  @IsString()
+  @IsOptional()
+  descriptionEn?: string;
+
+  @IsString()
+  @IsOptional()
   shortDescription?: string;
+
+  @IsString()
+  @IsOptional()
+  shortDescriptionUk?: string;
+
+  @IsString()
+  @IsOptional()
+  shortDescriptionRu?: string;
+
+  @IsString()
+  @IsOptional()
+  shortDescriptionEn?: string;
 
   @IsNumber()
   @Type(() => Number)

@@ -252,11 +252,38 @@ export const ProductEdit = () => {
                             <Grid item xs={12}>
                                 <TextInput disabled source="id" fullWidth />
                             </Grid>
-                            <Grid item xs={12} md={6}>
+                            <Grid item xs={12}>
+                                <Typography variant="subtitle1" gutterBottom sx={{ mt: 2, mb: 1, fontWeight: 'bold' }}>
+                                    Название товара (многоязычное)
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={12} md={4}>
+                                <TextInput
+                                    source="titleUk"
+                                    label="Название (Украинский)"
+                                    validate={[required()]}
+                                    fullWidth
+                                />
+                            </Grid>
+                            <Grid item xs={12} md={4}>
+                                <TextInput
+                                    source="titleRu"
+                                    label="Название (Русский)"
+                                    fullWidth
+                                />
+                            </Grid>
+                            <Grid item xs={12} md={4}>
+                                <TextInput
+                                    source="titleEn"
+                                    label="Название (English)"
+                                    fullWidth
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
                                 <TextInput
                                     source="title"
-                                    label="Название товара"
-                                    validate={[required()]}
+                                    label="Название (основное, fallback)"
+                                    helperText="Используется как резервное значение, обычно дублирует украинское"
                                     fullWidth
                                 />
                             </Grid>
@@ -322,16 +349,93 @@ export const ProductEdit = () => {
                     {/* Описание */}
                     <TabPanel value={tabValue} index={2}>
                         <Typography variant="h6" gutterBottom sx={{ mb: 3 }}>
-                            Описание товара
+                            Описание товара (многоязычное)
                         </Typography>
-                        <TextInput
-                            source="description"
-                            label="Полное описание"
-                            multiline
-                            rows={12}
-                            fullWidth
-                            helperText="Подробное описание товара для покупателей"
-                        />
+                        <Grid container spacing={3}>
+                            <Grid item xs={12}>
+                                <Typography variant="subtitle1" gutterBottom sx={{ mt: 1, mb: 1, fontWeight: 'bold' }}>
+                                    Полное описание
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={12} md={4}>
+                                <TextInput
+                                    source="descriptionUk"
+                                    label="Описание (Украинский)"
+                                    multiline
+                                    rows={8}
+                                    fullWidth
+                                />
+                            </Grid>
+                            <Grid item xs={12} md={4}>
+                                <TextInput
+                                    source="descriptionRu"
+                                    label="Описание (Русский)"
+                                    multiline
+                                    rows={8}
+                                    fullWidth
+                                />
+                            </Grid>
+                            <Grid item xs={12} md={4}>
+                                <TextInput
+                                    source="descriptionEn"
+                                    label="Описание (English)"
+                                    multiline
+                                    rows={8}
+                                    fullWidth
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextInput
+                                    source="description"
+                                    label="Описание (основное, fallback)"
+                                    multiline
+                                    rows={4}
+                                    fullWidth
+                                    helperText="Резервное значение, обычно дублирует украинское"
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Typography variant="subtitle1" gutterBottom sx={{ mt: 2, mb: 1, fontWeight: 'bold' }}>
+                                    Краткое описание
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={12} md={4}>
+                                <TextInput
+                                    source="shortDescriptionUk"
+                                    label="Краткое описание (Украинский)"
+                                    multiline
+                                    rows={3}
+                                    fullWidth
+                                />
+                            </Grid>
+                            <Grid item xs={12} md={4}>
+                                <TextInput
+                                    source="shortDescriptionRu"
+                                    label="Краткое описание (Русский)"
+                                    multiline
+                                    rows={3}
+                                    fullWidth
+                                />
+                            </Grid>
+                            <Grid item xs={12} md={4}>
+                                <TextInput
+                                    source="shortDescriptionEn"
+                                    label="Краткое описание (English)"
+                                    multiline
+                                    rows={3}
+                                    fullWidth
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextInput
+                                    source="shortDescription"
+                                    label="Краткое описание (основное, fallback)"
+                                    multiline
+                                    rows={2}
+                                    fullWidth
+                                />
+                            </Grid>
+                        </Grid>
                     </TabPanel>
 
                     {/* Изображения */}
@@ -437,11 +541,38 @@ export const ProductCreate = () => {
                             Основная информация о товаре
                         </Typography>
                         <Grid container spacing={3}>
-                            <Grid item xs={12} md={6}>
+                            <Grid item xs={12}>
+                                <Typography variant="subtitle1" gutterBottom sx={{ mt: 2, mb: 1, fontWeight: 'bold' }}>
+                                    Название товара (многоязычное)
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={12} md={4}>
+                                <TextInput
+                                    source="titleUk"
+                                    label="Название (Украинский)"
+                                    validate={[required()]}
+                                    fullWidth
+                                />
+                            </Grid>
+                            <Grid item xs={12} md={4}>
+                                <TextInput
+                                    source="titleRu"
+                                    label="Название (Русский)"
+                                    fullWidth
+                                />
+                            </Grid>
+                            <Grid item xs={12} md={4}>
+                                <TextInput
+                                    source="titleEn"
+                                    label="Название (English)"
+                                    fullWidth
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
                                 <TextInput
                                     source="title"
-                                    label="Название товара"
-                                    validate={[required()]}
+                                    label="Название (основное, fallback)"
+                                    helperText="Используется как резервное значение, обычно дублирует украинское"
                                     fullWidth
                                 />
                             </Grid>
@@ -508,16 +639,93 @@ export const ProductCreate = () => {
                     {/* Описание */}
                     <TabPanel value={tabValue} index={2}>
                         <Typography variant="h6" gutterBottom sx={{ mb: 3 }}>
-                            Описание товара
+                            Описание товара (многоязычное)
                         </Typography>
-                        <TextInput
-                            source="description"
-                            label="Полное описание"
-                            multiline
-                            rows={12}
-                            fullWidth
-                            helperText="Подробное описание товара для покупателей"
-                        />
+                        <Grid container spacing={3}>
+                            <Grid item xs={12}>
+                                <Typography variant="subtitle1" gutterBottom sx={{ mt: 1, mb: 1, fontWeight: 'bold' }}>
+                                    Полное описание
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={12} md={4}>
+                                <TextInput
+                                    source="descriptionUk"
+                                    label="Описание (Украинский)"
+                                    multiline
+                                    rows={8}
+                                    fullWidth
+                                />
+                            </Grid>
+                            <Grid item xs={12} md={4}>
+                                <TextInput
+                                    source="descriptionRu"
+                                    label="Описание (Русский)"
+                                    multiline
+                                    rows={8}
+                                    fullWidth
+                                />
+                            </Grid>
+                            <Grid item xs={12} md={4}>
+                                <TextInput
+                                    source="descriptionEn"
+                                    label="Описание (English)"
+                                    multiline
+                                    rows={8}
+                                    fullWidth
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextInput
+                                    source="description"
+                                    label="Описание (основное, fallback)"
+                                    multiline
+                                    rows={4}
+                                    fullWidth
+                                    helperText="Резервное значение, обычно дублирует украинское"
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Typography variant="subtitle1" gutterBottom sx={{ mt: 2, mb: 1, fontWeight: 'bold' }}>
+                                    Краткое описание
+                                </Typography>
+                            </Grid>
+                            <Grid item xs={12} md={4}>
+                                <TextInput
+                                    source="shortDescriptionUk"
+                                    label="Краткое описание (Украинский)"
+                                    multiline
+                                    rows={3}
+                                    fullWidth
+                                />
+                            </Grid>
+                            <Grid item xs={12} md={4}>
+                                <TextInput
+                                    source="shortDescriptionRu"
+                                    label="Краткое описание (Русский)"
+                                    multiline
+                                    rows={3}
+                                    fullWidth
+                                />
+                            </Grid>
+                            <Grid item xs={12} md={4}>
+                                <TextInput
+                                    source="shortDescriptionEn"
+                                    label="Краткое описание (English)"
+                                    multiline
+                                    rows={3}
+                                    fullWidth
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextInput
+                                    source="shortDescription"
+                                    label="Краткое описание (основное, fallback)"
+                                    multiline
+                                    rows={2}
+                                    fullWidth
+                                />
+                            </Grid>
+                        </Grid>
                     </TabPanel>
 
                     {/* Изображения */}
