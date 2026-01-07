@@ -8,3 +8,4 @@ CREATE UNIQUE INDEX IF NOT EXISTS "customers_email_key" ON "customers"("email");
 CREATE UNIQUE INDEX IF NOT EXISTS "customers_phone_key" ON "customers"("phone");
 
 
+

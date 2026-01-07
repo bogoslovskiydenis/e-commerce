@@ -21,7 +21,8 @@ import NavigationManager from './components/Navigation/NavigationManager';
 // Ресурсы - Заказы и клиенты (существующие)
 import {
     OrderList,
-    OrderEdit
+    OrderEdit,
+    OrderShow
 } from './resources/orders';
 
 import {
@@ -37,14 +38,16 @@ import {
 
 import {
     CustomerList,
-    CustomerEdit
+    CustomerEdit,
+    CustomerShow
 } from './resources/customers';
 
 // Ресурсы - Каталог (существующие)
 import {
     ProductList,
     ProductEdit,
-    ProductCreate
+    ProductCreate,
+    ProductShow
 } from './resources/products';
 
 // 🆕 ОБНОВЛЕННЫЙ ИМПОРТ - Категории с новыми полями навигации
@@ -89,10 +92,15 @@ import ProfilePage from './pages/ProfilePage';
 import AnalyticsPage from './pages/AnalyticsPage';
 import SystemInfoPage from './pages/SystemInfoPage';
 
-// Создаём заглушки для Show компонентов если их нет (существующие)
-const OrderShow = () => <div>Order Show</div>;
-const ProductShow = () => <div>Product Show</div>;
-const CustomerShow = () => <div>Customer Show</div>;
+// Импорт компонентов отзывов
+import {
+    ReviewList,
+    ReviewEdit,
+    ReviewCreate,
+    ReviewShow
+} from './resources/reviews';
+
+// Show компоненты импортированы из ресурсов
 
 const PageList = () => <div>Page List</div>;
 const PageEdit = () => <div>Page Edit</div>;
@@ -143,6 +151,11 @@ const SecurePromotionList = withPermissions(PromotionList, 'promotions.view');
 const SecurePromotionEdit = withPermissions(PromotionEdit, 'promotions.edit');
 const SecurePromotionCreate = withPermissions(PromotionCreate, 'promotions.create');
 const SecurePromotionShow = withPermissions(PromotionShow, 'promotions.view');
+
+const SecureReviewList = withPermissions(ReviewList, 'reviews.view');
+const SecureReviewEdit = withPermissions(ReviewEdit, 'reviews.edit');
+const SecureReviewCreate = withPermissions(ReviewCreate, 'reviews.create');
+const SecureReviewShow = withPermissions(ReviewShow, 'reviews.view');
 
 const SecureAnalyticsPage = withPermissions(AnalyticsPage, 'analytics.view');
 const SecureSystemInfoPage = withPermissions(SystemInfoPage, 'admin.full_access');
@@ -240,6 +253,17 @@ const App: React.FC = () => (
             show={SecurePromotionShow}
             options={{
                 label: 'Акции и промокоды'
+            }}
+        />
+
+        <Resource
+            name="reviews"
+            list={SecureReviewList}
+            edit={SecureReviewEdit}
+            create={SecureReviewCreate}
+            show={SecureReviewShow}
+            options={{
+                label: 'Отзывы'
             }}
         />
 

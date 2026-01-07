@@ -111,15 +111,42 @@ export class ReviewsService {
       throw new BadRequestException('Rating must be between 1 and 5');
     }
 
+    // Проверяем существование пользователя
+    let foundCustomerId: string | null = customerId || null;
+    // По умолчанию одобряем все отзывы (и гостей, и зарегистрированных)
+    let reviewStatus: ReviewStatus = ReviewStatus.APPROVED;
+
+    if (foundCustomerId) {
+      // Если передан customerId, проверяем его существование
+      const customer = await this.prisma.customer.findUnique({
+        where: { id: foundCustomerId },
+      });
+      if (!customer) {
+        foundCustomerId = null; // Если customer не найден, сбрасываем ID
+      }
+    } else if (email) {
+      // Если customerId не передан, но есть email, ищем customer по email
+      const customer = await this.prisma.customer.findUnique({
+        where: { email: email },
+      });
+      if (customer) {
+        foundCustomerId = customer.id;
+      }
+    }
+
+    // Все отзывы (гостей и зарегистрированных пользователей) автоматически одобряются
+    // Если нужно вернуть модерацию для гостей, можно добавить проверку:
+    // reviewStatus = foundCustomerId ? ReviewStatus.APPROVED : ReviewStatus.PENDING;
+
     const review = await this.prisma.review.create({
       data: {
         productId,
-        customerId: customerId || null,
+        customerId: foundCustomerId,
         name,
         email: email || null,
         rating: Number(rating),
         comment: comment || null,
-        status: ReviewStatus.PENDING,
+        status: reviewStatus,
       },
       include: {
         product: { select: { id: true, title: true, slug: true, images: true } },
