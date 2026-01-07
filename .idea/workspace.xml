@@ -4,28 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="cc69a437-414e-4395-a1be-55730bb45aca" name="Changes" comment="изменил UШ">
+    <list default="true" id="cc69a437-414e-4395-a1be-55730bb45aca" name="Changes" comment="оставление комментария в админке">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin-panel/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/admin-panel/src/App.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin-panel/src/components/CustomLayout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/admin-panel/src/components/CustomLayout.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin-panel/src/components/ErrorBoundary.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/admin-panel/src/components/ErrorBoundary.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin-panel/src/resources/reviews.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/admin-panel/src/resources/reviews.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/prisma/migrations/20250125180000_add_show_on_homepage_to_categories/migration.sql" beforeDir="false" afterPath="$PROJECT_DIR$/api/prisma/migrations/20250125180000_add_show_on_homepage_to_categories/migration.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/prisma/migrations/20250126120000_add_popular_to_products/migration.sql" beforeDir="false" afterPath="$PROJECT_DIR$/api/prisma/migrations/20250126120000_add_popular_to_products/migration.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/prisma/migrations/20251225193000_add_show_on_homepage_to_categories/migration.sql" beforeDir="false" afterPath="$PROJECT_DIR$/api/prisma/migrations/20251225193000_add_show_on_homepage_to_categories/migration.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/prisma/migrations/add_customer_password_hash/migration.sql" beforeDir="false" afterPath="$PROJECT_DIR$/api/prisma/migrations/add_customer_password_hash/migration.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/prisma/migrations/add_favorites/migration.sql" beforeDir="false" afterPath="$PROJECT_DIR$/api/prisma/migrations/add_favorites/migration.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/scripts/updateUserPasswords.mjs" beforeDir="false" afterPath="$PROJECT_DIR$/api/scripts/updateUserPasswords.mjs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/promotions/dto/create-promotion.dto.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/promotions/dto/create-promotion.dto.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/promotions/dto/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/promotions/dto/index.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/promotions/dto/update-promotion.dto.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/promotions/dto/update-promotion.dto.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/promotions/promotions.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/promotions/promotions.controller.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/promotions/promotions.module.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/promotions/promotions.module.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/reviews/reviews.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/reviews/reviews.service.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/app/account/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/app/account/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/app/checkout/success/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/app/checkout/success/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/components/Banner/BannersList.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/components/Banner/BannersList.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/components/FavoriteButton/FavoriteButton.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/components/FavoriteButton/FavoriteButton.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin-panel/logins.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin-panel/src/db.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/api/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/balloonshop_backup_20251006.sql" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/logs/combined.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/logs/error.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/logs/exceptions.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/logs/rejections.log" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -184,7 +172,7 @@
       <workItem from="1767009986762" duration="253000" />
       <workItem from="1767023373182" duration="2888000" />
       <workItem from="1767449742017" duration="10000" />
-      <workItem from="1767792668797" duration="1593000" />
+      <workItem from="1767792668797" duration="4454000" />
     </task>
     <task id="LOCAL-00001" summary="добавил аунтификацию по ролям">
       <option name="closed" value="true" />
@@ -426,7 +414,23 @@
       <option name="project" value="LOCAL" />
       <updated>1767119962970</updated>
     </task>
-    <option name="localTasksCounter" value="31" />
+    <task id="LOCAL-00031" summary="добавил добавление комментариев к товару">
+      <option name="closed" value="true" />
+      <created>1767794330594</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1767794330595</updated>
+    </task>
+    <task id="LOCAL-00032" summary="оставление комментария в админке">
+      <option name="closed" value="true" />
+      <created>1767797701049</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1767797701049</updated>
+    </task>
+    <option name="localTasksCounter" value="33" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -456,7 +460,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="добавляется фото к товару , нужно добавить скидку !!" />
     <MESSAGE value="добавил скидку" />
     <MESSAGE value="добавление категории под категории" />
     <MESSAGE value="Бд призмы" />
@@ -479,8 +482,9 @@
     <MESSAGE value="1. Личный кабинет клиента&#10;Регистрация и авторизация клиентов&#10;JWT-аутентификация с refresh-токенами&#10;Страница личного кабинета (/account) с профилем и историей заказов&#10;Обновление профиля клиента&#10;2. Избранное (Favorites)&#10;Backend:&#10;Модель Favorite в Prisma&#10;API endpoints: добавление/удаление, получение списка, проверка статуса&#10;Автоматическое создание таблицы при первом использовании&#10;Frontend:&#10;Кнопка избранного (сердце) на карточках товаров&#10;Страница избранного (/favorites) с двумя режимами отображения (сетка/список)&#10;Сортировка товаров (по дате, цене, названию)&#10;Удаление из избранного по клику на красное сердце&#10;3. Улучшения UI&#10;Обновленный дизайн страницы избранного&#10;Адаптивная верстка&#10;Индикаторы загрузки и состояния&#10;4. Исправления&#10;Поддержка параметра featured в API для рекомендуемых товаров&#10;Исправлена ошибка с showFavoriteButton в ProductCard" />
     <MESSAGE value="исправил ошибку с логином" />
     <MESSAGE value="добавил добавление товара в популярное и в хиты продаж" />
-    <MESSAGE value="добавил добавление комментариев к товару" />
     <MESSAGE value="изменил UШ" />
-    <option name="LAST_COMMIT_MESSAGE" value="изменил UШ" />
+    <MESSAGE value="добавил добавление комментариев к товару" />
+    <MESSAGE value="оставление комментария в админке" />
+    <option name="LAST_COMMIT_MESSAGE" value="оставление комментария в админке" />
   </component>
 </project>
