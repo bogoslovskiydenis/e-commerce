@@ -25,7 +25,7 @@ import {
     FunctionField,
     useRecordContext
 } from "react-admin";
-import { Chip, Box, Typography, Button } from '@mui/material';
+import { Chip, Box, Typography, Button, Grid } from '@mui/material';
 import { Visibility, VisibilityOff, Navigation } from '@mui/icons-material';
 import {CategoryDeleteButton} from "../components/categories/CategoryDeleteButton";
 
@@ -281,10 +281,39 @@ const CategoryForm = () => {
                         Основная информация
                     </Typography>
 
+                    <Typography variant="subtitle1" gutterBottom sx={{ mt: 1, mb: 1, fontWeight: 'bold' }}>
+                        Название категории (многоязычное)
+                    </Typography>
+
+                    <Grid container spacing={2} sx={{ mb: 2 }}>
+                        <Grid item xs={12} md={4}>
+                            <TextInput
+                                source="nameUk"
+                                label="Название (Украинский)"
+                                validate={[required()]}
+                                fullWidth
+                            />
+                        </Grid>
+                        <Grid item xs={12} md={4}>
+                            <TextInput
+                                source="nameRu"
+                                label="Название (Русский)"
+                                fullWidth
+                            />
+                        </Grid>
+                        <Grid item xs={12} md={4}>
+                            <TextInput
+                                source="nameEn"
+                                label="Название (English)"
+                                fullWidth
+                            />
+                        </Grid>
+                    </Grid>
+
                     <TextInput
                         source="name"
-                        label="Название категории"
-                        validate={[required()]}
+                        label="Название (основное, fallback)"
+                        helperText="Используется как резервное значение, обычно дублирует украинское"
                         fullWidth
                     />
 
@@ -296,12 +325,47 @@ const CategoryForm = () => {
                         helperText="Используется в адресе страницы. Только латинские буквы, цифры и дефисы"
                     />
 
+                    <Typography variant="subtitle1" gutterBottom sx={{ mt: 2, mb: 1, fontWeight: 'bold' }}>
+                        Описание (многоязычное)
+                    </Typography>
+
+                    <Grid container spacing={2} sx={{ mb: 2 }}>
+                        <Grid item xs={12} md={4}>
+                            <TextInput
+                                multiline
+                                source="descriptionUk"
+                                label="Описание (Украинский)"
+                                rows={3}
+                                fullWidth
+                            />
+                        </Grid>
+                        <Grid item xs={12} md={4}>
+                            <TextInput
+                                multiline
+                                source="descriptionRu"
+                                label="Описание (Русский)"
+                                rows={3}
+                                fullWidth
+                            />
+                        </Grid>
+                        <Grid item xs={12} md={4}>
+                            <TextInput
+                                multiline
+                                source="descriptionEn"
+                                label="Описание (English)"
+                                rows={3}
+                                fullWidth
+                            />
+                        </Grid>
+                    </Grid>
+
                     <TextInput
                         multiline
                         source="description"
-                        label="Описание"
-                        rows={3}
+                        label="Описание (основное, fallback)"
+                        rows={2}
                         fullWidth
+                        helperText="Резервное значение, обычно дублирует украинское"
                     />
 
                     <SelectInput
@@ -371,32 +435,93 @@ const CategoryForm = () => {
 
         <Box mt={3}>
             <Typography variant="h6" gutterBottom>
-                SEO настройки
+                SEO настройки (многоязычные)
             </Typography>
 
-            <Box display="flex" gap={2}>
-                <TextInput
-                    source="metaTitle"
-                    label="Meta Title"
-                    fullWidth
-                    helperText="Заголовок для поисковых систем (до 60 символов)"
-                />
+            <Typography variant="subtitle1" gutterBottom sx={{ mt: 1, mb: 1, fontWeight: 'bold' }}>
+                Meta Title
+            </Typography>
 
-                <TextInput
-                    source="metaKeywords"
-                    label="Ключевые слова"
-                    fullWidth
-                    helperText="Ключевые слова через запятую"
-                />
-            </Box>
+            <Grid container spacing={2} sx={{ mb: 2 }}>
+                <Grid item xs={12} md={4}>
+                    <TextInput
+                        source="metaTitleUk"
+                        label="Meta Title (Украинский)"
+                        fullWidth
+                        helperText="Заголовок для поисковых систем (до 60 символов)"
+                    />
+                </Grid>
+                <Grid item xs={12} md={4}>
+                    <TextInput
+                        source="metaTitleRu"
+                        label="Meta Title (Русский)"
+                        fullWidth
+                    />
+                </Grid>
+                <Grid item xs={12} md={4}>
+                    <TextInput
+                        source="metaTitleEn"
+                        label="Meta Title (English)"
+                        fullWidth
+                    />
+                </Grid>
+            </Grid>
+
+            <TextInput
+                source="metaTitle"
+                label="Meta Title (основное, fallback)"
+                fullWidth
+            />
+
+            <Typography variant="subtitle1" gutterBottom sx={{ mt: 2, mb: 1, fontWeight: 'bold' }}>
+                Meta Description
+            </Typography>
+
+            <Grid container spacing={2} sx={{ mb: 2 }}>
+                <Grid item xs={12} md={4}>
+                    <TextInput
+                        multiline
+                        source="metaDescriptionUk"
+                        label="Meta Description (Украинский)"
+                        rows={2}
+                        fullWidth
+                        helperText="Описание для поисковых систем (до 160 символов)"
+                    />
+                </Grid>
+                <Grid item xs={12} md={4}>
+                    <TextInput
+                        multiline
+                        source="metaDescriptionRu"
+                        label="Meta Description (Русский)"
+                        rows={2}
+                        fullWidth
+                    />
+                </Grid>
+                <Grid item xs={12} md={4}>
+                    <TextInput
+                        multiline
+                        source="metaDescriptionEn"
+                        label="Meta Description (English)"
+                        rows={2}
+                        fullWidth
+                    />
+                </Grid>
+            </Grid>
 
             <TextInput
                 source="metaDescription"
-                label="Meta Description"
+                label="Meta Description (основное, fallback)"
                 multiline
                 rows={2}
                 fullWidth
-                helperText="Описание для поисковых систем (до 160 символов)"
+            />
+
+            <TextInput
+                source="metaKeywords"
+                label="Ключевые слова"
+                fullWidth
+                helperText="Ключевые слова через запятую"
+                sx={{ mt: 2 }}
             />
         </Box>
 

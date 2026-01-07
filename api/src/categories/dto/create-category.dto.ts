@@ -8,11 +8,35 @@ export class CreateCategoryDto {
 
   @IsString()
   @IsOptional()
+  nameUk?: string;
+
+  @IsString()
+  @IsOptional()
+  nameRu?: string;
+
+  @IsString()
+  @IsOptional()
+  nameEn?: string;
+
+  @IsString()
+  @IsOptional()
   slug?: string;
 
   @IsString()
   @IsOptional()
   description?: string;
+
+  @IsString()
+  @IsOptional()
+  descriptionUk?: string;
+
+  @IsString()
+  @IsOptional()
+  descriptionRu?: string;
+
+  @IsString()
+  @IsOptional()
+  descriptionEn?: string;
 
   @IsEnum(CategoryType)
   @IsOptional()
@@ -53,7 +77,31 @@ export class CreateCategoryDto {
 
   @IsString()
   @IsOptional()
+  metaTitleUk?: string;
+
+  @IsString()
+  @IsOptional()
+  metaTitleRu?: string;
+
+  @IsString()
+  @IsOptional()
+  metaTitleEn?: string;
+
+  @IsString()
+  @IsOptional()
   metaDescription?: string;
+
+  @IsString()
+  @IsOptional()
+  metaDescriptionUk?: string;
+
+  @IsString()
+  @IsOptional()
+  metaDescriptionRu?: string;
+
+  @IsString()
+  @IsOptional()
+  metaDescriptionEn?: string;
 
   @IsString()
   @IsOptional()

@@ -4,17 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="cc69a437-414e-4395-a1be-55730bb45aca" name="Changes" comment="убрал ненужные импорты">
+    <list default="true" id="cc69a437-414e-4395-a1be-55730bb45aca" name="Changes" comment="добавил языки для категорий">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/prisma/schema.prisma" beforeDir="false" afterPath="$PROJECT_DIR$/api/prisma/schema.prisma" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/categories/categories.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/categories/categories.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin-panel/src/resources/categories.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/admin-panel/src/resources/categories.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/api/src/categories/categories.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/categories/categories.service.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/navigation/navigation.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/navigation/navigation.controller.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/navigation/navigation.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/navigation/navigation.service.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/products/dto/product-query.dto.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/products/dto/product-query.dto.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/products/products.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/products/products.controller.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/products/products.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/products/products.service.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/services/api.ts" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/services/api.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/categories/dto/create-category.dto.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/categories/dto/create-category.dto.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -173,7 +167,7 @@
       <workItem from="1767009986762" duration="253000" />
       <workItem from="1767023373182" duration="2888000" />
       <workItem from="1767449742017" duration="10000" />
-      <workItem from="1767792668797" duration="11234000" />
+      <workItem from="1767792668797" duration="13253000" />
     </task>
     <task id="LOCAL-00001" summary="добавил аунтификацию по ролям">
       <option name="closed" value="true" />
@@ -471,7 +465,23 @@
       <option name="project" value="LOCAL" />
       <updated>1767803058110</updated>
     </task>
-    <option name="localTasksCounter" value="38" />
+    <task id="LOCAL-00038" summary="добавил языки для категорий">
+      <option name="closed" value="true" />
+      <created>1767808606664</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1767808606664</updated>
+    </task>
+    <task id="LOCAL-00039" summary="добавил языки для категорий">
+      <option name="closed" value="true" />
+      <created>1767810569589</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1767810569589</updated>
+    </task>
+    <option name="localTasksCounter" value="40" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -501,7 +511,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="исправил с удалением категории" />
     <MESSAGE value="добавление товаров и категорий из админки в наш сайт" />
     <MESSAGE value="исправил деплой в версел" />
     <MESSAGE value="убрал ненужные категории , которые нам не нужны , у нас создается страница с продукцией под товар" />
@@ -526,6 +535,7 @@
     <MESSAGE value="добавил мультиязычность на другие страницы" />
     <MESSAGE value="добавил мультиязычность" />
     <MESSAGE value="убрал ненужные импорты" />
-    <option name="LAST_COMMIT_MESSAGE" value="убрал ненужные импорты" />
+    <MESSAGE value="добавил языки для категорий" />
+    <option name="LAST_COMMIT_MESSAGE" value="добавил языки для категорий" />
   </component>
 </project>

@@ -261,11 +261,10 @@ export class CategoriesService {
       throw new NotFoundException('Category not found');
     }
 
-    const localized = this.localizeCategory(category, lang);
-
+    // Для админ-панели возвращаем все поля напрямую без локализации
     return {
       success: true,
-      data: localized,
+      data: category,
     };
   }
 
