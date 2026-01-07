@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useNavigation } from '@/hooks/useNavigation'
 import { CategoryDropdownMenu } from './CategoryDropdownMenu'
 import { useTranslation } from '@/contexts/LanguageContext'
+import { getLocalizedCategoryName } from '@/utils/categoryLocalization'
 
 interface NavigationItem {
     id: string;
@@ -20,14 +21,14 @@ interface NavigationItem {
 }
 
 export default function Navigation() {
-    const { t } = useTranslation()
+    const { t, language } = useTranslation()
     const [navigationItems, setNavigationItems] = useState<NavigationItem[]>([]);
     const [hoveredItem, setHoveredItem] = useState<string | null>(null);
 
     // Получаем категории из API
     const { categories, isLoading, error } = useNavigation();
 
-    // Обновляем навигацию при загрузке категорий
+    // Обновляем навигацию при загрузке категорий или смене языка
     useEffect(() => {
         if (categories.length > 0) {
             console.log('📋 Категории из API:', categories);
@@ -41,8 +42,9 @@ export default function Navigation() {
                     const productsCount = (category as any)._count?.products || category.productsCount || 0;
                     const childrenProductsCount = (category as any).childrenProductsCount || 0;
                     const children = category.children || [];
+                    const localizedName = getLocalizedCategoryName(category, language);
                     
-                    console.log(`📦 Категория ${category.name}:`, {
+                    console.log(`📦 Категория ${localizedName}:`, {
                         children: children.length,
                         productsCount,
                         childrenProductsCount,
@@ -51,7 +53,7 @@ export default function Navigation() {
                     
                 return {
                     id: category.id,
-                    title: category.name,
+                    title: localizedName,
                     href: category.href || `/${category.slug}`,
                     slug: category.slug,
                     hasDropdown: children.length > 0 || productsCount > 0 || childrenProductsCount > 0,
@@ -91,7 +93,7 @@ export default function Navigation() {
                 { id: 'sale', title: 'Акции', href: '/sale', isSpecial: true },
             ]);
         }
-    }, [categories]);
+    }, [categories, language]);
 
     const handleMouseEnter = (itemId: string) => {
         setHoveredItem(itemId);
@@ -105,7 +107,7 @@ export default function Navigation() {
     const getDropdownContent = (item: NavigationItem) => {
         if (item.children && item.children.length > 0) {
             return item.children.map((child: any) => ({
-                name: child.name, // Только название подкатегории без слеша
+                name: getLocalizedCategoryName(child, language), // Локализованное название подкатегории
                 href: child.href || `/${child.slug}`,
                 count: child.productsCount || 0
             }));

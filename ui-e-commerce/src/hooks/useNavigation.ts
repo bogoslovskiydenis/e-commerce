@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Category, Product, apiService } from '@/services/api';
+import { getLocalizedCategoryName } from '@/utils/categoryLocalization';
 
 export interface NavigationState {
     categories: Category[];
@@ -164,7 +165,7 @@ export function useNavigation(options: UseNavigationOptions = {}) {
         return findInCategories(state.categories);
     }, [state.categories]);
 
-    const getBreadcrumbs = useCallback((categorySlug: string) => {
+    const getBreadcrumbs = useCallback((categorySlug: string, language: 'uk' | 'ru' | 'en' = 'uk') => {
         const breadcrumbs: Array<{ name: string; href: string; current?: boolean }> = [
             { name: 'Главная', href: '/' }
         ];
@@ -189,7 +190,7 @@ export function useNavigation(options: UseNavigationOptions = {}) {
         if (path) {
             path.forEach((category, index) => {
                 breadcrumbs.push({
-                    name: category.name,
+                    name: getLocalizedCategoryName(category, language),
                     href: category.href || `/${category.slug}`,
                     current: index === path.length - 1
                 });

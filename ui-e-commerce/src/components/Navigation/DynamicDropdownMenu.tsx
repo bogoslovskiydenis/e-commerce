@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Category, Product, apiService } from '@/services/api'
+import { useTranslation } from '@/contexts/LanguageContext'
+import { getLocalizedCategoryName } from '@/utils/categoryLocalization'
 
 interface DynamicDropdownMenuProps {
     categoryType: string;
@@ -13,13 +15,14 @@ interface DynamicDropdownMenuProps {
 }
 
 export function DynamicDropdownMenu({ categoryType, categoryId, categoryName, children }: DynamicDropdownMenuProps) {
+    const { language } = useTranslation();
     const [subcategories, setSubcategories] = useState<Category[]>([]);
     const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         loadDropdownData();
-    }, [categoryType, categoryId]);
+    }, [categoryType, categoryId, language]);
 
     const loadDropdownData = async () => {
         try {
@@ -107,7 +110,7 @@ export function DynamicDropdownMenu({ categoryType, categoryId, categoryName, ch
                                     className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 hover:text-teal-600 rounded-md transition-colors"
                                 >
                                     <div className="flex items-center justify-between">
-                                        <span>{subcategory.name}</span>
+                                        <span>{getLocalizedCategoryName(subcategory, language)}</span>
                                         {subcategory.productsCount !== undefined && subcategory.productsCount > 0 && (
                                             <span className="text-xs text-gray-400">
                                                 ({subcategory.productsCount})

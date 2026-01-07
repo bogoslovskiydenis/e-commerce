@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Category, apiService } from '@/services/api'
+import { useTranslation } from '@/contexts/LanguageContext'
+import { getLocalizedCategoryName } from '@/utils/categoryLocalization'
 
 interface CategoryDropdownMenuProps {
     categoryId: string;
@@ -17,12 +19,13 @@ interface SubcategoryGroup {
 }
 
 export function CategoryDropdownMenu({ categoryId, categoryName, children }: CategoryDropdownMenuProps) {
+    const { language } = useTranslation();
     const [subcategoryGroups, setSubcategoryGroups] = useState<SubcategoryGroup[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         loadSubcategories();
-    }, [categoryId, children]);
+    }, [categoryId, children, language]);
 
     const loadSubcategories = async () => {
         try {
@@ -188,7 +191,7 @@ export function CategoryDropdownMenu({ categoryId, categoryName, children }: Cat
                                         className="block text-sm text-gray-600 hover:text-teal-600 transition-colors py-1"
                                     >
                                         <div className="flex items-center justify-between">
-                                            <span>{subcategory.name}</span>
+                                            <span>{getLocalizedCategoryName(subcategory, language)}</span>
                                             {subcategory.productsCount !== undefined && subcategory.productsCount > 0 && (
                                                 <span className="text-xs text-gray-400 ml-2">
                                                     {subcategory.productsCount}

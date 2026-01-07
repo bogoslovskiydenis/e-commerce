@@ -5,6 +5,8 @@ import Link from 'next/link'
 import { Category, apiService } from '@/services/api'
 import { DynamicDropdownMenu } from './DynamicDropdownMenu'
 import { CategoryDropdownMenu } from './CategoryDropdownMenu'
+import { useTranslation } from '@/contexts/LanguageContext'
+import { getLocalizedCategoryName } from '@/utils/categoryLocalization'
 
 interface NavigationItem {
     id: string;
@@ -19,6 +21,7 @@ interface NavigationItem {
 }
 
 export default function DynamicNavigation() {
+    const { language, t } = useTranslation();
     const [navigationItems, setNavigationItems] = useState<NavigationItem[]>([]);
     const [hoveredItem, setHoveredItem] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -26,7 +29,7 @@ export default function DynamicNavigation() {
     // Загрузка категорий из админ панели
     useEffect(() => {
         loadNavigationData();
-    }, []);
+    }, [language]);
 
     const loadNavigationData = async () => {
         try {
@@ -36,7 +39,7 @@ export default function DynamicNavigation() {
             // Преобразуем категории в элементы навигации (только родительские категории)
             const items = categories.map(category => ({
                 id: category.id,
-                title: category.name,
+                title: getLocalizedCategoryName(category, language),
                 href: category.href || `/${category.slug}`,
                 slug: category.slug,
                 hasDropdown: (category.children && category.children.length > 0) || 
@@ -52,7 +55,7 @@ export default function DynamicNavigation() {
             const specialItems = [
                 {
                     id: 'sale',
-                    title: 'Акции',
+                    title: t('navigation.sale'),
                     href: '/sale',
                     type: 'promotions',
                     order: 999,

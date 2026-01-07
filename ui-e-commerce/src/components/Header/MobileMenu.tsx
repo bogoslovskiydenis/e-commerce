@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react'
 import { X, ChevronRight, ChevronDown, Phone, Mail } from 'lucide-react'
 import { apiService, Category } from '@/services/api'
 import { useTranslation } from '@/contexts/LanguageContext'
+import { getLocalizedCategoryName } from '@/utils/categoryLocalization'
 
 interface MobileMenuProps {
     isOpen: boolean;
@@ -21,7 +22,7 @@ interface MenuItem {
 }
 
 export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
-    const { t } = useTranslation()
+    const { t, language } = useTranslation()
     const [isVisible, setIsVisible] = useState(false)
     const [isAnimating, setIsAnimating] = useState(false)
     const [menuItems, setMenuItems] = useState<MenuItem[]>([])
@@ -38,7 +39,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                 .filter(cat => !cat.parentId && cat.showInNavigation)
                 .map(cat => ({
                     id: cat.id,
-                    title: cat.name,
+                    title: getLocalizedCategoryName(cat, language),
                     href: `/${cat.slug}`,
                     isSpecial: cat.type === 'promotions' || cat.slug === 'sale',
                     children: cat.children || [],
@@ -86,7 +87,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
         if (isOpen) {
             loadMenuData()
         }
-    }, [isOpen])
+    }, [isOpen, language])
 
     useEffect(() => {
         if (isOpen) {
@@ -206,7 +207,7 @@ export default function MobileMenu({ isOpen, onClose }: MobileMenuProps) {
                                                             className="flex items-center justify-between px-8 py-3 border-b border-gray-200 hover:bg-gray-100 transition-colors"
                                                             onClick={handleLinkClick}
                                                         >
-                                                            <span className="text-sm text-gray-700">{child.name}</span>
+                                                            <span className="text-sm text-gray-700">{getLocalizedCategoryName(child, language)}</span>
                                                             <ChevronRight size={16} className="text-gray-400" />
                                                         </Link>
                                                     ))}

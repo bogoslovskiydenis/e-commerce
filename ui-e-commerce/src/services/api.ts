@@ -5,8 +5,14 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/a
 export interface Category {
     id: string;
     name: string;
+    nameUk?: string;
+    nameRu?: string;
+    nameEn?: string;
     slug: string;
     description?: string;
+    descriptionUk?: string;
+    descriptionRu?: string;
+    descriptionEn?: string;
     type: string;
     parentId?: string;
     imageUrl?: string;
@@ -16,7 +22,13 @@ export interface Category {
     order: number;
     href?: string;
     metaTitle?: string;
+    metaTitleUk?: string;
+    metaTitleRu?: string;
+    metaTitleEn?: string;
     metaDescription?: string;
+    metaDescriptionUk?: string;
+    metaDescriptionRu?: string;
+    metaDescriptionEn?: string;
     metaKeywords?: string;
     filters?: any;
     createdAt?: string;
@@ -26,6 +38,9 @@ export interface Category {
     parent?: {
         id: string;
         name: string;
+        nameUk?: string;
+        nameRu?: string;
+        nameEn?: string;
         slug: string;
     };
     children?: Category[];
