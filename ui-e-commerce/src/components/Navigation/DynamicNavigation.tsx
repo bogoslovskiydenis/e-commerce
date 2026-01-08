@@ -71,66 +71,9 @@ export default function DynamicNavigation() {
             setNavigationItems(allItems);
         } catch (error) {
             console.error('Error loading navigation data:', error);
-            // Загружаем резервную навигацию
-            loadFallbackNavigation();
         } finally {
             setIsLoading(false);
         }
-    };
-
-    // Резервная навигация
-    const loadFallbackNavigation = () => {
-        const fallbackItems: NavigationItem[] = [
-            {
-                id: '1',
-                title: 'Шарики',
-                href: '/balloons',
-                hasDropdown: true,
-                type: 'balloons',
-                order: 1
-            },
-            {
-                id: '2',
-                title: 'Букеты из шаров',
-                href: '/bouquets',
-                hasDropdown: true,
-                type: 'bouquets',
-                order: 2
-            },
-            {
-                id: '3',
-                title: 'Стаканчики',
-                href: '/cups',
-                hasDropdown: true,
-                type: 'cups',
-                order: 3
-            },
-            {
-                id: '4',
-                title: 'Подарки',
-                href: '/gifts',
-                hasDropdown: true,
-                type: 'gifts',
-                order: 4
-            },
-            {
-                id: '5',
-                title: 'Наборы',
-                href: '/sets',
-                hasDropdown: true,
-                type: 'sets',
-                order: 5
-            },
-            {
-                id: 'sale',
-                title: 'Акции',
-                href: '/sale',
-                isSpecial: true,
-                type: 'promotions',
-                order: 999
-            }
-        ];
-        setNavigationItems(fallbackItems);
     };
 
     const handleMouseEnter = (itemId: string) => {

@@ -81,17 +81,6 @@ export default function Navigation() {
             });
             console.log('🔄 Элементы навигации:', allItems);
             setNavigationItems(allItems);
-        } else {
-            // Резервная навигация если API недоступно
-            console.log('⚠️ Используем резервную навигацию');
-            setNavigationItems([
-                { id: '1', title: 'Шарики', href: '/balloons', hasDropdown: true },
-                { id: '2', title: 'Букеты из шаров', href: '/bouquets', hasDropdown: true },
-                { id: '3', title: 'Стаканчики', href: '/cups', hasDropdown: true },
-                { id: '4', title: 'Подарки', href: '/gifts', hasDropdown: true },
-                { id: '5', title: 'Наборы', href: '/sets', hasDropdown: true },
-                { id: 'sale', title: 'Акции', href: '/sale', isSpecial: true },
-            ]);
         }
     }, [categories, language]);
 
