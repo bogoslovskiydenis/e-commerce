@@ -16,7 +16,7 @@ interface ProductPageProps {
 }
 
 export default function ProductPage({ params }: ProductPageProps) {
-    const { t } = useTranslation()
+    const { t, language } = useTranslation()
     const { id } = use(params)
     const router = useRouter()
     const [product, setProduct] = useState<any>(null)
@@ -33,7 +33,7 @@ export default function ProductPage({ params }: ProductPageProps) {
         const loadProduct = async () => {
             try {
                 setLoading(true)
-                const productData = await apiService.getProductById(id)
+                const productData = await apiService.getProductById(id, language)
                 if (productData) {
                     setProduct(productData)
                     // Устанавливаем значения по умолчанию
@@ -54,7 +54,7 @@ export default function ProductPage({ params }: ProductPageProps) {
             }
         }
         loadProduct()
-    }, [id, router])
+    }, [id, router, language])
 
     if (loading) {
         return (

@@ -12,7 +12,7 @@ import { apiService, Product, Category, Banner } from '@/services/api'
 import { useTranslation } from '@/contexts/LanguageContext'
 
 export default function HomePage() {
-    const { t } = useTranslation()
+    const { t, language } = useTranslation()
     const [featuredProducts, setFeaturedProducts] = useState<Product[]>([])
     const [popularProducts, setPopularProducts] = useState<Product[]>([])
     const [mainCategories, setMainCategories] = useState<Category[]>([])
@@ -76,7 +76,7 @@ export default function HomePage() {
         }
     ]
 
-    // Загрузка данных из API
+    // Загрузка данных из API - перезагружаем при смене языка
     useEffect(() => {
         const loadData = async () => {
             try {
@@ -85,16 +85,16 @@ export default function HomePage() {
                 const mainBanners = await apiService.getBanners('MAIN')
                 setBanners(mainBanners)
 
-                // Загружаем рекомендуемые товары (хиты продаж)
-                const products = await apiService.getFeaturedProducts(8)
+                // Загружаем рекомендуемые товары (хиты продаж) с текущим языком
+                const products = await apiService.getFeaturedProducts(8, language)
                 setFeaturedProducts(products)
 
-                // Загружаем популярные товары
-                const popular = await apiService.getPopularProducts(8)
+                // Загружаем популярные товары с текущим языком
+                const popular = await apiService.getPopularProducts(8, language)
                 setPopularProducts(popular)
 
-                // Загружаем популярные категории для главной страницы
-                const categories = await apiService.getPopularCategories(5)
+                // Загружаем популярные категории для главной страницы с текущим языком
+                const categories = await apiService.getPopularCategories(5, language)
                 // Преобразуем категории в формат для CategorySection
                 const formattedCategories = categories.map(cat => ({
                     name: cat.name,
@@ -110,7 +110,7 @@ export default function HomePage() {
             }
         }
         loadData()
-    }, [])
+    }, [language])
 
     return (
         <div>

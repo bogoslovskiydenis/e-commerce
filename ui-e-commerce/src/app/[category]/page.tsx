@@ -1,13 +1,19 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import { cookies } from 'next/headers'
 import UniversalCategoryPage from '@/components/UniversalCategoryPage/UniversalCategoryPage'
 import { CategoryConfig } from '@/config/categoryConfig'
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api'
 
-async function getCategory(slug: string) {
+async function getLanguage() {
+    const cookieStore = await cookies()
+    return cookieStore.get('language')?.value || 'uk'
+}
+
+async function getCategory(slug: string, lang: string) {
     try {
-        const res = await fetch(`${API_BASE_URL}/categories/slug/${slug}`, {
+        const res = await fetch(`${API_BASE_URL}/categories/slug/${slug}?lang=${lang}`, {
             cache: 'no-store',
             headers: { 'Content-Type': 'application/json' }
         })
@@ -20,9 +26,9 @@ async function getCategory(slug: string) {
     }
 }
 
-async function getCategoryProducts(categoryId: string) {
+async function getCategoryProducts(categoryId: string, lang: string) {
     try {
-        const res = await fetch(`${API_BASE_URL}/products?categoryId=${categoryId}&limit=100`, {
+        const res = await fetch(`${API_BASE_URL}/products?categoryId=${categoryId}&limit=100&lang=${lang}`, {
             cache: 'no-store',
             headers: { 'Content-Type': 'application/json' }
         })
@@ -37,7 +43,8 @@ async function getCategoryProducts(categoryId: string) {
 
 export async function generateMetadata({ params }: { params: Promise<{ category: string }> }): Promise<Metadata> {
     const { category: categorySlug } = await params
-    const category = await getCategory(categorySlug)
+    const lang = await getLanguage()
+    const category = await getCategory(categorySlug, lang)
     if (!category) {
         return { title: 'Category not found', description: 'The requested category does not exist' }
     }
@@ -50,10 +57,11 @@ export async function generateMetadata({ params }: { params: Promise<{ category:
 
 export default async function CategoryPage({ params }: { params: Promise<{ category: string }> }) {
     const { category: categorySlug } = await params
-    const category = await getCategory(categorySlug)
+    const lang = await getLanguage()
+    const category = await getCategory(categorySlug, lang)
     if (!category) notFound()
 
-    const products = await getCategoryProducts(category.id)
+    const products = await getCategoryProducts(category.id, lang)
 
     const config: CategoryConfig = {
         title: category.name,
@@ -70,8 +78,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
             giftTypes: category.type === 'GIFTS'
         },
         seoTitle: category.metaTitle || category.name,
-        seoDescription: category.metaDescription || category.description || '',
-        sortOptions: undefined
+        seoDescription: category.metaDescription || category.description || ''
     }
 
     const breadcrumbs = [

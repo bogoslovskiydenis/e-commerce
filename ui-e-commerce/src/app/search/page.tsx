@@ -6,8 +6,10 @@ import Link from 'next/link'
 import { apiService, Product } from '@/services/api'
 import UniversalCategoryPage from '@/components/UniversalCategoryPage/UniversalCategoryPage'
 import { CategoryConfig } from '@/config/categoryConfig'
+import { useTranslation } from '@/contexts/LanguageContext'
 
 export default function SearchPage() {
+    const { language } = useTranslation()
     const searchParams = useSearchParams()
     const query = searchParams.get('q') || ''
     const [products, setProducts] = useState<Product[]>([])
@@ -25,7 +27,7 @@ export default function SearchPage() {
             try {
                 setIsLoading(true)
                 setError(null)
-                const results = await apiService.searchProducts(query, 100)
+                const results = await apiService.searchProducts(query, 100, language)
                 setProducts(results)
             } catch (err) {
                 console.error('Error searching products:', err)
@@ -37,7 +39,7 @@ export default function SearchPage() {
         }
 
         loadSearchResults()
-    }, [query])
+    }, [query, language])
 
     const config: CategoryConfig = {
         title: query ? `Результати пошуку: "${query}"` : 'Пошук товарів',

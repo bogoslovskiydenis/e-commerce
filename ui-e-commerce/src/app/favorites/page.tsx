@@ -14,11 +14,13 @@ import { useTranslation } from '@/contexts/LanguageContext'
 function FavoriteProductCard({ 
     product, 
     onRemove, 
-    isRemoving 
+    isRemoving,
+    removeLabel
 }: { 
     product: Product
     onRemove: () => void
     isRemoving: boolean
+    removeLabel: string
 }) {
     const handleHeartClick = (e: React.MouseEvent) => {
         e.preventDefault()
@@ -45,7 +47,7 @@ function FavoriteProductCard({
                 onClick={handleHeartClick}
                 disabled={isRemoving}
                 className="absolute top-2 right-2 z-10 p-2 bg-white rounded-full shadow-md hover:bg-red-50 transition-colors"
-                aria-label={t('favorites.removeFromFavorites')}
+                aria-label={removeLabel}
             >
                 {isRemoving ? (
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-red-500"></div>
@@ -61,7 +63,7 @@ type ViewMode = 'grid' | 'list'
 type SortOption = 'newest' | 'oldest' | 'price-asc' | 'price-desc' | 'name-asc' | 'name-desc'
 
 export default function FavoritesPage() {
-    const { t } = useTranslation()
+    const { t, language } = useTranslation()
     const { isAuthenticated } = useAuth()
     const [favorites, setFavorites] = useState<Product[]>([])
     const [loading, setLoading] = useState(true)
@@ -75,12 +77,12 @@ export default function FavoritesPage() {
         } else {
             setLoading(false)
         }
-    }, [isAuthenticated])
+    }, [isAuthenticated, language])
 
     const loadFavorites = async () => {
         try {
             setLoading(true)
-            const data = await apiService.getFavorites()
+            const data = await apiService.getFavorites(language)
             setFavorites(data)
         } catch (error) {
             console.error('Error loading favorites:', error)
@@ -263,6 +265,7 @@ export default function FavoritesPage() {
                                 product={product}
                                 onRemove={() => handleRemoveFavorite(product.id)}
                                 isRemoving={removingId === product.id}
+                                removeLabel={t('favorites.removeFromFavorites')}
                             />
                         ))}
                     </div>

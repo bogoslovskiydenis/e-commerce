@@ -31,8 +31,11 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
         if (savedLang && ['uk', 'ru', 'en'].includes(savedLang)) {
             setLanguageState(savedLang)
             document.documentElement.lang = savedLang
+            // Синхронизируем с cookies
+            document.cookie = `language=${savedLang}; path=/; max-age=31536000; SameSite=Lax`
         } else {
             document.documentElement.lang = 'uk'
+            document.cookie = `language=uk; path=/; max-age=31536000; SameSite=Lax`
         }
     }, [])
 
@@ -41,6 +44,8 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
         if (mounted) {
             localStorage.setItem('language', lang)
             document.documentElement.lang = lang
+            // Сохраняем также в cookies для серверных компонентов
+            document.cookie = `language=${lang}; path=/; max-age=31536000; SameSite=Lax`
         }
     }
 

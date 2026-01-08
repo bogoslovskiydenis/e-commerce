@@ -1,15 +1,21 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import { cookies } from 'next/headers'
 import UniversalCategoryPage from '@/components/UniversalCategoryPage/UniversalCategoryPage'
 import { CategoryConfig } from '@/config/categoryConfig'
 import { PageProps, resolveParams } from '@/types/next'
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api'
 
+async function getLanguage() {
+    const cookieStore = await cookies()
+    return cookieStore.get('language')?.value || 'uk'
+}
+
 // Функция для получения категории по slug
-async function getCategory(slug: string) {
+async function getCategory(slug: string, lang: string) {
     try {
-        const res = await fetch(`${API_BASE_URL}/categories/slug/${slug}`, {
+        const res = await fetch(`${API_BASE_URL}/categories/slug/${slug}?lang=${lang}`, {
             cache: 'no-store',
             headers: {
                 'Content-Type': 'application/json',
@@ -29,10 +35,10 @@ async function getCategory(slug: string) {
 }
 
 // Функция для получения товаров подкатегории
-async function getCategoryProducts(categoryId: string) {
+async function getCategoryProducts(categoryId: string, lang: string) {
     try {
         const res = await fetch(
-            `${API_BASE_URL}/products?categoryId=${categoryId}&limit=100`,
+            `${API_BASE_URL}/products?categoryId=${categoryId}&limit=100&lang=${lang}`,
             {
                 cache: 'no-store',
                 headers: {
@@ -58,8 +64,9 @@ export async function generateMetadata({
                                            params
                                        }: PageProps<{ category: string; subcategory: string }>): Promise<Metadata> {
     const { subcategory: subcategorySlug, category: categorySlug } = await resolveParams(params)
-    const subcategory = await getCategory(subcategorySlug)
-    const parentCategory = await getCategory(categorySlug)
+    const lang = await getLanguage()
+    const subcategory = await getCategory(subcategorySlug, lang)
+    const parentCategory = await getCategory(categorySlug, lang)
 
     if (!subcategory) {
         return {
@@ -96,13 +103,14 @@ export default async function SubcategoryPage({
                                               }: PageProps<{ category: string; subcategory: string }>) {
     // Получаем параметры (работает и с Promise и без)
     const { category: categorySlug, subcategory: subcategorySlug } = await resolveParams(params)
+    const lang = await getLanguage()
 
     // ============================================
     // ШАГ 1: ПОЛУЧЕНИЕ ДАННЫХ КАТЕГОРИЙ
     // ============================================
 
     // Получаем родительскую категорию
-    const parentCategory = await getCategory(categorySlug)
+    const parentCategory = await getCategory(categorySlug, lang)
 
     if (!parentCategory) {
         console.error(`Parent category not found: ${categorySlug}`)
@@ -110,7 +118,7 @@ export default async function SubcategoryPage({
     }
 
     // Получаем подкатегорию
-    const subcategory = await getCategory(subcategorySlug)
+    const subcategory = await getCategory(subcategorySlug, lang)
 
     if (!subcategory) {
         console.error(`Subcategory not found: ${subcategorySlug}`)
@@ -131,7 +139,7 @@ export default async function SubcategoryPage({
     // ============================================
 
     // Получаем товары подкатегории
-    const products = await getCategoryProducts(subcategory.id)
+    const products = await getCategoryProducts(subcategory.id, lang)
 
     // ============================================
     // ШАГ 4: КОНФИГУРАЦИЯ СТРАНИЦЫ
@@ -158,17 +166,7 @@ export default async function SubcategoryPage({
         // SEO оптимизация
         seoTitle: subcategory.metaTitle || `${subcategory.name} - ${parentCategory.name}`,
         seoDescription: subcategory.metaDescription || subcategory.description ||
-            `Купить ${subcategory.name.toLowerCase()} в категории ${parentCategory.name.toLowerCase()}`,
-
-        // Опции сортировки
-        sortOptions: [
-            { value: 'popular', label: 'По популярности' },
-            { value: 'price-asc', label: 'Сначала дешевые' },
-            { value: 'price-desc', label: 'Сначала дорогие' },
-            { value: 'name-asc', label: 'По названию А-Я' },
-            { value: 'name-desc', label: 'По названию Я-А' },
-            { value: 'new', label: 'Новинки' }
-        ]
+            `Купить ${subcategory.name.toLowerCase()} в категории ${parentCategory.name.toLowerCase()}`
     }
 
     // ============================================

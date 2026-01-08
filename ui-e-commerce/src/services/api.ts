@@ -454,10 +454,14 @@ class ApiService {
     /**
      * Получить рекомендуемые товары
      */
-    async getFeaturedProducts(limit: number = 8): Promise<Product[]> {
+    async getFeaturedProducts(limit: number = 8, lang?: string): Promise<Product[]> {
         try {
+            const langParam = lang || this.getCurrentLanguage();
             const response = await this.request<ApiResponse<Product[]>>(
-                `/products?featured=true&limit=${limit}`
+                `/products?featured=true&limit=${limit}&lang=${langParam}`,
+                {},
+                true,
+                false
             );
             return response.data || [];
         } catch (error) {
@@ -469,10 +473,14 @@ class ApiService {
     /**
      * Получить популярные товары
      */
-    async getPopularProducts(limit: number = 8): Promise<Product[]> {
+    async getPopularProducts(limit: number = 8, lang?: string): Promise<Product[]> {
         try {
+            const langParam = lang || this.getCurrentLanguage();
             const response = await this.request<ApiResponse<Product[]>>(
-                `/products?popular=true&limit=${limit}&sortBy=createdAt&sortOrder=desc`
+                `/products?popular=true&limit=${limit}&sortBy=createdAt&sortOrder=desc&lang=${langParam}`,
+                {},
+                true,
+                false
             );
             return response.data || [];
         } catch (error) {
@@ -489,6 +497,7 @@ class ApiService {
         limit?: number;
         sortBy?: string;
         sortOrder?: 'asc' | 'desc';
+        lang?: string;
     }): Promise<{ products: Product[]; total: number }> {
         try {
             const queryParams = new URLSearchParams();
@@ -498,9 +507,13 @@ class ApiService {
             if (params?.limit) queryParams.append('limit', params.limit.toString());
             if (params?.sortBy) queryParams.append('sortBy', params.sortBy);
             if (params?.sortOrder) queryParams.append('sortOrder', params.sortOrder);
+            if (params?.lang) queryParams.append('lang', params.lang);
 
             const response = await this.request<ApiResponse<Product[]>>(
-                `/products?${queryParams.toString()}`
+                `/products?${queryParams.toString()}`,
+                {},
+                true,
+                !params?.lang
             );
 
             return {
@@ -516,10 +529,14 @@ class ApiService {
     /**
      * Поиск товаров
      */
-    async searchProducts(query: string, limit: number = 20): Promise<Product[]> {
+    async searchProducts(query: string, limit: number = 20, lang?: string): Promise<Product[]> {
         try {
+            const langParam = lang || this.getCurrentLanguage();
             const response = await this.request<ApiResponse<Product[]>>(
-                `/products?search=${encodeURIComponent(query)}&limit=${limit}`
+                `/products?search=${encodeURIComponent(query)}&limit=${limit}&lang=${langParam}`,
+                {},
+                true,
+                false
             );
             return response.data || [];
         } catch (error) {
@@ -699,8 +716,14 @@ class ApiService {
     /**
      * Получить список избранных товаров
      */
-    async getFavorites(): Promise<Product[]> {
-        const response = await this.request<ApiResponse<Product[]>>('/favorites');
+    async getFavorites(lang?: string): Promise<Product[]> {
+        const langParam = lang || this.getCurrentLanguage();
+        const response = await this.request<ApiResponse<Product[]>>(
+            `/favorites?lang=${langParam}`,
+            {},
+            false,
+            false
+        );
         return response.data || [];
     }
 
