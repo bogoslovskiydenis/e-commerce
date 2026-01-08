@@ -38,9 +38,10 @@ export default function LanguageSwitcherMobile() {
             <button
                 onClick={() => setIsOpen(!isOpen)}
                 className="flex items-center gap-1 text-gray-700 hover:text-teal-600 transition-colors text-xs sm:text-sm"
+                suppressHydrationWarning
             >
                 <Globe size={14} />
-                <span className="text-xs font-medium">{currentLanguage.code.toUpperCase()}</span>
+                <span className="text-xs font-medium" suppressHydrationWarning>{currentLanguage.code.toUpperCase()}</span>
             </button>
 
             {isOpen && (

@@ -338,12 +338,12 @@ export default function UniversalCategoryPage({
             <nav className="mb-6">
                 <ol className="flex items-center space-x-2 text-sm">
                     {breadcrumbs.map((item, index) => (
-                        <li key={item.name}>
+                        <li key={item.name} suppressHydrationWarning>
                             {index > 0 && <span className="text-gray-400 mx-2">/</span>}
                             {item.current ? (
-                                <span className="text-gray-900">{item.name}</span>
+                                <span className="text-gray-900" suppressHydrationWarning>{item.name}</span>
                             ) : (
-                                <Link href={item.href} className="text-gray-500 hover:text-teal-600">
+                                <Link href={item.href} className="text-gray-500 hover:text-teal-600" suppressHydrationWarning>
                                     {item.name}
                                 </Link>
                             )}

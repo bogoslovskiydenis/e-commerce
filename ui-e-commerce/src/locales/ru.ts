@@ -8,7 +8,7 @@ export default {
         account: 'Кабинет',
         favorites: 'Избранное',
         cart: 'Корзина',
-        searchPlaceholder: 'Поиск шариков, подарков, стаканчиков...',
+        searchPlaceholder: 'Поиск',
         logo: 'Логотип'
     },
     footer: {
@@ -152,6 +152,10 @@ export default {
         continueShoppingBtn: 'Продолжить покупки',
         currency: 'грн',
         loading: 'Загрузка...'
+    },
+    search: {
+        home: 'Главная',
+        title: 'Поиск'
     },
     category: {
         homePage: 'Главная',

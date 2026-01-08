@@ -3,12 +3,23 @@ import { notFound } from 'next/navigation'
 import { cookies } from 'next/headers'
 import UniversalCategoryPage from '@/components/UniversalCategoryPage/UniversalCategoryPage'
 import { CategoryConfig } from '@/config/categoryConfig'
+import { getLocalizedCategoryName, getLocalizedCategoryDescription } from '@/utils/categoryLocalization'
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api'
 
 async function getLanguage() {
     const cookieStore = await cookies()
     return cookieStore.get('language')?.value || 'uk'
+}
+
+// Функция для получения переводов на сервере
+function getServerTranslations(lang: string) {
+    const translations: Record<string, Record<string, string>> = {
+        uk: { home: 'Головна' },
+        ru: { home: 'Главная' },
+        en: { home: 'Home' }
+    }
+    return translations[lang] || translations.uk
 }
 
 async function getCategory(slug: string, lang: string) {
@@ -63,9 +74,12 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
 
     const products = await getCategoryProducts(category.id, lang)
 
+    const localizedCategoryName = getLocalizedCategoryName(category, lang as any)
+    const localizedCategoryDescription = getLocalizedCategoryDescription(category, lang as any)
+
     const config: CategoryConfig = {
-        title: category.name,
-        description: category.description || '',
+        title: localizedCategoryName,
+        description: localizedCategoryDescription,
         basePath: `/${category.slug}`,
         categoryType: category.type.toLowerCase(),
         filters: {
@@ -81,13 +95,17 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
         seoDescription: category.metaDescription || category.description || ''
     }
 
+    // Получаем переводы для breadcrumbs
+    const t = getServerTranslations(lang)
+
     const breadcrumbs = [
-        { name: 'Home', href: '/' },
-        { name: category.name, href: `/${category.slug}`, current: true }
+        { name: t.home, href: '/' },
+        { name: localizedCategoryName, href: `/${category.slug}`, current: true }
     ]
 
     if (category.parent) {
-        breadcrumbs.splice(1, 0, { name: category.parent.name, href: `/${category.parent.slug}` })
+        const localizedParentName = getLocalizedCategoryName(category.parent, lang as any)
+        breadcrumbs.splice(1, 0, { name: localizedParentName, href: `/${category.parent.slug}` })
     }
 
     const formattedProducts = products.map((product: any) => ({

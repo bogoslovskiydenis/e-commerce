@@ -9,7 +9,7 @@ import { CategoryConfig } from '@/config/categoryConfig'
 import { useTranslation } from '@/contexts/LanguageContext'
 
 export default function SearchPage() {
-    const { language } = useTranslation()
+    const { language, t } = useTranslation()
     const searchParams = useSearchParams()
     const query = searchParams.get('q') || ''
     const [products, setProducts] = useState<Product[]>([])
@@ -68,8 +68,8 @@ export default function SearchPage() {
     }
 
     const breadcrumbs = [
-        { name: 'Главная', href: '/' },
-        { name: 'Поиск', href: '/search', current: !query },
+        { name: t('search.home'), href: '/' },
+        { name: t('search.title'), href: '/search', current: !query },
         ...(query ? [{ name: `"${query}"`, href: `/search?q=${encodeURIComponent(query)}`, current: true }] : [])
     ]
 

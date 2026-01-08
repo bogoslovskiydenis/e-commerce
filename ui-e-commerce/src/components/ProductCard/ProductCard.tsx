@@ -11,7 +11,7 @@ import { useAuth } from '@/contexts/AuthContext'
 interface ProductCardProps {
     id: string
     name: string
-    type: 'foil' | 'latex' | 'bouquet' | 'set' | 'cup' | 'plush' | 'souvenir' | 'jewelry' | 'sweets' | 'flowers' | 'gift set'
+    type?: string
     price: number
     oldPrice?: number
     discount?: number
@@ -23,8 +23,8 @@ interface ProductCardProps {
     material?: string
     inStock: boolean
     className?: string
-    basePath?: string // Добавляем возможность указать базовый путь
-    showFavoriteButton?: boolean // Показывать ли кнопку избранного
+    basePath?: string
+    showFavoriteButton?: boolean
 }
 
 export default function ProductCard({
@@ -42,8 +42,8 @@ export default function ProductCard({
                                         material,
                                         inStock = true,
                                         className = "",
-                                        basePath = "/balloons", // По умолчанию используем balloons
-                                        showFavoriteButton = true // По умолчанию показываем
+                                        basePath = "/product",
+                                        showFavoriteButton = true
                                     }: ProductCardProps) {
     const { isAuthenticated } = useAuth()
     const [isAdded, setIsAdded] = useState(false)

@@ -22,7 +22,7 @@ export default function ToolbarSection({
                                            sortOptions,
                                            productsCount
                                        }: ToolbarSectionProps) {
-    const { t } = useTranslation()
+    const { t, mounted } = useTranslation()
     return (
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 pb-4 border-b gap-4">
             <div className="flex items-center gap-3 w-full sm:w-auto">
@@ -30,9 +30,10 @@ export default function ToolbarSection({
                 <button
                     onClick={onShowMobileFilters}
                     className="lg:hidden flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-sm"
+                    suppressHydrationWarning
                 >
                     <Filter size={16} />
-                    {t('category.filters')}
+                    {mounted ? t('category.filters') : 'Фільтри'}
                 </button>
 
                 {/* Сортировка */}
@@ -53,14 +54,16 @@ export default function ToolbarSection({
                     <button
                         onClick={() => setViewMode('grid')}
                         className={`p-2 ${viewMode === 'grid' ? 'bg-teal-600 text-white' : 'bg-white text-gray-600'}`}
-                        title={t('category.grid')}
+                        title={mounted ? t('category.grid') : 'Сітка'}
+                        suppressHydrationWarning
                     >
                         <Grid size={18} />
                     </button>
                     <button
                         onClick={() => setViewMode('list')}
                         className={`p-2 ${viewMode === 'list' ? 'bg-teal-600 text-white' : 'bg-white text-gray-600'}`}
-                        title={t('category.list')}
+                        title={mounted ? t('category.list') : 'Список'}
+                        suppressHydrationWarning
                     >
                         <List size={18} />
                     </button>
@@ -69,8 +72,12 @@ export default function ToolbarSection({
 
             {/* Счетчик товаров */}
             <div className="flex items-center gap-2 text-sm text-gray-600 w-full sm:w-auto justify-between sm:justify-end">
-                <span>{t('category.found')}</span>
-                <span className="font-medium">{productsCount} {t('category.items')}</span>
+                <span suppressHydrationWarning>
+                    {mounted ? t('category.found') : 'Знайдено:'}
+                </span>
+                <span className="font-medium" suppressHydrationWarning>
+                    {productsCount} {mounted ? t('category.items') : 'товарів'}
+                </span>
             </div>
         </div>
     )

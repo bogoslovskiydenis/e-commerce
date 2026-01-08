@@ -39,10 +39,10 @@ export default function Header() {
                 <div className="container mx-auto px-4">
                     <div className="flex justify-between items-center text-sm">
                         <nav className="flex gap-6">
-                            <Link href="/about" className="hover:text-teal-200">{t('header.about')}</Link>
-                            <Link href="/delivery" className="hover:text-teal-200">{t('header.delivery')}</Link>
-                            <Link href="/sale" className="hover:text-teal-200">{t('header.sale')}</Link>
-                            <Link href="/contacts" className="hover:text-teal-200">{t('header.contacts')}</Link>
+                            <Link href="/about" className="hover:text-teal-200" suppressHydrationWarning>{t('header.about')}</Link>
+                            <Link href="/delivery" className="hover:text-teal-200" suppressHydrationWarning>{t('header.delivery')}</Link>
+                            <Link href="/sale" className="hover:text-teal-200" suppressHydrationWarning>{t('header.sale')}</Link>
+                            <Link href="/contacts" className="hover:text-teal-200" suppressHydrationWarning>{t('header.contacts')}</Link>
                         </nav>
 
                         <div className="flex items-center gap-6">
@@ -74,7 +74,7 @@ export default function Header() {
                                 <Menu size={24} />
                             </button>
 
-                            <Link href="/" className="text-2xl font-bold text-teal-600">
+                            <Link href="/" className="text-2xl font-bold text-teal-600" suppressHydrationWarning>
                                 {t('header.logo')}
                             </Link>
 
@@ -106,6 +106,7 @@ export default function Header() {
                         <div className="py-3">
                             <SearchAutocomplete
                                 placeholder={t('header.searchPlaceholder')}
+                                suppressHydrationWarning
                             />
                         </div>
                     </div>
@@ -117,7 +118,7 @@ export default function Header() {
                 <div className="py-4">
                     <div className="container mx-auto px-4">
                         <div className="flex items-center gap-8">
-                            <Link href="/" className="text-3xl font-bold text-teal-600">
+                            <Link href="/" className="text-3xl font-bold text-teal-600" suppressHydrationWarning>
                                 {t('header.logo')}
                             </Link>
 
@@ -125,6 +126,7 @@ export default function Header() {
                                 <SearchAutocomplete
                                     placeholder={t('header.searchPlaceholder')}
                                     className="max-w-md"
+                                    suppressHydrationWarning
                                 />
                             </div>
 
@@ -133,9 +135,10 @@ export default function Header() {
                                     <Link
                                         href="/account"
                                         className="flex items-center gap-2 text-sm"
+                                        suppressHydrationWarning
                                     >
                                         <User size={20} />
-                                        <span>{customer?.name || t('header.account')}</span>
+                                        <span suppressHydrationWarning>{customer?.name || t('header.account')}</span>
                                     </Link>
                                 ) : (
                                     <div className="relative">
@@ -143,9 +146,10 @@ export default function Header() {
                                             href="/login"
                                             className="flex items-center gap-2 text-sm"
                                             onMouseEnter={() => setShowPrompt(true)}
+                                            suppressHydrationWarning
                                         >
                                             <User size={20} />
-                                            <span>{t('header.login')}</span>
+                                            <span suppressHydrationWarning>{t('header.login')}</span>
                                         </Link>
 
                                         {showPrompt && (
@@ -170,13 +174,13 @@ export default function Header() {
                                     </div>
                                 )}
 
-                                <Link href="/favorites" className="flex items-center gap-2 text-sm">
+                                <Link href="/favorites" className="flex items-center gap-2 text-sm" suppressHydrationWarning>
                                     <Heart size={20} />
-                                    <span>{t('header.favorites')}</span>
+                                    <span suppressHydrationWarning>{t('header.favorites')}</span>
                                 </Link>
-                                <Link href="/cart" className="flex items-center gap-2 text-sm relative">
+                                <Link href="/cart" className="flex items-center gap-2 text-sm relative" suppressHydrationWarning>
                                     <ShoppingBag size={20} />
-                                    <span>{t('header.cart')}</span>
+                                    <span suppressHydrationWarning>{t('header.cart')}</span>
                                     {cartCount > 0 && (
                                         <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                                             {cartCount > 99 ? '99+' : cartCount}

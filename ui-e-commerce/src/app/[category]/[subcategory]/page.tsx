@@ -4,12 +4,23 @@ import { cookies } from 'next/headers'
 import UniversalCategoryPage from '@/components/UniversalCategoryPage/UniversalCategoryPage'
 import { CategoryConfig } from '@/config/categoryConfig'
 import { PageProps, resolveParams } from '@/types/next'
+import { getLocalizedCategoryName, getLocalizedCategoryDescription } from '@/utils/categoryLocalization'
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api'
 
 async function getLanguage() {
     const cookieStore = await cookies()
     return cookieStore.get('language')?.value || 'uk'
+}
+
+// Функция для получения переводов на сервере
+function getServerTranslations(lang: string) {
+    const translations: Record<string, Record<string, string>> = {
+        uk: { home: 'Головна' },
+        ru: { home: 'Главная' },
+        en: { home: 'Home' }
+    }
+    return translations[lang] || translations.uk
 }
 
 // Функция для получения категории по slug
@@ -146,9 +157,12 @@ export default async function SubcategoryPage({
     // ============================================
 
     // Формируем конфигурацию для UniversalCategoryPage
+    const localizedSubcategoryName = getLocalizedCategoryName(subcategory, lang as any)
+    const localizedSubcategoryDescription = getLocalizedCategoryDescription(subcategory, lang as any)
+
     const config: CategoryConfig = {
-        title: subcategory.name,
-        description: subcategory.description || '',
+        title: localizedSubcategoryName,
+        description: localizedSubcategoryDescription,
         basePath: `/${parentCategory.slug}/${subcategory.slug}`,
         categoryType: subcategory.type.toLowerCase(),
 
@@ -164,36 +178,39 @@ export default async function SubcategoryPage({
         },
 
         // SEO оптимизация
-        seoTitle: subcategory.metaTitle || `${subcategory.name} - ${parentCategory.name}`,
-        seoDescription: subcategory.metaDescription || subcategory.description ||
-            `Купить ${subcategory.name.toLowerCase()} в категории ${parentCategory.name.toLowerCase()}`
+        seoTitle: subcategory.metaTitle || `${localizedSubcategoryName} - ${getLocalizedCategoryName(parentCategory, lang as any)}`,
+        seoDescription: subcategory.metaDescription || localizedSubcategoryDescription ||
+            `Купить ${localizedSubcategoryName.toLowerCase()} в категории ${getLocalizedCategoryName(parentCategory, lang as any).toLowerCase()}`
     }
 
     // ============================================
     // ШАГ 5: ФОРМИРОВАНИЕ BREADCRUMBS
     // ============================================
 
+    // Получаем переводы для breadcrumbs
+    const t = getServerTranslations(lang)
+
     // Формируем breadcrumbs с учетом иерархии
+    const localizedParentName = getLocalizedCategoryName(parentCategory, lang as any)
+    const localizedRootParentName = parentCategory.parent
+        ? getLocalizedCategoryName(parentCategory.parent, lang as any)
+        : null
+
     const breadcrumbs = [
-        { name: 'Главная', href: '/' },
+        { name: t.home, href: '/' },
+        ...(localizedRootParentName
+            ? [{ name: localizedRootParentName, href: `/${parentCategory.parent!.slug}` }]
+            : []),
         {
-            name: parentCategory.name,
+            name: localizedParentName,
             href: `/${parentCategory.slug}`
         },
         {
-            name: subcategory.name,
+            name: localizedSubcategoryName,
             href: `/${parentCategory.slug}/${subcategory.slug}`,
             current: true
         }
     ]
-
-    // Если у родительской категории есть свой родитель, добавляем его
-    if (parentCategory.parent) {
-        breadcrumbs.splice(1, 0, {
-            name: parentCategory.parent.name,
-            href: `/${parentCategory.parent.slug}`
-        })
-    }
 
     // ============================================
     // ШАГ 6: ФОРМАТИРОВАНИЕ ТОВАРОВ

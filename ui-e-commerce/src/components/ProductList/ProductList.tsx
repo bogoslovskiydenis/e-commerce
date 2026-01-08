@@ -7,10 +7,10 @@ import { ShoppingBag, Check } from 'lucide-react'
 import FavoriteButton from '@/components/FavoriteButton/FavoriteButton'
 import { cartUtils } from '@/utils/cart'
 
-interface BalloonProduct {
+interface ListProduct {
     id: string
     name: string
-    type: 'foil' | 'latex' | 'bouquet' | 'set' | 'cup' | 'plush' | 'souvenir' | 'jewelry' | 'sweets' | 'flowers'
+    type?: string
     price: number
     oldPrice?: number
     discount?: number
@@ -25,7 +25,7 @@ interface BalloonProduct {
 }
 
 interface ProductListProps {
-    products?: BalloonProduct[]
+    products?: ListProduct[]
     className?: string
     basePath?: string
 }
@@ -33,17 +33,17 @@ interface ProductListProps {
 export default function ProductList({
                                         products = [],
                                         className = "",
-                                        basePath = "/balloons"
+                                        basePath = "/product"
                                     }: ProductListProps) {
     const [addedItems, setAddedItems] = useState<Set<string>>(new Set())
 
     // Функция для определения правильной ссылки на товар
-    const getProductLink = (product: BalloonProduct) => {
+    const getProductLink = (product: ListProduct) => {
         // Используем универсальный роут /product/[id] для всех товаров
         return `/product/${product.id}`
     }
 
-    const handleAddToCart = (e: React.MouseEvent, product: BalloonProduct) => {
+    const handleAddToCart = (e: React.MouseEvent, product: ListProduct) => {
         e.preventDefault()
         e.stopPropagation()
         

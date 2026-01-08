@@ -38,11 +38,12 @@ export default function LanguageSwitcher() {
             <button
                 onClick={() => setIsOpen(!isOpen)}
                 className="flex items-center gap-1 sm:gap-2 text-white hover:text-teal-200 transition-colors text-xs sm:text-sm"
+                suppressHydrationWarning
             >
                 <Globe size={14} className="sm:w-4 sm:h-4" />
-                <span className="hidden lg:inline">{currentLanguage.label}</span>
-                <span className="hidden sm:inline lg:hidden text-xs">{currentLanguage.code.toUpperCase()}</span>
-                <span className="sm:hidden text-xs font-medium">{currentLanguage.code.toUpperCase()}</span>
+                <span className="hidden lg:inline" suppressHydrationWarning>{currentLanguage.label}</span>
+                <span className="hidden sm:inline lg:hidden text-xs" suppressHydrationWarning>{currentLanguage.code.toUpperCase()}</span>
+                <span className="sm:hidden text-xs font-medium" suppressHydrationWarning>{currentLanguage.code.toUpperCase()}</span>
             </button>
 
             {isOpen && (

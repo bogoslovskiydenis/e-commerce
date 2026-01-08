@@ -28,7 +28,7 @@ export default function SidebarFilters({
                                            isMobile = false,
                                            onFiltersChange
                                        }: SidebarFiltersProps) {
-    const { t } = useTranslation()
+    const { t, mounted } = useTranslation()
     const [filters, setFilters] = useState<FilterState>({
         priceRange: { from: '', to: '' },
         colors: [],
@@ -121,44 +121,52 @@ export default function SidebarFilters({
 
             {/* Фильтры */}
             <div className="p-4 space-y-6">
-                <h3 className="font-semibold text-base">{t('category.filters')}</h3>
+                <h3 className="font-semibold text-base" suppressHydrationWarning>
+                    {mounted ? t('category.filters') : 'Фільтри'}
+                </h3>
 
                 {/* Цена */}
                 <div>
-                    <h4 className="text-sm font-medium mb-3">{t('category.price')}</h4>
+                    <h4 className="text-sm font-medium mb-3" suppressHydrationWarning>
+                        {mounted ? t('category.price') : 'Ціна'}
+                    </h4>
                     <div className="flex gap-2">
                         <input
                             type="number"
-                            placeholder={t('category.from')}
+                            placeholder={mounted ? t('category.from') : 'Від'}
                             value={filters.priceRange.from}
                             onChange={(e) => updateFilters({
                                 priceRange: { ...filters.priceRange, from: e.target.value }
                             })}
                             className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+                            suppressHydrationWarning
                         />
                         <input
                             type="number"
-                            placeholder={t('category.to')}
+                            placeholder={mounted ? t('category.to') : 'До'}
                             value={filters.priceRange.to}
                             onChange={(e) => updateFilters({
                                 priceRange: { ...filters.priceRange, to: e.target.value }
                             })}
                             className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+                            suppressHydrationWarning
                         />
                     </div>
                 </div>
 
                 {/* Цвет */}
                 <div>
-                    <h4 className="text-sm font-medium mb-3">{t('category.color')}</h4>
+                    <h4 className="text-sm font-medium mb-3" suppressHydrationWarning>
+                        {mounted ? t('category.color') : 'Колір'}
+                    </h4>
                     <div className="space-y-2">
                         {[
-                            { name: t('category.red'), value: 'red', color: 'bg-red-500' },
-                            { name: t('category.blue'), value: 'blue', color: 'bg-blue-500' },
-                            { name: t('category.pink'), value: 'pink', color: 'bg-pink-500' },
-                            { name: t('category.gold'), value: 'gold', color: 'bg-yellow-500' },
-                            { name: t('category.silver'), value: 'silver', color: 'bg-gray-400' },
-                            { name: t('category.green'), value: 'green', color: 'bg-green-500' }
+                            { name: mounted ? t('category.red') : 'Червоний', value: 'red', color: 'bg-red-500' },
+                            { name: mounted ? t('category.blue') : 'Синій', value: 'blue', color: 'bg-blue-500' },
+                            { name: mounted ? t('category.pink') : 'Рожевий', value: 'pink', color: 'bg-pink-500' },
+                            { name: mounted ? t('category.gold') : 'Золотий', value: 'gold', color: 'bg-yellow-500' },
+                            { name: mounted ? t('category.silver') : 'Срібний', value: 'silver', color: 'bg-gray-400' },
+                            { name: mounted ? t('category.green') : 'Зелений', value: 'green', color: 'bg-green-500' }
                         ].map((color) => (
                             <label key={color.value} className="flex items-center gap-3 cursor-pointer">
                                 <input
@@ -168,7 +176,7 @@ export default function SidebarFilters({
                                     className="w-4 h-4 text-teal-600 rounded focus:ring-teal-500"
                                 />
                                 <div className={`w-4 h-4 rounded-full ${color.color}`}></div>
-                                <span className="text-sm">{color.name}</span>
+                                <span className="text-sm" suppressHydrationWarning>{color.name}</span>
                             </label>
                         ))}
                     </div>
@@ -177,9 +185,14 @@ export default function SidebarFilters({
                 {/* Материал для шариков */}
                 {categoryKey === 'balloons' && (
                     <div>
-                        <h4 className="text-sm font-medium mb-3">{t('category.material')}</h4>
+                        <h4 className="text-sm font-medium mb-3" suppressHydrationWarning>
+                            {mounted ? t('category.material') : 'Матеріал'}
+                        </h4>
                         <div className="space-y-2">
-                            {[t('category.foil'), t('category.latex')].map((material) => (
+                            {[
+                                mounted ? t('category.foil') : 'Фольга',
+                                mounted ? t('category.latex') : 'Латекс'
+                            ].map((material) => (
                                 <label key={material} className="flex items-center gap-2 cursor-pointer">
                                     <input
                                         type="checkbox"
@@ -187,7 +200,7 @@ export default function SidebarFilters({
                                         onChange={() => handleMaterialChange(material)}
                                         className="w-4 h-4 text-teal-600 rounded focus:ring-teal-500"
                                     />
-                                    <span className="text-sm">{material}</span>
+                                    <span className="text-sm" suppressHydrationWarning>{material}</span>
                                 </label>
                             ))}
                         </div>
@@ -197,9 +210,15 @@ export default function SidebarFilters({
                 {/* Материал для стаканчиков */}
                 {categoryKey === 'cups' && (
                     <div>
-                        <h4 className="text-sm font-medium mb-3">{t('category.material')}</h4>
+                        <h4 className="text-sm font-medium mb-3" suppressHydrationWarning>
+                            {mounted ? t('category.material') : 'Матеріал'}
+                        </h4>
                         <div className="space-y-2">
-                            {[t('category.paper'), t('category.plastic'), t('category.eco')].map((material) => (
+                            {[
+                                mounted ? t('category.paper') : 'Паперові',
+                                mounted ? t('category.plastic') : 'Пластикові',
+                                mounted ? t('category.eco') : 'Екологічні'
+                            ].map((material) => (
                                 <label key={material} className="flex items-center gap-2 cursor-pointer">
                                     <input
                                         type="checkbox"
@@ -207,7 +226,7 @@ export default function SidebarFilters({
                                         onChange={() => handleMaterialChange(material)}
                                         className="w-4 h-4 text-teal-600 rounded focus:ring-teal-500"
                                     />
-                                    <span className="text-sm">{material}</span>
+                                    <span className="text-sm" suppressHydrationWarning>{material}</span>
                                 </label>
                             ))}
                         </div>
@@ -217,7 +236,9 @@ export default function SidebarFilters({
                 {/* Объем для стаканчиков */}
                 {categoryKey === 'cups' && (
                     <div>
-                        <h4 className="text-sm font-medium mb-3">{t('category.volume')}</h4>
+                        <h4 className="text-sm font-medium mb-3" suppressHydrationWarning>
+                            {mounted ? t('category.volume') : 'Об\'єм'}
+                        </h4>
                         <div className="space-y-2">
                             {['200мл', '250мл', '300мл'].map((volume) => (
                                 <label key={volume} className="flex items-center gap-2 cursor-pointer">
@@ -237,9 +258,17 @@ export default function SidebarFilters({
                 {/* Тип подарка для подарков */}
                 {categoryKey === 'gifts' && (
                     <div>
-                        <h4 className="text-sm font-medium mb-3">{t('category.giftType')}</h4>
+                        <h4 className="text-sm font-medium mb-3" suppressHydrationWarning>
+                            {mounted ? t('category.giftType') : 'Тип подарунка'}
+                        </h4>
                         <div className="space-y-2">
-                            {[t('category.plush'), t('category.souvenirs'), t('category.jewelry'), t('category.sweets'), t('category.flowers')].map((type) => (
+                            {[
+                                mounted ? t('category.plush') : 'М\'які іграшки',
+                                mounted ? t('category.souvenirs') : 'Сувеніри',
+                                mounted ? t('category.jewelry') : 'Прикраси',
+                                mounted ? t('category.sweets') : 'Цукерки',
+                                mounted ? t('category.flowers') : 'Квіти'
+                            ].map((type) => (
                                 <label key={type} className="flex items-center gap-2 cursor-pointer">
                                     <input
                                         type="checkbox"
@@ -247,7 +276,7 @@ export default function SidebarFilters({
                                         onChange={() => handleGiftTypeChange(type)}
                                         className="w-4 h-4 text-teal-600 rounded focus:ring-teal-500"
                                     />
-                                    <span className="text-sm">{type}</span>
+                                    <span className="text-sm" suppressHydrationWarning>{type}</span>
                                 </label>
                             ))}
                         </div>
@@ -264,7 +293,9 @@ export default function SidebarFilters({
                                 onChange={(e) => updateFilters({ withHelium: e.target.checked })}
                                 className="w-4 h-4 text-teal-600 rounded focus:ring-teal-500"
                             />
-                            <span className="text-sm">{t('category.withHelium')}</span>
+                            <span className="text-sm" suppressHydrationWarning>
+                                {mounted ? t('category.withHelium') : 'З гелієм'}
+                            </span>
                         </label>
                     </div>
                 )}
@@ -278,7 +309,9 @@ export default function SidebarFilters({
                             onChange={(e) => updateFilters({ inStock: e.target.checked })}
                             className="w-4 h-4 text-teal-600 rounded focus:ring-teal-500"
                         />
-                        <span className="text-sm">{t('category.inStock')}</span>
+                        <span className="text-sm" suppressHydrationWarning>
+                            {mounted ? t('category.inStock') : 'В наявності'}
+                        </span>
                     </label>
                 </div>
 
@@ -287,14 +320,16 @@ export default function SidebarFilters({
                     <button
                         onClick={applyFilters}
                         className="w-full bg-teal-600 text-white py-2 rounded-lg hover:bg-teal-700 text-sm font-medium transition-colors"
+                        suppressHydrationWarning
                     >
-                        {t('category.applyFilters')}
+                        {mounted ? t('category.applyFilters') : 'Застосувати фільтри'}
                     </button>
                     <button
                         onClick={resetFilters}
                         className="w-full border border-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-50 text-sm transition-colors"
+                        suppressHydrationWarning
                     >
-                        {t('category.resetAll')}
+                        {mounted ? t('category.resetAll') : 'Скинути все'}
                     </button>
                 </div>
             </div>

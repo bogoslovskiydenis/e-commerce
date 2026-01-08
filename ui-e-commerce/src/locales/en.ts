@@ -8,7 +8,7 @@ export default {
         account: 'Account',
         favorites: 'Favorites',
         cart: 'Cart',
-        searchPlaceholder: 'Search balloons, gifts, cups...',
+        searchPlaceholder: 'Search',
         logo: 'Logo'
     },
     footer: {
@@ -152,6 +152,10 @@ export default {
         continueShoppingBtn: 'Continue shopping',
         currency: 'UAH',
         loading: 'Loading...'
+    },
+    search: {
+        home: 'Home',
+        title: 'Search'
     },
     category: {
         homePage: 'Home',

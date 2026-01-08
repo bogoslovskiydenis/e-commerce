@@ -11,6 +11,7 @@ interface LanguageContextType {
     language: Language
     setLanguage: (lang: Language) => void
     t: (key: string) => string
+    mounted: boolean
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined)
@@ -21,22 +22,42 @@ const translations: Record<Language, Record<string, any>> = {
     en: enTranslations
 }
 
+// Функция для чтения cookie на клиенте
+function getCookie(name: string): string | null {
+    if (typeof document === 'undefined') return null
+    const value = `; ${document.cookie}`
+    const parts = value.split(`; ${name}=`)
+    if (parts.length === 2) return parts.pop()?.split(';').shift() || null
+    return null
+}
+
 export function LanguageProvider({ children }: { children: ReactNode }) {
-    const [language, setLanguageState] = useState<Language>('uk')
+    // Инициализируем язык из cookies или localStorage
+    const [language, setLanguageState] = useState<Language>(() => {
+        if (typeof window === 'undefined') return 'uk'
+        
+        // Сначала проверяем cookies (приоритет для серверных компонентов)
+        const cookieLang = getCookie('language') as Language
+        if (cookieLang && ['uk', 'ru', 'en'].includes(cookieLang)) {
+            return cookieLang
+        }
+        
+        // Затем localStorage
+        const storageLang = localStorage.getItem('language') as Language
+        if (storageLang && ['uk', 'ru', 'en'].includes(storageLang)) {
+            return storageLang
+        }
+        
+        return 'uk'
+    })
     const [mounted, setMounted] = useState(false)
 
     useEffect(() => {
         setMounted(true)
-        const savedLang = localStorage.getItem('language') as Language
-        if (savedLang && ['uk', 'ru', 'en'].includes(savedLang)) {
-            setLanguageState(savedLang)
-            document.documentElement.lang = savedLang
-            // Синхронизируем с cookies
-            document.cookie = `language=${savedLang}; path=/; max-age=31536000; SameSite=Lax`
-        } else {
-            document.documentElement.lang = 'uk'
-            document.cookie = `language=uk; path=/; max-age=31536000; SameSite=Lax`
-        }
+        // Синхронизируем язык с cookies и localStorage
+        document.documentElement.lang = language
+        document.cookie = `language=${language}; path=/; max-age=31536000; SameSite=Lax`
+        localStorage.setItem('language', language)
     }, [])
 
     const setLanguage = (lang: Language) => {
@@ -46,6 +67,8 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
             document.documentElement.lang = lang
             // Сохраняем также в cookies для серверных компонентов
             document.cookie = `language=${lang}; path=/; max-age=31536000; SameSite=Lax`
+            // Перезагружаем страницу для обновления серверных компонентов
+            window.location.reload()
         }
     }
 
@@ -65,7 +88,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     }
 
     return (
-        <LanguageContext.Provider value={{ language, setLanguage, t }}>
+        <LanguageContext.Provider value={{ language, setLanguage, t, mounted }}>
             {children}
         </LanguageContext.Provider>
     )

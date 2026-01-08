@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Category, Product, apiService } from '@/services/api';
 import { getLocalizedCategoryName } from '@/utils/categoryLocalization';
+import { useTranslation } from '@/contexts/LanguageContext';
 
 export interface NavigationState {
     categories: Category[];
@@ -23,11 +24,12 @@ const DEFAULT_OPTIONS: UseNavigationOptions = {
     cacheTimeout: 2 * 60 * 1000,
 };
 
-const CACHE_KEY = 'navigation_categories';
-const CACHE_VERSION = '4'; // Увеличиваем версию при изменении структуры навигации (dropdown с подкатегориями)
+const CACHE_KEY_PREFIX = 'navigation_categories';
+const CACHE_VERSION = '5'; // Увеличиваем версию при изменении структуры навигации (добавлена поддержка языков)
 
 export function useNavigation(options: UseNavigationOptions = {}) {
     const config = { ...DEFAULT_OPTIONS, ...options };
+    const { language } = useTranslation();
 
     const [state, setState] = useState<NavigationState>({
         categories: [],
@@ -36,7 +38,7 @@ export function useNavigation(options: UseNavigationOptions = {}) {
         lastUpdated: null
     });
 
-    // ИСПРАВЛЕНИЕ: SSR-безопасная функция кеширования
+    // ИСПРАВЛЕНИЕ: SSR-безопасная функция кеширования с учетом языка
     const loadFromCache = useCallback((): Category[] | null => {
         if (!config.enableCache) return null;
 
@@ -44,6 +46,7 @@ export function useNavigation(options: UseNavigationOptions = {}) {
         if (typeof window === 'undefined') return null;
 
         try {
+            const CACHE_KEY = `${CACHE_KEY_PREFIX}_${language}`;
             const cached = localStorage.getItem(CACHE_KEY);
             if (!cached) return null;
 
@@ -67,7 +70,7 @@ export function useNavigation(options: UseNavigationOptions = {}) {
             console.error('Error loading navigation from cache:', error);
             return null;
         }
-    }, [config.enableCache, config.cacheTimeout]);
+    }, [config.enableCache, config.cacheTimeout, language]);
 
     const saveToCache = useCallback((data: Category[]) => {
         if (!config.enableCache) return;
@@ -76,6 +79,7 @@ export function useNavigation(options: UseNavigationOptions = {}) {
         if (typeof window === 'undefined') return;
 
         try {
+            const CACHE_KEY = `${CACHE_KEY_PREFIX}_${language}`;
             const cacheData = {
                 data,
                 timestamp: Date.now(),
@@ -85,7 +89,7 @@ export function useNavigation(options: UseNavigationOptions = {}) {
         } catch (error) {
             console.error('Error saving navigation to cache:', error);
         }
-    }, [config.enableCache]);
+    }, [config.enableCache, language]);
 
     const loadNavigation = useCallback(async (useCache: boolean = true) => {
         setState(prev => ({ ...prev, isLoading: true, error: null }));
@@ -105,8 +109,8 @@ export function useNavigation(options: UseNavigationOptions = {}) {
                 }
             }
 
-            // Загружаем с сервера
-            const categories = await apiService.getNavigationCategories();
+            // Загружаем с сервера с текущим языком
+            const categories = await apiService.getNavigationCategories(language);
 
             setState({
                 categories,
@@ -127,7 +131,7 @@ export function useNavigation(options: UseNavigationOptions = {}) {
             console.log('API недоступно, используем резервные данные');
 
             // Используем резервные данные при ошибке
-            const fallbackCategories = await apiService.getNavigationCategories();
+            const fallbackCategories = await apiService.getNavigationCategories(language);
 
             setState({
                 categories: fallbackCategories,
@@ -146,7 +150,10 @@ export function useNavigation(options: UseNavigationOptions = {}) {
 
     const clearCache = useCallback(() => {
         if (typeof window !== 'undefined') {
-            localStorage.removeItem(CACHE_KEY);
+            // Очищаем кеш для всех языков
+            ['uk', 'ru', 'en'].forEach(lang => {
+                localStorage.removeItem(`${CACHE_KEY_PREFIX}_${lang}`);
+            });
         }
     }, []);
 
@@ -200,12 +207,12 @@ export function useNavigation(options: UseNavigationOptions = {}) {
         return breadcrumbs;
     }, [state.categories]);
 
-    // ИСПРАВЛЕНИЕ: Загружаем только на клиенте
+    // ИСПРАВЛЕНИЕ: Загружаем только на клиенте и перезагружаем при смене языка
     useEffect(() => {
         if (typeof window !== 'undefined') {
             loadNavigation().catch(console.error);
         }
-    }, [loadNavigation]);
+    }, [loadNavigation, language]);
 
     return {
         ...state,

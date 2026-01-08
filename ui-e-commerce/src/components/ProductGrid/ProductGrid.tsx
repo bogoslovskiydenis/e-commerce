@@ -1,9 +1,9 @@
 import ProductCard from '@/components/ProductCard/ProductCard'
 
-export interface BalloonProduct {
+interface GridProduct {
     id: string
     name: string
-    type: 'foil' | 'latex' | 'bouquet' | 'set' | 'cup' | 'plush' | 'souvenir' | 'jewelry' | 'sweets' | 'flowers' | 'gift set'
+    type?: string
     price: number
     oldPrice?: number
     discount?: number
@@ -17,15 +17,15 @@ export interface BalloonProduct {
 }
 
 interface ProductGridProps {
-    products?: BalloonProduct[]
+    products?: GridProduct[]
     className?: string
-    basePath?: string // Добавляем basePath для гибкости
+    basePath?: string
 }
 
 export default function ProductGrid({
                                         products = [],
                                         className = "",
-                                        basePath = "/balloons" // По умолчанию balloons, но можно переопределить
+                                        basePath = "/product"
                                     }: ProductGridProps) {
     return (
         <div className={`grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 ${className}`}>
