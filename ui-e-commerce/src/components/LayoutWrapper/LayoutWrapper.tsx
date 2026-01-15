@@ -7,6 +7,7 @@ import Footer from '@/components/Footer/Footer'
 import SimpleHeader from '@/components/Header/SimpleHeader'
 import { AuthProvider } from '@/contexts/AuthContext'
 import { LanguageProvider } from '@/contexts/LanguageContext'
+import LanguageHtmlLang from '@/components/LanguageHtmlLang/LanguageHtmlLang'
 
 export default function LayoutWrapper({
                                           children
@@ -18,6 +19,7 @@ export default function LayoutWrapper({
 
     return (
         <LanguageProvider>
+            <LanguageHtmlLang />
             <AuthProvider>
                 {isLoginPage ? <SimpleHeader /> : <Header />}
                 <main className="flex-1">

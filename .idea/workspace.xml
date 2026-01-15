@@ -4,27 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="cc69a437-414e-4395-a1be-55730bb45aca" name="Changes" comment="локализация на фронте">
+    <list default="true" id="cc69a437-414e-4395-a1be-55730bb45aca" name="Changes" comment="убрал резервную навигацию">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui-e-commerce/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/app/[category]/[subcategory]/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/app/[category]/[subcategory]/page.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/app/[category]/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/app/[category]/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/app/search/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/app/search/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/components/Header/Header.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/components/Header/Header.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/components/Header/LanguageSwitcher.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/components/Header/LanguageSwitcher.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/components/Header/LanguageSwitcherMobile.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/components/Header/LanguageSwitcherMobile.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/components/ProductCard/ProductCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/components/ProductCard/ProductCard.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/components/ProductGrid/ProductGrid.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/components/ProductGrid/ProductGrid.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/components/ProductList/ProductList.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/components/ProductList/ProductList.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/components/Search/SearchAutocomplete.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/components/Search/SearchAutocomplete.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/components/UniversalCategoryPage/UniversalCategoryPage.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/components/UniversalCategoryPage/UniversalCategoryPage.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/components/UniversalCategoryPage/components/SidebarFilters.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/components/UniversalCategoryPage/components/SidebarFilters.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/components/UniversalCategoryPage/components/ToolbarSection.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/components/UniversalCategoryPage/components/ToolbarSection.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/components/LayoutWrapper/LayoutWrapper.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/components/LayoutWrapper/LayoutWrapper.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/contexts/LanguageContext.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/contexts/LanguageContext.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/hooks/useNavigation.ts" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/hooks/useNavigation.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/locales/en.ts" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/locales/en.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/locales/ru.ts" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/locales/ru.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/locales/uk.ts" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/locales/uk.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -183,7 +167,8 @@
       <workItem from="1767009986762" duration="253000" />
       <workItem from="1767023373182" duration="2888000" />
       <workItem from="1767449742017" duration="10000" />
-      <workItem from="1767792668797" duration="19792000" />
+      <workItem from="1767792668797" duration="22847000" />
+      <workItem from="1768402900049" duration="7176000" />
     </task>
     <task id="LOCAL-00001" summary="добавил аунтификацию по ролям">
       <option name="closed" value="true" />
@@ -521,7 +506,23 @@
       <option name="project" value="LOCAL" />
       <updated>1767853047366</updated>
     </task>
-    <option name="localTasksCounter" value="43" />
+    <task id="LOCAL-00043" summary="убрал ненужное и добавил локализацию">
+      <option name="closed" value="true" />
+      <created>1767856650573</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1767856650573</updated>
+    </task>
+    <task id="LOCAL-00044" summary="убрал резервную навигацию">
+      <option name="closed" value="true" />
+      <created>1767856904634</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1767856904635</updated>
+    </task>
+    <option name="localTasksCounter" value="45" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -551,8 +552,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="перенес проект на Nest" />
-    <MESSAGE value="создал секцию отзывы, обратные звонки" />
     <MESSAGE value="перенес дашборд в dashboard" />
     <MESSAGE value="изменил ордерс отзывы ордерс" />
     <MESSAGE value="удалил dist сборку , не заливать на гитхаб" />
@@ -576,6 +575,8 @@
     <MESSAGE value="добавил в категорию локалицазию" />
     <MESSAGE value="локализация на фронте в навигации" />
     <MESSAGE value="локализация на фронте" />
-    <option name="LAST_COMMIT_MESSAGE" value="локализация на фронте" />
+    <MESSAGE value="убрал ненужное и добавил локализацию" />
+    <MESSAGE value="убрал резервную навигацию" />
+    <option name="LAST_COMMIT_MESSAGE" value="убрал резервную навигацию" />
   </component>
 </project>

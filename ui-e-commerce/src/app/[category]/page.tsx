@@ -37,15 +37,44 @@ async function getCategory(slug: string, lang: string) {
     }
 }
 
-async function getCategoryProducts(categoryId: string, lang: string) {
+// Функция для получения всех товаров категории и её подкатегорий
+async function getCategoryProducts(categoryId: string, subcategoryIds: string[] = [], lang: string) {
     try {
-        const res = await fetch(`${API_BASE_URL}/products?categoryId=${categoryId}&limit=100&lang=${lang}`, {
-            cache: 'no-store',
-            headers: { 'Content-Type': 'application/json' }
-        })
-        if (!res.ok) return []
-        const data = await res.json()
-        return data.success ? data.data : []
+        // Если нет подкатегорий, делаем один запрос
+        if (subcategoryIds.length === 0) {
+            const res = await fetch(`${API_BASE_URL}/products?categoryId=${categoryId}&limit=1000&lang=${lang}`, {
+                cache: 'no-store',
+                headers: { 'Content-Type': 'application/json' }
+            })
+            if (!res.ok) return []
+            const data = await res.json()
+            return data.success ? data.data : []
+        }
+        
+        // Собираем все ID категорий (родительская + подкатегории)
+        const allCategoryIds = [categoryId, ...subcategoryIds]
+        
+        // Делаем параллельные запросы для всех категорий
+        const productPromises = allCategoryIds.map(catId =>
+            fetch(`${API_BASE_URL}/products?categoryId=${catId}&limit=1000&lang=${lang}`, {
+                cache: 'no-store',
+                headers: { 'Content-Type': 'application/json' }
+            })
+                .then(res => res.ok ? res.json() : { success: false, data: [] })
+                .then(data => data.success ? data.data : [])
+                .catch(() => [])
+        )
+        
+        // Ждем все запросы и объединяем результаты
+        const allProductsArrays = await Promise.all(productPromises)
+        const allProducts = allProductsArrays.flat()
+        
+        // Удаляем дубликаты по ID товара
+        const uniqueProducts = Array.from(
+            new Map(allProducts.map((product: any) => [product.id, product])).values()
+        )
+        
+        return uniqueProducts
     } catch (error) {
         console.error('Error fetching products:', error)
         return []
@@ -72,7 +101,11 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
     const category = await getCategory(categorySlug, lang)
     if (!category) notFound()
 
-    const products = await getCategoryProducts(category.id, lang)
+    // Получаем ID всех подкатегорий
+    const subcategoryIds = category.children?.map((child: any) => child.id) || []
+    
+    // Загружаем товары из родительской категории и всех подкатегорий
+    const products = await getCategoryProducts(category.id, subcategoryIds, lang)
 
     const localizedCategoryName = getLocalizedCategoryName(category, lang as any)
     const localizedCategoryDescription = getLocalizedCategoryDescription(category, lang as any)

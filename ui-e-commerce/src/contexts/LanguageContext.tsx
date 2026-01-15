@@ -55,10 +55,12 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     useEffect(() => {
         setMounted(true)
         // Синхронизируем язык с cookies и localStorage
-        document.documentElement.lang = language
-        document.cookie = `language=${language}; path=/; max-age=31536000; SameSite=Lax`
-        localStorage.setItem('language', language)
-    }, [])
+        if (typeof window !== 'undefined') {
+            document.documentElement.lang = language
+            document.cookie = `language=${language}; path=/; max-age=31536000; SameSite=Lax`
+            localStorage.setItem('language', language)
+        }
+    }, [language])
 
     const setLanguage = (lang: Language) => {
         setLanguageState(lang)
@@ -67,8 +69,11 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
             document.documentElement.lang = lang
             // Сохраняем также в cookies для серверных компонентов
             document.cookie = `language=${lang}; path=/; max-age=31536000; SameSite=Lax`
-            // Перезагружаем страницу для обновления серверных компонентов
-            window.location.reload()
+            // Используем router для навигации без полной перезагрузки
+            if (typeof window !== 'undefined') {
+                const currentPath = window.location.pathname
+                window.location.href = currentPath
+            }
         }
     }
 
