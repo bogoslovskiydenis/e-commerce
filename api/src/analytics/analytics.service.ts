@@ -216,33 +216,33 @@ export class AnalyticsService {
       stat.averagePrice = stat.sales > 0 ? stat.revenue / stat.sales : 0;
     });
 
+    // Всегда получаем рейтинги для всех товаров
+    const productIds = Object.values(productStats).map((p) => p.productId);
+    const reviews = await this.prisma.review.groupBy({
+      by: ['productId'],
+      where: {
+        productId: { in: productIds },
+        status: 'APPROVED',
+      },
+      _avg: { rating: true },
+      _count: { id: true },
+    });
+
+    const reviewMap = new Map(reviews.map((r) => [r.productId, { rating: r._avg.rating || 0, count: r._count.id }]));
+
+    // Добавляем рейтинги ко всем товарам
+    let sorted = Object.values(productStats).map((p) => ({
+      ...p,
+      rating: reviewMap.get(p.productId)?.rating || 0,
+      reviewsCount: reviewMap.get(p.productId)?.count || 0,
+    }));
+
     // Сортируем
-    let sorted = Object.values(productStats);
     if (sortBy === 'revenue') {
       sorted = sorted.sort((a, b) => b.revenue - a.revenue);
     } else if (sortBy === 'sales') {
       sorted = sorted.sort((a, b) => b.sales - a.sales);
     } else if (sortBy === 'rating') {
-      // Для рейтинга нужно получить средний рейтинг из отзывов
-      const productIds = sorted.map((p) => p.productId);
-      const reviews = await this.prisma.review.groupBy({
-        by: ['productId'],
-        where: {
-          productId: { in: productIds },
-          status: 'APPROVED',
-        },
-        _avg: { rating: true },
-        _count: { id: true },
-      });
-
-      const reviewMap = new Map(reviews.map((r) => [r.productId, { rating: r._avg.rating || 0, count: r._count.id }]));
-
-      sorted = sorted.map((p) => ({
-        ...p,
-        rating: reviewMap.get(p.productId)?.rating || 0,
-        reviewsCount: reviewMap.get(p.productId)?.count || 0,
-      }));
-
       sorted = sorted.sort((a: any, b: any) => (b.rating || 0) - (a.rating || 0));
     }
 
@@ -256,7 +256,7 @@ export class AnalyticsService {
   async getCustomersAnalytics(query: any) {
     const { limit = 10, sortBy = 'totalSpent' } = query;
 
-    // Получаем всех клиентов с их заказами
+    // Получаем всех клиентов с их заказами и отзывами
     const customers = await this.prisma.customer.findMany({
       include: {
         orders: {
@@ -266,6 +266,14 @@ export class AnalyticsService {
           select: {
             totalAmount: true,
             createdAt: true,
+          },
+        },
+        reviews: {
+          where: {
+            status: 'APPROVED',
+          },
+          select: {
+            id: true,
           },
         },
       },
@@ -280,16 +288,19 @@ export class AnalyticsService {
         ? orders.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0].createdAt
         : null;
       const averageOrderValue = orderCount > 0 ? totalSpent / orderCount : 0;
+      const reviewsCount = customer.reviews?.length || 0;
 
       return {
         customerId: customer.id,
         name: customer.name,
         email: customer.email,
         phone: customer.phone,
+        createdAt: customer.createdAt,
         totalSpent,
         orderCount,
         averageOrderValue,
         lastOrderDate,
+        reviewsCount,
       };
     });
 

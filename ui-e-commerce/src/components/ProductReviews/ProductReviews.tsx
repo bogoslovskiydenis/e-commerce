@@ -11,7 +11,7 @@ interface ProductReviewsProps {
 }
 
 export default function ProductReviews({ productId }: ProductReviewsProps) {
-    const { t } = useTranslation()
+    const { t, language } = useTranslation()
     const { customer, isAuthenticated } = useAuth()
     const [reviews, setReviews] = useState<Review[]>([])
     const [loading, setLoading] = useState(true)
