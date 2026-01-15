@@ -4,15 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="cc69a437-414e-4395-a1be-55730bb45aca" name="Changes" comment="изменил Юа для навигации">
+    <list default="true" id="cc69a437-414e-4395-a1be-55730bb45aca" name="Changes" comment="загрузка пдф файла из админки">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin-panel-nuxt/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/admin-panel-nuxt/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin-panel-nuxt/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/admin-panel-nuxt/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin-panel-nuxt/pages/navigation.vue" beforeDir="false" afterPath="$PROJECT_DIR$/admin-panel-nuxt/pages/navigation.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin-panel-nuxt/pages/orders/[id].vue" beforeDir="false" afterPath="$PROJECT_DIR$/admin-panel-nuxt/pages/orders/[id].vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin-panel-nuxt/pages/products/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/admin-panel-nuxt/pages/products/index.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/orders/orders.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/orders/orders.controller.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/orders/orders.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/orders/orders.service.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/app.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/app.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/app.module.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/app.module.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -172,7 +167,7 @@
       <workItem from="1767023373182" duration="2888000" />
       <workItem from="1767449742017" duration="10000" />
       <workItem from="1767792668797" duration="22847000" />
-      <workItem from="1768402900049" duration="9449000" />
+      <workItem from="1768402900049" duration="12647000" />
     </task>
     <task id="LOCAL-00001" summary="добавил аунтификацию по ролям">
       <option name="closed" value="true" />
@@ -542,7 +537,15 @@
       <option name="project" value="LOCAL" />
       <updated>1768463240738</updated>
     </task>
-    <option name="localTasksCounter" value="47" />
+    <task id="LOCAL-00047" summary="загрузка пдф файла из админки">
+      <option name="closed" value="true" />
+      <created>1768468248600</created>
+      <option name="number" value="00047" />
+      <option name="presentableId" value="LOCAL-00047" />
+      <option name="project" value="LOCAL" />
+      <updated>1768468248600</updated>
+    </task>
+    <option name="localTasksCounter" value="48" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -572,7 +575,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="удалил dist сборку , не заливать на гитхаб" />
     <MESSAGE value="добавил сид категории и категории" />
     <MESSAGE value="изменил фронт" />
     <MESSAGE value="изменил навигацию для фронтенда" />
@@ -597,6 +599,7 @@
     <MESSAGE value="убрал резервную навигацию" />
     <MESSAGE value="переписал проект на nuxt" />
     <MESSAGE value="изменил Юа для навигации" />
-    <option name="LAST_COMMIT_MESSAGE" value="изменил Юа для навигации" />
+    <MESSAGE value="загрузка пдф файла из админки" />
+    <option name="LAST_COMMIT_MESSAGE" value="загрузка пдф файла из админки" />
   </component>
 </project>
