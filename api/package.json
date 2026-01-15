@@ -23,6 +23,7 @@
     "seed:disable-old-nav": "tsx scripts/disableOldCategoriesNavigation.mjs",
     "seed:disable-empty": "tsx scripts/disableEmptyCategoriesNavigation.mjs",
     "seed:all": "tsx scripts/seedAll.mjs",
+    "seed:analytics": "tsx scripts/addTestDataForAnalytics.mjs",
     "delete:categories": "tsx scripts/deleteCategories.mjs"
   },
   "dependencies": {

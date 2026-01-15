@@ -623,6 +623,12 @@ const loadCustomersAnalytics = async () => {
   try {
     loadingCustomers.value = true
     const params = { limit: 10, sortBy: customersSortBy.value }
+    if (selectedPeriod.value !== 'custom') {
+      params.period = selectedPeriod.value
+    } else {
+      if (dateFrom.value) params.dateFrom = dateFrom.value
+      if (dateTo.value) params.dateTo = dateTo.value
+    }
     const query = new URLSearchParams(params).toString()
     const response = await request(`/analytics/customers${query ? `?${query}` : ''}`)
     customersData.value = response.data || []

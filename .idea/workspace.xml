@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="cc69a437-414e-4395-a1be-55730bb45aca" name="Changes" comment="добавил аналитику">
+    <list default="true" id="cc69a437-414e-4395-a1be-55730bb45aca" name="Changes" comment="аналитика в админ панели">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/admin-panel-nuxt/pages/analytics.vue" beforeDir="false" afterPath="$PROJECT_DIR$/admin-panel-nuxt/pages/analytics.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/api/src/analytics/analytics.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/analytics/analytics.service.ts" afterDir="false" />
@@ -167,7 +167,7 @@
       <workItem from="1767023373182" duration="2888000" />
       <workItem from="1767449742017" duration="10000" />
       <workItem from="1767792668797" duration="22847000" />
-      <workItem from="1768402900049" duration="13859000" />
+      <workItem from="1768402900049" duration="15075000" />
     </task>
     <task id="LOCAL-00001" summary="добавил аунтификацию по ролям">
       <option name="closed" value="true" />
@@ -553,7 +553,15 @@
       <option name="project" value="LOCAL" />
       <updated>1768485741231</updated>
     </task>
-    <option name="localTasksCounter" value="49" />
+    <task id="LOCAL-00049" summary="аналитика в админ панели">
+      <option name="closed" value="true" />
+      <created>1768487595231</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1768487595231</updated>
+    </task>
+    <option name="localTasksCounter" value="50" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -583,7 +591,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="изменил фронт" />
     <MESSAGE value="изменил навигацию для фронтенда" />
     <MESSAGE value="сидд для создании 5 категории 5 подкатегориий и товары" />
     <MESSAGE value="добавил пагинацию" />
@@ -608,6 +615,7 @@
     <MESSAGE value="изменил Юа для навигации" />
     <MESSAGE value="загрузка пдф файла из админки" />
     <MESSAGE value="добавил аналитику" />
-    <option name="LAST_COMMIT_MESSAGE" value="добавил аналитику" />
+    <MESSAGE value="аналитика в админ панели" />
+    <option name="LAST_COMMIT_MESSAGE" value="аналитика в админ панели" />
   </component>
 </project>

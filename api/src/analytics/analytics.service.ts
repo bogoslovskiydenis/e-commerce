@@ -162,7 +162,9 @@ export class AnalyticsService {
         gte: startDate,
         lte: endDate,
       },
-      status: OrderStatus.DELIVERED,
+      status: {
+        in: [OrderStatus.DELIVERED, OrderStatus.SHIPPED, OrderStatus.CONFIRMED, OrderStatus.PROCESSING],
+      },
     };
 
     // Получаем все заказы за период
@@ -186,7 +188,7 @@ export class AnalyticsService {
         productImage?: string;
         sales: number;
         revenue: number;
-        orders: number;
+        orderIds: Set<string>;
         averagePrice: number;
       }
     > = {};
@@ -201,13 +203,13 @@ export class AnalyticsService {
             productImage: item.product.images?.[0],
             sales: 0,
             revenue: 0,
-            orders: 0,
+            orderIds: new Set(),
             averagePrice: 0,
           };
         }
         productStats[productId].sales += item.quantity;
         productStats[productId].revenue += Number(item.total);
-        productStats[productId].orders += 1;
+        productStats[productId].orderIds.add(order.id);
       });
     });
 
@@ -216,8 +218,15 @@ export class AnalyticsService {
       stat.averagePrice = stat.sales > 0 ? stat.revenue / stat.sales : 0;
     });
 
-    // Всегда получаем рейтинги для всех товаров
+    // Получаем информацию о товарах (popular флаг)
     const productIds = Object.values(productStats).map((p) => p.productId);
+    const products = await this.prisma.product.findMany({
+      where: { id: { in: productIds } },
+      select: { id: true, popular: true },
+    });
+    const productMap = new Map(products.map((p) => [p.id, p.popular]));
+
+    // Получаем рейтинги для всех товаров
     const reviews = await this.prisma.review.groupBy({
       by: ['productId'],
       where: {
@@ -230,20 +239,36 @@ export class AnalyticsService {
 
     const reviewMap = new Map(reviews.map((r) => [r.productId, { rating: r._avg.rating || 0, count: r._count.id }]));
 
-    // Добавляем рейтинги ко всем товарам
+    // Добавляем рейтинги и флаг popular ко всем товарам и преобразуем orderIds в количество
     let sorted = Object.values(productStats).map((p) => ({
-      ...p,
+      productId: p.productId,
+      productTitle: p.productTitle,
+      productImage: p.productImage,
+      sales: p.sales,
+      revenue: p.revenue,
+      orders: p.orderIds.size,
+      averagePrice: p.averagePrice,
       rating: reviewMap.get(p.productId)?.rating || 0,
       reviewsCount: reviewMap.get(p.productId)?.count || 0,
+      popular: productMap.get(p.productId) || false,
     }));
 
-    // Сортируем
+    // Сортируем с учетом флага popular (популярные товары выше)
     if (sortBy === 'revenue') {
-      sorted = sorted.sort((a, b) => b.revenue - a.revenue);
+      sorted = sorted.sort((a, b) => {
+        if (a.popular !== b.popular) return a.popular ? -1 : 1;
+        return b.revenue - a.revenue;
+      });
     } else if (sortBy === 'sales') {
-      sorted = sorted.sort((a, b) => b.sales - a.sales);
+      sorted = sorted.sort((a, b) => {
+        if (a.popular !== b.popular) return a.popular ? -1 : 1;
+        return b.sales - a.sales;
+      });
     } else if (sortBy === 'rating') {
-      sorted = sorted.sort((a: any, b: any) => (b.rating || 0) - (a.rating || 0));
+      sorted = sorted.sort((a: any, b: any) => {
+        if (a.popular !== b.popular) return a.popular ? -1 : 1;
+        return (b.rating || 0) - (a.rating || 0);
+      });
     }
 
     return {
@@ -254,7 +279,8 @@ export class AnalyticsService {
 
   // Аналитика по клиентам
   async getCustomersAnalytics(query: any) {
-    const { limit = 10, sortBy = 'totalSpent' } = query;
+    const { limit = 10, sortBy = 'totalSpent', period, dateFrom, dateTo } = query;
+    const { startDate, endDate } = this.getDateRange(period, dateFrom, dateTo);
 
     // Получаем всех клиентов с их заказами и отзывами
     const customers = await this.prisma.customer.findMany({
@@ -262,6 +288,10 @@ export class AnalyticsService {
         orders: {
           where: {
             status: OrderStatus.DELIVERED,
+            createdAt: {
+              gte: startDate,
+              lte: endDate,
+            },
           },
           select: {
             totalAmount: true,
