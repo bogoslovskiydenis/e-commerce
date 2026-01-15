@@ -72,11 +72,20 @@ export class CategoriesService {
             select: { id: true, name: true, slug: true },
           },
           children: {
-            select: { id: true, name: true, slug: true },
+            where: { isActive: true },
+            orderBy: { sortOrder: 'asc' },
+            include: {
+              _count: {
+                select: { products: { where: { isActive: true } } }
+              }
+            }
           },
           products: {
             select: { id: true },
             where: { isActive: true }
+          },
+          _count: {
+            select: { products: { where: { isActive: true } } }
           },
         },
         orderBy,
@@ -86,11 +95,34 @@ export class CategoriesService {
       this.prisma.category.count({ where }),
     ]);
 
-    const localizedCategories = categories.map(cat => this.localizeCategory(cat, lang));
+    // Для родительских категорий считаем общее количество товаров включая подкатегории
+    const categoriesWithProductsCount = await Promise.all(
+      categories.map(async (cat) => {
+        let productsCount = cat._count?.products || 0;
+        
+        // Если это родительская категория, считаем товары из всех подкатегорий
+        if (!cat.parentId) {
+          productsCount = await this.getTotalProductsCount(cat.id);
+        }
+        
+        // Добавляем количество товаров к дочерним категориям
+        const childrenWithCounts = cat.children ? cat.children.map(child => ({
+          ...child,
+          productsCount: child._count?.products || 0,
+        })) : [];
+        
+        const localized = this.localizeCategory(cat, lang);
+        return {
+          ...localized,
+          productsCount,
+          children: childrenWithCounts,
+        };
+      })
+    );
 
     return {
       success: true,
-      data: localizedCategories,
+      data: categoriesWithProductsCount,
       pagination: {
         page: Number(page),
         limit: Number(limit),
@@ -122,6 +154,51 @@ export class CategoriesService {
     };
   }
 
+  // Рекурсивная функция для подсчета всех товаров в категории и её подкатегориях
+  private async getTotalProductsCount(categoryId: string): Promise<number> {
+    // Считаем прямые товары в категории
+    const directProducts = await this.prisma.product.count({
+      where: {
+        categoryId,
+        isActive: true,
+      },
+    });
+
+    // Получаем все дочерние категории (включая вложенные)
+    const getAllChildrenIds = async (parentId: string): Promise<string[]> => {
+      const children = await this.prisma.category.findMany({
+        where: {
+          parentId,
+          isActive: true,
+        },
+        select: { id: true },
+      });
+
+      const childrenIds = children.map(c => c.id);
+      
+      // Рекурсивно получаем ID всех вложенных подкатегорий
+      const nestedIds = await Promise.all(
+        childrenIds.map(id => getAllChildrenIds(id))
+      );
+      
+      return [...childrenIds, ...nestedIds.flat()];
+    };
+
+    const childrenIds = await getAllChildrenIds(categoryId);
+    
+    // Считаем товары во всех подкатегориях
+    const childrenProducts = childrenIds.length > 0
+      ? await this.prisma.product.count({
+          where: {
+            categoryId: { in: childrenIds },
+            isActive: true,
+          },
+        })
+      : 0;
+
+    return directProducts + childrenProducts;
+  }
+
   async getNavigationCategories(query: any = {}) {
     const { lang = 'uk' } = query;
     // Получаем только родительские категории с showInNavigation: true
@@ -137,12 +214,12 @@ export class CategoriesService {
           orderBy: { sortOrder: 'asc' },
           include: {
             _count: {
-              select: { products: true }
+              select: { products: { where: { isActive: true } } }
             }
           }
         },
         _count: {
-          select: { products: true }
+          select: { products: { where: { isActive: true } } }
         }
       },
       orderBy: { sortOrder: 'asc' },
@@ -160,7 +237,7 @@ export class CategoriesService {
           },
           include: {
             _count: {
-              select: { products: true }
+              select: { products: { where: { isActive: true } } }
             }
           }
         });
@@ -169,6 +246,9 @@ export class CategoriesService {
           (sum, child) => sum + child._count.products,
           0
         );
+
+        // Считаем общее количество товаров в родительской категории (прямые + из всех подкатегорий)
+        const totalProductsCount = await this.getTotalProductsCount(category.id);
 
         // Добавляем количество товаров к каждой дочерней категории
         const childrenWithCounts = category.children.map(child => {
@@ -183,6 +263,7 @@ export class CategoriesService {
           ...category,
           children: childrenWithCounts,
           childrenProductsCount: totalChildrenProducts,
+          productsCount: totalProductsCount, // Общее количество товаров включая подкатегории
         };
       })
     );
