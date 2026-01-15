@@ -271,4 +271,66 @@ export class OrdersService {
 
     return { success: true, data: order };
   }
+
+  async addItemsToOrder(id: string, items: any[]) {
+    const order = await this.prisma.order.findUnique({
+      where: { id },
+      include: { items: true },
+    });
+
+    if (!order) {
+      throw new NotFoundException('Order not found');
+    }
+
+    // Проверяем и добавляем товары
+    let newTotalAmount = Number(order.totalAmount);
+    const orderItems = [];
+
+    for (const item of items) {
+      if (!item.productId || !item.quantity || !item.price) {
+        throw new BadRequestException('Invalid order item data');
+      }
+
+      const product = await this.prisma.product.findUnique({
+        where: { id: item.productId },
+      });
+
+      if (!product) {
+        throw new BadRequestException(`Product ${item.productId} not found`);
+      }
+
+      const itemTotal = Number(item.price) * item.quantity;
+      newTotalAmount += itemTotal;
+
+      orderItems.push({
+        productId: item.productId,
+        quantity: item.quantity,
+        price: Number(item.price),
+        total: itemTotal,
+      });
+    }
+
+    // Добавляем товары в заказ
+    await this.prisma.orderItem.createMany({
+      data: orderItems.map(item => ({
+        orderId: id,
+        ...item,
+      })),
+    });
+
+    // Обновляем итоговую сумму заказа
+    const updatedOrder = await this.prisma.order.update({
+      where: { id },
+      data: {
+        totalAmount: newTotalAmount - Number(order.discountAmount || 0),
+      },
+      include: {
+        customer: true,
+        manager: { select: { id: true, fullName: true, username: true } },
+        items: { include: { product: true } },
+      },
+    });
+
+    return { success: true, data: updatedOrder };
+  }
 }

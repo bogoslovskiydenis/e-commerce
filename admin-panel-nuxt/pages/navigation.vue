@@ -84,6 +84,7 @@
               v-for="child in category.children"
               :key="child.id"
               class="navigation-item navigation-subitem"
+              @click="openCategoryProducts(child.id)"
             >
               <template v-slot:prepend>
                 <div style="width: 40px;"></div>
@@ -146,6 +147,13 @@ const expandedCategories = ref({})
 
 const toggleCategory = (categoryId) => {
   expandedCategories.value[categoryId] = !expandedCategories.value[categoryId]
+}
+
+const openCategoryProducts = (categoryId) => {
+  navigateTo({
+    name: 'products',
+    query: { categoryId }
+  })
 }
 
 const loadCategories = async () => {

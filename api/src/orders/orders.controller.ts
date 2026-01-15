@@ -33,4 +33,11 @@ export class OrdersController {
   async updateOrderStatus(@Param('id') id: string, @Body() body: any, @Request() req: any) {
     return this.ordersService.updateOrderStatus(id, body, req.user.id);
   }
+
+  @Post(':id/items')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @RequirePermissions('orders.edit')
+  async addItemsToOrder(@Param('id') id: string, @Body() body: any) {
+    return this.ordersService.addItemsToOrder(id, body.items || []);
+  }
 }

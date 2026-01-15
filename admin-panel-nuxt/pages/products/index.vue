@@ -145,6 +145,7 @@
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
+import { useRoute } from '#imports'
 import { useApi } from '~/composables/useApi'
 
 definePageMeta({
@@ -152,6 +153,7 @@ definePageMeta({
 })
 
 const api = useApi()
+const route = useRoute()
 const loading = ref(false)
 const products = ref([])
 const categories = ref([])
@@ -262,6 +264,12 @@ watch([search, filters], () => {
 
 onMounted(async () => {
   await loadCategories()
+
+  // Если пришли из навигации с выбранной категорией - устанавливаем фильтр
+  if (route.query.categoryId) {
+    filters.categoryId = route.query.categoryId
+  }
+
   await loadProducts()
 })
 </script>

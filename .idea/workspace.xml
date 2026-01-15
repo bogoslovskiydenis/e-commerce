@@ -4,10 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="cc69a437-414e-4395-a1be-55730bb45aca" name="Changes" comment="переписал проект на nuxt">
+    <list default="true" id="cc69a437-414e-4395-a1be-55730bb45aca" name="Changes" comment="изменил Юа для навигации">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin-panel-nuxt/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/admin-panel-nuxt/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin-panel-nuxt/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/admin-panel-nuxt/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/admin-panel-nuxt/pages/navigation.vue" beforeDir="false" afterPath="$PROJECT_DIR$/admin-panel-nuxt/pages/navigation.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/categories/categories.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/categories/categories.service.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin-panel-nuxt/pages/orders/[id].vue" beforeDir="false" afterPath="$PROJECT_DIR$/admin-panel-nuxt/pages/orders/[id].vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin-panel-nuxt/pages/products/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/admin-panel-nuxt/pages/products/index.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/orders/orders.controller.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/orders/orders.controller.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/orders/orders.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/orders/orders.service.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -167,7 +172,7 @@
       <workItem from="1767023373182" duration="2888000" />
       <workItem from="1767449742017" duration="10000" />
       <workItem from="1767792668797" duration="22847000" />
-      <workItem from="1768402900049" duration="8207000" />
+      <workItem from="1768402900049" duration="9449000" />
     </task>
     <task id="LOCAL-00001" summary="добавил аунтификацию по ролям">
       <option name="closed" value="true" />
@@ -529,7 +534,15 @@
       <option name="project" value="LOCAL" />
       <updated>1768462435312</updated>
     </task>
-    <option name="localTasksCounter" value="46" />
+    <task id="LOCAL-00046" summary="изменил Юа для навигации">
+      <option name="closed" value="true" />
+      <created>1768463240738</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1768463240738</updated>
+    </task>
+    <option name="localTasksCounter" value="47" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -559,7 +572,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="изменил ордерс отзывы ордерс" />
     <MESSAGE value="удалил dist сборку , не заливать на гитхаб" />
     <MESSAGE value="добавил сид категории и категории" />
     <MESSAGE value="изменил фронт" />
@@ -584,6 +596,7 @@
     <MESSAGE value="убрал ненужное и добавил локализацию" />
     <MESSAGE value="убрал резервную навигацию" />
     <MESSAGE value="переписал проект на nuxt" />
-    <option name="LAST_COMMIT_MESSAGE" value="переписал проект на nuxt" />
+    <MESSAGE value="изменил Юа для навигации" />
+    <option name="LAST_COMMIT_MESSAGE" value="изменил Юа для навигации" />
   </component>
 </project>
