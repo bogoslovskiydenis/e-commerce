@@ -6,6 +6,13 @@ interface ProductSectionProps {
     products: Product[]
 }
 
+const getImageUrl = (url?: string | null) => {
+    if (!url) return '/api/placeholder/300/300'
+    if (url.startsWith('http')) return url
+    const apiBase = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api').replace('/api', '')
+    return `${apiBase}${url}`
+}
+
 export default function ProductSection({ products }: ProductSectionProps) {
     return (
         <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -17,7 +24,7 @@ export default function ProductSection({ products }: ProductSectionProps) {
                 >
                     <div className="aspect-square overflow-hidden rounded-lg bg-gray-100 relative">
                         <Image
-                            src={product.images?.[0] || product.image || '/api/placeholder/300/300'}
+                            src={getImageUrl(product.images?.[0] || product.image)}
                             alt={product.title || product.name || 'Product'}
                             width={300}
                             height={300}

@@ -4,10 +4,23 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="cc69a437-414e-4395-a1be-55730bb45aca" name="Changes" comment="аналитика в админ панели">
+    <list default="true" id="cc69a437-414e-4395-a1be-55730bb45aca" name="Changes" comment="добавлен скрипт для тестирования аналитики">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin-panel-nuxt/pages/analytics.vue" beforeDir="false" afterPath="$PROJECT_DIR$/admin-panel-nuxt/pages/analytics.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/analytics/analytics.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/analytics/analytics.service.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/DOCUMENTATION.md" beforeDir="false" afterPath="$PROJECT_DIR$/DOCUMENTATION.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin-panel-nuxt/pages/orders/[id].vue" beforeDir="false" afterPath="$PROJECT_DIR$/admin-panel-nuxt/pages/orders/[id].vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin-panel-nuxt/pages/products/[id].vue" beforeDir="false" afterPath="$PROJECT_DIR$/admin-panel-nuxt/pages/products/[id].vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin-panel-nuxt/pages/products/create.vue" beforeDir="false" afterPath="$PROJECT_DIR$/admin-panel-nuxt/pages/products/create.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin-panel-nuxt/pages/products/edit/[id].vue" beforeDir="false" afterPath="$PROJECT_DIR$/admin-panel-nuxt/pages/products/edit/[id].vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/orders/orders.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/orders/orders.service.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/src/products/products.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/products/products.service.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/app/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/app/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/components/Navigation/Navigation.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/components/Navigation/Navigation.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/components/ProductCard/ProductCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/components/ProductCard/ProductCard.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/components/ProductSection/ProductSection.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/components/ProductSection/ProductSection.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/hooks/useNavigation.ts" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/hooks/useNavigation.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/locales/en.ts" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/locales/en.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/locales/ru.ts" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/locales/ru.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/locales/uk.ts" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/locales/uk.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -67,17 +80,7 @@
       <recent name="$PROJECT_DIR$/api/src" />
     </key>
   </component>
-  <component name="RunManager" selected="npm.seed:users">
-    <configuration name="dev" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
-      <package-json value="$PROJECT_DIR$/ui-e-commerce/package.json" />
-      <command value="run" />
-      <scripts>
-        <script value="dev" />
-      </scripts>
-      <node-interpreter value="project" />
-      <envs />
-      <method v="2" />
-    </configuration>
+  <component name="RunManager" selected="npm.start">
     <configuration name="seed:all" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
       <package-json value="$PROJECT_DIR$/api/package.json" />
       <command value="run" />
@@ -118,13 +121,23 @@
       <envs />
       <method v="2" />
     </configuration>
+    <configuration name="start" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/ui-e-commerce/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="start" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="npm.start" />
         <item itemvalue="npm.seed:users" />
         <item itemvalue="npm.seed:disable-old-nav" />
         <item itemvalue="npm.seed:structured" />
         <item itemvalue="npm.seed:all" />
-        <item itemvalue="npm.dev" />
       </list>
     </recent_temporary>
   </component>
@@ -167,15 +180,8 @@
       <workItem from="1767023373182" duration="2888000" />
       <workItem from="1767449742017" duration="10000" />
       <workItem from="1767792668797" duration="22847000" />
-      <workItem from="1768402900049" duration="15075000" />
-    </task>
-    <task id="LOCAL-00001" summary="добавил аунтификацию по ролям">
-      <option name="closed" value="true" />
-      <created>1752049198338</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1752049198338</updated>
+      <workItem from="1768402900049" duration="17825000" />
+      <workItem from="1772800924218" duration="4201000" />
     </task>
     <task id="LOCAL-00002" summary="добавил аунтификацию по ролям включил PgAdmin">
       <option name="closed" value="true" />
@@ -561,7 +567,15 @@
       <option name="project" value="LOCAL" />
       <updated>1768487595231</updated>
     </task>
-    <option name="localTasksCounter" value="50" />
+    <task id="LOCAL-00050" summary="добавлен скрипт для тестирования аналитики">
+      <option name="closed" value="true" />
+      <created>1768544915635</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1768544915636</updated>
+    </task>
+    <option name="localTasksCounter" value="51" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -591,7 +605,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="изменил навигацию для фронтенда" />
     <MESSAGE value="сидд для создании 5 категории 5 подкатегориий и товары" />
     <MESSAGE value="добавил пагинацию" />
     <MESSAGE value="добавил регистрацию с фронта" />
@@ -616,6 +629,7 @@
     <MESSAGE value="загрузка пдф файла из админки" />
     <MESSAGE value="добавил аналитику" />
     <MESSAGE value="аналитика в админ панели" />
-    <option name="LAST_COMMIT_MESSAGE" value="аналитика в админ панели" />
+    <MESSAGE value="добавлен скрипт для тестирования аналитики" />
+    <option name="LAST_COMMIT_MESSAGE" value="добавлен скрипт для тестирования аналитики" />
   </component>
 </project>

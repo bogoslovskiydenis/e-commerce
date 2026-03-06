@@ -31,9 +31,6 @@ export default function Navigation() {
     // Обновляем навигацию при загрузке категорий или смене языка
     useEffect(() => {
         if (categories.length > 0) {
-            console.log('📋 Категории из API:', categories);
-            console.log('📋 Первая категория (структура):', JSON.stringify(categories[0], null, 2));
-
             // Преобразуем категории в элементы навигации (только родительские категории)
             const apiItems: NavigationItem[] = categories
                 .filter(category => !category.parentId) // Фильтруем только родительские категории
@@ -43,14 +40,6 @@ export default function Navigation() {
                     const childrenProductsCount = (category as any).childrenProductsCount || 0;
                     const children = category.children || [];
                     const localizedName = getLocalizedCategoryName(category, language);
-                    
-                    console.log(`📦 Категория ${localizedName}:`, {
-                        children: children.length,
-                        productsCount,
-                        childrenProductsCount,
-                        hasDropdown: children.length > 0 || productsCount > 0 || childrenProductsCount > 0
-                    });
-                    
                 return {
                     id: category.id,
                     title: localizedName,
@@ -79,7 +68,6 @@ export default function Navigation() {
             const allItems = [...apiItems, ...specialItems].sort((a, b) => {
                 return (a.sortOrder || 0) - (b.sortOrder || 0);
             });
-            console.log('🔄 Элементы навигации:', allItems);
             setNavigationItems(allItems);
         }
     }, [categories, language]);

@@ -27,6 +27,13 @@ interface ProductCardProps {
     showFavoriteButton?: boolean
 }
 
+const getImageUrl = (url?: string | null) => {
+    if (!url) return '/api/placeholder/300/300'
+    if (url.startsWith('http')) return url
+    const apiBase = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api').replace('/api', '')
+    return `${apiBase}${url}`
+}
+
 export default function ProductCard({
                                         id,
                                         name,
@@ -153,7 +160,7 @@ export default function ProductCard({
             <div className="aspect-square overflow-hidden bg-gray-100 relative">
                 <Link href={productLink}>
                     <Image
-                        src={image}
+                        src={getImageUrl(image)}
                         alt={name}
                         width={300}
                         height={300}

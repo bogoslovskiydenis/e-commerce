@@ -5,7 +5,7 @@
         <v-btn
           prepend-icon="mdi-arrow-left"
           variant="text"
-          @click="navigateTo({ name: 'products-index' })"
+          @click="navigateTo('/products')"
         >
           Назад к списку
         </v-btn>

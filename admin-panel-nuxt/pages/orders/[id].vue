@@ -557,11 +557,7 @@ const removeItem = async (itemId) => {
 const loadOrder = async () => {
   try {
     const data = await api.getOne('orders', route.params.id)
-    console.log('Загруженный заказ:', data)
-    console.log('Товары в заказе:', data.items)
     order.value = transformOrder(data)
-    console.log('Трансформированный заказ:', order.value)
-    console.log('Товары после трансформации:', order.value.items)
   } catch (error) {
     console.error('Ошибка загрузки заказа:', error)
   }

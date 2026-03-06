@@ -5,7 +5,7 @@
         <v-btn
           prepend-icon="mdi-arrow-left"
           variant="text"
-          @click="navigateTo({ name: 'products-index' })"
+          @click="navigateTo('/products')"
         >
           Назад к списку
         </v-btn>
@@ -320,7 +320,7 @@
           </v-btn>
           <v-btn
             variant="text"
-            @click="navigateTo({ name: 'products-index' })"
+            @click="navigateTo('/products')"
           >
             Отмена
           </v-btn>
@@ -404,7 +404,9 @@ const handleImageChange = async (event) => {
 
     if (response.ok) {
       const result = await response.json()
-      form.imageUrl = result.data?.url || result.data?.path || ''
+      const relativeUrl = result.data?.url || result.data?.path || ''
+      const apiBase = config.public.apiBase.replace('/api', '')
+      form.imageUrl = relativeUrl.startsWith('http') ? relativeUrl : `${apiBase}${relativeUrl}`
     }
   } catch (error) {
     console.error('Ошибка загрузки изображения:', error)
@@ -492,7 +494,7 @@ const handleSubmit = async () => {
     })
 
     await api.update('products', route.params.id, updateData)
-    await navigateTo({ name: 'products-index' })
+    await navigateTo('/products')
   } catch (error) {
     console.error('Ошибка сохранения:', error)
   } finally {

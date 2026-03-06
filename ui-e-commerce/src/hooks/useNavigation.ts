@@ -128,8 +128,6 @@ export function useNavigation(options: UseNavigationOptions = {}) {
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : 'Ошибка загрузки навигации';
 
-            console.log('API недоступно, используем резервные данные');
-
             // Используем резервные данные при ошибке
             const fallbackCategories = await apiService.getNavigationCategories(language);
 

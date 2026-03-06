@@ -60,7 +60,9 @@ export default {
         testimonials: 'Відгуки наших клієнтів',
         readyToOrder: 'Готові зробити замовлення?',
         readyToOrderSubtitle: 'Зв\'яжіться з нами будь-яким зручним способом',
-        writeToTelegram: '💬 Написати в Telegram'
+        writeToTelegram: '💬 Написати в Telegram',
+        popularSearches: 'Популярні запити',
+        promotions: 'Акції та спеціальні пропозиції'
     },
     languages: {
         uk: 'Українська',

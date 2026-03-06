@@ -97,15 +97,6 @@ export class ProductsService {
 
     const totalPages = Math.ceil(total / limitNum);
 
-    // Логируем для отладки
-    console.log('📦 Products API:', { 
-      requestedLimit: limit, 
-      actualLimit: limitNum, 
-      returnedCount: products.length, 
-      total, 
-      page: pageNum 
-    });
-
     const localizedProducts = products.map(product => {
       const localized = this.localizeProduct(product, lang);
       return this.formatProduct(localized);

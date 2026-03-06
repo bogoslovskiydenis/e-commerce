@@ -7,6 +7,8 @@ import FeaturesSection from '@/components/HomePageComponent/FeaturesSection/Feat
 import TestimonialsSection from '@/components/HomePageComponent/TestimonialsSection/TestimonialsSection'
 import CTASection from '@/components/HomePageComponent/CTASection/CTASection'
 import QuickOrderSection from '@/components/HomePageComponent/QuickOrderSection/QuickOrderSection'
+import PopularSearchesSection from '@/components/HomePageComponent/PopularSearchesSection/PopularSearchesSection'
+import PromotionsSection from '@/components/HomePageComponent/PromotionsSection/PromotionsSection'
 import BannerSlider from '@/components/Banner/BannerSlider'
 import { apiService, Product, Category, Banner } from '@/services/api'
 import { useTranslation } from '@/contexts/LanguageContext'
@@ -17,6 +19,7 @@ export default function HomePage() {
     const [popularProducts, setPopularProducts] = useState<Product[]>([])
     const [mainCategories, setMainCategories] = useState<Category[]>([])
     const [banners, setBanners] = useState<Banner[]>([])
+    const [popularQueries, setPopularQueries] = useState<string[]>([])
     const [loading, setLoading] = useState(true)
 
     // Данные для быстрого заказа
@@ -93,6 +96,10 @@ export default function HomePage() {
                 const popular = await apiService.getPopularProducts(8, language)
                 setPopularProducts(popular)
 
+                // Загружаем популярные поисковые запросы
+                const queries = await apiService.getPopularSearchQueries(8)
+                setPopularQueries(queries)
+
                 // Загружаем популярные категории для главной страницы с текущим языком
                 const categories = await apiService.getPopularCategories(5, language)
                 // Преобразуем категории в формат для CategorySection
@@ -129,6 +136,14 @@ export default function HomePage() {
                     title={t('home.popularCategories')}
                     categories={mainCategories}
                     columns={5}
+                />
+            )}
+
+            {/* Популярные запросы */}
+            {!loading && popularQueries.length > 0 && (
+                <PopularSearchesSection
+                    title={t('home.popularSearches')}
+                    queries={popularQueries}
                 />
             )}
 
@@ -171,6 +186,14 @@ export default function HomePage() {
                     viewAllText={t('home.viewAll')}
                     bgColor="bg-white"
                     slidesToShow={4}
+                />
+            )}
+
+            {/* Акции и спецпредложения */}
+            {!loading && banners.length > 0 && (
+                <PromotionsSection
+                    title={t('home.promotions')}
+                    banners={banners}
                 />
             )}
 
