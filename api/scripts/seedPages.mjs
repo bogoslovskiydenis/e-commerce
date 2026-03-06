@@ -51,6 +51,30 @@ const pages = [
         metaDescriptionRu: 'Условия доставки и способы оплаты в BalloonShop',
         metaDescriptionEn: 'Delivery and payment options at BalloonShop',
         isActive: true
+    },
+    {
+        slug: 'contacts',
+        title: 'Контакты',
+        titleUk: 'Контакти',
+        titleRu: 'Контакты',
+        titleEn: 'Contacts',
+        content: '<h2>Наши контакты</h2><p>Мы всегда на связи и готовы помочь с подбором шаров и оформлением заказа.</p><h3>Телефон</h3><p><a href=\"tel:+380671111111\">+38 (067) 111-11-11</a></p><h3>График работы</h3><p>Пн–Вс: 9:00–21:00</p><h3>Адрес</h3><p>Киев, ул. Примерная, 1</p><h3>Email</h3><p><a href=\"mailto:info@balloonshop.ua\">info@balloonshop.ua</a></p>',
+        contentUk: '<h2>Наші контакти</h2><p>Ми завжди на звʼязку і готові допомогти з підбором кульок та оформленням замовлення.</p><h3>Телефон</h3><p><a href=\"tel:+380671111111\">+38 (067) 111-11-11</a></p><h3>Графік роботи</h3><p>Пн–Нд: 9:00–21:00</p><h3>Адреса</h3><p>Київ, вул. Прикладна, 1</p><h3>Email</h3><p><a href=\"mailto:info@balloonshop.ua\">info@balloonshop.ua</a></p>',
+        contentRu: '<h2>Наши контакты</h2><p>Мы всегда на связи и готовы помочь с подбором шаров и оформлением заказа.</p><h3>Телефон</h3><p><a href=\"tel:+380671111111\">+38 (067) 111-11-11</a></p><h3>График работы</h3><p>Пн–Вс: 9:00–21:00</p><h3>Адрес</h3><p>Киев, ул. Примерная, 1</p><h3>Email</h3><p><a href=\"mailto:info@balloonshop.ua\">info@balloonshop.ua</a></p>',
+        contentEn: '<h2>Our contacts</h2><p>We are always in touch and ready to help with balloon selection and ordering.</p><h3>Phone</h3><p><a href=\"tel:+380671111111\">+38 (067) 111-11-11</a></p><h3>Working hours</h3><p>Mon–Sun: 9:00–21:00</p><h3>Address</h3><p>Kyiv, Prykladna St, 1</p><h3>Email</h3><p><a href=\"mailto:info@balloonshop.ua\">info@balloonshop.ua</a></p>',
+        excerpt: 'Как с нами связаться',
+        excerptUk: 'Як з нами звʼязатися',
+        excerptRu: 'Как с нами связаться',
+        excerptEn: 'How to contact us',
+        metaTitle: 'Контакты - BalloonShop',
+        metaTitleUk: 'Контакти - BalloonShop',
+        metaTitleRu: 'Контакты - BalloonShop',
+        metaTitleEn: 'Contacts - BalloonShop',
+        metaDescription: 'Телефон, адрес и график работы BalloonShop в Киеве',
+        metaDescriptionUk: 'Телефон, адреса та графік роботи BalloonShop у Києві',
+        metaDescriptionRu: 'Телефон, адрес и график работы BalloonShop в Киеве',
+        metaDescriptionEn: 'Phone, address and working hours of BalloonShop in Kyiv',
+        isActive: true
     }
 ];
 
