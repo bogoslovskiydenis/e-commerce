@@ -275,6 +275,16 @@ export default {
         page: 'Page',
         of: 'of',
         error: 'Error adding review'
+    },
+    aboutPage: {
+        loading: 'Loading...',
+        notFound: 'Page not found. Create a page with slug "about" in the admin (Site → Pages).',
+        loadError: 'Failed to load page'
+    },
+    deliveryPage: {
+        loading: 'Loading...',
+        notFound: 'Page not found. Create a page with slug "delivery" in the admin (Site → Pages).',
+        loadError: 'Failed to load page'
     }
 }
 

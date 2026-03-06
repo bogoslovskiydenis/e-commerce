@@ -8,11 +8,23 @@ import { RequirePermissions } from '../common/decorators/permissions.decorator';
 export class PagesController {
   constructor(private pagesService: PagesService) {}
 
+  @Get('slug/:slug')
+  async getPageBySlug(@Param('slug') slug: string, @Query('lang') lang?: string) {
+    return this.pagesService.getPageBySlug(slug, lang);
+  }
+
   @Get()
   @UseGuards(JwtAuthGuard, PermissionsGuard)
   @RequirePermissions('website.pages')
   async getPages(@Query() query: any) {
     return this.pagesService.getPages(query);
+  }
+
+  @Get(':id')
+  @UseGuards(JwtAuthGuard, PermissionsGuard)
+  @RequirePermissions('website.pages')
+  async getPageById(@Param('id') id: string) {
+    return this.pagesService.getPageById(id);
   }
 
   @Post()

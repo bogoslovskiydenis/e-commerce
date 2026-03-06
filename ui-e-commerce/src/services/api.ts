@@ -857,6 +857,27 @@ class ApiService {
         return response.data!;
     }
 
+    // ==================== СТРАНИЦЫ САЙТА ====================
+
+    /**
+     * Получить страницу по slug (публичный endpoint). lang — язык контента (uk, ru, en).
+     */
+    async getPageBySlug(slug: string, lang?: string): Promise<Page | null> {
+        try {
+            const langParam = lang || this.getCurrentLanguage();
+            const response = await this.request<ApiResponse<Page>>(
+                `/pages/slug/${encodeURIComponent(slug)}?lang=${langParam}`,
+                {},
+                true,
+                false
+            );
+            return response.data || null;
+        } catch (error) {
+            console.error(`Error fetching page by slug ${slug}:`, error);
+            return null;
+        }
+    }
+
     // ==================== ПРОМОКОДЫ ====================
 
     /**
@@ -875,6 +896,21 @@ class ApiService {
             throw error;
         }
     }
+}
+
+export interface Page {
+    id: string;
+    title: string;
+    slug: string;
+    content: string;
+    excerpt?: string;
+    isActive: boolean;
+    metaTitle?: string;
+    metaDescription?: string;
+    metaKeywords?: string;
+    template?: string;
+    createdAt?: string;
+    updatedAt?: string;
 }
 
 export interface Review {

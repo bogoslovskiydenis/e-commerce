@@ -5,6 +5,43 @@ import { PrismaService } from '../prisma/prisma.service';
 export class PagesService {
   constructor(private prisma: PrismaService) {}
 
+  async getPageBySlug(slug: string, lang?: string) {
+    const page = await this.prisma.page.findFirst({
+      where: { slug, isActive: true },
+    });
+    if (!page) {
+      throw new NotFoundException('Page not found');
+    }
+    const data = this.localizePage(page, lang || 'uk');
+    return { success: true, data };
+  }
+
+  private localizePage(page: any, lang: string) {
+    const key = lang === 'ru' ? 'Ru' : lang === 'en' ? 'En' : 'Uk';
+    return {
+      id: page.id,
+      slug: page.slug,
+      title: page[`title${key}`] ?? page.title,
+      content: page[`content${key}`] ?? page.content,
+      excerpt: page[`excerpt${key}`] ?? page.excerpt ?? undefined,
+      metaTitle: page[`metaTitle${key}`] ?? page.metaTitle ?? undefined,
+      metaDescription: page[`metaDescription${key}`] ?? page.metaDescription ?? undefined,
+      metaKeywords: page.metaKeywords ?? undefined,
+      template: page.template ?? undefined,
+      isActive: page.isActive,
+      createdAt: page.createdAt,
+      updatedAt: page.updatedAt,
+    };
+  }
+
+  async getPageById(id: string) {
+    const page = await this.prisma.page.findUnique({ where: { id } });
+    if (!page) {
+      throw new NotFoundException('Page not found');
+    }
+    return { success: true, data: page };
+  }
+
   async getPages(query: any) {
     const { active } = query;
     const where: any = {};

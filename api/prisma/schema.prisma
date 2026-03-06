@@ -388,14 +388,29 @@ model Banner {
 }
 
 model Page {
-  id              String   @id @default(uuid())
-  title           String
-  slug            String   @unique
-  content         String
-  excerpt         String?
-  isActive        Boolean  @default(true) @map("is_active")
-  metaTitle       String?  @map("meta_title")
-  metaDescription String?  @map("meta_description")
+  id               String   @id @default(uuid())
+  title            String
+  titleUk          String?  @map("title_uk")
+  titleRu          String?  @map("title_ru")
+  titleEn          String?  @map("title_en")
+  slug             String   @unique
+  content          String
+  contentUk        String?  @map("content_uk")
+  contentRu        String?  @map("content_ru")
+  contentEn        String?  @map("content_en")
+  excerpt          String?
+  excerptUk        String?  @map("excerpt_uk")
+  excerptRu        String?  @map("excerpt_ru")
+  excerptEn        String?  @map("excerpt_en")
+  isActive         Boolean  @default(true) @map("is_active")
+  metaTitle        String?  @map("meta_title")
+  metaTitleUk      String?  @map("meta_title_uk")
+  metaTitleRu      String?  @map("meta_title_ru")
+  metaTitleEn      String?  @map("meta_title_en")
+  metaDescription  String?  @map("meta_description")
+  metaDescriptionUk String? @map("meta_description_uk")
+  metaDescriptionRu String? @map("meta_description_ru")
+  metaDescriptionEn String? @map("meta_description_en")
   metaKeywords    String?  @map("meta_keywords")
   template        String?  @default("default")
   createdAt       DateTime @default(now()) @map("created_at")

@@ -5,7 +5,7 @@
         <v-btn
           prepend-icon="mdi-arrow-left"
           variant="text"
-          @click="navigateTo({ name: 'pages-index' })"
+          @click="navigateTo('/pages')"
         >
           Назад к списку
         </v-btn>
