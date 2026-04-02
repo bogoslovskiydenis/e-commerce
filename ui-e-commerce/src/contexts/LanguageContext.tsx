@@ -37,15 +37,7 @@ export function LanguageProvider({
         setMounted(true)
     }, [])
 
-    useEffect(() => {
-        if (typeof window === 'undefined') return
-        document.documentElement.lang = language
-        localStorage.setItem('language', language)
-        document.cookie = `language=${language}; path=/; max-age=31536000; SameSite=Lax`
-    }, [language])
-
     const setLanguage = (lang: Language) => {
-        setLanguageState(lang)
         if (typeof window === 'undefined') return
         document.documentElement.lang = lang
         localStorage.setItem('language', lang)

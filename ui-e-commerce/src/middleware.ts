@@ -23,7 +23,7 @@ export function middleware(request: NextRequest) {
         return NextResponse.next()
     }
     const response = NextResponse.next()
-    const lang = raw === undefined ? parsePreferredLanguage(request.headers.get('accept-language')) : 'uk'
+    const lang = parsePreferredLanguage(request.headers.get('accept-language'))
     setLanguageCookie(response, lang)
     return response
 }

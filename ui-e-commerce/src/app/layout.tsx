@@ -4,7 +4,7 @@ import LayoutWrapper from '@/components/LayoutWrapper/LayoutWrapper'
 import { getServerLanguage } from '@/lib/serverLanguage'
 import './globals.css'
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ subsets: ['latin', 'cyrillic'] })
 
 export const metadata: Metadata = {
     title: 'Ecommerce',
