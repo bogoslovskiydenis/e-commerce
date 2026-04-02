@@ -105,6 +105,7 @@ enum CategoryType {
   COLORS
   MATERIALS
   OCCASIONS
+  TECH
 
   @@map("category_type")
 }

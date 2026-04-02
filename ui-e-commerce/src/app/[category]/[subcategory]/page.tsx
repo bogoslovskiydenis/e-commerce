@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import { cookies } from 'next/headers'
 import UniversalCategoryPage from '@/components/UniversalCategoryPage/UniversalCategoryPage'
 import { CategoryConfig } from '@/config/categoryConfig'
+import { resolveFacets } from '@/config/categoryFacets'
 import { PageProps, resolveParams } from '@/types/next'
 import { getLocalizedCategoryName, getLocalizedCategoryDescription } from '@/utils/categoryLocalization'
 
@@ -165,19 +166,7 @@ export default async function SubcategoryPage({
         description: localizedSubcategoryDescription,
         basePath: `/${parentCategory.slug}/${subcategory.slug}`,
         categoryType: subcategory.type.toLowerCase(),
-
-        // Фильтры на основе типа категории
-        filters: {
-            colors: ['BALLOONS', 'COLORS'].includes(subcategory.type),
-            materials: ['BALLOONS', 'MATERIALS'].includes(subcategory.type),
-            price: true,
-            helium: subcategory.type === 'BALLOONS',
-            inStock: true,
-            volume: subcategory.type === 'CUPS',
-            giftTypes: subcategory.type === 'GIFTS'
-        },
-
-        // SEO оптимизация
+        facets: resolveFacets(subcategory),
         seoTitle: subcategory.metaTitle || `${localizedSubcategoryName} - ${getLocalizedCategoryName(parentCategory, lang as any)}`,
         seoDescription: subcategory.metaDescription || localizedSubcategoryDescription ||
             `Купить ${localizedSubcategoryName.toLowerCase()} в категории ${getLocalizedCategoryName(parentCategory, lang as any).toLowerCase()}`
@@ -234,8 +223,9 @@ export default async function SubcategoryPage({
         size: product.attributes?.size || '',
         volume: product.attributes?.volume || '',
 
-        // Мета-информация
         type: subcategory.type.toLowerCase(),
+        giftType: String(product.attributes?.giftType || product.attributes?.type || ''),
+        brand: product.brand ? String(product.brand) : '',
         slug: product.slug,
         featured: product.featured || false
     }))

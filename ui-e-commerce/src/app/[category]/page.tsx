@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import { cookies } from 'next/headers'
 import UniversalCategoryPage from '@/components/UniversalCategoryPage/UniversalCategoryPage'
 import { CategoryConfig } from '@/config/categoryConfig'
+import { resolveFacets } from '@/config/categoryFacets'
 import { getLocalizedCategoryName, getLocalizedCategoryDescription } from '@/utils/categoryLocalization'
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api'
@@ -115,15 +116,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
         description: localizedCategoryDescription,
         basePath: `/${category.slug}`,
         categoryType: category.type.toLowerCase(),
-        filters: {
-            colors: category.type === 'BALLOONS' || category.type === 'COLORS',
-            materials: category.type === 'BALLOONS' || category.type === 'MATERIALS',
-            price: true,
-            helium: category.type === 'BALLOONS',
-            inStock: true,
-            volume: category.type === 'CUPS',
-            giftTypes: category.type === 'GIFTS'
-        },
+        facets: resolveFacets(category),
         seoTitle: category.metaTitle || category.name,
         seoDescription: category.metaDescription || category.description || ''
     }
@@ -155,7 +148,9 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
         withHelium: product.attributes?.withHelium || false,
         size: product.attributes?.size || '',
         volume: product.attributes?.volume || '',
-        type: category.type.toLowerCase()
+        type: category.type.toLowerCase(),
+        giftType: String(product.attributes?.giftType || product.attributes?.type || ''),
+        brand: product.brand ? String(product.brand) : ''
     }))
 
     return (

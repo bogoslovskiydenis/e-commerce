@@ -88,6 +88,16 @@
           </v-card>
 
           <v-card class="mb-4">
+            <v-card-title>Фильтры витрины</v-card-title>
+            <v-card-text>
+              <CategoryFiltersBuilder
+                :key="String(route.params.id)"
+                v-model="filterForm"
+              />
+            </v-card-text>
+          </v-card>
+
+          <v-card class="mb-4">
             <v-card-title>Описание</v-card-title>
             <v-card-text>
               <v-textarea
@@ -156,6 +166,7 @@
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useApi } from '~/composables/useApi'
+import { parseFiltersFromApi, serializeFiltersForApi } from '~/composables/useCategoryFiltersForm'
 
 definePageMeta({
   middleware: 'auth'
@@ -166,6 +177,8 @@ const api = useApi()
 const category = ref(null)
 const categories = ref([])
 const loading = ref(false)
+
+const filterForm = ref({ useCustom: false, facets: [] })
 
 const form = reactive({
   id: '',
@@ -193,7 +206,8 @@ const typeOptions = [
   { title: 'События', value: 'events' },
   { title: 'Цвета', value: 'colors' },
   { title: 'Материалы', value: 'materials' },
-  { title: 'Поводы', value: 'occasions' }
+  { title: 'Поводы', value: 'occasions' },
+  { title: 'Техника', value: 'TECH' }
 ]
 
 const parentCategories = computed(() => {
@@ -212,8 +226,7 @@ const loadCategories = async () => {
 const loadCategory = async () => {
   try {
     const data = await api.getOne('categories', route.params.id)
-    category.value = data
-    
+
     form.id = data.id
     form.name = data.name || ''
     form.nameUk = data.nameUk || ''
@@ -227,6 +240,8 @@ const loadCategory = async () => {
     form.isActive = data.isActive !== undefined ? data.isActive : true
     form.showInNavigation = data.showInNavigation !== undefined ? data.showInNavigation : true
     form.showOnHomepage = data.showOnHomepage || false
+    filterForm.value = parseFiltersFromApi(data.filters)
+    category.value = data
   } catch (error) {
     console.error('Ошибка загрузки категории:', error)
   }
@@ -235,6 +250,11 @@ const loadCategory = async () => {
 const handleSubmit = async () => {
   loading.value = true
   try {
+    const filtersPayload = serializeFiltersForApi(
+      filterForm.value.useCustom,
+      filterForm.value.facets
+    )
+
     const updateData = {
       name: form.name || form.nameUk,
       nameUk: form.nameUk,
@@ -255,6 +275,8 @@ const handleSubmit = async () => {
         delete updateData[key]
       }
     })
+
+    updateData.filters = filtersPayload
 
     await api.update('categories', route.params.id, updateData)
     await navigateTo({ name: 'categories-index' })

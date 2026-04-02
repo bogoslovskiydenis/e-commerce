@@ -5,10 +5,18 @@ import Link from 'next/link'
 import ProductGrid from '@/components/ProductGrid/ProductGrid'
 import ProductList from '@/components/ProductList/ProductList'
 import { CategoryConfig, DEFAULT_SORT_OPTIONS } from '@/config/categoryConfig'
-import SidebarFilters, { FilterState } from './components/SidebarFilters'
+import SidebarFilters from './components/SidebarFilters'
 import ToolbarSection from './components/ToolbarSection'
 import ActiveFilters from './components/ActiveFilters'
 import MobileFiltersModal from './components/MobileFiltersModal'
+import type { FilterState } from '@/utils/categoryFilterEngine'
+import {
+    initialFilterState,
+    filterProductsByFacets,
+    buildActiveChips,
+    applyRemoveChipKey,
+    chipColorClass,
+} from '@/utils/categoryFilterEngine'
 import PaginationSection from './components/PaginationSection'
 import SEOSection from './components/SEOSection'
 import BannersList from '@/components/Banner/BannersList'
@@ -28,22 +36,19 @@ export default function UniversalCategoryPage({
                                                   products,
                                                   customBreadcrumbs
                                               }: UniversalCategoryPageProps) {
-    const { t } = useTranslation()
+    const { t, language } = useTranslation()
     const [sortBy, setSortBy] = useState('popular')
     const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
     const [showMobileFilters, setShowMobileFilters] = useState(false)
     const [currentPage, setCurrentPage] = useState(1)
     const [categoryBanners, setCategoryBanners] = useState<Banner[]>([])
     const productsPerPage = 20
-    const [filters, setFilters] = useState<FilterState>({
-        priceRange: { from: '', to: '' },
-        colors: [],
-        materials: [],
-        withHelium: false,
-        inStock: false,
-        volume: [],
-        giftTypes: []
-    })
+    const [filters, setFilters] = useState<FilterState>(() => initialFilterState(config.facets))
+
+    useEffect(() => {
+        setFilters(initialFilterState(config.facets))
+        setCurrentPage(1)
+    }, [categoryKey, config.basePath])
 
     // Загрузка баннеров для категорий
     useEffect(() => {
@@ -73,90 +78,10 @@ export default function UniversalCategoryPage({
         { value: 'new', label: t('category.sortNew') }
     ]
 
-    // Фильтрация товаров
-    const filteredProducts = useMemo(() => {
-        return products.filter(product => {
-            // Фильтр по цене
-            if (filters.priceRange.from && product.price < parseFloat(filters.priceRange.from)) {
-                return false
-            }
-            if (filters.priceRange.to && product.price > parseFloat(filters.priceRange.to)) {
-                return false
-            }
-
-            // Фильтр по цвету
-            if (filters.colors.length > 0) {
-                const productColors = product.colors || []
-                const hasMatchingColor = filters.colors.some(filterColor => {
-                    return productColors.some((productColor: string) => {
-                        const colorMap: Record<string, string[]> = {
-                            'red': ['Красный', 'красный'],
-                            'blue': ['Синий', 'синий'],
-                            'pink': ['Розовый', 'розовый'],
-                            'gold': ['Золотой', 'золотой'],
-                            'silver': ['Серебряный', 'серебряный'],
-                            'green': ['Зеленый', 'зеленый']
-                        }
-                        return colorMap[filterColor]?.includes(productColor) || false
-                    })
-                })
-                if (!hasMatchingColor) return false
-            }
-
-            // Фильтр по материалу
-            if (filters.materials.length > 0) {
-                const productMaterial = product.material || ''
-                const hasMatchingMaterial = filters.materials.some(filterMaterial => {
-                    const materialMap: Record<string, string[]> = {
-                        'Фольга': ['Фольга', 'фольга'],
-                        'Латекс': ['Латекс', 'латекс'],
-                        'Бумажные': ['Бумага', 'бумага'],
-                        'Пластиковые': ['Пластик', 'пластик'],
-                        'Экологические': ['Эко', 'эко']
-                    }
-                    return materialMap[filterMaterial]?.includes(productMaterial) || false
-                })
-                if (!hasMatchingMaterial) return false
-            }
-
-            // Фильтр по гелию
-            if (filters.withHelium && !product.withHelium) {
-                return false
-            }
-
-            // Фильтр по наличию
-            if (filters.inStock && !product.inStock) {
-                return false
-            }
-
-            // Фильтр по объему (для стаканчиков)
-            if (filters.volume && filters.volume.length > 0) {
-                const productSize = product.size || ''
-                const hasMatchingVolume = filters.volume.some(filterVolume => {
-                    return productSize.includes(filterVolume.replace('мл', ''))
-                })
-                if (!hasMatchingVolume) return false
-            }
-
-            // Фильтр по типу подарка
-            if (filters.giftTypes && filters.giftTypes.length > 0) {
-                const productType = product.type || ''
-                const hasMatchingGiftType = filters.giftTypes.some(filterType => {
-                    const typeMap: Record<string, string[]> = {
-                        'Мягкие игрушки': ['plush'],
-                        'Сувениры': ['souvenir'],
-                        'Украшения': ['jewelry'],
-                        'Конфеты': ['sweets'],
-                        'Цветы': ['flowers']
-                    }
-                    return typeMap[filterType]?.includes(productType) || false
-                })
-                if (!hasMatchingGiftType) return false
-            }
-
-            return true
-        })
-    }, [products, filters])
+    const filteredProducts = useMemo(
+        () => filterProductsByFacets(products, config.facets, filters),
+        [products, config.facets, filters]
+    )
 
     // Сортировка товаров
     const sortedProducts = useMemo(() => {
@@ -201,136 +126,26 @@ export default function UniversalCategoryPage({
         setShowMobileFilters(false)
     }
 
-    // Обработка изменения фильтров
     const handleFiltersChange = (newFilters: FilterState) => {
         setFilters(newFilters)
-        setCurrentPage(1) // Сброс на первую страницу при изменении фильтров
+        setCurrentPage(1)
     }
 
-    // Получение активных фильтров для отображения
-    const getActiveFilters = (): string[] => {
-        const active: string[] = []
+    const lang = (language === 'ru' || language === 'en' ? language : 'uk') as 'uk' | 'ru' | 'en'
+    const activeFilterChips = useMemo(
+        () => buildActiveChips(config.facets, filters, lang),
+        [config.facets, filters, lang]
+    )
 
-        if (filters.priceRange.from || filters.priceRange.to) {
-            const from = filters.priceRange.from || '0'
-            const to = filters.priceRange.to || '∞'
-            active.push(`${t('category.price')}: ${from} - ${to} ${t('cart.currency')}`)
-        }
-
-        if (filters.colors.length > 0) {
-            const colorNames: Record<string, string> = {
-                'red': t('category.red'),
-                'blue': t('category.blue'),
-                'pink': t('category.pink'),
-                'gold': t('category.gold'),
-                'silver': t('category.silver'),
-                'green': t('category.green')
-            }
-            filters.colors.forEach(color => {
-                active.push(colorNames[color] || color)
-            })
-        }
-
-        if (filters.materials.length > 0) {
-            filters.materials.forEach(material => active.push(material))
-        }
-
-        if (filters.withHelium) {
-            active.push(t('category.withHelium'))
-        }
-
-        if (filters.inStock) {
-            active.push(t('category.inStock'))
-        }
-
-        if (filters.volume && filters.volume.length > 0) {
-            filters.volume.forEach(volume => active.push(volume))
-        }
-
-        if (filters.giftTypes && filters.giftTypes.length > 0) {
-            filters.giftTypes.forEach(type => active.push(type))
-        }
-
-        return active
+    const removeFilter = (key: string) => {
+        setFilters(applyRemoveChipKey(key, config.facets, filters))
     }
 
-    // Функция для удаления конкретного фильтра
-    const removeFilter = (filterName: string) => {
-        const newFilters = { ...filters }
-
-        // Удаление фильтра по цене
-        if (filterName.startsWith(t('category.price') + ':')) {
-            newFilters.priceRange = { from: '', to: '' }
-        }
-
-        // Удаление цветового фильтра
-        const colorNames: Record<string, string> = {
-            [t('category.red')]: 'red',
-            [t('category.blue')]: 'blue',
-            [t('category.pink')]: 'pink',
-            [t('category.gold')]: 'gold',
-            [t('category.silver')]: 'silver',
-            [t('category.green')]: 'green'
-        }
-        if (colorNames[filterName]) {
-            newFilters.colors = newFilters.colors.filter(c => c !== colorNames[filterName])
-        }
-
-        // Удаление материала
-        if (newFilters.materials.includes(filterName)) {
-            newFilters.materials = newFilters.materials.filter(m => m !== filterName)
-        }
-
-        // Удаление других фильтров
-        if (filterName === t('category.withHelium')) {
-            newFilters.withHelium = false
-        }
-        if (filterName === t('category.inStock')) {
-            newFilters.inStock = false
-        }
-
-        // Удаление объема
-        if (newFilters.volume?.includes(filterName)) {
-            newFilters.volume = newFilters.volume.filter(v => v !== filterName)
-        }
-
-        // Удаление типа подарка
-        if (newFilters.giftTypes?.includes(filterName)) {
-            newFilters.giftTypes = newFilters.giftTypes.filter(g => g !== filterName)
-        }
-
-        setFilters(newFilters)
-    }
-
-    // Функция для очистки всех фильтров
     const clearAllFilters = () => {
-        const defaultFilters: FilterState = {
-            priceRange: { from: '', to: '' },
-            colors: [],
-            materials: [],
-            withHelium: false,
-            inStock: false,
-            volume: [],
-            giftTypes: []
-        }
-        setFilters(defaultFilters)
+        setFilters(initialFilterState(config.facets))
     }
 
-    // Определение цвета для фильтра
-    const getFilterColor = (filterName: string) => {
-        if (filterName.startsWith(t('category.price') + ':')) return 'bg-amber-100 text-amber-800'
-        if ([t('category.red'), t('category.blue'), t('category.pink'), t('category.gold'), t('category.silver'), t('category.green')].includes(filterName)) {
-            return 'bg-blue-100 text-blue-800'
-        }
-        if ([t('category.foil'), t('category.latex'), t('category.paper'), t('category.plastic'), t('category.eco')].includes(filterName)) {
-            return 'bg-purple-100 text-purple-800'
-        }
-        if (filterName === t('category.withHelium')) return 'bg-teal-100 text-teal-800'
-        if (filterName === t('category.inStock')) return 'bg-green-100 text-green-800'
-        return 'bg-gray-100 text-gray-800'
-    }
-
-    const activeFilters = getActiveFilters()
+    const getFilterColor = (key: string) => chipColorClass(key)
 
     return (
         <div className="container mx-auto px-4 py-8">
@@ -372,8 +187,8 @@ export default function UniversalCategoryPage({
                 {/* Боковая панель - скрыта на мобильных */}
                 <div className="hidden lg:block w-80 flex-shrink-0">
                     <SidebarFilters
-                        categoryKey={categoryKey}
                         config={config}
+                        filters={filters}
                         onFiltersChange={handleFiltersChange}
                     />
                 </div>
@@ -395,7 +210,7 @@ export default function UniversalCategoryPage({
 
                     {/* Активные фильтры */}
                     <ActiveFilters
-                        activeFilters={activeFilters}
+                        activeFilters={activeFilterChips}
                         onRemoveFilter={removeFilter}
                         onClearAllFilters={clearAllFilters}
                         getFilterColor={getFilterColor}
@@ -442,8 +257,8 @@ export default function UniversalCategoryPage({
             <MobileFiltersModal
                 isOpen={showMobileFilters}
                 onClose={closeMobileFilters}
-                categoryKey={categoryKey}
                 config={config}
+                filters={filters}
                 onFiltersChange={handleFiltersChange}
             />
 

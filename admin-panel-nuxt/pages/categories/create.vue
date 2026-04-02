@@ -82,6 +82,13 @@
           </v-card>
 
           <v-card class="mb-4">
+            <v-card-title>Фильтры витрины</v-card-title>
+            <v-card-text>
+              <CategoryFiltersBuilder v-model="filterForm" />
+            </v-card-text>
+          </v-card>
+
+          <v-card class="mb-4">
             <v-card-title>Описание</v-card-title>
             <v-card-text>
               <v-textarea
@@ -152,6 +159,7 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { useApi } from '~/composables/useApi'
+import { serializeFiltersForApi } from '~/composables/useCategoryFiltersForm'
 
 definePageMeta({
   middleware: 'auth'
@@ -160,6 +168,7 @@ definePageMeta({
 const api = useApi()
 const categories = ref([])
 const loading = ref(false)
+const filterForm = ref({ useCustom: false, facets: [] })
 
 const form = reactive({
   name: '',
@@ -186,7 +195,8 @@ const typeOptions = [
   { title: 'События', value: 'events' },
   { title: 'Цвета', value: 'colors' },
   { title: 'Материалы', value: 'materials' },
-  { title: 'Поводы', value: 'occasions' }
+  { title: 'Поводы', value: 'occasions' },
+  { title: 'Техника', value: 'TECH' }
 ]
 
 const loadCategories = async () => {
@@ -201,6 +211,11 @@ const loadCategories = async () => {
 const handleSubmit = async () => {
   loading.value = true
   try {
+    const filtersParsed = serializeFiltersForApi(
+      filterForm.value.useCustom,
+      filterForm.value.facets
+    )
+
     const createData = {
       name: form.name || form.nameUk,
       nameUk: form.nameUk,
@@ -221,6 +236,10 @@ const handleSubmit = async () => {
         delete createData[key]
       }
     })
+
+    if (filtersParsed !== null) {
+      createData.filters = filtersParsed
+    }
 
     await api.create('categories', createData)
     await navigateTo({ name: 'categories-index' })

@@ -1,11 +1,12 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { apiService, Product } from '@/services/api'
 import UniversalCategoryPage from '@/components/UniversalCategoryPage/UniversalCategoryPage'
 import { CategoryConfig } from '@/config/categoryConfig'
+import { getSearchFacets } from '@/config/categoryFacets'
 import { useTranslation } from '@/contexts/LanguageContext'
 
 export default function SearchPage() {
@@ -41,31 +42,28 @@ export default function SearchPage() {
         loadSearchResults()
     }, [query, language])
 
-    const config: CategoryConfig = {
-        title: query ? `Результати пошуку: "${query}"` : 'Пошук товарів',
-        description: query ? `Знайдено товарів за запитом "${query}"` : 'Введіть запит для пошуку',
-        basePath: `/search?q=${encodeURIComponent(query)}`,
-        categoryType: 'products',
-        filters: {
-            colors: true,
-            materials: true,
-            price: true,
-            helium: false,
-            inStock: true,
-            volume: false,
-            giftTypes: false
-        },
-        seoTitle: query ? `Пошук: ${query}` : 'Пошук товарів',
-        seoDescription: query ? `Результати пошуку для "${query}"` : 'Пошук товарів',
-        sortOptions: [
-            { value: 'popular', label: 'По популярности' },
-            { value: 'price-asc', label: 'Сначала дешевые' },
-            { value: 'price-desc', label: 'Сначала дорогие' },
-            { value: 'name-asc', label: 'По названию А-Я' },
-            { value: 'name-desc', label: 'По названию Я-А' },
-            { value: 'new', label: 'Новинки' }
-        ]
-    }
+    const searchFacets = useMemo(() => getSearchFacets(), [])
+
+    const config: CategoryConfig = useMemo(
+        () => ({
+            title: query ? `Результати пошуку: "${query}"` : 'Пошук товарів',
+            description: query ? `Знайдено товарів за запитом "${query}"` : 'Введіть запит для пошуку',
+            basePath: `/search?q=${encodeURIComponent(query)}`,
+            categoryType: 'products',
+            facets: searchFacets,
+            seoTitle: query ? `Пошук: ${query}` : 'Пошук товарів',
+            seoDescription: query ? `Результати пошуку для "${query}"` : 'Пошук товарів',
+            sortOptions: [
+                { value: 'popular', label: 'По популярности' },
+                { value: 'price-asc', label: 'Сначала дешевые' },
+                { value: 'price-desc', label: 'Сначала дорогие' },
+                { value: 'name-asc', label: 'По названию А-Я' },
+                { value: 'name-desc', label: 'По названию Я-А' },
+                { value: 'new', label: 'Новинки' }
+            ]
+        }),
+        [query, searchFacets]
+    )
 
     const breadcrumbs = [
         { name: t('search.home'), href: '/' },
@@ -88,7 +86,9 @@ export default function SearchPage() {
         withHelium: (product.attributes as any)?.withHelium || false,
         size: (product.attributes as any)?.size || '',
         volume: (product.attributes as any)?.volume || '',
-        type: product.category?.type?.toLowerCase() || 'products'
+        type: product.category?.type?.toLowerCase() || 'products',
+        giftType: String((product.attributes as any)?.giftType || (product.attributes as any)?.type || ''),
+        brand: product.brand ? String(product.brand) : ''
     }))
 
     if (isLoading) {
