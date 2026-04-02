@@ -1,5 +1,5 @@
 import { Category } from '@/services/api';
-import { Language } from '@/contexts/LanguageContext';
+import type { Language } from '@/lib/language'
 
 /**
  * Получает локализованное имя категории на основе текущего языка

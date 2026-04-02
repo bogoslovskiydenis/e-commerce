@@ -4,8 +4,9 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import ukTranslations from '@/locales/uk'
 import ruTranslations from '@/locales/ru'
 import enTranslations from '@/locales/en'
+import type { Language } from '@/lib/language'
 
-export type Language = 'uk' | 'ru' | 'en'
+export type { Language } from '@/lib/language'
 
 interface LanguageContextType {
     language: Language
@@ -19,68 +20,43 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 const translations: Record<Language, Record<string, any>> = {
     uk: ukTranslations,
     ru: ruTranslations,
-    en: enTranslations
+    en: enTranslations,
 }
 
-// Функция для чтения cookie на клиенте
-function getCookie(name: string): string | null {
-    if (typeof document === 'undefined') return null
-    const value = `; ${document.cookie}`
-    const parts = value.split(`; ${name}=`)
-    if (parts.length === 2) return parts.pop()?.split(';').shift() || null
-    return null
-}
-
-export function LanguageProvider({ children }: { children: ReactNode }) {
-    // Инициализируем язык из cookies или localStorage
-    const [language, setLanguageState] = useState<Language>(() => {
-        if (typeof window === 'undefined') return 'uk'
-        
-        // Сначала проверяем cookies (приоритет для серверных компонентов)
-        const cookieLang = getCookie('language') as Language
-        if (cookieLang && ['uk', 'ru', 'en'].includes(cookieLang)) {
-            return cookieLang
-        }
-        
-        // Затем localStorage
-        const storageLang = localStorage.getItem('language') as Language
-        if (storageLang && ['uk', 'ru', 'en'].includes(storageLang)) {
-            return storageLang
-        }
-        
-        return 'uk'
-    })
+export function LanguageProvider({
+    children,
+    initialLanguage,
+}: {
+    children: ReactNode
+    initialLanguage: Language
+}) {
+    const [language, setLanguageState] = useState<Language>(() => initialLanguage)
     const [mounted, setMounted] = useState(false)
 
     useEffect(() => {
         setMounted(true)
-        // Синхронизируем язык с cookies и localStorage
-        if (typeof window !== 'undefined') {
-            document.documentElement.lang = language
-            document.cookie = `language=${language}; path=/; max-age=31536000; SameSite=Lax`
-            localStorage.setItem('language', language)
-        }
+    }, [])
+
+    useEffect(() => {
+        if (typeof window === 'undefined') return
+        document.documentElement.lang = language
+        localStorage.setItem('language', language)
+        document.cookie = `language=${language}; path=/; max-age=31536000; SameSite=Lax`
     }, [language])
 
     const setLanguage = (lang: Language) => {
         setLanguageState(lang)
-        if (mounted) {
-            localStorage.setItem('language', lang)
-            document.documentElement.lang = lang
-            // Сохраняем также в cookies для серверных компонентов
-            document.cookie = `language=${lang}; path=/; max-age=31536000; SameSite=Lax`
-            // Используем router для навигации без полной перезагрузки
-            if (typeof window !== 'undefined') {
-                const currentPath = window.location.pathname
-                window.location.href = currentPath
-            }
-        }
+        if (typeof window === 'undefined') return
+        document.documentElement.lang = lang
+        localStorage.setItem('language', lang)
+        document.cookie = `language=${lang}; path=/; max-age=31536000; SameSite=Lax`
+        window.location.href = window.location.pathname + window.location.search + window.location.hash
     }
 
     const t = (key: string): string => {
         const keys = key.split('.')
         let value: any = translations[language]
-        
+
         for (const k of keys) {
             if (value && typeof value === 'object' && k in value) {
                 value = value[k]
@@ -88,7 +64,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
                 return key
             }
         }
-        
+
         return typeof value === 'string' ? value : key
     }
 
@@ -106,4 +82,3 @@ export function useTranslation() {
     }
     return context
 }
-

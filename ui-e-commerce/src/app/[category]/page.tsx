@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { cookies } from 'next/headers'
+import { getServerLanguage } from '@/lib/serverLanguage'
 import UniversalCategoryPage from '@/components/UniversalCategoryPage/UniversalCategoryPage'
 import { CategoryConfig } from '@/config/categoryConfig'
 import { resolveFacets } from '@/config/categoryFacets'
@@ -9,8 +9,7 @@ import { getLocalizedCategoryName, getLocalizedCategoryDescription } from '@/uti
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api'
 
 async function getLanguage() {
-    const cookieStore = await cookies()
-    return cookieStore.get('language')?.value || 'uk'
+    return getServerLanguage()
 }
 
 // Функция для получения переводов на сервере
