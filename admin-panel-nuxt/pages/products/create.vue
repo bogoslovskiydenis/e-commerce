@@ -48,7 +48,7 @@
 
       <v-form @submit.prevent="handleSubmit">
         <v-card-text>
-          <v-window v-model="tab">
+          <v-window v-model="tab" class="product-form-tabs-window">
             <!-- Основная информация -->
             <v-window-item value="basic">
               <v-row>
@@ -457,3 +457,9 @@ onMounted(async () => {
   await loadCategories()
 })
 </script>
+
+<style scoped>
+.product-form-tabs-window :deep(.v-window__container) {
+  margin-top: 10px;
+}
+</style>
