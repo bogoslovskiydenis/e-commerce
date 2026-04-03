@@ -6,11 +6,14 @@
           <v-card-title>Заголовок</v-card-title>
           <v-card-text>
             <v-row>
-              <v-col cols="12" md="6">
-                <v-text-field v-model="form.titleUk" label="Заголовок (Українська)" variant="outlined" />
+              <v-col cols="12" md="4">
+                <v-text-field v-model="form.titleUk" label="Українська" variant="outlined" />
               </v-col>
-              <v-col cols="12" md="6">
-                <v-text-field v-model="form.titleRu" label="Заголовок (Русский)" variant="outlined" />
+              <v-col cols="12" md="4">
+                <v-text-field v-model="form.titleRu" label="Русский" variant="outlined" />
+              </v-col>
+              <v-col cols="12" md="4">
+                <v-text-field v-model="form.titleEn" label="English" variant="outlined" />
               </v-col>
             </v-row>
           </v-card-text>
@@ -20,11 +23,14 @@
           <v-card-title>Подзаголовок</v-card-title>
           <v-card-text>
             <v-row>
-              <v-col cols="12" md="6">
-                <v-text-field v-model="form.subtitleUk" label="Підзаголовок (Українська)" variant="outlined" />
+              <v-col cols="12" md="4">
+                <v-text-field v-model="form.subtitleUk" label="Українська" variant="outlined" />
               </v-col>
-              <v-col cols="12" md="6">
-                <v-text-field v-model="form.subtitleRu" label="Подзаголовок (Русский)" variant="outlined" />
+              <v-col cols="12" md="4">
+                <v-text-field v-model="form.subtitleRu" label="Русский" variant="outlined" />
+              </v-col>
+              <v-col cols="12" md="4">
+                <v-text-field v-model="form.subtitleEn" label="English" variant="outlined" />
               </v-col>
             </v-row>
           </v-card-text>
@@ -34,11 +40,14 @@
           <v-card-title>Текст ссылки</v-card-title>
           <v-card-text>
             <v-row>
-              <v-col cols="12" md="6">
-                <v-text-field v-model="form.linkTextUk" label="Текст ссылки (Українська)" variant="outlined" />
+              <v-col cols="12" md="4">
+                <v-text-field v-model="form.linkTextUk" label="Українська" variant="outlined" />
               </v-col>
-              <v-col cols="12" md="6">
-                <v-text-field v-model="form.linkTextRu" label="Текст ссылки (Русский)" variant="outlined" />
+              <v-col cols="12" md="4">
+                <v-text-field v-model="form.linkTextRu" label="Русский" variant="outlined" />
+              </v-col>
+              <v-col cols="12" md="4">
+                <v-text-field v-model="form.linkTextEn" label="English" variant="outlined" />
               </v-col>
             </v-row>
           </v-card-text>
@@ -85,14 +94,21 @@
               placeholder="/category/special"
               :rules="[v => !!v || 'Обязательное поле']"
             />
-            <v-text-field
+
+            <v-autocomplete
               v-model="form.categoryId"
-              label="ID категории (пусто = все)"
+              :items="categoryOptions"
+              item-title="label"
+              item-value="value"
+              label="Категория (пусто = все)"
               variant="outlined"
               class="mb-4"
-              hint="Оставьте пустым, чтобы показывать во всех категориях"
+              clearable
+              hint="Пусто — карточка показывается во всех категориях"
               persistent-hint
+              :loading="categoriesLoading"
             />
+
             <v-select
               v-model="form.colorTheme"
               :items="themeOptions"
@@ -120,11 +136,11 @@
                 <span v-else class="text-3xl">{{ form.emoji || '🎁' }}</span>
               </div>
               <div class="font-weight-semibold text-sm mt-2">
-                {{ form.titleUk || form.titleRu || 'Заголовок' }}
+                {{ form.titleUk || form.titleRu || form.titleEn || 'Заголовок' }}
               </div>
-              <div class="text-caption text-grey">{{ form.subtitleUk || form.subtitleRu || 'Подзаголовок' }}</div>
+              <div class="text-caption text-grey">{{ form.subtitleUk || form.subtitleRu || form.subtitleEn || 'Подзаголовок' }}</div>
               <div class="text-caption mt-2 promo-link-text">
-                {{ form.linkTextUk || form.linkTextRu || 'Переглянути →' }}
+                {{ form.linkTextUk || form.linkTextRu || form.linkTextEn || 'Переглянути →' }}
               </div>
             </div>
           </v-card-text>
@@ -146,13 +162,18 @@
 </template>
 
 <script setup>
-import { reactive, watch } from 'vue'
+import { reactive, watch, ref, onMounted } from 'vue'
+import { useApi } from '~/composables/useApi'
 
 const props = defineProps({
   initial: { type: Object, default: null },
   loading: { type: Boolean, default: false },
 })
 const emit = defineEmits(['submit'])
+
+const api = useApi()
+const categoriesLoading = ref(false)
+const categoryOptions = ref([{ label: 'Все категории', value: null }])
 
 const themeOptions = [
   { title: 'Teal (бирюзовый)', value: 'teal' },
@@ -162,16 +183,13 @@ const themeOptions = [
 ]
 
 const form = reactive({
-  titleUk: '',
-  titleRu: '',
-  subtitleUk: '',
-  subtitleRu: '',
-  linkTextUk: '',
-  linkTextRu: '',
+  titleUk: '', titleRu: '', titleEn: '',
+  subtitleUk: '', subtitleRu: '', subtitleEn: '',
+  linkTextUk: '', linkTextRu: '', linkTextEn: '',
   emoji: '',
   imageUrl: '',
   link: '',
-  categoryId: '',
+  categoryId: null,
   colorTheme: 'teal',
   sortOrder: 0,
   isActive: true,
@@ -180,6 +198,24 @@ const form = reactive({
 watch(() => props.initial, (val) => {
   if (val) Object.assign(form, val)
 }, { immediate: true })
+
+const loadCategories = async () => {
+  categoriesLoading.value = true
+  try {
+    const res = await api.getList('categories', { limit: 200, sortBy: 'sortOrder', sortOrder: 'asc' })
+    const parents = res.data.filter(c => !c.parentId)
+    categoryOptions.value = [
+      { label: 'Все категории', value: null },
+      ...parents.map(c => ({ label: c.name, value: c.id })),
+    ]
+  } catch (e) {
+    console.error(e)
+  } finally {
+    categoriesLoading.value = false
+  }
+}
+
+onMounted(loadCategories)
 
 const getImageUrl = (url) => {
   if (!url) return ''
@@ -210,17 +246,20 @@ const handleImageUpload = async (event) => {
 }
 
 const handleSubmit = () => {
-  const title = form.titleUk || form.titleRu || ''
+  const title = form.titleUk || form.titleRu || form.titleEn || ''
   emit('submit', {
     title,
     titleUk: form.titleUk || null,
     titleRu: form.titleRu || null,
-    subtitle: form.subtitleUk || form.subtitleRu || null,
+    titleEn: form.titleEn || null,
+    subtitle: form.subtitleUk || form.subtitleRu || form.subtitleEn || null,
     subtitleUk: form.subtitleUk || null,
     subtitleRu: form.subtitleRu || null,
-    linkText: form.linkTextUk || form.linkTextRu || null,
+    subtitleEn: form.subtitleEn || null,
+    linkText: form.linkTextUk || form.linkTextRu || form.linkTextEn || null,
     linkTextUk: form.linkTextUk || null,
     linkTextRu: form.linkTextRu || null,
+    linkTextEn: form.linkTextEn || null,
     emoji: form.emoji || null,
     imageUrl: form.imageUrl || null,
     link: form.link,
@@ -238,34 +277,15 @@ const handleSubmit = () => {
   padding: 16px;
   border: 1px solid;
 }
-.promo-preview-card--teal {
-  background: linear-gradient(135deg, #e0f7f6, #b2ebf2);
-  border-color: #80cbc4;
-}
-.promo-preview-card--pink {
-  background: linear-gradient(135deg, #fce4ec, #f8bbd0);
-  border-color: #f48fb1;
-}
-.promo-preview-card--purple {
-  background: linear-gradient(135deg, #ede7f6, #d1c4e9);
-  border-color: #ce93d8;
-}
-.promo-preview-card--orange {
-  background: linear-gradient(135deg, #fff3e0, #ffe0b2);
-  border-color: #ffcc80;
-}
+.promo-preview-card--teal { background: linear-gradient(135deg, #e0f7f6, #b2ebf2); border-color: #80cbc4; }
+.promo-preview-card--pink { background: linear-gradient(135deg, #fce4ec, #f8bbd0); border-color: #f48fb1; }
+.promo-preview-card--purple { background: linear-gradient(135deg, #ede7f6, #d1c4e9); border-color: #ce93d8; }
+.promo-preview-card--orange { background: linear-gradient(135deg, #fff3e0, #ffe0b2); border-color: #ffcc80; }
 .promo-preview-icon {
-  width: 64px;
-  height: 64px;
-  background: white;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 64px; height: 64px;
+  background: white; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
   font-size: 28px;
 }
-.promo-link-text {
-  color: #00897b;
-  font-weight: 500;
-}
+.promo-link-text { color: #00897b; font-weight: 500; }
 </style>

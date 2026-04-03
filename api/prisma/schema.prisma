@@ -599,15 +599,18 @@ model NavPromoCard {
   title       String
   titleUk     String?  @map("title_uk")
   titleRu     String?  @map("title_ru")
+  titleEn     String?  @map("title_en")
   subtitle    String?
   subtitleUk  String?  @map("subtitle_uk")
   subtitleRu  String?  @map("subtitle_ru")
+  subtitleEn  String?  @map("subtitle_en")
   emoji       String?
   imageUrl    String?  @map("image_url")
   link        String
   linkText    String?  @map("link_text")
   linkTextUk  String?  @map("link_text_uk")
   linkTextRu  String?  @map("link_text_ru")
+  linkTextEn  String?  @map("link_text_en")
   colorTheme  String   @default("teal") @map("color_theme")
   categoryId  String?  @map("category_id")
   isActive    Boolean  @default(true) @map("is_active")

@@ -148,15 +148,6 @@ export function CategoryDropdownMenu({ categoryId, categoryName, children, onLin
                                     </li>
                                 ))}
                             </ul>
-                            {gi === 0 && (
-                                <Link
-                                    href={`/${categoryId}`}
-                                    className="block mt-5 text-sm font-medium text-gray-500 hover:text-teal-600 transition-colors"
-                                    onClick={onLinkClick}
-                                >
-                                    Показати все →
-                                </Link>
-                            )}
                         </div>
                     ))}
                 </div>
@@ -169,13 +160,13 @@ export function CategoryDropdownMenu({ categoryId, categoryName, children, onLin
                             const cls = themeMap[theme] || themeMap.teal;
                             const title = language === 'uk' ? (card.titleUk || card.title)
                                         : language === 'ru' ? (card.titleRu || card.title)
-                                        : card.title;
+                                        : (card.titleEn || card.title);
                             const subtitle = language === 'uk' ? (card.subtitleUk || card.subtitle)
                                            : language === 'ru' ? (card.subtitleRu || card.subtitle)
-                                           : card.subtitle;
+                                           : (card.subtitleEn || card.subtitle);
                             const linkText = language === 'uk' ? (card.linkTextUk || card.linkText)
                                            : language === 'ru' ? (card.linkTextRu || card.linkText)
-                                           : card.linkText;
+                                           : (card.linkTextEn || card.linkText);
                             return (
                                 <Link
                                     key={card.id}
