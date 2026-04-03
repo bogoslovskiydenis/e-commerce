@@ -212,15 +212,6 @@ export function CategoryDropdownMenu({ categoryId, categoryName, children, onLin
             </div>
 
             {/* Нижняя ссылка */}
-            <div className="mt-6 pt-5 border-t border-gray-100">
-                <Link
-                    href={`/${categoryId}`}
-                    className="text-sm font-medium text-teal-600 hover:text-teal-700 transition-colors"
-                    onClick={onLinkClick}
-                >
-                    Дивитись всі {categoryName.toLowerCase()} →
-                </Link>
-            </div>
         </div>
     );
 }
