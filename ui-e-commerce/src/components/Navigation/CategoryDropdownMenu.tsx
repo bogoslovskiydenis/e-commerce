@@ -11,6 +11,7 @@ interface CategoryDropdownMenuProps {
     categoryId: string;
     categoryName: string;
     children?: Category[];
+    onLinkClick?: () => void;
 }
 
 interface SubcategoryGroup {
@@ -18,127 +19,74 @@ interface SubcategoryGroup {
     items: Category[];
 }
 
-export function CategoryDropdownMenu({ categoryId, categoryName, children }: CategoryDropdownMenuProps) {
+export function CategoryDropdownMenu({ categoryId, categoryName, children, onLinkClick }: CategoryDropdownMenuProps) {
     const { language } = useTranslation();
     const [subcategoryGroups, setSubcategoryGroups] = useState<SubcategoryGroup[]>([]);
+    const [promoCards, setPromoCards] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        loadSubcategories();
+        loadData();
     }, [categoryId, children, language]);
 
-    const loadSubcategories = async () => {
+    const loadData = async () => {
         try {
             setIsLoading(true);
+            const [cards] = await Promise.all([
+                apiService.getNavPromoCards(categoryId),
+            ]);
+            setPromoCards(cards);
 
             let allSubcategories: Category[] = [];
-
-            // Используем переданные дочерние категории или загружаем из API
             if (children && children.length > 0) {
                 allSubcategories = children;
             } else {
-                // Загружаем все подкатегории для текущей категории
                 const categories = await apiService.getNavigationCategories();
-                const currentCategory = categories.find(cat => cat.id === categoryId);
-                if (currentCategory?.children) {
-                    allSubcategories = currentCategory.children;
-                }
+                const current = categories.find(cat => cat.id === categoryId);
+                if (current?.children) allSubcategories = current.children;
             }
 
-            // Группируем подкатегории по типам/группам
-            const groups = organizeSubcategories(allSubcategories);
-            setSubcategoryGroups(groups);
-        } catch (error) {
-            console.error('Error loading balloons subcategories:', error);
+            setSubcategoryGroups(organizeSubcategories(allSubcategories));
+        } catch {
             setSubcategoryGroups([]);
         } finally {
             setIsLoading(false);
         }
     };
 
-    // Организуем подкатегории в группы (колонки) на основе sortOrder из админки
     const organizeSubcategories = (subcategories: Category[]): SubcategoryGroup[] => {
-        if (subcategories.length === 0) {
-            return [];
-        }
+        if (subcategories.length === 0) return [];
 
-        // Сортируем подкатегории по sortOrder (из админки)
         const sorted = [...subcategories].sort((a, b) => {
-            const orderA = (a as any).sortOrder || a.order || 0;
-            const orderB = (b as any).sortOrder || b.order || 0;
-            return orderA - orderB;
+            return ((a as any).sortOrder || a.order || 0) - ((b as any).sortOrder || b.order || 0);
         });
 
-        // Группируем по диапазонам sortOrder для создания колонок
-        // Используем поле description или filters для указания названия группы, если есть
-        // Иначе группируем равномерно по 3-4 колонки
-        const groups: SubcategoryGroup[] = [];
-        const itemsPerColumn = Math.ceil(sorted.length / 3); // Максимум 3 колонки
-
-        // Пытаемся определить группы по описанию или другим полям
         const groupMap = new Map<string, Category[]>();
-        
+        const itemsPerColumn = Math.ceil(sorted.length / 3);
+
         sorted.forEach((sub, index) => {
-            // Используем description для указания группы, если оно содержит название группы
             const desc = sub.description || '';
             let groupTitle = '';
-            
-            // Проверяем, есть ли в description указание на группу (например, "Группа: Популярні")
             if (desc.includes('Группа:') || desc.includes('Група:')) {
                 const match = desc.match(/(?:Группа|Група):\s*([^\n,]+)/i);
-                if (match) {
-                    groupTitle = match[1].trim();
-                }
+                if (match) groupTitle = match[1].trim();
             }
-            
-            // Если группа не указана, используем автоматическую группировку по sortOrder
             if (!groupTitle) {
-                // Определяем номер колонки на основе индекса
-                const columnIndex = Math.floor(index / itemsPerColumn);
-                groupTitle = `Колонка ${columnIndex + 1}`;
+                groupTitle = `col_${Math.floor(index / itemsPerColumn)}`;
             }
-            
-            if (!groupMap.has(groupTitle)) {
-                groupMap.set(groupTitle, []);
-            }
+            if (!groupMap.has(groupTitle)) groupMap.set(groupTitle, []);
             groupMap.get(groupTitle)!.push(sub);
         });
 
-        // Преобразуем Map в массив групп
+        const groups: SubcategoryGroup[] = [];
         groupMap.forEach((items, title) => {
-            // Сортируем элементы внутри группы по sortOrder
-            items.sort((a, b) => {
-                const orderA = (a as any).sortOrder || a.order || 0;
-                const orderB = (b as any).sortOrder || b.order || 0;
-                return orderA - orderB;
-            });
-            
-            groups.push({
-                title: title,
-                items: items
-            });
+            items.sort((a, b) => ((a as any).sortOrder || a.order || 0) - ((b as any).sortOrder || b.order || 0));
+            groups.push({ title: title.startsWith('col_') ? '' : title, items });
         });
 
-        // Если групп нет или слишком много, группируем равномерно
-        if (groups.length === 0 || groups.length > 4) {
-            groups.length = 0; // Очищаем
-            const chunkSize = Math.ceil(sorted.length / 3);
-            for (let i = 0; i < sorted.length; i += chunkSize) {
-                const chunk = sorted.slice(i, i + chunkSize);
-                if (chunk.length > 0) {
-                    groups.push({
-                        title: i === 0 ? 'Популярні' : i === chunkSize ? 'Преміум' : 'Інші',
-                        items: chunk
-                    });
-                }
-            }
-        }
-
-        // Сортируем группы по порядку появления первой категории в группе
         groups.sort((a, b) => {
-            const orderA = (a.items[0] as any)?.sortOrder || a.items[0]?.order || 0;
-            const orderB = (b.items[0] as any)?.sortOrder || b.items[0]?.order || 0;
-            return orderA - orderB;
+            return ((a.items[0] as any)?.sortOrder || a.items[0]?.order || 0) -
+                   ((b.items[0] as any)?.sortOrder || b.items[0]?.order || 0);
         });
 
         return groups;
@@ -146,124 +94,131 @@ export function CategoryDropdownMenu({ categoryId, categoryName, children }: Cat
 
     if (isLoading) {
         return (
-            <div className="bg-white border border-gray-200 rounded-lg shadow-lg p-6 w-full" style={{ minWidth: '900px', maxWidth: '1200px' }}>
-                <div className="animate-pulse space-y-4">
-                    <div className="h-6 bg-gray-200 rounded w-1/4"></div>
-                    <div className="grid grid-cols-5 gap-4">
-                        {[1, 2, 3, 4, 5].map(i => (
-                            <div key={i} className="space-y-2">
-                                <div className="h-4 bg-gray-200 rounded"></div>
-                                <div className="h-4 bg-gray-200 rounded"></div>
-                                <div className="h-4 bg-gray-200 rounded"></div>
-                            </div>
-                        ))}
-                    </div>
+            <div className="container mx-auto py-8 px-4">
+                <div className="flex gap-8 animate-pulse">
+                    {[1, 2, 3].map(i => (
+                        <div key={i} className="flex-1 space-y-3">
+                            <div className="h-4 bg-gray-200 rounded w-3/4" />
+                            {[1,2,3,4,5].map(j => <div key={j} className="h-3 bg-gray-100 rounded" />)}
+                        </div>
+                    ))}
+                    {[1, 2].map(i => (
+                        <div key={i} className="w-44 space-y-2">
+                            <div className="h-32 bg-gray-200 rounded" />
+                            <div className="h-4 bg-gray-200 rounded w-3/4" />
+                            <div className="h-3 bg-gray-100 rounded w-1/2" />
+                        </div>
+                    ))}
                 </div>
             </div>
         );
     }
 
-    if (subcategoryGroups.length === 0) {
-        return null;
-    }
+    if (subcategoryGroups.length === 0 && promoCards.length === 0) return null;
+
+    const themeMap: Record<string, { link: string }> = {
+        teal:   { link: 'text-teal-600 hover:text-teal-700' },
+        pink:   { link: 'text-pink-500 hover:text-pink-600' },
+        purple: { link: 'text-purple-600 hover:text-purple-700' },
+        orange: { link: 'text-orange-500 hover:text-orange-600' },
+    };
 
     return (
-        <div className="bg-white border border-gray-200 rounded-lg shadow-xl p-6 w-full" style={{ minWidth: '900px', maxWidth: '1200px' }}>
-            <div className="mb-4">
-                <h2 className="text-lg font-bold text-gray-900">{categoryName}</h2>
-            </div>
-
-            <div className="grid grid-cols-5 gap-6">
-                {/* Колонки с подкатегориями */}
-                {subcategoryGroups.map((group, groupIndex) => (
-                    <div 
-                        key={groupIndex} 
-                        className={groupIndex < subcategoryGroups.length - 1 ? 'border-r border-gray-200 pr-6' : ''}
-                    >
-                        <h3 className="font-semibold text-gray-900 mb-4 text-sm">
-                            {group.title}
-                        </h3>
-                        <ul className="space-y-2">
-                            {group.items.map((subcategory) => (
-                                <li key={subcategory.id}>
-                                    <Link
-                                        href={`/${subcategory.slug}`}
-                                        className="block text-sm text-gray-600 hover:text-teal-600 transition-colors py-1"
-                                    >
-                                        <div className="flex items-center justify-between">
-                                            <span>{getLocalizedCategoryName(subcategory, language)}</span>
-                                            {subcategory.productsCount !== undefined && subcategory.productsCount > 0 && (
-                                                <span className="text-xs text-gray-400 ml-2">
-                                                    {subcategory.productsCount}
-                                                </span>
-                                            )}
-                                        </div>
-                                    </Link>
-                                </li>
-                            ))}
-                        </ul>
-                        {groupIndex === 0 && group.items.length > 0 && (
-                            <Link
-                                href={`/${categoryId === 'balloons' ? 'balloons' : categoryId}`}
-                                className="block mt-4 text-sm text-gray-600 hover:text-teal-600 font-medium"
-                            >
-                                Показати все →
-                            </Link>
-                        )}
-                    </div>
-                ))}
-
-                {/* Промо-карточки справа (если есть место) - можно настроить через админку */}
-                {subcategoryGroups.length < 5 && (
-                    <div className="space-y-4">
-                        {/* Промо-карточка 1 */}
-                        <div className="bg-gradient-to-br from-teal-50 to-teal-100 rounded-lg p-4 border border-teal-200">
-                            <div className="aspect-square bg-white rounded-md mb-3 flex items-center justify-center">
-                                <span className="text-4xl">🎈</span>
-                            </div>
-                            <h4 className="font-semibold text-sm text-gray-900 mb-1">
-                                Спеціальні пропозиції
-                            </h4>
-                            <p className="text-xs text-gray-600 mb-3">
-                                Унікальні композиції
-                            </p>
-                            <Link
-                                href={`/${categoryId === 'balloons' ? 'balloons' : categoryId}/special`}
-                                className="text-xs font-medium text-teal-600 hover:text-teal-700"
-                            >
-                                Переглянути товари →
-                            </Link>
+        <div className="container mx-auto py-7 px-4">
+            <div className="flex gap-8">
+                {/* Колонки подкатегорий */}
+                <div className="flex gap-10 flex-1">
+                    {subcategoryGroups.map((group, gi) => (
+                        <div key={gi} className="min-w-[140px]">
+                            {group.title && (
+                                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">
+                                    {group.title}
+                                </p>
+                            )}
+                            <ul className="space-y-[10px]">
+                                {group.items.map((sub) => (
+                                    <li key={sub.id}>
+                                        <Link
+                                            href={`/${sub.slug}`}
+                                            className="text-sm text-gray-700 hover:text-teal-600 transition-colors"
+                                            onClick={onLinkClick}
+                                        >
+                                            {getLocalizedCategoryName(sub, language)}
+                                        </Link>
+                                    </li>
+                                ))}
+                            </ul>
+                            {gi === 0 && (
+                                <Link
+                                    href={`/${categoryId}`}
+                                    className="block mt-5 text-sm font-medium text-gray-500 hover:text-teal-600 transition-colors"
+                                    onClick={onLinkClick}
+                                >
+                                    Показати все →
+                                </Link>
+                            )}
                         </div>
+                    ))}
+                </div>
 
-                        {/* Промо-карточка 2 */}
-                        <div className="bg-gradient-to-br from-pink-50 to-pink-100 rounded-lg p-4 border border-pink-200">
-                            <div className="aspect-square bg-white rounded-md mb-3 flex items-center justify-center">
-                                <span className="text-4xl">💝</span>
-                            </div>
-                            <h4 className="font-semibold text-sm text-gray-900 mb-1">
-                                Подарункові набори
-                            </h4>
-                            <p className="text-xs text-gray-600 mb-3">
-                                Готові композиції
-                            </p>
-                            <Link
-                                href={`/${categoryId === 'balloons' ? 'balloons' : categoryId}/gift-sets`}
-                                className="text-xs font-medium text-pink-600 hover:text-pink-700"
-                            >
-                                Переглянути товари →
-                            </Link>
-                        </div>
+                {/* Промо-карточки */}
+                {promoCards.length > 0 && (
+                    <div className="flex gap-4 shrink-0">
+                        {promoCards.map((card) => {
+                            const theme = card.colorTheme || 'teal';
+                            const cls = themeMap[theme] || themeMap.teal;
+                            const title = language === 'uk' ? (card.titleUk || card.title)
+                                        : language === 'ru' ? (card.titleRu || card.title)
+                                        : card.title;
+                            const subtitle = language === 'uk' ? (card.subtitleUk || card.subtitle)
+                                           : language === 'ru' ? (card.subtitleRu || card.subtitle)
+                                           : card.subtitle;
+                            const linkText = language === 'uk' ? (card.linkTextUk || card.linkText)
+                                           : language === 'ru' ? (card.linkTextRu || card.linkText)
+                                           : card.linkText;
+                            return (
+                                <Link
+                                    key={card.id}
+                                    href={card.link}
+                                    className="group w-44 shrink-0 block"
+                                    onClick={onLinkClick}
+                                >
+                                    <div className="w-full h-36 bg-gray-100 rounded-lg overflow-hidden mb-3 relative">
+                                        {card.imageUrl ? (
+                                            <Image
+                                                src={card.imageUrl.startsWith('http') ? card.imageUrl : `${process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:3001'}${card.imageUrl}`}
+                                                alt={title}
+                                                fill
+                                                className="object-cover group-hover:scale-105 transition-transform duration-300"
+                                            />
+                                        ) : (
+                                            <div className="w-full h-full flex items-center justify-center text-5xl bg-gray-50">
+                                                {card.emoji || '🎁'}
+                                            </div>
+                                        )}
+                                    </div>
+                                    <p className="text-xs text-gray-400 mb-1">{subtitle}</p>
+                                    <p className="text-sm font-semibold text-gray-900 mb-2 group-hover:text-teal-600 transition-colors">
+                                        {title}
+                                    </p>
+                                    <span className={`text-xs font-medium ${cls.link} transition-colors`}>
+                                        {linkText || 'Переглянути товари →'}
+                                    </span>
+                                </Link>
+                            );
+                        })}
                     </div>
                 )}
             </div>
 
-            {/* Ссылка "Смотреть все" внизу */}
-            <div className="mt-6 pt-4 border-t border-gray-200">
+            {/* Нижняя ссылка */}
+            <div className="mt-6 pt-5 border-t border-gray-100">
                 <Link
-                    href={`/${categoryId === 'balloons' ? 'balloons' : categoryId}`}
-                    className="flex items-center justify-center text-sm font-medium text-teal-600 hover:text-teal-700 transition-colors"
+                    href={`/${categoryId}`}
+                    className="text-sm font-medium text-teal-600 hover:text-teal-700 transition-colors"
+                    onClick={onLinkClick}
                 >
-                    Смотреть все {categoryName.toLowerCase()} →
+                    Дивитись всі {categoryName.toLowerCase()} →
                 </Link>
             </div>
         </div>

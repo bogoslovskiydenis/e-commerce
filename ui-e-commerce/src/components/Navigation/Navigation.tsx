@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import Link from 'next/link'
 import { useNavigation } from '@/hooks/useNavigation'
 import { CategoryDropdownMenu } from './CategoryDropdownMenu'
@@ -23,10 +23,33 @@ interface NavigationItem {
 export default function Navigation() {
     const { t, language } = useTranslation()
     const [navigationItems, setNavigationItems] = useState<NavigationItem[]>([]);
-    const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+    const [activeItem, setActiveItem] = useState<string | null>(null);
+    const [navBottom, setNavBottom] = useState(0);
+    const navBarRef = useRef<HTMLElement>(null);
+    const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-    // Получаем категории из API
     const { categories, isLoading, error } = useNavigation();
+
+    const openItem = useCallback((id: string) => {
+        if (closeTimer.current) clearTimeout(closeTimer.current);
+        if (navBarRef.current) {
+            setNavBottom(navBarRef.current.getBoundingClientRect().bottom);
+        }
+        setActiveItem(id);
+    }, []);
+
+    const scheduleClose = useCallback(() => {
+        closeTimer.current = setTimeout(() => setActiveItem(null), 150);
+    }, []);
+
+    const cancelClose = useCallback(() => {
+        if (closeTimer.current) clearTimeout(closeTimer.current);
+    }, []);
+
+    const closeNow = useCallback(() => {
+        if (closeTimer.current) clearTimeout(closeTimer.current);
+        setActiveItem(null);
+    }, []);
 
     // Обновляем навигацию при загрузке категорий или смене языка
     useEffect(() => {
@@ -72,13 +95,6 @@ export default function Navigation() {
         }
     }, [categories, language]);
 
-    const handleMouseEnter = (itemId: string) => {
-        setHoveredItem(itemId);
-    };
-
-    const handleMouseLeave = () => {
-        setHoveredItem(null);
-    };
 
     // Функция для получения содержимого дропдауна
     const getDropdownContent = (item: NavigationItem) => {
@@ -98,71 +114,82 @@ export default function Navigation() {
 
     return (
         <div className="relative">
-            <nav className="bg-white border-t border-b">
+            {activeItem && (
+                <div
+                    className="fixed left-0 right-0 bottom-0 bg-black/40 z-40"
+                    style={{ top: navBottom }}
+                    onMouseEnter={cancelClose}
+                    onMouseLeave={scheduleClose}
+                    onClick={closeNow}
+                />
+            )}
+
+            <nav ref={navBarRef} className="bg-white border-t border-b relative z-50">
                 <div className="container mx-auto">
                     <ul className="flex">
                         {navigationItems.map((item) => (
                             <li
                                 key={item.id}
-                                className={`nav-item ${hoveredItem === item.id ? 'hovered' : ''}`}
-                                onMouseEnter={() => handleMouseEnter(item.id)}
-                                onMouseLeave={handleMouseLeave}
-                                style={{ background: hoveredItem === item.id ? '#f3f4f6' : 'transparent' }}
+                                className="nav-item"
+                                style={{ background: activeItem === item.id ? '#f3f4f6' : 'transparent' }}
+                                onMouseEnter={() => item.hasDropdown ? openItem(item.id) : undefined}
+                                onMouseLeave={() => item.hasDropdown ? scheduleClose() : undefined}
                             >
                                 <Link
                                     href={item.href}
-                                    className={`nav-link block px-6 py-4 text-sm transition-colors ${
+                                    className={`nav-link flex items-center gap-1 px-6 py-4 text-sm transition-colors ${
                                         item.isSpecial
                                             ? 'text-red-600 font-semibold hover:text-red-700'
-                                            : 'text-gray-900 hover:text-teal-600'
+                                            : activeItem === item.id
+                                                ? 'text-teal-600 font-medium'
+                                                : 'text-gray-900 hover:text-teal-600'
                                     }`}
+                                    onClick={closeNow}
                                 >
                                     {item.title}
+                                    {item.hasDropdown && (
+                                        <svg
+                                            width="10" height="6"
+                                            viewBox="0 0 10 6"
+                                            className={`transition-transform duration-200 ${activeItem === item.id ? 'rotate-180' : ''}`}
+                                            fill="none"
+                                        >
+                                            <path d="M1 1l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                                        </svg>
+                                    )}
                                 </Link>
 
-                                {/* Дропдаун с поддержкой специального меню для шариков */}
-                                {item.hasDropdown && hoveredItem === item.id && (
-                                    <div className="absolute top-full left-0 z-50" style={{ width: 'max-content', minWidth: '900px' }}>
-                                        {/* Динамический dropdown меню для категорий с подкатегориями */}
+                                {item.hasDropdown && activeItem === item.id && (
+                                    <div
+                                        className="fixed left-0 right-0 z-50 bg-white shadow-xl border-t border-gray-100"
+                                        style={{ top: navBottom }}
+                                        onMouseEnter={cancelClose}
+                                        onMouseLeave={scheduleClose}
+                                    >
                                         {(item.children && item.children.length > 0) ? (
                                             <CategoryDropdownMenu
                                                 categoryId={item.id}
                                                 categoryName={item.title}
                                                 children={item.children}
+                                                onLinkClick={closeNow}
                                             />
                                         ) : (
-                                            <div className="min-w-64 bg-white border border-gray-200 rounded-lg shadow-lg p-4">
+                                            <div className="container mx-auto py-6 px-4">
                                                 <div className="space-y-2">
-                                                    <h3 className="font-semibold text-gray-900 mb-3">
-                                                        {item.title}
-                                                    </h3>
-
+                                                    <h3 className="font-semibold text-gray-900 mb-3">{item.title}</h3>
                                                     {getDropdownContent(item).map((subItem: any, index: number) => (
                                                         <Link
                                                             key={index}
                                                             href={subItem.href}
-                                                            className="flex items-center justify-between py-2 px-3 pl-6 rounded-lg hover:bg-gray-50 transition-colors group relative"
+                                                            className="block text-sm text-gray-600 hover:text-teal-600 py-1"
+                                                            onClick={closeNow}
                                                         >
-                                                            <span className="text-sm text-gray-700 group-hover:text-teal-600 flex items-center gap-1.5">
-                                                                <span className="text-gray-400 text-xs absolute left-3">/</span>
-                                                                <span>{subItem.name}</span>
-                                                            </span>
-                                                            {subItem.count > 0 && (
-                                                                <span className="text-xs text-gray-400">
-                                                                    {subItem.count}
-                                                                </span>
-                                                            )}
+                                                            {subItem.name}
                                                         </Link>
                                                     ))}
-
-                                                    <div className="pt-2 border-t">
-                                                        <Link
-                                                            href={item.href}
-                                                            className="text-sm text-teal-600 hover:text-teal-700 font-medium"
-                                                        >
-                                                            {t('navigation.viewAll')} {item.title.toLowerCase()} →
-                                                        </Link>
-                                                    </div>
+                                                    <Link href={item.href} className="text-sm text-teal-600 hover:text-teal-700 font-medium pt-2 block" onClick={closeNow}>
+                                                        {t('navigation.viewAll')} {item.title.toLowerCase()} →
+                                                    </Link>
                                                 </div>
                                             </div>
                                         )}

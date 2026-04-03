@@ -18,6 +18,7 @@ import { ReviewsModule } from './reviews/reviews.module';
 import { FavoritesModule } from './favorites/favorites.module';
 import { PromotionsModule } from './promotions/promotions.module';
 import { AnalyticsModule } from './analytics/analytics.module';
+import { NavPromoCardsModule } from './nav-promo-cards/nav-promo-cards.module';
 import { AppController } from './app.controller';
 
 @Module({
@@ -53,6 +54,7 @@ import { AppController } from './app.controller';
     FavoritesModule,
     PromotionsModule,
     AnalyticsModule,
+    NavPromoCardsModule,
   ],
   controllers: [AppController],
 })

@@ -808,6 +808,21 @@ class ApiService {
         }
     }
 
+    async getNavPromoCards(categoryId?: string): Promise<any[]> {
+        try {
+            const queryParams = categoryId ? `?categoryId=${categoryId}` : '';
+            const response = await this.request<ApiResponse<any[]>>(
+                `/nav-promo-cards/public${queryParams}`,
+                {},
+                true
+            );
+            return response.data || [];
+        } catch (error) {
+            console.error('Error fetching nav promo cards:', error);
+            return [];
+        }
+    }
+
     // ==================== НАСТРОЙКИ ====================
 
     /**

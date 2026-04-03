@@ -171,6 +171,7 @@ export const useApi = () => {
       'navigation': '/navigation',
       'settings': '/settings',
       'promotions': '/promotions',
+      'nav-promo-cards': '/nav-promo-cards',
       'coupons': '/coupons',
       'newsletters': '/newsletters',
       'admin-users': '/admin/users',

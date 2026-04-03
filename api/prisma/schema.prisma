@@ -594,6 +594,30 @@ enum NavigationType {
   EXTERNAL
 }
 
+model NavPromoCard {
+  id          String   @id @default(uuid())
+  title       String
+  titleUk     String?  @map("title_uk")
+  titleRu     String?  @map("title_ru")
+  subtitle    String?
+  subtitleUk  String?  @map("subtitle_uk")
+  subtitleRu  String?  @map("subtitle_ru")
+  emoji       String?
+  imageUrl    String?  @map("image_url")
+  link        String
+  linkText    String?  @map("link_text")
+  linkTextUk  String?  @map("link_text_uk")
+  linkTextRu  String?  @map("link_text_ru")
+  colorTheme  String   @default("teal") @map("color_theme")
+  categoryId  String?  @map("category_id")
+  isActive    Boolean  @default(true) @map("is_active")
+  sortOrder   Int      @default(0) @map("sort_order")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("nav_promo_cards")
+}
+
 model Favorite {
   id         String   @id @default(uuid())
   customerId String   @map("customer_id")

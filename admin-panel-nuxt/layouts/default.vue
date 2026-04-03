@@ -86,6 +86,13 @@
         ></v-list-item>
 
         <v-list-item
+          prepend-icon="mdi-card-multiple"
+          title="Спецпредложения в меню"
+          value="nav-promo-cards"
+          to="/nav-promo-cards"
+        ></v-list-item>
+
+        <v-list-item
           prepend-icon="mdi-file-document-outline"
           title="Страницы"
           value="pages"
