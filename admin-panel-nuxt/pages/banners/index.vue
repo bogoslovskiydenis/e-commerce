@@ -56,9 +56,28 @@
             variant="text"
             @click.stop="navigateTo({ name: 'banners-edit-id', params: { id: item.id } })"
           ></v-btn>
+          <v-btn
+            icon="mdi-delete"
+            size="small"
+            variant="text"
+            color="error"
+            @click.stop="confirmDelete(item)"
+          ></v-btn>
         </template>
       </v-data-table>
     </v-card>
+
+    <v-dialog v-model="deleteDialog" max-width="400">
+      <v-card>
+        <v-card-title>Удалить баннер?</v-card-title>
+        <v-card-text>Баннер «{{ bannerToDelete?.title }}» будет удалён. Это действие необратимо.</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn variant="text" @click="deleteDialog = false">Отмена</v-btn>
+          <v-btn color="error" :loading="deleteLoading" @click="handleDelete">Удалить</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -74,6 +93,9 @@ const api = useApi()
 const loading = ref(false)
 const banners = ref([])
 const total = ref(0)
+const deleteDialog = ref(false)
+const deleteLoading = ref(false)
+const bannerToDelete = ref(null)
 
 const pagination = reactive({
   page: 1,
@@ -98,14 +120,12 @@ const getImageUrl = (imagePath) => {
 const loadBanners = async () => {
   loading.value = true
   try {
-    const params = {
+    const response = await api.getList('banners', {
       page: pagination.page,
       limit: pagination.perPage,
       sortBy: 'createdAt',
       sortOrder: 'desc'
-    }
-
-    const response = await api.getList('banners', params)
+    })
     banners.value = response.data
     total.value = response.total
   } catch (error) {
@@ -128,6 +148,26 @@ const handlePerPageChange = (perPage) => {
 
 const handleRowClick = (event, row) => {
   navigateTo({ name: 'banners-edit-id', params: { id: row.item.id } })
+}
+
+const confirmDelete = (item) => {
+  bannerToDelete.value = item
+  deleteDialog.value = true
+}
+
+const handleDelete = async () => {
+  if (!bannerToDelete.value) return
+  deleteLoading.value = true
+  try {
+    await api.remove('banners', bannerToDelete.value.id)
+    deleteDialog.value = false
+    bannerToDelete.value = null
+    await loadBanners()
+  } catch (error) {
+    console.error('Ошибка удаления:', error)
+  } finally {
+    deleteLoading.value = false
+  }
 }
 
 onMounted(() => {

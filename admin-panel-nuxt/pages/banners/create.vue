@@ -5,7 +5,7 @@
         <v-btn
           prepend-icon="mdi-arrow-left"
           variant="text"
-          @click="navigateTo({ name: 'banners-index' })"
+          @click="navigateTo('/banners')"
         >
           Назад к списку
         </v-btn>
@@ -24,35 +24,114 @@
           <v-card class="mb-4">
             <v-card-title>Основная информация</v-card-title>
             <v-card-text>
-              <v-text-field
-                v-model="form.title"
-                label="Название"
-                variant="outlined"
-                class="mb-4"
-              ></v-text-field>
-              <v-text-field
-                v-model="form.subtitle"
-                label="Подзаголовок"
-                variant="outlined"
-                class="mb-4"
-              ></v-text-field>
-              <v-textarea
-                v-model="form.description"
-                label="Описание"
-                variant="outlined"
-                rows="3"
-                class="mb-4"
-              ></v-textarea>
-              <v-text-field
-                v-model="form.buttonText"
-                label="Текст кнопки"
-                variant="outlined"
-                class="mb-4"
-              ></v-text-field>
+              <h3 class="text-subtitle-1 mb-3">Название</h3>
+              <v-row>
+                <v-col cols="12" md="4">
+                  <v-text-field
+                    v-model="form.titleUk"
+                    label="Название (Українська)"
+                    variant="outlined"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12" md="4">
+                  <v-text-field
+                    v-model="form.titleRu"
+                    label="Название (Русский)"
+                    variant="outlined"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12" md="4">
+                  <v-text-field
+                    v-model="form.titleEn"
+                    label="Title (English)"
+                    variant="outlined"
+                  ></v-text-field>
+                </v-col>
+              </v-row>
+
+              <h3 class="text-subtitle-1 mb-3 mt-2">Подзаголовок</h3>
+              <v-row>
+                <v-col cols="12" md="4">
+                  <v-text-field
+                    v-model="form.subtitleUk"
+                    label="Підзаголовок (Українська)"
+                    variant="outlined"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12" md="4">
+                  <v-text-field
+                    v-model="form.subtitleRu"
+                    label="Подзаголовок (Русский)"
+                    variant="outlined"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12" md="4">
+                  <v-text-field
+                    v-model="form.subtitleEn"
+                    label="Subtitle (English)"
+                    variant="outlined"
+                  ></v-text-field>
+                </v-col>
+              </v-row>
+
+              <h3 class="text-subtitle-1 mb-3 mt-2">Описание</h3>
+              <v-row>
+                <v-col cols="12" md="4">
+                  <v-textarea
+                    v-model="form.descriptionUk"
+                    label="Опис (Українська)"
+                    variant="outlined"
+                    rows="3"
+                  ></v-textarea>
+                </v-col>
+                <v-col cols="12" md="4">
+                  <v-textarea
+                    v-model="form.descriptionRu"
+                    label="Описание (Русский)"
+                    variant="outlined"
+                    rows="3"
+                  ></v-textarea>
+                </v-col>
+                <v-col cols="12" md="4">
+                  <v-textarea
+                    v-model="form.descriptionEn"
+                    label="Description (English)"
+                    variant="outlined"
+                    rows="3"
+                  ></v-textarea>
+                </v-col>
+              </v-row>
+
+              <h3 class="text-subtitle-1 mb-3 mt-2">Текст кнопки</h3>
+              <v-row>
+                <v-col cols="12" md="4">
+                  <v-text-field
+                    v-model="form.buttonTextUk"
+                    label="Текст кнопки (Українська)"
+                    variant="outlined"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12" md="4">
+                  <v-text-field
+                    v-model="form.buttonTextRu"
+                    label="Текст кнопки (Русский)"
+                    variant="outlined"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="12" md="4">
+                  <v-text-field
+                    v-model="form.buttonTextEn"
+                    label="Button text (English)"
+                    variant="outlined"
+                  ></v-text-field>
+                </v-col>
+              </v-row>
+
               <v-text-field
                 v-model="form.buttonUrl"
                 label="URL кнопки"
                 variant="outlined"
+                class="mt-2"
               ></v-text-field>
             </v-card-text>
           </v-card>
@@ -113,7 +192,6 @@
                 label="Порядок сортировки"
                 type="number"
                 variant="outlined"
-                :model-value="0"
                 class="mb-4"
               ></v-text-field>
               <v-text-field
@@ -133,7 +211,6 @@
               <v-checkbox
                 v-model="form.isActive"
                 label="Активен"
-                :model-value="true"
               ></v-checkbox>
             </v-card-text>
           </v-card>
@@ -153,7 +230,7 @@
           <v-btn
             class="ml-2"
             variant="text"
-            @click="navigateTo({ name: 'banners-index' })"
+            @click="navigateTo('/banners')"
           >
             Отмена
           </v-btn>
@@ -178,9 +255,18 @@ const mobileImageFile = ref(null)
 
 const form = reactive({
   title: '',
-  subtitle: '',
-  description: '',
-  buttonText: '',
+  titleUk: '',
+  titleRu: '',
+  titleEn: '',
+  subtitleUk: '',
+  subtitleRu: '',
+  subtitleEn: '',
+  descriptionUk: '',
+  descriptionRu: '',
+  descriptionEn: '',
+  buttonTextUk: '',
+  buttonTextRu: '',
+  buttonTextEn: '',
   buttonUrl: '',
   imageUrl: null,
   mobileImageUrl: null,
@@ -209,7 +295,7 @@ const uploadImage = async (file) => {
   try {
     const formData = new FormData()
     formData.append('file', file)
-    
+
     const config = useRuntimeConfig()
     const authStore = useAuthStore()
     const token = authStore.token
@@ -217,7 +303,7 @@ const uploadImage = async (file) => {
     const response = await fetch(`${config.public.apiBase}/banners/upload`, {
       method: 'POST',
       headers: {
-        ...(token && { 'Authorization': `Bearer ${token}` })
+        ...(token && { Authorization: `Bearer ${token}` })
       },
       body: formData
     })
@@ -236,9 +322,7 @@ const handleImageChange = async (event) => {
   const file = event.target.files?.[0]
   if (file) {
     const url = await uploadImage(file)
-    if (url) {
-      form.imageUrl = url
-    }
+    if (url) form.imageUrl = url
   }
 }
 
@@ -246,9 +330,7 @@ const handleMobileImageChange = async (event) => {
   const file = event.target.files?.[0]
   if (file) {
     const url = await uploadImage(file)
-    if (url) {
-      form.mobileImageUrl = url
-    }
+    if (url) form.mobileImageUrl = url
   }
 }
 
@@ -256,13 +338,23 @@ const handleSubmit = async () => {
   loading.value = true
   try {
     const createData = {
-      title: form.title,
-      subtitle: form.subtitle || undefined,
-      description: form.description || undefined,
+      title: form.title || form.titleUk || form.titleRu || form.titleEn,
+      titleUk: form.titleUk || undefined,
+      titleRu: form.titleRu || undefined,
+      titleEn: form.titleEn || undefined,
+      subtitleUk: form.subtitleUk || undefined,
+      subtitleRu: form.subtitleRu || undefined,
+      subtitleEn: form.subtitleEn || undefined,
+      descriptionUk: form.descriptionUk || undefined,
+      descriptionRu: form.descriptionRu || undefined,
+      descriptionEn: form.descriptionEn || undefined,
+      buttonText: form.buttonTextUk || form.buttonTextRu || form.buttonTextEn || undefined,
+      buttonTextUk: form.buttonTextUk || undefined,
+      buttonTextRu: form.buttonTextRu || undefined,
+      buttonTextEn: form.buttonTextEn || undefined,
       imageUrl: form.imageUrl || '',
       mobileImageUrl: form.mobileImageUrl || null,
       link: form.buttonUrl || null,
-      buttonText: form.buttonText || null,
       position: form.position,
       isActive: form.isActive,
       sortOrder: Number(form.sortOrder) || 0,
@@ -277,7 +369,7 @@ const handleSubmit = async () => {
     })
 
     await api.create('banners', createData)
-    await navigateTo({ name: 'banners-index' })
+    await navigateTo('/banners')
   } catch (error) {
     console.error('Ошибка создания:', error)
   } finally {

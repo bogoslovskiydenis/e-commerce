@@ -5,6 +5,8 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Banner } from '@/services/api'
+import { useTranslation } from '@/contexts/LanguageContext'
+import type { Language } from '@/lib/language'
 
 const getImageUrl = (url: string) => {
     if (!url) return '/api/placeholder/800/400'
@@ -13,12 +15,22 @@ const getImageUrl = (url: string) => {
     return `${apiBase}${url}`
 }
 
+const getLangField = (banner: Banner, field: 'title' | 'subtitle' | 'buttonText', lang: Language): string => {
+    const map: Record<Language, string | undefined> = {
+        uk: banner[`${field}Uk` as keyof Banner] as string | undefined,
+        ru: banner[`${field}Ru` as keyof Banner] as string | undefined,
+        en: banner[`${field}En` as keyof Banner] as string | undefined,
+    }
+    return map[lang] || banner[field] || ''
+}
+
 interface BannerSliderProps {
     banners: Banner[]
 }
 
 export default function BannerSlider({ banners }: BannerSliderProps) {
     const [currentSlide, setCurrentSlide] = useState(0)
+    const { language } = useTranslation()
 
     useEffect(() => {
         if (banners.length <= 1) return
@@ -34,65 +46,78 @@ export default function BannerSlider({ banners }: BannerSliderProps) {
         return null
     }
 
-    const goToSlide = (index: number) => {
-        setCurrentSlide(index)
-    }
-
-    const goToPrevSlide = () => {
-        setCurrentSlide((prev) => (prev - 1 + banners.length) % banners.length)
-    }
-
-    const goToNextSlide = () => {
-        setCurrentSlide((prev) => (prev + 1) % banners.length)
-    }
+    const goToSlide = (index: number) => setCurrentSlide(index)
+    const goToPrevSlide = () => setCurrentSlide((prev) => (prev - 1 + banners.length) % banners.length)
+    const goToNextSlide = () => setCurrentSlide((prev) => (prev + 1) % banners.length)
 
     return (
         <div className="relative aspect-[3/2] sm:aspect-[5/2] md:aspect-[3/1] lg:aspect-[7/2] overflow-hidden">
-            {banners.map((banner, index) => (
-                <div
-                    key={banner.id}
-                    className={`absolute inset-0 transition-opacity duration-500 ${
-                        index === currentSlide ? 'opacity-100' : 'opacity-0'
-                    }`}
-                >
-                    <picture>
-                        <source media="(max-width: 768px)" srcSet={getImageUrl(banner.mobileImageUrl || banner.imageUrl)} />
-                        <Image
-                            src={getImageUrl(banner.imageUrl)}
-                            alt={banner.title}
-                            fill
-                            sizes="100vw"
-                            className="object-cover"
-                            priority={index === 0}
-                        />
-                    </picture>
-                    <div className="absolute inset-0 bg-black bg-opacity-30" />
-                    <div className="absolute inset-0 flex items-center">
-                        <div className="container mx-auto px-4">
-                            <div className="max-w-xl lg:max-w-2xl text-white">
-                                <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-3 sm:mb-4 leading-tight">
-                                    {banner.title}
-                                </h1>
-                                {banner.subtitle && (
-                                    <p className="text-sm sm:text-base md:text-lg lg:text-xl mb-6 sm:mb-8 leading-relaxed">
-                                        {banner.subtitle}
-                                    </p>
-                                )}
-                                {banner.buttonText && banner.link && (
-                                    <div className="flex flex-col xs:flex-row gap-2 sm:gap-3">
-                                        <Link
-                                            href={banner.link}
-                                            className="inline-block w-44 px-4 sm:px-6 py-2 sm:py-2.5 bg-teal-600 text-white rounded-lg hover:bg-teal-700 text-center font-medium text-xs sm:text-sm transition-colors"
-                                        >
-                                            {banner.buttonText}
-                                        </Link>
-                                    </div>
-                                )}
+            {banners.map((banner, index) => {
+                const title = getLangField(banner, 'title', language)
+                const subtitle = getLangField(banner, 'subtitle', language)
+                const buttonText = getLangField(banner, 'buttonText', language)
+
+                const slideContent = (
+                    <>
+                        <picture>
+                            <source media="(max-width: 768px)" srcSet={getImageUrl(banner.mobileImageUrl || banner.imageUrl)} />
+                            <Image
+                                src={getImageUrl(banner.imageUrl)}
+                                alt={title}
+                                fill
+                                sizes="100vw"
+                                className="object-cover"
+                                priority={index === 0}
+                            />
+                        </picture>
+                        <div className="absolute inset-0 bg-black bg-opacity-30 pointer-events-none" />
+                        <div className="absolute inset-0 flex items-center pointer-events-none">
+                            <div className="container mx-auto px-4">
+                                <div className="max-w-xl lg:max-w-2xl text-white">
+                                    {title && (
+                                        <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-3 sm:mb-4 leading-tight">
+                                            {title}
+                                        </h1>
+                                    )}
+                                    {subtitle && (
+                                        <p className="text-sm sm:text-base md:text-lg lg:text-xl mb-6 sm:mb-8 leading-relaxed">
+                                            {subtitle}
+                                        </p>
+                                    )}
+                                    {buttonText && (
+                                        <div className="flex flex-col xs:flex-row gap-2 sm:gap-3">
+                                            <span className="inline-block w-44 px-4 sm:px-6 py-2 sm:py-2.5 bg-teal-600 text-white rounded-lg hover:bg-teal-700 text-center font-medium text-xs sm:text-sm transition-colors">
+                                                {buttonText}
+                                            </span>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         </div>
+                    </>
+                )
+
+                return banner.link ? (
+                    <Link
+                        key={banner.id}
+                        href={banner.link}
+                        className={`absolute inset-0 transition-opacity duration-500 ${
+                            index === currentSlide ? 'opacity-100' : 'opacity-0 pointer-events-none'
+                        }`}
+                    >
+                        {slideContent}
+                    </Link>
+                ) : (
+                    <div
+                        key={banner.id}
+                        className={`absolute inset-0 transition-opacity duration-500 ${
+                            index === currentSlide ? 'opacity-100' : 'opacity-0 pointer-events-none'
+                        }`}
+                    >
+                        {slideContent}
                     </div>
-                </div>
-            ))}
+                )
+            })}
 
             {banners.length > 1 && (
                 <>

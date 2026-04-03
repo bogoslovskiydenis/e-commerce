@@ -136,12 +136,24 @@ export interface OrderItem {
 export interface Banner {
     id: string;
     title: string;
+    titleUk?: string;
+    titleRu?: string;
+    titleEn?: string;
     subtitle?: string;
+    subtitleUk?: string;
+    subtitleRu?: string;
+    subtitleEn?: string;
     description?: string;
+    descriptionUk?: string;
+    descriptionRu?: string;
+    descriptionEn?: string;
     imageUrl: string;
     mobileImageUrl?: string;
     link?: string;
     buttonText?: string;
+    buttonTextUk?: string;
+    buttonTextRu?: string;
+    buttonTextEn?: string;
     position: 'MAIN' | 'CATEGORY' | 'SIDEBAR' | 'FOOTER' | 'POPUP';
     isActive: boolean;
     sortOrder: number;

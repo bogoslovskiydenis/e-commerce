@@ -369,21 +369,33 @@ model Review {
 }
 
 model Banner {
-  id             String         @id @default(uuid())
-  title          String
-  subtitle       String?
-  description    String?
-  imageUrl       String         @map("image_url")
-  mobileImageUrl String?        @map("mobile_image_url")
-  link           String?
-  buttonText     String?        @map("button_text")
-  position       BannerPosition @default(MAIN)
-  isActive       Boolean        @default(true) @map("is_active")
-  sortOrder      Int            @default(0) @map("sort_order")
-  startDate      DateTime?      @map("start_date")
-  endDate        DateTime?      @map("end_date")
-  createdAt      DateTime       @default(now()) @map("created_at")
-  updatedAt      DateTime       @updatedAt @map("updated_at")
+  id               String         @id @default(uuid())
+  title            String
+  titleUk          String?        @map("title_uk")
+  titleRu          String?        @map("title_ru")
+  titleEn          String?        @map("title_en")
+  subtitle         String?
+  subtitleUk       String?        @map("subtitle_uk")
+  subtitleRu       String?        @map("subtitle_ru")
+  subtitleEn       String?        @map("subtitle_en")
+  description      String?
+  descriptionUk    String?        @map("description_uk")
+  descriptionRu    String?        @map("description_ru")
+  descriptionEn    String?        @map("description_en")
+  imageUrl         String         @map("image_url")
+  mobileImageUrl   String?        @map("mobile_image_url")
+  link             String?
+  buttonText       String?        @map("button_text")
+  buttonTextUk     String?        @map("button_text_uk")
+  buttonTextRu     String?        @map("button_text_ru")
+  buttonTextEn     String?        @map("button_text_en")
+  position         BannerPosition @default(MAIN)
+  isActive         Boolean        @default(true) @map("is_active")
+  sortOrder        Int            @default(0) @map("sort_order")
+  startDate        DateTime?      @map("start_date")
+  endDate          DateTime?      @map("end_date")
+  createdAt        DateTime       @default(now()) @map("created_at")
+  updatedAt        DateTime       @updatedAt @map("updated_at")
 
   @@map("banners")
 }
