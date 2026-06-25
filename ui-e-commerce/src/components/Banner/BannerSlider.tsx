@@ -74,11 +74,16 @@ export default function BannerSlider({ banners }: BannerSliderProps) {
                         <div className="absolute inset-0 flex items-center pointer-events-none">
                             <div className="container mx-auto px-4">
                                 <div className="max-w-xl lg:max-w-2xl text-white">
-                                    {title && (
-                                        <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-3 sm:mb-4 leading-tight">
-                                            {title}
-                                        </h1>
-                                    )}
+                                    {title &&
+                                        (index === currentSlide ? (
+                                            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-3 sm:mb-4 leading-tight">
+                                                {title}
+                                            </h1>
+                                        ) : (
+                                            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-3 sm:mb-4 leading-tight">
+                                                {title}
+                                            </h2>
+                                        ))}
                                     {subtitle && (
                                         <p className="text-sm sm:text-base md:text-lg lg:text-xl mb-6 sm:mb-8 leading-relaxed">
                                             {subtitle}

@@ -4,20 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="cc69a437-414e-4395-a1be-55730bb45aca" name="Changes" comment="добавлен скрипт для тестирования аналитики">
+    <list default="true" id="cc69a437-414e-4395-a1be-55730bb45aca" name="Changes" comment="добавил локализацию в навигацию специальные предложения">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DOCUMENTATION.md" beforeDir="false" afterPath="$PROJECT_DIR$/DOCUMENTATION.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin-panel-nuxt/pages/orders/[id].vue" beforeDir="false" afterPath="$PROJECT_DIR$/admin-panel-nuxt/pages/orders/[id].vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin-panel-nuxt/pages/products/[id].vue" beforeDir="false" afterPath="$PROJECT_DIR$/admin-panel-nuxt/pages/products/[id].vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin-panel-nuxt/pages/products/create.vue" beforeDir="false" afterPath="$PROJECT_DIR$/admin-panel-nuxt/pages/products/create.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin-panel-nuxt/pages/products/edit/[id].vue" beforeDir="false" afterPath="$PROJECT_DIR$/admin-panel-nuxt/pages/products/edit/[id].vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/orders/orders.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/orders/orders.service.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/src/products/products.service.ts" beforeDir="false" afterPath="$PROJECT_DIR$/api/src/products/products.service.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/app/layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/app/layout.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/app/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/app/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/components/Navigation/Navigation.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/components/Navigation/Navigation.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/components/ProductCard/ProductCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/components/ProductCard/ProductCard.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/components/ProductSection/ProductSection.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/components/ProductSection/ProductSection.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/hooks/useNavigation.ts" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/hooks/useNavigation.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/components/Banner/BannerSlider.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/components/Banner/BannerSlider.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/locales/en.ts" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/locales/en.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/locales/ru.ts" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/locales/ru.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ui-e-commerce/src/locales/uk.ts" beforeDir="false" afterPath="$PROJECT_DIR$/ui-e-commerce/src/locales/uk.ts" afterDir="false" />
@@ -181,111 +172,13 @@
       <workItem from="1767449742017" duration="10000" />
       <workItem from="1767792668797" duration="22847000" />
       <workItem from="1768402900049" duration="17825000" />
-      <workItem from="1772800924218" duration="4201000" />
-    </task>
-    <task id="LOCAL-00002" summary="добавил аунтификацию по ролям включил PgAdmin">
-      <option name="closed" value="true" />
-      <created>1752076156444</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1752076156444</updated>
-    </task>
-    <task id="LOCAL-00003" summary="просмотр зарегенистрированных пользователей в админ панели">
-      <option name="closed" value="true" />
-      <created>1752154781995</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
-      <option name="project" value="LOCAL" />
-      <updated>1752154781995</updated>
-    </task>
-    <task id="LOCAL-00004" summary="изменил на более дружелюбный интерфейс , удалил ненужное">
-      <option name="closed" value="true" />
-      <created>1752158226990</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
-      <option name="project" value="LOCAL" />
-      <updated>1752158226990</updated>
-    </task>
-    <task id="LOCAL-00005" summary="добавил , добавление пользователя по ролям , добавил добавление Товара (не добавляется фотографии!!!)">
-      <option name="closed" value="true" />
-      <created>1752227762851</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1752227762851</updated>
-    </task>
-    <task id="LOCAL-00006" summary="добавляется фото к товару , нужно добавить скидку !!">
-      <option name="closed" value="true" />
-      <created>1752232921246</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1752232921246</updated>
-    </task>
-    <task id="LOCAL-00007" summary="добавил скидку">
-      <option name="closed" value="true" />
-      <created>1752245572899</created>
-      <option name="number" value="00007" />
-      <option name="presentableId" value="LOCAL-00007" />
-      <option name="project" value="LOCAL" />
-      <updated>1752245572899</updated>
-    </task>
-    <task id="LOCAL-00008" summary="добавление категории под категории">
-      <option name="closed" value="true" />
-      <created>1752507521413</created>
-      <option name="number" value="00008" />
-      <option name="presentableId" value="LOCAL-00008" />
-      <option name="project" value="LOCAL" />
-      <updated>1752507521413</updated>
-    </task>
-    <task id="LOCAL-00009" summary="изменил проблему с аунтификацие и отображением секций для менеджера , немного изменил секции для продукции &#10;Нужно добавить фильтр!!!!">
-      <option name="closed" value="true" />
-      <created>1752576274458</created>
-      <option name="number" value="00009" />
-      <option name="presentableId" value="LOCAL-00009" />
-      <option name="project" value="LOCAL" />
-      <updated>1752576274458</updated>
-    </task>
-    <task id="LOCAL-00010" summary="исправил с удалением категории">
-      <option name="closed" value="true" />
-      <created>1759753934003</created>
-      <option name="number" value="00010" />
-      <option name="presentableId" value="LOCAL-00010" />
-      <option name="project" value="LOCAL" />
-      <updated>1759753934003</updated>
-    </task>
-    <task id="LOCAL-00011" summary="добавление товаров и категорий из админки в наш сайт">
-      <option name="closed" value="true" />
-      <created>1759824927610</created>
-      <option name="number" value="00011" />
-      <option name="presentableId" value="LOCAL-00011" />
-      <option name="project" value="LOCAL" />
-      <updated>1759824927610</updated>
-    </task>
-    <task id="LOCAL-00012" summary="исправил деплой в версел">
-      <option name="closed" value="true" />
-      <created>1759827809430</created>
-      <option name="number" value="00012" />
-      <option name="presentableId" value="LOCAL-00012" />
-      <option name="project" value="LOCAL" />
-      <updated>1759827809430</updated>
-    </task>
-    <task id="LOCAL-00013" summary="исправил деплой в версел">
-      <option name="closed" value="true" />
-      <created>1759828091929</created>
-      <option name="number" value="00013" />
-      <option name="presentableId" value="LOCAL-00013" />
-      <option name="project" value="LOCAL" />
-      <updated>1759828091929</updated>
-    </task>
-    <task id="LOCAL-00014" summary="убрал ненужные категории , которые нам не нужны , у нас создается страница с продукцией под товар">
-      <option name="closed" value="true" />
-      <created>1759834527307</created>
-      <option name="number" value="00014" />
-      <option name="presentableId" value="LOCAL-00014" />
-      <option name="project" value="LOCAL" />
-      <updated>1759834527307</updated>
+      <workItem from="1772800924218" duration="7366000" />
+      <workItem from="1773759584845" duration="2155000" />
+      <workItem from="1775136028735" duration="15844000" />
+      <workItem from="1775212304267" duration="703000" />
+      <workItem from="1775220922733" duration="1275000" />
+      <workItem from="1775927018767" duration="70000" />
+      <workItem from="1778685344567" duration="747000" />
     </task>
     <task id="LOCAL-00015" summary="перенес проект на Nest">
       <option name="closed" value="true" />
@@ -575,7 +468,111 @@
       <option name="project" value="LOCAL" />
       <updated>1768544915636</updated>
     </task>
-    <option name="localTasksCounter" value="51" />
+    <task id="LOCAL-00051" summary="добавил страницу акции , убрал логи в проекте">
+      <option name="closed" value="true" />
+      <created>1772810749831</created>
+      <option name="number" value="00051" />
+      <option name="presentableId" value="LOCAL-00051" />
+      <option name="project" value="LOCAL" />
+      <updated>1772810749831</updated>
+    </task>
+    <task id="LOCAL-00052" summary="добавил страницы доставка о нас">
+      <option name="closed" value="true" />
+      <created>1772813478025</created>
+      <option name="number" value="00052" />
+      <option name="presentableId" value="LOCAL-00052" />
+      <option name="project" value="LOCAL" />
+      <updated>1772813478025</updated>
+    </task>
+    <task id="LOCAL-00053" summary="добавил контакнты">
+      <option name="closed" value="true" />
+      <created>1772813582436</created>
+      <option name="number" value="00053" />
+      <option name="presentableId" value="LOCAL-00053" />
+      <option name="project" value="LOCAL" />
+      <updated>1772813582436</updated>
+    </task>
+    <task id="LOCAL-00054" summary="исправил ощибку">
+      <option name="closed" value="true" />
+      <created>1772814906878</created>
+      <option name="number" value="00054" />
+      <option name="presentableId" value="LOCAL-00054" />
+      <option name="project" value="LOCAL" />
+      <updated>1772814906878</updated>
+    </task>
+    <task id="LOCAL-00055" summary="удалил неиспользуемое">
+      <option name="closed" value="true" />
+      <created>1775138050434</created>
+      <option name="number" value="00055" />
+      <option name="presentableId" value="LOCAL-00055" />
+      <option name="project" value="LOCAL" />
+      <updated>1775138050434</updated>
+    </task>
+    <task id="LOCAL-00056" summary="добавили фильтра в категории">
+      <option name="closed" value="true" />
+      <created>1775142991245</created>
+      <option name="number" value="00056" />
+      <option name="presentableId" value="LOCAL-00056" />
+      <option name="project" value="LOCAL" />
+      <updated>1775142991246</updated>
+    </task>
+    <task id="LOCAL-00057" summary="исправил языки">
+      <option name="closed" value="true" />
+      <created>1775145193678</created>
+      <option name="number" value="00057" />
+      <option name="presentableId" value="LOCAL-00057" />
+      <option name="project" value="LOCAL" />
+      <updated>1775145193679</updated>
+    </task>
+    <task id="LOCAL-00058" summary="исправил языки убрал useEffect">
+      <option name="closed" value="true" />
+      <created>1775146113554</created>
+      <option name="number" value="00058" />
+      <option name="presentableId" value="LOCAL-00058" />
+      <option name="project" value="LOCAL" />
+      <updated>1775146113554</updated>
+    </task>
+    <task id="LOCAL-00059" summary="опустил ниже контейнер чтобы было видно лейбл">
+      <option name="closed" value="true" />
+      <created>1775196933689</created>
+      <option name="number" value="00059" />
+      <option name="presentableId" value="LOCAL-00059" />
+      <option name="project" value="LOCAL" />
+      <updated>1775196933689</updated>
+    </task>
+    <task id="LOCAL-00060" summary="добавил редактирование баннеров">
+      <option name="closed" value="true" />
+      <created>1775198469589</created>
+      <option name="number" value="00060" />
+      <option name="presentableId" value="LOCAL-00060" />
+      <option name="project" value="LOCAL" />
+      <updated>1775198469590</updated>
+    </task>
+    <task id="LOCAL-00061" summary="изменил навигацию и спецпредложения">
+      <option name="closed" value="true" />
+      <created>1775201255421</created>
+      <option name="number" value="00061" />
+      <option name="presentableId" value="LOCAL-00061" />
+      <option name="project" value="LOCAL" />
+      <updated>1775201255422</updated>
+    </task>
+    <task id="LOCAL-00062" summary="удалил смотреть категорию всю удалил">
+      <option name="closed" value="true" />
+      <created>1775201717855</created>
+      <option name="number" value="00062" />
+      <option name="presentableId" value="LOCAL-00062" />
+      <option name="project" value="LOCAL" />
+      <updated>1775201717855</updated>
+    </task>
+    <task id="LOCAL-00063" summary="добавил локализацию в навигацию специальные предложения">
+      <option name="closed" value="true" />
+      <created>1775202196531</created>
+      <option name="number" value="00063" />
+      <option name="presentableId" value="LOCAL-00063" />
+      <option name="project" value="LOCAL" />
+      <updated>1775202196532</updated>
+    </task>
+    <option name="localTasksCounter" value="64" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -605,19 +602,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="сидд для создании 5 категории 5 подкатегориий и товары" />
-    <MESSAGE value="добавил пагинацию" />
-    <MESSAGE value="добавил регистрацию с фронта" />
-    <MESSAGE value="1. Личный кабинет клиента&#10;Регистрация и авторизация клиентов&#10;JWT-аутентификация с refresh-токенами&#10;Страница личного кабинета (/account) с профилем и историей заказов&#10;Обновление профиля клиента&#10;2. Избранное (Favorites)&#10;Backend:&#10;Модель Favorite в Prisma&#10;API endpoints: добавление/удаление, получение списка, проверка статуса&#10;Автоматическое создание таблицы при первом использовании&#10;Frontend:&#10;Кнопка избранного (сердце) на карточках товаров&#10;Страница избранного (/favorites) с двумя режимами отображения (сетка/список)&#10;Сортировка товаров (по дате, цене, названию)&#10;Удаление из избранного по клику на красное сердце&#10;3. Улучшения UI&#10;Обновленный дизайн страницы избранного&#10;Адаптивная верстка&#10;Индикаторы загрузки и состояния&#10;4. Исправления&#10;Поддержка параметра featured в API для рекомендуемых товаров&#10;Исправлена ошибка с showFavoriteButton в ProductCard" />
-    <MESSAGE value="исправил ошибку с логином" />
-    <MESSAGE value="добавил добавление товара в популярное и в хиты продаж" />
-    <MESSAGE value="изменил UШ" />
-    <MESSAGE value="добавил добавление комментариев к товару" />
-    <MESSAGE value="оставление комментария в админке" />
-    <MESSAGE value="удалил ненужное" />
-    <MESSAGE value="добавил мультиязычность на другие страницы" />
-    <MESSAGE value="добавил мультиязычность" />
-    <MESSAGE value="убрал ненужные импорты" />
     <MESSAGE value="добавил языки для категорий" />
     <MESSAGE value="добавил в категорию локалицазию" />
     <MESSAGE value="локализация на фронте в навигации" />
@@ -630,6 +614,19 @@
     <MESSAGE value="добавил аналитику" />
     <MESSAGE value="аналитика в админ панели" />
     <MESSAGE value="добавлен скрипт для тестирования аналитики" />
-    <option name="LAST_COMMIT_MESSAGE" value="добавлен скрипт для тестирования аналитики" />
+    <MESSAGE value="добавил страницу акции , убрал логи в проекте" />
+    <MESSAGE value="добавил страницы доставка о нас" />
+    <MESSAGE value="добавил контакнты" />
+    <MESSAGE value="исправил ощибку" />
+    <MESSAGE value="удалил неиспользуемое" />
+    <MESSAGE value="добавили фильтра в категории" />
+    <MESSAGE value="исправил языки" />
+    <MESSAGE value="исправил языки убрал useEffect" />
+    <MESSAGE value="опустил ниже контейнер чтобы было видно лейбл" />
+    <MESSAGE value="добавил редактирование баннеров" />
+    <MESSAGE value="изменил навигацию и спецпредложения" />
+    <MESSAGE value="удалил смотреть категорию всю удалил" />
+    <MESSAGE value="добавил локализацию в навигацию специальные предложения" />
+    <option name="LAST_COMMIT_MESSAGE" value="добавил локализацию в навигацию специальные предложения" />
   </component>
 </project>

@@ -7,8 +7,8 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin', 'cyrillic'] })
 
 export const metadata: Metadata = {
-    title: 'Ecommerce',
-    description: 'Шарики',
+    title: { default: 'Ecommerce', template: '%s | Ecommerce' },
+    description: 'Інтернет-магазин: каталог товарів, зручне замовлення та доставка.',
 }
 
 export const viewport: Viewport = {
